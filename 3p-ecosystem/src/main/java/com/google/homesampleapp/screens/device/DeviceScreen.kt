@@ -32,13 +32,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -48,6 +51,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -56,6 +60,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -161,6 +166,20 @@ internal fun DeviceRoute(
     }
   }
 
+  // Brightness value changed.
+  val onBrightnessChange: (value: Int) -> Unit = remember {
+    { value ->
+      deviceViewModel.updateDeviceStateLevel(deviceUiModel!!, value)
+    }
+  }
+
+  // Color Temperature value changed.
+  val onColorTemperatureChange: (value: Int) -> Unit = remember {
+    { value ->
+      deviceViewModel.updateDeviceStateColorTemperature(deviceUiModel!!, value)
+    }
+  }
+
   // Inspect button click handler.
   // isOnline must be provided in InspectScreen because it is updated there.
   val onInspect: (isOnline: Boolean) -> Unit = remember {
@@ -238,6 +257,8 @@ internal fun DeviceRoute(
     deviceUiModel,
     lastUpdatedDeviceState,
     onOnOffClick,
+    onBrightnessChange,
+    onColorTemperatureChange,
     onRemoveDeviceClick,
     onShareDevice,
     onInspect,
@@ -256,6 +277,8 @@ private fun DeviceScreen(
   deviceUiModel: DeviceUiModel?,
   deviceState: DeviceState?,
   onOnOffClick: (value: Boolean) -> Unit,
+  onBrightnessChange: (value: Int) -> Unit,
+  onColorTemperatureChange: (value: Int) -> Unit,
   onRemoveDeviceClick: () -> Unit,
   onShareDevice: () -> Unit,
   onInspect: (isOnline: Boolean) -> Unit,
@@ -275,6 +298,11 @@ private fun DeviceScreen(
   // This is why the state of the device is cached in local variables.
   var isOnline by remember { mutableStateOf(false) }
   var isOn by remember { mutableStateOf(false) }
+  var brightness by remember { mutableFloatStateOf(0f) }
+  var colorTemperature by remember { mutableFloatStateOf(0f) }
+
+  val brightnessMax = 254f
+  val colorTemperatureMax = 1667f
 
   if (deviceUiModel == null) {
     Text("Still loading the device information")
@@ -300,8 +328,21 @@ private fun DeviceScreen(
           null -> model.isOn
           else -> deviceState.on
         }
+      brightness =
+        when (deviceState) {
+          null -> model.level / brightnessMax
+          else -> deviceState.level / brightnessMax
+        }
+      colorTemperature =
+        when (deviceState) {
+          null -> model.colorTemperature / colorTemperatureMax
+          else -> deviceState.colorTemperature / colorTemperatureMax
+        }
     }
-    Timber.d("deviceState: isOnline [$isOnline] isOn[$isOn]")
+    Timber.d(
+      "deviceState: isOnline [$isOnline] isOn[$isOn]" +
+              "level[$brightness] colorTemperature[$colorTemperature]"
+    )
   }
 
   // The various AlertDialog's that may pop up to inform the user of important information.
@@ -313,8 +354,40 @@ private fun DeviceScreen(
   )
 
   deviceUiModel.let { model ->
-    Column(modifier = Modifier.fillMaxWidth().padding(innerPadding)) {
-      OnOffStateSection(isOnline, isOn) { onOnOffClick(it) }
+    Column(
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(innerPadding)
+        .verticalScroll(rememberScrollState())
+    ) {
+      OnOffStateSection(isOnline, isOn) {
+        onOnOffClick(it)
+        model.isOn = it
+      }
+      LevelControl(
+        stringResource(R.string.brightness),
+        isOnline,
+        isOn,
+        brightness,
+        { brightness = it },
+        {
+          val brightnessVal = (brightness * 254).toInt()
+          onBrightnessChange(brightnessVal)
+          model.level = brightnessVal
+        }
+      )
+      LevelControl(
+        stringResource(R.string.color_temperature),
+        isOnline,
+        isOn,
+        colorTemperature,
+        { colorTemperature = it },
+        {
+          val colorTemperatureVal = (colorTemperature * colorTemperatureMax).toInt()
+          onColorTemperatureChange(colorTemperatureVal)
+          model.colorTemperature = colorTemperatureVal
+        }
+      )
       ShareSection(name = model.device.name, onShareDevice)
       // TODO: Use HorizontalDivider when it becomes part of the stable Compose BOM.
       Spacer(modifier = Modifier)
@@ -351,6 +424,41 @@ private fun OnOffStateSection(
       Text(text = text, style = MaterialTheme.typography.bodyLarge)
       Spacer(Modifier.weight(1f))
       Switch(checked = isOn, onCheckedChange = onStateChange)
+    }
+  }
+}
+
+@Composable
+private fun LevelControl(
+  title: String,
+  isOnline: Boolean,
+  isOn: Boolean,
+  level: Float,
+  onStateChange: (Float) -> Unit,
+  onValueChangeFinished: () -> Unit,
+) {
+  Surface(
+    modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal)),
+    border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+    shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
+  ) {
+    Column (
+      modifier = Modifier
+        .padding(dimensionResource(R.dimen.padding_surface_content))
+    ) {
+      Text(text = title)
+      Slider(
+        enabled = isOnline && isOn,
+        value = level,
+        onValueChange = onStateChange,
+        onValueChangeFinished = onValueChangeFinished,
+        valueRange = 0f..1f,
+      )
+      Text(
+        (level * 100).toInt().toString(),
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth()
+      )
     }
   }
 }
@@ -557,6 +665,21 @@ private fun OnOffStateSection_OnlineOn() {
 
 @Preview(widthDp = 300)
 @Composable
+private fun BrightnessControl_50() {
+  MaterialTheme {
+    LevelControl(
+      title = stringResource(R.string.brightness),
+      isOnline = true,
+      isOn = true,
+      level = 0.45f,
+      onStateChange = { Timber.d("Brightness changed to $it") },
+      onValueChangeFinished = { Timber.d("Brightness change finished") }
+    )
+  }
+}
+
+@Preview(widthDp = 300)
+@Composable
 private fun OnOffStateSection_Offline() {
   MaterialTheme { OnOffStateSection(false, true, { Timber.d("OnOff state changed to $it") }) }
 }
@@ -584,8 +707,16 @@ private fun RemoveDeviceSectionPreview() {
 private fun DeviceScreenOnlineOnPreview() {
   val deviceState = DeviceState_OnlineOn
   val device = DeviceTest
-  val deviceUiModel = DeviceUiModel(device, true, true)
+  val deviceUiModel = DeviceUiModel(device, true, true, level = 127)
   val onOnOffClick: (value: Boolean) -> Unit =
+    { value ->
+      Timber.d("deviceUiModel [$deviceUiModel] value [$value]")
+    }
+  val onBrightnessChange: (value: Int) -> Unit =
+    { value ->
+      Timber.d("deviceUiModel [$deviceUiModel] value [$value]")
+    }
+  val onColorTemperatureChange: (value: Int) -> Unit =
     { value ->
       Timber.d("deviceUiModel [$deviceUiModel] value [$value]")
     }
@@ -595,6 +726,8 @@ private fun DeviceScreenOnlineOnPreview() {
       deviceUiModel,
       deviceState,
       onOnOffClick,
+      onBrightnessChange,
+      onColorTemperatureChange,
       {},
       {},
       {},

@@ -565,6 +565,138 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   }
 
   // -----------------------------------------------------------------------------------------------
+  // LevelControlCluster functions
+
+  suspend fun setLevelStateLevelControlCluster(deviceId: Long, level: Int, endpoint: Int) {
+      Timber.d(
+          "setLevelStateLevelControlCluster() [${deviceId}] level [${level}] endpoint [${endpoint}]")
+      val connectedDevicePtr =
+          try {
+              chipClient.getConnectedDevicePointer(deviceId)
+          } catch (e: IllegalStateException) {
+              Timber.e("Can't get connectedDevicePointer.")
+              return
+          }
+      return suspendCoroutine { continuation ->
+          getLevelControlClusterForDevice(connectedDevicePtr, endpoint)
+              .moveToLevel(
+                  object : ChipClusters.DefaultClusterCallback {
+                      override fun onSuccess() {
+                          Timber.d("Success for setLevelStateLevelControlCluster")
+                          continuation.resume(Unit)
+                      }
+
+                      override fun onError(ex: Exception) {
+                          Timber.e(ex, "Failure for setLevelStateLevelControlCluster")
+                          continuation.resumeWithException(ex)
+                      }
+                  },
+                  level,
+                  0,
+                  0,
+                  0
+              )
+      }
+  }
+
+  suspend fun getDeviceStateLevelControlCluster(deviceId: Long, endpoint: Int): Int? {
+      Timber.d("getDeviceStateLevelControlCluster())")
+      val connectedDevicePtr =
+          try {
+              chipClient.getConnectedDevicePointer(deviceId)
+          } catch (e: IllegalStateException) {
+              Timber.e("Can't get connectedDevicePointer.")
+              return null
+          }
+      return suspendCoroutine { continuation ->
+          getLevelControlClusterForDevice(connectedDevicePtr, endpoint)
+              .readCurrentLevelAttribute(
+                  object : ChipClusters.LevelControlCluster.CurrentLevelAttributeCallback {
+                      override fun onSuccess(value: Int?) {
+                          Timber.d("readLevelControlAttribute success: [$value]")
+                          continuation.resume(value)
+                      }
+
+                      override fun onError(ex: Exception) {
+                          Timber.e(ex, "readLevelControlAttribute command failure")
+                          continuation.resumeWithException(ex)
+                      }
+                  }
+              )
+      }
+  }
+
+  private fun getLevelControlClusterForDevice(devicePtr: Long, endpoint: Int): ChipClusters.LevelControlCluster {
+      return ChipClusters.LevelControlCluster(devicePtr, endpoint)
+  }
+
+  // -----------------------------------------------------------------------------------------------
+  // ColorControlCluster functions
+
+  suspend fun setColorTemperatureColorControlCluster(deviceId: Long, colorTemperature: Int, endpoint: Int) {
+      Timber.d(
+          "setColorTemperatureColorControlCluster() [${deviceId}] colorTemperature [${colorTemperature}] endpoint [${endpoint}]")
+      val connectedDevicePtr =
+          try {
+              chipClient.getConnectedDevicePointer(deviceId)
+          } catch (e: IllegalStateException) {
+              Timber.e("Can't get connectedDevicePointer.")
+              return
+          }
+      return suspendCoroutine { continuation ->
+          getColorControlClusterForDevice(connectedDevicePtr, endpoint)
+              .moveToColorTemperature(
+                  object : ChipClusters.DefaultClusterCallback {
+                      override fun onSuccess() {
+                          Timber.d("Success for setColorTemperatureColorControlCluster")
+                          continuation.resume(Unit)
+                      }
+
+                      override fun onError(ex: Exception) {
+                          Timber.e(ex, "Failure for setColorTemperatureColorControlCluster")
+                          continuation.resumeWithException(ex)
+                      }
+                  },
+                  colorTemperature,
+                  0,
+                  0,
+                  0,
+              )
+      }
+  }
+
+  suspend fun getColorTemperatureColorControlCluster(deviceId: Long, endpoint: Int): Int? {
+      Timber.d("getDeviceStateColorControlCluster())")
+      val connectedDevicePtr =
+          try {
+              chipClient.getConnectedDevicePointer(deviceId)
+          } catch (e: IllegalStateException) {
+              Timber.e("Can't get connectedDevicePointer.")
+              return null
+          }
+      return suspendCoroutine { continuation ->
+          getColorControlClusterForDevice(connectedDevicePtr, endpoint)
+              .readColorTemperatureMiredsAttribute(
+                  object : ChipClusters.IntegerAttributeCallback {
+                      override fun onSuccess(value: Int) {
+                          Timber.d("readColorTemperatureMiredsAttribute success: [$value]")
+                          continuation.resume(value)
+                      }
+
+                      override fun onError(ex: Exception) {
+                          Timber.e(ex, "readColorTemperatureMiredsAttribute command failure")
+                          continuation.resumeWithException(ex)
+                      }
+                  }
+              )
+      }
+  }
+
+  private fun getColorControlClusterForDevice(devicePtr: Long, endpoint: Int): ChipClusters.ColorControlCluster {
+      return ChipClusters.ColorControlCluster(devicePtr, endpoint)
+  }
+
+  // -----------------------------------------------------------------------------------------------
   // Administrator Commissioning Cluster (11.19)
 
   suspend fun openCommissioningWindowAdministratorCommissioningCluster(
