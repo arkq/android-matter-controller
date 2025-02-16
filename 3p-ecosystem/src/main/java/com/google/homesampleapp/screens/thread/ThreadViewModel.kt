@@ -189,7 +189,7 @@ class ThreadViewModel @Inject constructor() : ViewModel() {
       )
     return if (response.first.responseCode in OtbrHttpClient.okResponses) {
       ThreadNetworkCredentials.fromActiveOperationalDataset(
-        BaseEncoding.base16().decode(response.second)
+        BaseEncoding.base16().lowerCase().decode(response.second)
       )
     } else {
       null
