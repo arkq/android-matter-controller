@@ -10,7 +10,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.SystemClock
-import android.text.method.LinkMovementMethod
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
@@ -36,7 +35,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -63,9 +61,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.pm.PackageInfoCompat
-import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -81,7 +77,6 @@ import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_D
 import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_MANUAL_PAIRING_CODE
 import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_PRODUCT_ID
 import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_VENDOR_ID
-import com.google.android.material.textview.MaterialTextView
 import com.google.homesampleapp.AppViewModel
 import com.google.homesampleapp.Device
 import com.google.homesampleapp.MIN_COMMISSIONING_WINDOW_EXPIRATION_SECONDS
@@ -92,7 +87,6 @@ import com.google.homesampleapp.getDeviceTypeIconId
 import com.google.homesampleapp.isMultiAdminCommissioning
 import com.google.homesampleapp.screens.common.DialogInfo
 import com.google.homesampleapp.screens.common.MsgAlertDialog
-import com.google.homesampleapp.screens.shared.UserPreferencesViewModel
 import com.google.homesampleapp.screens.thread.getActivity
 import com.google.homesampleapp.stateDisplayString
 import com.google.protobuf.Timestamp
@@ -109,10 +103,6 @@ import timber.log.Timber
  *    screen.
  * 2. Top App Bar. Settings icon to navigate to the Settings screen.
  * 3. "Add Device" button. Triggers the commissioning of a new device.
- * 4. Codelab information. When the app is first launched, a Dialog is shown to provide information
- *    about the app's companion codelab. This can be dismissed via a checkbox and the setting is
- *    persisted in the UserPreferences proto datastore.
- *
  * Note:
  * - The app currently only supports Matter devices with server attribute "ON/OFF".
  *
@@ -124,7 +114,6 @@ internal fun HomeRoute(
   innerPadding: PaddingValues,
   updateTitle: (title: String) -> Unit,
   navigateToDevice: (deviceId: Long) -> Unit,
-  userPreferencesViewModel: UserPreferencesViewModel = hiltViewModel(),
   homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
   // Launching GPS commissioning requires Activity.
@@ -141,14 +130,6 @@ internal fun HomeRoute(
   // decision has to be made because UI is fully controlled by GPS at that point.
   val deviceAttestationFailureIgnored by
     homeViewModel.deviceAttestationFailureIgnored.collectAsState()
-
-  // Controls whether the codelab alert dialog should be shown.
-  val showCodelabAlertDialog by userPreferencesViewModel.showCodelabAlertDialog.collectAsState()
-  val onCodelabCheckboxChange: (checked: Boolean) -> Unit = remember {
-    {
-      userPreferencesViewModel.updateHideCodelabInfo(it)
-    }
-  }
 
   // Controls when the "New Device" alert dialog is shown.
   // When that alert dialog completes, control needs to go back to the ViewModel to complete
@@ -266,8 +247,6 @@ internal fun HomeRoute(
   HomeScreen(
     innerPadding,
     devicesList,
-    showCodelabAlertDialog,
-    onCodelabCheckboxChange,
     msgDialogInfo,
     onDismissMsgDialog,
     showNewDeviceAlertDialog,
@@ -285,8 +264,6 @@ fun getPlayServicesVersion(context: Context): Long {
 private fun HomeScreen(
         innerPadding: PaddingValues,
         devicesList: List<DeviceUiModel>,
-        showCodelabUserPrefs: Boolean,
-        onCodelabCheckboxChange: (Boolean) -> Unit,
         msgDialogInfo: DialogInfo?,
         onConsumeMsgDialog: () -> Unit,
         showNewDeviceAlertDialog: Boolean,
@@ -331,11 +308,6 @@ private fun HomeScreen(
                 }
                    )
     }
-
-    // Alert Dialog taling about the Codelab when the app is first launched.
-    CodelabAlertDialog(showCodelabUserPrefs,
-                       onCodelabCheckboxChange
-                      )
 
   // Alert Dialog for messages to be shown to the user.
   MsgAlertDialog(msgDialogInfo, onConsumeMsgDialog)
@@ -517,69 +489,6 @@ private fun NewDeviceAlertDialog(
 }
 
 @Composable
-private fun CodelabAlertDialog(
-  showCodelabAlertDialog: Boolean,
-  onCodelabCheckboxChange: (Boolean) -> Unit,
-) {
-  // The user preference dictates whether this dialog should show or not.
-  if (!showCodelabAlertDialog) return
-
-  // Internal state, since the user may click on OK without checking to hide the
-  // dialog. Dialog won't be shown anymore until the next app launch.
-  var showDialog by remember { mutableStateOf(true) }
-  if (!showDialog) return
-
-  val htmlText =
-    HtmlCompat.fromHtml(
-      stringResource(R.string.showCodelabMessage),
-      HtmlCompat.FROM_HTML_MODE_LEGACY,
-    )
-  var isChecked by remember { mutableStateOf(false) }
-
-  AlertDialog(
-    title = { Text(stringResource(id = R.string.codelab)) },
-    text = {
-      // See https://developer.android.com/codelabs/jetpack-compose-migration
-      Column {
-        AndroidView(
-          update = { it.text = htmlText },
-          factory = {
-            MaterialTextView(it).apply { movementMethod = LinkMovementMethod.getInstance() }
-          },
-        )
-        Row(
-          modifier = Modifier
-            .fillMaxWidth()
-            .padding(4.dp),
-          verticalAlignment = Alignment.CenterVertically,
-        ) {
-          Checkbox(
-            checked = isChecked,
-            onCheckedChange = {
-              isChecked = !isChecked
-              onCodelabCheckboxChange(isChecked)
-            },
-          )
-          Text(stringResource(id = R.string.do_not_show_again))
-        }
-      }
-    },
-    confirmButton = {
-      TextButton(
-        onClick = {
-          Timber.d("confirmButton: onClick")
-          showDialog = false
-        }
-      ) {
-        Text("OK")
-      }
-    },
-    onDismissRequest = {},
-    dismissButton = {},
-  )
-}
-
-@Composable
 private fun NoDevices() {
   Column(
     modifier = Modifier.fillMaxSize(), // Make the Column occupy the whole screen
@@ -736,8 +645,6 @@ private fun HomeScreenNoDevicesPreview() {
     HomeScreen(
       PaddingValues(8.dp),
       emptyList(),
-      false,
-      {},
       null,
       {},
       false,
@@ -764,8 +671,6 @@ private fun HomeScreenWithDevicesPreview() {
     HomeScreen(
       PaddingValues(8.dp),
       devicesList,
-      false,
-      {},
       null,
       {},
       false,
@@ -782,12 +687,6 @@ private fun HomeScreenWithDevicesPreview() {
 @Composable
 private fun NoDevicesPreview() {
   MaterialTheme { NoDevices() }
-}
-
-@Preview
-@Composable
-private fun CodelabAlertDialogPreview() {
-  MaterialTheme { CodelabAlertDialog(true, {}) }
 }
 
 @Preview
