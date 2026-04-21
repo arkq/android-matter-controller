@@ -1,22 +1,29 @@
 name: Android Build
 
-on: pull_request
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
 
-      - name: Set Up JDK
-        uses: actions/setup-java@v1
+      - name: Set up JDK
+        uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          distribution: temurin
+          java-version: "21"
 
-      - name: Run Tests
-        run: ./gradlew test
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
 
-      - name: Build Project
-        run: ./gradlew assemble
+      - name: Run tests and build
+        run: ./gradlew --no-daemon test assemble

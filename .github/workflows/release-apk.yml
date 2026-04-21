@@ -5,57 +5,40 @@ on:
     tags:
       - 'v*.*.*'  # Triggers on version tags like v1.0.0
 
+permissions:
+  contents: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
 
-    - name: Set Up JDK
-      uses: actions/setup-java@v1
+    - name: Set up JDK
+      uses: actions/setup-java@v4
       with:
-        java-version: '17'
+        distribution: temurin
+        java-version: "21"
+
+    - name: Set up Gradle
+      uses: gradle/actions/setup-gradle@v4
 
     - name: Build APK
-      run: ./gradlew assembleRelease
+      run: ./gradlew --no-daemon assembleRelease
 
-    - name: Find APK files
-      id: apkfiles
+    - name: Collect APK files
       run: |
-        mkdir -p release_apks 
-        find . -type f -name "*.apk" -exec cp {} release_apks/ \; 
-        APK_FILES=$(find release_apks -type f -name "*.apk")
-        echo "Listing all files in the release_apks folder:"
-        find release_apks -type f
+        mkdir -p release_apks
+        find . -type f -name "*.apk" -exec cp {} release_apks/ \;
 
     - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
+      uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ github.ref_name }}
+        name: Release ${{ github.ref_name }}
         draft: false
         prerelease: false
-
-    - name: Upload First APK file
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: 'release_apks/3p-ecosystem-targetcommissioner-release-unsigned.apk'
-        asset_name: '3p-ecosystem-targetcommissioner-release-unsigned.apk'
-        asset_content_type: application/vnd.android.package-archive
-    
-    - name: Upload Second APK file
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: 'release_apks/3p-ecosystem-default-release-unsigned.apk'
-        asset_name: '3p-ecosystem-default-release-unsigned.apk'
-        asset_content_type: application/vnd.android.package-archive
+        files: release_apks/*.apk
