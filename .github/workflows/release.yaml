@@ -33,14 +33,26 @@ jobs:
           distribution: temurin
           java-version: "21"
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Build APK
-        run: ./gradlew --no-daemon ${{ inputs.target || 'assembleRelease' }}
+      - name: Restore keystore from GitHub Secrets
+        env:
+          # To regenerate this key and rotate the secret:
+          # > keytool -genkeypair -v -keystore debug.keystore -storetype PKCS12 \
+          #     -storepass android -alias androiddebugkey -keypass android \
+          #     -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          # base64 -w 0 debug.keystore | gh secret set DEBUG_KEYSTORE_B64
+          DEBUG_KEYSTORE_B64: ${{ secrets.DEBUG_KEYSTORE_B64 }}
+        run: |
+          mkdir -p ~/.android
+          echo "$DEBUG_KEYSTORE_B64" | base64 -d > ~/.android/debug.keystore
+
+      - name: Build APK with Gradle cache
+        uses: burrunan/gradle-cache-action@v3
+        with:
+          arguments: ${{ inputs.target || 'assembleRelease' }}
+          gradle-version: wrapper
 
       - name: Collect APK files
         run: |

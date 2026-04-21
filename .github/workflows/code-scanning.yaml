@@ -35,9 +35,6 @@ jobs:
           distribution: temurin
           java-version: "21"
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
@@ -46,8 +43,10 @@ jobs:
         with:
           languages: ${{ matrix.language }}
 
-      - name: Build for CodeQL
-        run: ./gradlew --no-daemon assemble
+      - name: Build for CodeQL with Gradle cache
+        uses: burrunan/gradle-cache-action@v3
+        with:
+          arguments: assemble
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
