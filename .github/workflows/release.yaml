@@ -14,35 +14,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        distribution: temurin
-        java-version: "21"
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
 
-    - name: Set up Gradle
-      uses: gradle/actions/setup-gradle@v4
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
 
-    - name: Set up Android SDK
-      uses: android-actions/setup-android@v3
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
 
-    - name: Build APK
-      run: ./gradlew --no-daemon assembleRelease
+      - name: Build APK
+        run: ./gradlew --no-daemon assembleRelease
 
-    - name: Collect APK files
-      run: |
-        mkdir -p release_apks
-        find . -type f -name "*.apk" -exec cp {} release_apks/ \;
+      - name: Collect APK files
+        run: |
+          mkdir -p release_apks
+          find . -type f -name "*.apk" -exec cp {} release_apks/ \;
 
-    - name: Create Release
-      uses: softprops/action-gh-release@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref_name }}
-        name: Release ${{ github.ref_name }}
-        draft: false
-        prerelease: false
-        files: release_apks/*.apk
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: release_apks/*.apk
