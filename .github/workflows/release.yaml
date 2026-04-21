@@ -46,12 +46,13 @@ jobs:
         run: ./gradlew --no-daemon ${{ github.event.inputs.gradle_task }}
 
       - name: Collect APK files
+        if: github.event_name == 'push' || github.event.inputs.gradle_task == 'assembleRelease'
         run: |
           mkdir -p release-apks
           find . -type f -name "*.apk" -exec cp {} release-apks/ \;
 
       - name: Upload APK artifacts
-        if: github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.gradle_task == 'assembleRelease'
         uses: actions/upload-artifact@v4
         with:
           name: release-apks
