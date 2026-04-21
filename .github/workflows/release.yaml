@@ -36,7 +36,15 @@ jobs:
           mkdir -p release_apks
           find . -type f -name "*.apk" -exec cp {} release_apks/ \;
 
+      - name: Upload APK artifacts
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apks
+          path: release_apks/*.apk
+
       - name: Create Release
+        if: github.event_name == 'push'
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
