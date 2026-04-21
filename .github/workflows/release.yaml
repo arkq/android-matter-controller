@@ -5,6 +5,14 @@ on:
     tags:
       - 'v*.*.*'
   workflow_dispatch:
+    inputs:
+      target:
+        description: "Gradle task to run for manual builds"
+        default: assembleRelease
+        type: choice
+        options:
+          - assembleRelease
+          - assembleDebug
 
 permissions:
   contents: write
@@ -29,7 +37,7 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Build APK
-        run: ./gradlew --no-daemon assembleRelease
+        run: ./gradlew --no-daemon ${{ inputs.target || 'assembleRelease' }}
 
       - name: Collect APK files
         run: |
