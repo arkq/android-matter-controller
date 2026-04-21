@@ -46,6 +46,18 @@ message Device {
 
     // The name of the vendor for the device.
     string vendorName = 9;
+
+    // Matter node id for this commissioned device.
+    int64 node_id = 10;
+
+    // Matter endpoint controlled by this logical device entry.
+    int32 endpoint = 11;
+
+    // Whether this endpoint exposes Level Control.
+    bool supports_level_control = 12;
+
+    // Whether this endpoint exposes Color Control color temperature attribute.
+    bool supports_color_temperature = 13;
 }
 
 message Devices {

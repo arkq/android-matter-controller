@@ -47,8 +47,12 @@ object MatterConstants {
       )
 
   // Well known cluster attributes
+  const val OnOffClusterId = 6L
+  const val LevelControlClusterId = 8L
+  const val ColorControlClusterId = 768L
+
   data class ClusterAttribute(val clusterId: Long, val attributeId: Long)
-  val OnOffAttribute = ClusterAttribute(6L, 0L)
-  val LevelAttribute = ClusterAttribute(8L, 0L)
-  val ColorTemperatureAttribute = ClusterAttribute(768L, 7L)
+  val OnOffAttribute = ClusterAttribute(OnOffClusterId, 0L)
+  val LevelAttribute = ClusterAttribute(LevelControlClusterId, 0L)
+  val ColorTemperatureAttribute = ClusterAttribute(ColorControlClusterId, 7L)
 }
