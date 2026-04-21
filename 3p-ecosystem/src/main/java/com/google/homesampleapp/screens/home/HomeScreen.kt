@@ -99,7 +99,7 @@ import timber.log.Timber
 /**
  * Home screen for the application.
  *
- * The Home screen features four sections:
+ * The Home screen features three sections:
  * 1. The list of devices currently commissioned into the app's fabric. When the user clicks on a
  *    device, app flow moves to the Device screen where one can get additional details on the device
  *    and perform actions on it. Devices are persisted in the DevicesRepository, a Proto Datastore.
