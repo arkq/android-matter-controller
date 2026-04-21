@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 The Authors
+# SPDX-License-Identifier: Apache-2.0
+
 name: Code Scanning
 
 on:
@@ -48,3 +51,11 @@ jobs:
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
+
+  reuse:
+    name: REUSE Compliance Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: REUSE Compliance Check
+        uses: fsfe/reuse-action@v6

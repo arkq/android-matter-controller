@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 The Authors
+// SPDX-License-Identifier: Apache-2.0
+
 // This file typically defines the common versions of plugins used by modules in the project.
 plugins {
   /**

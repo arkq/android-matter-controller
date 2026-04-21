@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2022 Google LLC
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Google Home Mobile SDK Sample Applications for Matter
 
 The "[Google Home Application (GHA)](https://play.google.com/store/apps/details?id=com.google.android.apps.chromecast.app)"

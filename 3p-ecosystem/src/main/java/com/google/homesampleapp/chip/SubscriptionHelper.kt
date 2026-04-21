@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Google LLC
+// SPDX-License-Identifier: Apache-2.0
+
 package com.google.homesampleapp.chip
 
 import chip.devicecontroller.ChipIdLookup

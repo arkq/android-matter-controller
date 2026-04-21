@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Google LLC
+// SPDX-License-Identifier: Apache-2.0
+
 // This settings file defines project-level repository settings and informs Gradle
 // which modules it should include when building the app.
 // Multi-module projects need to specify each module that should go into the final build.

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 The Authors
+# SPDX-License-Identifier: Apache-2.0
+
 # Define variables that hold the versions of your dependencies and plugins.
 # You use these variables in the subsequent blocks (the versions and plugins blocks).
 [versions]

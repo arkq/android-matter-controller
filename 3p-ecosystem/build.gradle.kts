@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 The Authors
+// SPDX-License-Identifier: Apache-2.0
+
 // Module-level build file.
 // This file t lets you configure build settings for the specific module it is located in.
 // Configuring these build settings lets you provide custom packaging options,

@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2022 Google LLC
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Google Home Sample App for Matter -- 3p-ecosystem
 
 The **Google Home Sample App for Matter** (GHSAFM-3p-ecosystem) provides a concrete example of how to
