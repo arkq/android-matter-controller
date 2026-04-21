@@ -37,8 +37,13 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Build APK
-        run: ./gradlew --no-daemon ${{ github.event_name == 'push' && 'assembleRelease' || github.event.inputs.gradle_task || 'assembleRelease' }}
+      - name: Build APK (release tags)
+        if: github.event_name == 'push'
+        run: ./gradlew --no-daemon assembleRelease
+
+      - name: Build APK (manual)
+        if: github.event_name == 'workflow_dispatch'
+        run: ./gradlew --no-daemon ${{ github.event.inputs.gradle_task }}
 
       - name: Collect APK files
         run: |
