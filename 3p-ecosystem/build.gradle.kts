@@ -18,6 +18,7 @@ plugins {
     // FIXME: to be changed with KSP
     id("org.jetbrains.kotlin.kapt")
     alias(libs.plugins.ktfmt.plugin)
+    alias(libs.plugins.compose.compiler)
 }
 
 /**
@@ -29,7 +30,7 @@ plugins {
  * Android Gradle Plugin)
  */
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 /**
@@ -100,7 +101,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.4"
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
     android.buildFeatures.viewBinding = true
 

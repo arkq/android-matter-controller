@@ -20,6 +20,7 @@ import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.SystemClock
 import android.text.method.LinkMovementMethod
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -57,6 +58,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -67,15 +69,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.home.matter.Matter
 import com.google.android.gms.home.matter.commissioning.CommissioningRequest
 import com.google.android.gms.home.matter.commissioning.DeviceInfo
@@ -282,24 +290,64 @@ internal fun HomeRoute(
     onOnOffClick,
   )
 }
-
+fun getPlayServicesVersion(context: Context): Long {
+     return PackageInfoCompat.getLongVersionCode(context.packageManager.getPackageInfo(GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE, 0))
+}
 @Composable
 private fun HomeScreen(
-  innerPadding: PaddingValues,
-  devicesList: List<DeviceUiModel>,
-  showCodelabUserPrefs: Boolean,
-  onCodelabCheckboxChange: (Boolean) -> Unit,
-  msgDialogInfo: DialogInfo?,
-  onConsumeMsgDialog: () -> Unit,
-  showNewDeviceAlertDialog: Boolean,
-  deviceAttestationFailureIgnored: Boolean,
-  onCommissionedDeviceNameCaptured: (name: String) -> Unit,
-  onCommissionDevice: () -> Unit,
-  onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit,
-  onOnOffClick: (deviceId: Long, value: Boolean) -> Unit,
-) {
-  // Alert Dialog taling about the Codelab when the app is first launched.
-  CodelabAlertDialog(showCodelabUserPrefs, onCodelabCheckboxChange)
+        innerPadding: PaddingValues,
+        devicesList: List<DeviceUiModel>,
+        showCodelabUserPrefs: Boolean,
+        onCodelabCheckboxChange: (Boolean) -> Unit,
+        msgDialogInfo: DialogInfo?,
+        onConsumeMsgDialog: () -> Unit,
+        showNewDeviceAlertDialog: Boolean,
+        deviceAttestationFailureIgnored: Boolean,
+        onCommissionedDeviceNameCaptured: (name: String) -> Unit,
+        onCommissionDevice: () -> Unit,
+        onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit,
+        onOnOffClick: (deviceId: Long, value: Boolean) -> Unit,
+                      ) {
+
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var showUpdateDialog by remember { mutableStateOf(false) }
+    var canAdd by remember { mutableStateOf(false) }
+
+    // Check when entering or resuming
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                val status = GoogleApiAvailability.getInstance()
+                        .isGooglePlayServicesAvailable(context)
+                showUpdateDialog = status != ConnectionResult.SUCCESS
+                if (getPlayServicesVersion(context) < 223615000L) showUpdateDialog = true
+                if (!showUpdateDialog) {
+                    canAdd = true
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    if (showUpdateDialog) {
+        AlertDialog(
+                onDismissRequest = {},
+                title = { Text("Update required") },
+                text = { Text("Please update Google Play services to continue.") },
+                confirmButton = {
+                    TextButton(onClick = { openPlayServicesInStore(context) }) {
+                        Text("Update")
+                    }
+                }
+                   )
+    }
+
+    // Alert Dialog taling about the Codelab when the app is first launched.
+    CodelabAlertDialog(showCodelabUserPrefs,
+                       onCodelabCheckboxChange
+                      )
 
   // Alert Dialog for messages to be shown to the user.
   MsgAlertDialog(msgDialogInfo, onConsumeMsgDialog)
@@ -350,6 +398,32 @@ private fun HomeScreen(
   LaunchedEffect(devicesList) { Timber.d("HomeRoute [$devicesList]") }
 }
 
+
+fun openPlayServicesInStore(context: Context) {
+
+    if (context is Activity) {
+        Timber.d("context is Activity")
+    }
+    else{
+        Timber.d("context is NOT Activity")
+    }
+
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+        data = Uri.parse("market://details?id=com.google.android.gms")
+        setPackage("com.android.vending")
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+
+    try {
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        val webIntent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.gms")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(webIntent)
+    }
+}
 @Composable
 private fun DeviceItem(
   deviceId: Long,
