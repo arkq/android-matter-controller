@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*.*.*'  # Triggers on version tags like v1.0.0
+      - 'v*.*.*'
   workflow_dispatch:
 
 permissions:
@@ -33,17 +33,17 @@ jobs:
 
       - name: Collect APK files
         run: |
-          mkdir -p release_apks
-          find . -type f -name "*.apk" -exec cp {} release_apks/ \;
+          mkdir -p release-apks
+          find . -type f -name "*.apk" -exec cp {} release-apks/ \;
 
       - name: Upload APK artifacts
         if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v4
         with:
           name: release-apks
-          path: release_apks/*.apk
+          path: release-apks/*.apk
 
-      - name: Create Release
+      - name: Create new release
         if: github.event_name == 'push'
         uses: softprops/action-gh-release@v2
         env:
@@ -53,4 +53,4 @@ jobs:
           name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
-          files: release_apks/*.apk
+          files: release-apks/*.apk
