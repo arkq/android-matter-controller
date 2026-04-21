@@ -43,7 +43,9 @@ import com.google.homesampleapp.TaskStatus
 import com.google.homesampleapp.UserPreferences
 import com.google.homesampleapp.chip.ChipClient
 import com.google.homesampleapp.chip.ClustersHelper
+import com.google.homesampleapp.chip.MatterConstants.LevelAttribute
 import com.google.homesampleapp.chip.MatterConstants.OnOffAttribute
+import com.google.homesampleapp.chip.MatterConstants.ColorTemperatureAttribute
 import com.google.homesampleapp.chip.SubscriptionHelper
 import com.google.homesampleapp.commissioning.AppCommissioningService
 import com.google.homesampleapp.convertToAppDeviceType
@@ -79,6 +81,10 @@ data class DeviceUiModel(
   var isOnline: Boolean,
   // Whether the device is on or off.
   var isOn: Boolean,
+  // Level of device
+  var level: Int = 0,
+  // Color temperature of device
+  var colorTemperature: Int = 0,
 )
 
 /**
@@ -186,7 +192,7 @@ constructor(
         devicesUiModel.add(DeviceUiModel(device, isOnline = false, isOn = false))
       } else {
         Timber.d("    deviceId setting its own value for state")
-        devicesUiModel.add(DeviceUiModel(device, state.online, state.on))
+        devicesUiModel.add(DeviceUiModel(device, state.online, state.on, state.level, state.colorTemperature))
       }
     }
     return devicesUiModel
@@ -335,7 +341,7 @@ constructor(
             .build()
         )
         Timber.d("Commissioning: Adding device state to repository: isOnline:true isOn:false")
-        devicesStateRepository.addDeviceState(deviceId, isOnline = true, isOn = false)
+        devicesStateRepository.addDeviceState(deviceId, isOnline = true, isOn = false, level = 0, colorTemperature = 0)
       } catch (e: Exception) {
         val title = "Adding device to app's repository failed"
         val msg = "Adding device [${deviceId}] [${deviceName}] to app's repository failed."
@@ -403,7 +409,9 @@ constructor(
     viewModelScope.launch {
       Timber.d("Handling real device")
       clustersHelper.setOnOffDeviceStateOnOffCluster(deviceId, isOn, 1)
-      devicesStateRepository.updateDeviceState(deviceId, true, isOn)
+      val level = clustersHelper.getDeviceStateLevelControlCluster(deviceId, 1) ?: 0
+      val colorTemperature = clustersHelper.getColorTemperatureColorControlCluster(deviceId, 1) ?: 0
+      devicesStateRepository.updateDeviceState(deviceId, true, isOn, level, colorTemperature)
     }
   }
 
@@ -451,9 +459,21 @@ constructor(
               // TODO: See HomeViewModel:CommissionDeviceSucceeded for device capabilities
               val onOffState =
                 subscriptionHelper.extractAttribute(nodeState, 1, OnOffAttribute) as Boolean?
+              val levelState =
+                subscriptionHelper.extractAttribute(nodeState, 1, LevelAttribute) as Int?
+              val colorTemperatureState =
+                subscriptionHelper.extractAttribute(nodeState, 1, ColorTemperatureAttribute) as Int?
               Timber.d("onOffState [${onOffState}]")
               if (onOffState == null) {
                 Timber.e("onReport(): WARNING -> onOffState is NULL. Ignoring.")
+                return
+              }
+              if (levelState == null) {
+                Timber.e("onReport(): WARNING -> levelState is NULL. Ignoring.")
+                return
+              }
+              if (colorTemperatureState == null) {
+                Timber.e("onReport(): WARNING -> colorTemperatureState is NULL. Ignoring.")
                 return
               }
               viewModelScope.launch {
@@ -461,6 +481,8 @@ constructor(
                   device.deviceId,
                   isOnline = true,
                   isOn = onOffState,
+                  level = levelState,
+                  colorTemperature = colorTemperatureState,
                 )
               }
             }
@@ -521,11 +543,15 @@ constructor(
         devicesList.forEach { device ->
           Timber.d("runDevicesPeriodicPing deviceId [${device.deviceId}]")
           var isOn = clustersHelper.getDeviceStateOnOffCluster(device.deviceId, 1)
+          var level = clustersHelper.getDeviceStateLevelControlCluster(device.deviceId, 1)
+          var colorTemperature = clustersHelper.getColorTemperatureColorControlCluster(device.deviceId, 1)
           val isOnline: Boolean
-          if (isOn == null) {
-            Timber.e("runDevicesPeriodicUpdate: cannot get device on/off state -> OFFLINE")
+          if (isOn == null || level == null || colorTemperature == null) {
+            Timber.e("runDevicesPeriodicUpdate: cannot get device state -> OFFLINE")
             isOn = false
             isOnline = false
+            level = 0
+            colorTemperature = 0
           } else {
             isOnline = true
           }
@@ -535,6 +561,8 @@ constructor(
             device.deviceId,
             isOnline = isOnline,
             isOn = isOn,
+            level = level,
+            colorTemperature = colorTemperature,
           )
         }
         delay(PERIODIC_READ_INTERVAL_HOME_SCREEN_SECONDS * 1000L)

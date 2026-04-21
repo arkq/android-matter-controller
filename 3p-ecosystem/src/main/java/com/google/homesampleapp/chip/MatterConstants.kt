@@ -55,10 +55,13 @@ object MatterConstants {
           63L to "Group Key Management",
           64L to "Fixed label",
           65L to "User label",
+          768L to "Color Control",
           1030L to "Occupancy Sensing",
       )
 
   // Well known cluster attributes
   data class ClusterAttribute(val clusterId: Long, val attributeId: Long)
   val OnOffAttribute = ClusterAttribute(6L, 0L)
+  val LevelAttribute = ClusterAttribute(8L, 0L)
+  val ColorTemperatureAttribute = ClusterAttribute(768L, 7L)
 }
