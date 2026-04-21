@@ -19,34 +19,6 @@ import org.junit.Assert
 
 /** Suite of utility objects and functions used across our Android Espresso/UIAutomator tests. */
 object HomeScreen {
-  /**
-   * When the app starts, it may or may not display the codelab dialog depending on the state it was
-   * in the last time it was launched. Was unable to find a way to force the preferences datastore
-   * to be cleared prior to the test being run. Having the code below:
-   * ```
-   * @Before fun init() {
-   *   scope.launch {
-   *     userPreferencesRepository.clearData()
-   *   }
-   * }
-   * ```
-   *
-   * does not complete prior to the start of the test.
-   *
-   * So for now, if we fail clicking on "OK" this means the codelab dialog is not shown and we
-   * simply ignore the exception.
-   *
-   * TODO: Figure out the proper way to force a clear of the preferences datastore before the test
-   *   runs.
-   */
-  fun ensureCodelabDialogNotShown() {
-    try {
-      onView(withText("OK")).perform(click())
-    } catch (e: Throwable) {
-      // The Codelab dialog was not shown. Simply ignore the error.
-    }
-  }
-
   fun verifyInHomeScreen(delayInSecs: Int) {
     Thread.sleep(delayInSecs * 1000L)
     // Verify Add Device button is displayed.

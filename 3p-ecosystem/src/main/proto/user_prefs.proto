@@ -9,11 +9,6 @@ option java_multiple_files = true;
 // User preferences as well as settings used by the application
 // that are persisted in a Proto DataStore.
 message UserPreferences {
-  // Filter for showing / hiding the codelab information on the Home screen.
-  // Using "hide" instead of show so that the default value (false) is the
-  // default behavior we want.
-  bool hide_codelab_info = 1;
-
   // Filter for showing / hiding offline devices on the Home screen.
   // Using "hide" instead of "show" so that the default value (false) is the
   // default behavior we want (i.e. hide_offline_devices is false by default,

@@ -98,9 +98,6 @@ class CommissionDeviceAndToggleOnOffTest {
 
   @Test
   fun commissionDeviceAndVerifyOnOffToggle() {
-    // Handle codelab dialog.
-    HomeScreen.ensureCodelabDialogNotShown()
-
     // Verify that at least one device is commissionable.
     HomeScreen.navigateToSettingsScreen()
     SettingsScreen.selectDeveloperUtilities()

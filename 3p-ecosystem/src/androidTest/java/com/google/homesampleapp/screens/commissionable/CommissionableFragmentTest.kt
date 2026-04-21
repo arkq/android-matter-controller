@@ -92,9 +92,6 @@ class CommissionableFragmentTest {
 
   @Test
   fun testFragmentBehavior() {
-    // Handle codelab dialog.
-    HomeScreen.ensureCodelabDialogNotShown()
-
     // Navigate to "Commissionable devices" screen.
     HomeScreen.navigateToSettingsScreen()
     SettingsScreen.selectDeveloperUtilities()

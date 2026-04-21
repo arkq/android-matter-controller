@@ -35,13 +35,6 @@ class UserPreferencesRepository @Inject constructor(@ApplicationContext context:
 
   val userPreferencesLiveData = userPreferencesFlow.asLiveData()
 
-  suspend fun updateHideCodelabInfo(hide: Boolean) {
-    Timber.d("updateHideCodelabInfo [$hide]")
-    userPreferencesDataStore.updateData { prefs ->
-      prefs.toBuilder().setHideCodelabInfo(hide).build()
-    }
-  }
-
   suspend fun updateHideOfflineDevices(hide: Boolean) {
     Timber.d("updateHideOfflineDevices [$hide]")
     userPreferencesDataStore.updateData { prefs ->
@@ -59,10 +52,6 @@ class UserPreferencesRepository @Inject constructor(@ApplicationContext context:
     userPreferencesDataStore.updateData { prefs ->
       prefs.toBuilder().setShowHalfsheetNotification(show).build()
     }
-  }
-
-  suspend fun isHideCodelabInfo(): Boolean {
-    return userPreferencesFlow.first().hideCodelabInfo
   }
 
   suspend fun getData(): UserPreferences {

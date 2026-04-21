@@ -80,9 +80,6 @@ data class DeviceUiModel(
 data class DevicesListUiModel(
   // The list of devices.
   val devices: List<DeviceUiModel>,
-  // Making it so default is false, so that codelabinfo is not shown when we have not gotten
-  // the userpreferences data yet.
-  val showCodelabInfo: Boolean,
   // Whether offline devices should be shown.
   val showOfflineDevices: Boolean,
 )
@@ -155,7 +152,6 @@ constructor(
       Timber.d("*** devicesListUiModelFlow changed ***")
       return@combine DevicesListUiModel(
         devices = processDevices(devices, devicesStates, userPreferences),
-        showCodelabInfo = !userPreferences.hideCodelabInfo,
         showOfflineDevices = !userPreferences.hideOfflineDevices,
       )
     }

@@ -26,10 +26,6 @@ constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
 
-  // Controls whether the "Codelab" AlertDialog should be shown in the UI.
-  private var _showCodelabAlertDialog = MutableStateFlow<Boolean>(false)
-  val showCodelabAlertDialog: StateFlow<Boolean> = _showCodelabAlertDialog.asStateFlow()
-
   // Controls whether the "Offline" devices should be shown in the UI.
   private var _showOfflineDevices = MutableStateFlow<Boolean>(false)
   val showOfflineDevices: StateFlow<Boolean> = _showOfflineDevices.asStateFlow()
@@ -37,18 +33,7 @@ constructor(
   init {
     viewModelScope.launch {
       val userPreferences = userPreferencesRepository.getData()
-      _showCodelabAlertDialog.value = !userPreferences.hideCodelabInfo
       _showOfflineDevices.value = !userPreferences.hideOfflineDevices
-    }
-  }
-
-  // -----------------------------------------------------------------------------------------------
-  // Model data accessors
-
-  fun updateHideCodelabInfo(value: Boolean) {
-    viewModelScope.launch {
-      userPreferencesRepository.updateHideCodelabInfo(value)
-      _showCodelabAlertDialog.value = value
     }
   }
 }

@@ -28,10 +28,6 @@ class AppPreferenceDataStore @Inject constructor() : PreferenceDataStore() {
     val boolValue = stringToBoolean(key!!)
     runBlocking {
       when (key) {
-        // codelab represents "showing" the codelab which is the inverse of the "hide" proto value.
-        "codelab" -> {
-          userPreferencesRepository.updateHideCodelabInfo(!boolValue)
-        }
         // offline_devices represents "showing" the offline devices which is the inverse of the
         // "hide" proto value.
         "offline_devices" -> {
@@ -58,9 +54,6 @@ class AppPreferenceDataStore @Inject constructor() : PreferenceDataStore() {
       Timber.d("userPreferences: [$userPreferences]")
       value =
           when (key) {
-            // codelab represents "showing" the codelab which is the inverse of the "hide" proto
-            // value.
-            "codelab" -> (!userPreferences.hideCodelabInfo).toString()
             // offline_devices represents "showing" the offline devices which is the inverse of the
             // "hide" proto value.
             "offline_devices" -> (!userPreferences.hideOfflineDevices).toString()
@@ -78,10 +71,6 @@ class AppPreferenceDataStore @Inject constructor() : PreferenceDataStore() {
     Timber.d("putBoolean [$key] -> [$value]")
     runBlocking {
       when (key) {
-        // codelab represents "showing" the codelab which is the inverse of the "hide" proto value.
-        "codelab" -> {
-          userPreferencesRepository.updateHideCodelabInfo(!value)
-        }
         // offline_devices represents "showing" the offline devices which is the inverse of the
         // "hide" proto value.
         "offline_devices" -> {
@@ -106,9 +95,6 @@ class AppPreferenceDataStore @Inject constructor() : PreferenceDataStore() {
       val userPreferences = job.await()
       value =
           when (key) {
-            // codelab represents "showing" the codelab which is the inverse of the "hide" proto
-            // value.
-            "codelab" -> !userPreferences.hideCodelabInfo
             // offline_devices represents "showing" the offline devices which is the inverse of the
             // "hide" proto value.
             "offline_devices" -> !userPreferences.hideOfflineDevices

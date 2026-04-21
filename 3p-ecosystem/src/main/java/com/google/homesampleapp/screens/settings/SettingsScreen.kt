@@ -41,29 +41,12 @@ internal fun SettingsRoute(
 
 @Composable
 private fun SettingsScreen(innerPadding: PaddingValues, navigateToDeveloperUtilities: () -> Unit) {
-  var showHelpAndFeedbackDialog by remember { mutableStateOf(false) }
   var showAboutDialog by remember { mutableStateOf(false) }
   var showHalfsheetDialog by remember { mutableStateOf(false) }
   // Cannot use extension function for Halfsheet Preference, onValueChange needed.
   val showHalfsheetPref = rememberPreferenceState("halfsheet_preference", false)
 
   LazyColumn(modifier = Modifier.fillMaxSize()) {
-    switchPreference(
-      key = "codelab_preference",
-      defaultValue = false,
-      icon = {
-        Icon(
-          painter = painterResource(id = R.drawable.ic_baseline_code_24),
-          contentDescription = null, // decorative element
-        )
-      },
-      title = { Text(text = "Codelab") },
-      summary = {
-        Text(
-          text = if (it) "Show codelab info at startup" else "Do not show codelab info at startup"
-        )
-      },
-    )
     switchPreference(
       key = "offline_devices_preference",
       defaultValue = true,
@@ -115,18 +98,6 @@ private fun SettingsScreen(innerPadding: PaddingValues, navigateToDeveloperUtili
       onClick = navigateToDeveloperUtilities,
     )
     preference(
-      key = "help_feedback_preference",
-      icon = {
-        Icon(
-          painter = painterResource(id = R.drawable.ic_baseline_help_24),
-          contentDescription = null, // decorative element
-        )
-      },
-      title = { Text(text = "Help and Feedback") },
-      summary = { Text(text = "Learn how to use this sample app and/or give us feedback") },
-      onClick = { showHelpAndFeedbackDialog = true },
-    )
-    preference(
       key = "about_preference",
       icon = {
         Icon(
@@ -137,13 +108,6 @@ private fun SettingsScreen(innerPadding: PaddingValues, navigateToDeveloperUtili
       title = { Text(text = "About this app") },
       summary = { Text(text = "More information about this application") },
       onClick = { showAboutDialog = true },
-    )
-  }
-  if (showHelpAndFeedbackDialog) {
-    HtmlInfoDialog(
-      "Help and Feedback",
-      stringResource(R.string.help_and_feedback),
-      onClick = { showHelpAndFeedbackDialog = false },
     )
   }
   if (showAboutDialog) {
