@@ -59,7 +59,7 @@ class ThreadViewModel @Inject constructor() : ViewModel() {
     get() = _threadClientIntentSender
 
   // OpenThread BorderRouter constants.
-  private val otbrPort = "8081"
+  private val otbrPort = "80"
   private val otbrDatasetPendingEndpoint = "/node/dataset/pending"
   private val otbrDatasetActiveEndpoint = "/node/dataset/active"
   private val threadCredentialsQRCodePrefix = "TD:"
@@ -189,7 +189,7 @@ class ThreadViewModel @Inject constructor() : ViewModel() {
       )
     return if (response.first.responseCode in OtbrHttpClient.okResponses) {
       ThreadNetworkCredentials.fromActiveOperationalDataset(
-        BaseEncoding.base16().decode(response.second)
+        BaseEncoding.base16().decode(response.second.uppercase())
       )
     } else {
       null
