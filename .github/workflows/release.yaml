@@ -8,7 +8,6 @@ on:
     inputs:
       target:
         description: "Gradle task to run for manual builds"
-        required: true
         default: assembleRelease
         type: choice
         options:
