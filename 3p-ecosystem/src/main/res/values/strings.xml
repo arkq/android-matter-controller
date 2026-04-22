@@ -43,13 +43,6 @@
 
     <string name="no_devices">No devices to show!!!</string>
     <string name="action_result_label">Action Result Shown Here!</string>
-    <string name="showCodelabMessage">You can learn more about this sample application via its companion codelab available at the &lt;a href="https://developers.home.google.com/codelabs/matter-sample-app">Google Home Developer Center&lt;/a></string>
-    <string name="help_and_feedback">
-        You can learn more about this sample application via its companion codelab available at the &lt;a href="https://developers.home.google.com/codelabs/matter-sample-app">Google Home Developer Center&lt;/a>.&lt;p>
-        To get official guidance from Google on technical questions, see the &lt;a href="https://www.googlenestcommunity.com/t5/Smart-Home-Developer-Forum/bd-p/Smart-Home-Developer-Forum">Smart Home Developer Forum&lt;/a>.&lt;p>
-        To get technical support from the community, see &lt;a href="https://stackoverflow.com/questions/tagged/google-smart-home">Stack Overflow&lt;/a>.&lt;p>
-        Feedback can be filed in the &lt;a href="https://github.com/google-home/sample-app-for-matter-android/issues">Issues section&lt;/a> of the sample application\'s GitHub repository.
-    </string>
     <string name="accept">Accept</string>
     <string name="home_label">Home</string>
     <string name="settings_label">Settings</string>
@@ -72,8 +65,6 @@
     <string name="no">No</string>
     <string name="add_your_first">Start by adding your first Matter device</string>
     <string name="no_devices_yet">No devices yet</string>
-    <string name="codelab">Codelab</string>
-    <string name="do_not_show_again">Don\'t show this again</string>
     <string name="sample_app">Sample App</string>
     <string name="content_description_settings">Settings icon to manage app settings</string>
     <string name="general_settings">General settings</string>

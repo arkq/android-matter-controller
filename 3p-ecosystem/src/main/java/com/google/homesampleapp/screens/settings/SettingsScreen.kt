@@ -48,22 +48,6 @@ private fun SettingsScreen(innerPadding: PaddingValues, navigateToDeveloperUtili
 
   LazyColumn(modifier = Modifier.fillMaxSize()) {
     switchPreference(
-      key = "codelab_preference",
-      defaultValue = false,
-      icon = {
-        Icon(
-          painter = painterResource(id = R.drawable.ic_baseline_code_24),
-          contentDescription = null, // decorative element
-        )
-      },
-      title = { Text(text = "Codelab") },
-      summary = {
-        Text(
-          text = if (it) "Show codelab info at startup" else "Do not show codelab info at startup"
-        )
-      },
-    )
-    switchPreference(
       key = "offline_devices_preference",
       defaultValue = true,
       icon = {

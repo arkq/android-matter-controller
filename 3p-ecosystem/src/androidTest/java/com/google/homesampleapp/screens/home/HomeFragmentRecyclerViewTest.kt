@@ -125,9 +125,6 @@ class HomeFragmentRecyclerViewTest {
 
   @Test
   fun testRecyclerView() {
-    // Handle codelab dialog.
-    HomeScreen.ensureCodelabDialogNotShown()
-
     var count = 0
     TEST_DEVICES.forEach { device ->
       count++
