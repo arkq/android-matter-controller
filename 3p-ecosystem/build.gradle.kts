@@ -109,32 +109,6 @@ android {
     }
     android.buildFeatures.viewBinding = true
 
-    /**
-     * The productFlavors block is where you can configure multiple product flavors.
-     * This lets you create different versions of your app that can
-     * override the defaultConfig block with their own settings. Product flavors
-     * are optional, and the build system does not create them by default.
-     *
-     * For example, one can create a free and paid product flavor. Each product flavor
-     * then specifies its own application ID, so that they can exist on the Google
-     * Play Store, or an Android device, simultaneously.
-     *
-     * If you declare product flavors, you must also declare flavor dimensions
-     * and assign each flavor to a flavor dimension.
-     */
-    flavorDimensions += "version"
-    productFlavors {
-        create("default") {
-            dimension = "version"
-            applicationIdSuffix = ".default"
-            versionNameSuffix = "-default"
-        }
-        create("targetcommissioner") {
-            dimension = "version"
-            applicationIdSuffix = ".targetcommissioner"
-            versionNameSuffix = "-targetcommissioner"
-        }
-    }
     // Gradle will use the NDK that"s associated by default with its plugin.
     // If it"s not available (from the SDK Manager), then stripping the .so"s will not happen
     // (message: Unable to strip library...)
