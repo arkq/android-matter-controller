@@ -81,7 +81,6 @@ class AppCommissioningService : Service(), CommissioningService.Callback {
             "port [${metadata.networkLocation.port}]\n" +
             "\tpassCode [${metadata.passcode}]")
 
-    // CODELAB: onCommissioningRequested()
     // Perform commissioning on custom fabric for the sample app.
     serviceScope.launch {
       val deviceId = getNextDeviceId(DeviceIdGenerator.Random)
@@ -126,7 +125,6 @@ class AppCommissioningService : Service(), CommissioningService.Callback {
                 e, "Commissioning: commissioningServiceDelegate.sendCommissioningComplete() failed")
           }
     }
-    // CODELAB SECTION END
   }
 
   /**

@@ -190,7 +190,6 @@ internal fun DeviceRoute(
   // used in step 3 to call shareDeviceLauncher.launch().
   // Step 4 is when GPS takes over the sharing flow.
   // Step 5 is when the GPS activity completes and the result is handled here.
-  // CODELAB: shareDeviceLauncher definition
   val shareDeviceLauncher =
     rememberLauncherForActivityResult(
       contract = ActivityResultContracts.StartIntentSenderForResult()
@@ -204,8 +203,6 @@ internal fun DeviceRoute(
         deviceViewModel.shareDeviceFailed(resultCode)
       }
     }
-  // CODELAB SECTION END
-
   // When the pairing window has been open for device sharing.
   val pairingWindowOpenForDeviceSharing by
     deviceViewModel.pairingWindowOpenForDeviceSharing.collectAsState()
@@ -602,7 +599,6 @@ fun shareDevice(
   shareDeviceLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
   deviceViewModel: DeviceViewModel,
 ) {
-  // CODELAB: shareDevice
   Timber.d("ShareDevice: starting")
 
   val shareDeviceRequest =
@@ -636,7 +632,6 @@ fun shareDevice(
       Timber.e(error)
       deviceViewModel.showMsgDialog("Share device failed", error.toString())
     }
-  // CODELAB SECTION END
 }
 
 // -----------------------------------------------------------------------------------------------

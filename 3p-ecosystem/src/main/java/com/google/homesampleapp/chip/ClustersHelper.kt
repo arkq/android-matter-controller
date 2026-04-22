@@ -446,7 +446,6 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   // -----------------------------------------------------------------------------------------------
   // OnOffCluster functions
 
-  // CODELAB FEATURED BEGIN
   suspend fun toggleDeviceStateOnOffCluster(deviceId: Long, endpoint: Int) {
     Timber.d("toggleDeviceStateOnOffCluster())")
     val connectedDevicePtr =
@@ -471,8 +470,6 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
               })
     }
   }
-
-  // CODELAB FEATURED END
 
   suspend fun setOnOffDeviceStateOnOffCluster(deviceId: Long, isOn: Boolean, endpoint: Int) {
     Timber.d(
