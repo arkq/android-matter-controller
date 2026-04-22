@@ -53,12 +53,6 @@ path = [
   "3p-ecosystem/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png",
   "3p-ecosystem/src/main/res/mipmap-xxxhdpi/ic_notification.png",
   "3p-ecosystem/src/main/res/mipmap-xxxhdpi/ic_status_bar.png",
-  "3p-ecosystem/src/targetcommissioner/ic_launcher-playstore.png",
-  "3p-ecosystem/src/targetcommissioner/res/mipmap-hdpi/ic_launcher_foreground.png",
-  "3p-ecosystem/src/targetcommissioner/res/mipmap-mdpi/ic_launcher_foreground.png",
-  "3p-ecosystem/src/targetcommissioner/res/mipmap-xhdpi/ic_launcher_foreground.png",
-  "3p-ecosystem/src/targetcommissioner/res/mipmap-xxhdpi/ic_launcher_foreground.png",
-  "3p-ecosystem/src/targetcommissioner/res/mipmap-xxxhdpi/ic_launcher_foreground.png",
 ]
 SPDX-FileCopyrightText = "2022 Google LLC"
 SPDX-License-Identifier = "Apache-2.0"
