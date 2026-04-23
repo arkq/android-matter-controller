@@ -42,8 +42,12 @@ import io.aether.android.convertToAppDeviceType
 import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.data.UserPreferencesRepository
+import io.aether.android.endpointFor
 import io.aether.android.getTimestampForNow
+import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
+import io.aether.android.supportsColorTemperature
+import io.aether.android.supportsLevelControl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -189,23 +193,6 @@ constructor(
       }
     }
     return devicesUiModel
-  }
-
-  private fun nodeIdFor(device: Device): Long = if (device.nodeId != 0L) device.nodeId else device.deviceId
-
-  private fun endpointFor(device: Device): Int = if (device.endpoint != 0) device.endpoint else 1
-
-  private fun supportsLevelControl(device: Device): Boolean {
-    return device.supportsLevelControl ||
-      device.deviceType == Device.DeviceType.TYPE_DIMMABLE_LIGHT ||
-      device.deviceType == Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT ||
-      device.deviceType == Device.DeviceType.TYPE_EXTENDED_COLOR_LIGHT
-  }
-
-  private fun supportsColorTemperature(device: Device): Boolean {
-    return device.supportsColorTemperature ||
-      device.deviceType == Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT ||
-      device.deviceType == Device.DeviceType.TYPE_EXTENDED_COLOR_LIGHT
   }
 
   // -----------------------------------------------------------------------------------------------
@@ -374,7 +361,20 @@ constructor(
             val endpointType =
               if (info.types.isNotEmpty()) convertToAppDeviceType(info.types.first()) else commissionedDeviceType
             val supportsLevel = info.serverClusters.contains(LevelControlClusterId)
-            val supportsColorTemperature = info.serverClusters.contains(ColorControlClusterId)
+            // Check the Color Control cluster's AttributeList to confirm that the optional
+            // color temperature attribute (id 7) is actually present, not just the cluster.
+            val supportsColorTemperature =
+              if (info.serverClusters.contains(ColorControlClusterId)) {
+                try {
+                  clustersHelper.readColorControlClusterAttributeList(nodeId, info.endpoint)
+                    .contains(ColorTemperatureAttribute.attributeId)
+                } catch (e: Exception) {
+                  Timber.w(e, "Could not read Color Control attribute list for endpoint ${info.endpoint}; assuming color temperature unsupported")
+                  false
+                }
+              } else {
+                false
+              }
 
             val device =
               Device.newBuilder()

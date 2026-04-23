@@ -299,15 +299,23 @@ private fun DeviceScreen(
   val endpointsToShow = allEndpointUiModels.ifEmpty { listOf(deviceUiModel) }
   val showEndpointLabel = endpointsToShow.size > 1
 
-  // Track live online status at the node level for the Inspect button.
-  var anyOnline by remember(endpointsToShow) { mutableStateOf(endpointsToShow.any { it.isOnline }) }
-  LaunchedEffect(lastUpdatedDeviceState) {
-    if (lastUpdatedDeviceState != null &&
-      endpointsToShow.any { it.device.deviceId == lastUpdatedDeviceState.deviceId }
+  // Track live online status per endpoint so `anyOnline` stays accurate as updates arrive.
+  // The map is keyed by deviceId and seeded from the loaded DeviceUiModel values.
+  var endpointOnlineStates by remember(endpointsToShow) {
+    mutableStateOf(endpointsToShow.associate { it.device.deviceId to it.isOnline })
+  }
+  LaunchedEffect(endpointsToShow, lastUpdatedDeviceState) {
+    val updatedDeviceState = lastUpdatedDeviceState
+    if (updatedDeviceState != null &&
+      endpointsToShow.any { it.device.deviceId == updatedDeviceState.deviceId }
     ) {
-      anyOnline = lastUpdatedDeviceState.online ||
-        endpointsToShow.filter { it.device.deviceId != lastUpdatedDeviceState.deviceId }.any { it.isOnline }
+      endpointOnlineStates = endpointOnlineStates.toMutableMap().apply {
+        put(updatedDeviceState.deviceId, updatedDeviceState.online)
+      }
     }
+  }
+  val anyOnline = endpointsToShow.any { endpointModel ->
+    endpointOnlineStates[endpointModel.device.deviceId] ?: endpointModel.isOnline
   }
 
   Column(
