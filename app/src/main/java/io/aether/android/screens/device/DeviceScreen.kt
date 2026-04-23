@@ -103,6 +103,9 @@ internal fun DeviceRoute(
   val deviceUiModel by deviceViewModel.deviceUiModel.collectAsState()
   Timber.d("DeviceRoute deviceUiModel [${deviceUiModel?.device?.deviceId}]")
 
+  // All endpoint models for the same physical node.
+  val allEndpointUiModels by deviceViewModel.allEndpointUiModels.collectAsState()
+
   // When the device has been removed by the ViewModel, navigate back to the Home screen.
   val deviceRemovalCompleted by deviceViewModel.deviceRemovalCompleted.collectAsState()
   if (deviceRemovalCompleted) {
@@ -146,24 +149,22 @@ internal fun DeviceRoute(
   val lastUpdatedDeviceState by
     deviceViewModel.devicesStateRepository.lastUpdatedDeviceState.observeAsState()
 
-  // On/Off Switch click.
-  val onOnOffClick: (value: Boolean) -> Unit = remember {
-    { value ->
-      deviceViewModel.updateDeviceStateOn(deviceUiModel!!, value)
+  // Per-endpoint callbacks: each accepts the specific endpoint DeviceUiModel.
+  val onOnOffClick: (endpointModel: DeviceUiModel, value: Boolean) -> Unit = remember {
+    { endpointModel, value ->
+      deviceViewModel.updateDeviceStateOn(endpointModel, value)
     }
   }
 
-  // Brightness value changed.
-  val onBrightnessChange: (value: Int) -> Unit = remember {
-    { value ->
-      deviceViewModel.updateDeviceStateLevel(deviceUiModel!!, value)
+  val onBrightnessChange: (endpointModel: DeviceUiModel, value: Int) -> Unit = remember {
+    { endpointModel, value ->
+      deviceViewModel.updateDeviceStateLevel(endpointModel, value)
     }
   }
 
-  // Color Temperature value changed.
-  val onColorTemperatureChange: (value: Int) -> Unit = remember {
-    { value ->
-      deviceViewModel.updateDeviceStateColorTemperature(deviceUiModel!!, value)
+  val onColorTemperatureChange: (endpointModel: DeviceUiModel, value: Int) -> Unit = remember {
+    { endpointModel, value ->
+      deviceViewModel.updateDeviceStateColorTemperature(endpointModel, value)
     }
   }
 
@@ -172,7 +173,13 @@ internal fun DeviceRoute(
   val onInspect: (isOnline: Boolean) -> Unit = remember {
     { isOnline ->
       if (isOnline) {
-        navigateToInspect(deviceUiModel!!.device.deviceId)
+        val nodeId =
+          if (deviceUiModel!!.device.nodeId != 0L) {
+            deviceUiModel!!.device.nodeId
+          } else {
+            deviceUiModel!!.device.deviceId
+          }
+        navigateToInspect(nodeId)
       } else {
         deviceViewModel.showMsgDialog(
           "Inspect Device",
@@ -239,6 +246,7 @@ internal fun DeviceRoute(
   DeviceScreen(
     innerPadding,
     deviceUiModel,
+    allEndpointUiModels,
     lastUpdatedDeviceState,
     onOnOffClick,
     onBrightnessChange,
@@ -259,10 +267,11 @@ internal fun DeviceRoute(
 private fun DeviceScreen(
   innerPadding: PaddingValues,
   deviceUiModel: DeviceUiModel?,
-  deviceState: DeviceState?,
-  onOnOffClick: (value: Boolean) -> Unit,
-  onBrightnessChange: (value: Int) -> Unit,
-  onColorTemperatureChange: (value: Int) -> Unit,
+  allEndpointUiModels: List<DeviceUiModel>,
+  lastUpdatedDeviceState: DeviceState?,
+  onOnOffClick: (endpointModel: DeviceUiModel, value: Boolean) -> Unit,
+  onBrightnessChange: (endpointModel: DeviceUiModel, value: Int) -> Unit,
+  onColorTemperatureChange: (endpointModel: DeviceUiModel, value: Int) -> Unit,
   onRemoveDeviceClick: () -> Unit,
   onShareDevice: () -> Unit,
   onInspect: (isOnline: Boolean) -> Unit,
@@ -273,60 +282,9 @@ private fun DeviceScreen(
   showConfirmDeviceRemovalAlertDialog: Boolean,
   onConfirmDeviceRemovalOutcome: (Boolean) -> Unit,
 ) {
-  // The current state of the device.
-  // The DeviceUiModel is not updated whenever we observe changes in the state of the device.
-  // This is an issue for the "Inspect Device" onClick listener which relies on the device
-  // state to decide whether to show a dialog stating that the device is offline and therefore
-  // the inspect screen cannot be shown, or go show the inspect information (when device is
-  // online).
-  // This is why the state of the device is cached in local variables.
-  var isOnline by remember { mutableStateOf(false) }
-  var isOn by remember { mutableStateOf(false) }
-  var brightness by remember { mutableFloatStateOf(0f) }
-  var colorTemperature by remember { mutableFloatStateOf(0f) }
-
-  val brightnessMax = 254f
-  val colorTemperatureMax = 1667f
-
   if (deviceUiModel == null) {
     Text("Still loading the device information")
     return
-  }
-
-  LaunchedEffect(deviceUiModel, deviceState) {
-    if (deviceUiModel == null) {
-      // Device was just removed, nothing to do. We'll move to HomeFragment.
-      isOnline = false
-      return@LaunchedEffect
-    }
-
-    // Device state
-    deviceUiModel.let { model ->
-      isOnline =
-        when (deviceState) {
-          null -> model.isOnline
-          else -> deviceState.online
-        }
-      isOn =
-        when (deviceState) {
-          null -> model.isOn
-          else -> deviceState.on
-        }
-      brightness =
-        when (deviceState) {
-          null -> model.level / brightnessMax
-          else -> deviceState.level / brightnessMax
-        }
-      colorTemperature =
-        when (deviceState) {
-          null -> model.colorTemperature / colorTemperatureMax
-          else -> deviceState.colorTemperature / colorTemperatureMax
-        }
-    }
-    Timber.d(
-      "deviceState: isOnline [$isOnline] isOn[$isOn]" +
-              "level[$brightness] colorTemperature[$colorTemperature]"
-    )
   }
 
   // The various AlertDialog's that may pop up to inform the user of important information.
@@ -337,46 +295,188 @@ private fun DeviceScreen(
     onConfirmDeviceRemovalOutcome,
   )
 
-  deviceUiModel.let { model ->
-    Column(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(innerPadding)
-        .verticalScroll(rememberScrollState())
+  // Determine whether to use the endpoint list or fall back to the single primary model.
+  val endpointsToShow = allEndpointUiModels.ifEmpty { listOf(deviceUiModel) }
+  val showEndpointLabel = endpointsToShow.size > 1
+
+  // Track live online status per endpoint so `anyOnline` stays accurate as updates arrive.
+  // The map is keyed by deviceId and seeded from the loaded DeviceUiModel values.
+  var endpointOnlineStates by remember(endpointsToShow) {
+    mutableStateOf(endpointsToShow.associate { it.device.deviceId to it.isOnline })
+  }
+  LaunchedEffect(endpointsToShow, lastUpdatedDeviceState) {
+    val updatedDeviceState = lastUpdatedDeviceState
+    if (updatedDeviceState != null &&
+      endpointsToShow.any { it.device.deviceId == updatedDeviceState.deviceId }
     ) {
-      OnOffStateSection(isOnline, isOn) {
-        onOnOffClick(it)
-        model.isOn = it
+      endpointOnlineStates = endpointOnlineStates.toMutableMap().apply {
+        put(updatedDeviceState.deviceId, updatedDeviceState.online)
       }
-      LevelControl(
-        stringResource(R.string.brightness),
-        isOnline,
-        isOn,
-        brightness,
-        { brightness = it },
-        {
-          val brightnessVal = (brightness * 254).toInt()
-          onBrightnessChange(brightnessVal)
-          model.level = brightnessVal
-        }
+    }
+  }
+  val anyOnline = endpointsToShow.any { endpointModel ->
+    endpointOnlineStates[endpointModel.device.deviceId] ?: endpointModel.isOnline
+  }
+
+  Column(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(innerPadding)
+      .verticalScroll(rememberScrollState())
+  ) {
+    // Render one endpoint control section per endpoint.
+    endpointsToShow.forEach { endpointModel ->
+      EndpointControlSection(
+        endpointModel = endpointModel,
+        showEndpointLabel = showEndpointLabel,
+        lastUpdatedDeviceState = lastUpdatedDeviceState,
+        onOnOffClick = { value -> onOnOffClick(endpointModel, value) },
+        onBrightnessChange = { value -> onBrightnessChange(endpointModel, value) },
+        onColorTemperatureChange = { value -> onColorTemperatureChange(endpointModel, value) },
       )
-      LevelControl(
-        stringResource(R.string.color_temperature),
-        isOnline,
-        isOn,
-        colorTemperature,
-        { colorTemperature = it },
-        {
-          val colorTemperatureVal = (colorTemperature * colorTemperatureMax).toInt()
-          onColorTemperatureChange(colorTemperatureVal)
-          model.colorTemperature = colorTemperatureVal
-        }
-      )
-      ShareSection(name = model.device.name, onShareDevice)
-      // TODO: Use HorizontalDivider when it becomes part of the stable Compose BOM.
-      Spacer(modifier = Modifier)
-      TechnicalInfoSection(model.device, onInspect, isOnline)
-      RemoveDeviceSection(onRemoveDeviceClick)
+    }
+    // Shared sections (node level).
+    ShareSection(name = deviceUiModel.device.name, onShareDevice)
+    Spacer(modifier = Modifier)
+    TechnicalInfoSection(deviceUiModel.device, onInspect, anyOnline)
+    RemoveDeviceSection(onRemoveDeviceClick)
+  }
+}
+
+/**
+ * A framed section showing all controls for a single endpoint grouped in one Surface,
+ * similar in style to [ShareSection] and [TechnicalInfoSection].
+ * The label "Endpoint N" is shown when the device has multiple endpoints.
+ */
+@Composable
+private fun EndpointControlSection(
+  endpointModel: DeviceUiModel,
+  showEndpointLabel: Boolean,
+  lastUpdatedDeviceState: DeviceState?,
+  onOnOffClick: (Boolean) -> Unit,
+  onBrightnessChange: (Int) -> Unit,
+  onColorTemperatureChange: (Int) -> Unit,
+) {
+  val brightnessMax = 254f
+  val colorTemperatureMax = 1667f
+
+  var isOnline by remember(endpointModel) { mutableStateOf(endpointModel.isOnline) }
+  var isOn by remember(endpointModel) { mutableStateOf(endpointModel.isOn) }
+  var brightness by remember(endpointModel) { mutableFloatStateOf(endpointModel.level / brightnessMax) }
+  var colorTemperature by remember(endpointModel) { mutableFloatStateOf(endpointModel.colorTemperature / colorTemperatureMax) }
+
+  // Respond to live state updates for this specific endpoint's device.
+  LaunchedEffect(endpointModel, lastUpdatedDeviceState) {
+    if (lastUpdatedDeviceState != null &&
+      lastUpdatedDeviceState.deviceId == endpointModel.device.deviceId
+    ) {
+      isOnline = lastUpdatedDeviceState.online
+      isOn = lastUpdatedDeviceState.on
+      brightness = lastUpdatedDeviceState.level / brightnessMax
+      colorTemperature = lastUpdatedDeviceState.colorTemperature / colorTemperatureMax
+    } else if (lastUpdatedDeviceState == null) {
+      isOnline = endpointModel.isOnline
+      isOn = endpointModel.isOn
+      brightness = endpointModel.level / brightnessMax
+      colorTemperature = endpointModel.colorTemperature / colorTemperatureMax
+    }
+  }
+
+  val supportsLevelControl =
+    endpointModel.device.supportsLevelControl ||
+      endpointModel.device.deviceType == Device.DeviceType.TYPE_DIMMABLE_LIGHT ||
+      endpointModel.device.deviceType == Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT ||
+      endpointModel.device.deviceType == Device.DeviceType.TYPE_EXTENDED_COLOR_LIGHT
+  val supportsColorTemperature =
+    endpointModel.device.supportsColorTemperature ||
+      endpointModel.device.deviceType == Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT ||
+      endpointModel.device.deviceType == Device.DeviceType.TYPE_EXTENDED_COLOR_LIGHT
+
+  val bgColor =
+    if (isOnline && isOn) MaterialTheme.colorScheme.surfaceVariant
+    else MaterialTheme.colorScheme.surface
+  val contentColor =
+    if (isOnline && isOn) MaterialTheme.colorScheme.onSurfaceVariant
+    else MaterialTheme.colorScheme.onSurface
+
+  Surface(
+    modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal)),
+    border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+    color = bgColor,
+    contentColor = contentColor,
+    shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
+  ) {
+    Column(
+      modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content))
+    ) {
+      if (showEndpointLabel) {
+        Text(
+          text = "Endpoint ${endpointModel.device.endpoint}",
+          style = MaterialTheme.typography.labelMedium,
+          modifier = Modifier.padding(bottom = 4.dp),
+        )
+      }
+      // On/Off row
+      Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth(),
+      ) {
+        Text(
+          text = stateDisplayString(isOnline, isOn),
+          style = MaterialTheme.typography.bodyLarge,
+        )
+        Spacer(Modifier.weight(1f))
+        Switch(
+          checked = isOn,
+          onCheckedChange = { value ->
+            onOnOffClick(value)
+          },
+        )
+      }
+      // Brightness slider
+      if (supportsLevelControl) {
+        Text(
+          text = stringResource(R.string.brightness),
+          modifier = Modifier.padding(top = 8.dp),
+        )
+        Slider(
+          enabled = isOnline && isOn,
+          value = brightness,
+          onValueChange = { brightness = it },
+          onValueChangeFinished = {
+            val brightnessVal = (brightness * brightnessMax).toInt()
+            onBrightnessChange(brightnessVal)
+          },
+          valueRange = 0f..1f,
+        )
+        Text(
+          text = (brightness * 100).toInt().toString(),
+          textAlign = TextAlign.Center,
+          modifier = Modifier.fillMaxWidth(),
+        )
+      }
+      // Color temperature slider
+      if (supportsColorTemperature) {
+        Text(
+          text = stringResource(R.string.color_temperature),
+          modifier = Modifier.padding(top = 8.dp),
+        )
+        Slider(
+          enabled = isOnline && isOn,
+          value = colorTemperature,
+          onValueChange = { colorTemperature = it },
+          onValueChangeFinished = {
+            val colorTemperatureVal = (colorTemperature * colorTemperatureMax).toInt()
+            onColorTemperatureChange(colorTemperatureVal)
+          },
+          valueRange = 0f..1f,
+        )
+        Text(
+          text = (colorTemperature * 100).toInt().toString(),
+          textAlign = TextAlign.Center,
+          modifier = Modifier.fillMaxWidth(),
+        )
+      }
     }
   }
 }
@@ -690,22 +790,23 @@ private fun DeviceScreenOnlineOnPreview() {
   val deviceState = DeviceState_OnlineOn
   val device = DeviceTest
   val deviceUiModel = DeviceUiModel(device, true, true, level = 127)
-  val onOnOffClick: (value: Boolean) -> Unit =
-    { value ->
+  val onOnOffClick: (endpointModel: DeviceUiModel, value: Boolean) -> Unit =
+    { _, value ->
       Timber.d("deviceUiModel [$deviceUiModel] value [$value]")
     }
-  val onBrightnessChange: (value: Int) -> Unit =
-    { value ->
+  val onBrightnessChange: (endpointModel: DeviceUiModel, value: Int) -> Unit =
+    { _, value ->
       Timber.d("deviceUiModel [$deviceUiModel] value [$value]")
     }
-  val onColorTemperatureChange: (value: Int) -> Unit =
-    { value ->
+  val onColorTemperatureChange: (endpointModel: DeviceUiModel, value: Int) -> Unit =
+    { _, value ->
       Timber.d("deviceUiModel [$deviceUiModel] value [$value]")
     }
   MaterialTheme {
     DeviceScreen(
       PaddingValues(),
       deviceUiModel,
+      listOf(deviceUiModel),
       deviceState,
       onOnOffClick,
       onBrightnessChange,

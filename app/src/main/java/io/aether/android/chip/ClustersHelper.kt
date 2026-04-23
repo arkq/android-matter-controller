@@ -676,6 +676,36 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
       }
   }
 
+  /**
+   * Reads the AttributeList of the Color Control cluster for the given [nodeId] and [endpoint].
+   * Returns the list of supported attribute IDs, or an empty list on error.
+   * Use this to check whether the optional Color Temperature attribute (id 7) is present before
+   * flagging a device as supporting color temperature control.
+   */
+  suspend fun readColorControlClusterAttributeList(nodeId: Long, endpoint: Int): List<Long> {
+      val connectedDevicePtr =
+          try {
+              chipClient.getConnectedDevicePointer(nodeId)
+          } catch (e: IllegalStateException) {
+              Timber.e("Can't get connectedDevicePointer for readColorControlClusterAttributeList.")
+              return emptyList()
+          }
+      return suspendCoroutine { continuation ->
+          getColorControlClusterForDevice(connectedDevicePtr, endpoint)
+              .readAttributeListAttribute(
+                  object : ChipClusters.ColorControlCluster.AttributeListAttributeCallback {
+                      override fun onSuccess(value: MutableList<Long>) {
+                          continuation.resume(value)
+                      }
+
+                      override fun onError(ex: Exception) {
+                          Timber.e(ex, "readColorControlClusterAttributeList failure")
+                          continuation.resumeWithException(ex)
+                      }
+                  })
+      }
+  }
+
   private fun getColorControlClusterForDevice(devicePtr: Long, endpoint: Int): ChipClusters.ColorControlCluster {
       return ChipClusters.ColorControlCluster(devicePtr, endpoint)
   }
