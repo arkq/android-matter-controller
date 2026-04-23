@@ -29,6 +29,7 @@ import io.aether.android.convertToAppDeviceType
 import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.endpointFor
+import io.aether.android.LEGACY_DEVICE_NODE_ID
 import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.home.DeviceUiModel
@@ -190,7 +191,7 @@ constructor(
       // For old-format devices (nodeId == 0) the deviceId IS the Matter node ID. Patch the
       // existing record so that nodeId and endpoint are filled in; subsequent loads will then
       // find all siblings via the normal nodeIdFor filter without a network call.
-      if (primaryDevice.nodeId == 0L) {
+      if (primaryDevice.nodeId == LEGACY_DEVICE_NODE_ID) {
         val smallestEndpoint = liveAppEndpoints.minOf { it.endpoint }
         val updatedPrimary = Device.newBuilder(primaryDevice)
           .setNodeId(nodeId)
@@ -211,13 +212,27 @@ constructor(
         val endpointType =
           if (info.types.isNotEmpty()) convertToAppDeviceType(info.types.first())
           else primaryDevice.deviceType
+        val supportsLevel = info.serverClusters.contains(LevelControlClusterId)
+        // Mirror the commissioning logic: only set supportsColorTemperature when the
+        // Color Control cluster's AttributeList actually contains the color temperature
+        // attribute (id 7). Fall back to false if the read fails.
+        val supportsColorTemperature =
+          if (info.serverClusters.contains(ColorControlClusterId)) {
+            try {
+              clustersHelper.readColorControlClusterAttributeList(nodeId, info.endpoint)
+                .contains(ColorTemperatureAttribute.attributeId)
+            } catch (e: Exception) {
+              Timber.w(e, "discoverLiveEndpoints: could not read Color Control attribute list for endpoint ${info.endpoint}; assuming color temperature unsupported")
+              false
+            }
+          } else false
         val newDevice = Device.newBuilder()
           .setName(primaryDevice.name)
           .setDeviceId(newDeviceId)
           .setNodeId(nodeId)
           .setEndpoint(info.endpoint)
-          .setSupportsLevelControl(info.serverClusters.contains(LevelControlClusterId))
-          .setSupportsColorTemperature(info.serverClusters.contains(ColorControlClusterId))
+          .setSupportsLevelControl(supportsLevel)
+          .setSupportsColorTemperature(supportsColorTemperature)
           .setVendorId(primaryDevice.vendorId)
           .setVendorName(primaryDevice.vendorName)
           .setProductId(primaryDevice.productId)

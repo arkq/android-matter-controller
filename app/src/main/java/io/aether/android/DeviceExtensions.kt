@@ -3,8 +3,16 @@
 
 package io.aether.android
 
+/**
+ * Sentinel value used by [nodeIdFor] to identify legacy Device records that were commissioned
+ * before the [Device.nodeId] field was introduced. In those records [Device.deviceId] carries the
+ * Matter node ID directly and [Device.nodeId] is left at its proto3 default of 0.
+ */
+const val LEGACY_DEVICE_NODE_ID = 0L
+
 /** Returns the Matter node ID for [device], falling back to [Device.deviceId] for legacy records. */
-fun nodeIdFor(device: Device): Long = if (device.nodeId != 0L) device.nodeId else device.deviceId
+fun nodeIdFor(device: Device): Long =
+  if (device.nodeId != LEGACY_DEVICE_NODE_ID) device.nodeId else device.deviceId
 
 /** Returns the Matter endpoint number for [device], defaulting to 1 for legacy records. */
 fun endpointFor(device: Device): Int = if (device.endpoint != 0) device.endpoint else 1
