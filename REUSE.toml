@@ -19,40 +19,6 @@ SPDX-FileCopyrightText = "2015-2021 the original authors"
 SPDX-License-Identifier = "Apache-2.0"
 
 [[annotations]]
-path = [
-  "3p-ecosystem/src/main/ic_launcher-playstore.png",
-  "3p-ecosystem/src/main/res/drawable/emptystate_missing_content.png",
-  "3p-ecosystem/src/main/res/drawable/matterhornicon.png",
-  "3p-ecosystem/src/main/res/drawable/sample_home_app_logo.png",
-  "3p-ecosystem/src/main/res/ic_playstore.png",
-  "3p-ecosystem/src/main/res/ic_playstore_legacy.png",
-  "3p-ecosystem/src/main/res/mipmap-anydpi-v26/ic_background.png",
-  "3p-ecosystem/src/main/res/mipmap-anydpi-v26/ic_foreground.png",
-  "3p-ecosystem/src/main/res/mipmap-hdpi/ic_launcher.png",
-  "3p-ecosystem/src/main/res/mipmap-hdpi/ic_launcher_foreground.png",
-  "3p-ecosystem/src/main/res/mipmap-hdpi/ic_launcher_round.png",
-  "3p-ecosystem/src/main/res/mipmap-hdpi/ic_notification.png",
-  "3p-ecosystem/src/main/res/mipmap-hdpi/ic_status_bar.png",
-  "3p-ecosystem/src/main/res/mipmap-mdpi/ic_launcher.png",
-  "3p-ecosystem/src/main/res/mipmap-mdpi/ic_launcher_foreground.png",
-  "3p-ecosystem/src/main/res/mipmap-mdpi/ic_launcher_round.png",
-  "3p-ecosystem/src/main/res/mipmap-mdpi/ic_notification.png",
-  "3p-ecosystem/src/main/res/mipmap-mdpi/ic_status_bar.png",
-  "3p-ecosystem/src/main/res/mipmap-xhdpi/ic_launcher.png",
-  "3p-ecosystem/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png",
-  "3p-ecosystem/src/main/res/mipmap-xhdpi/ic_launcher_round.png",
-  "3p-ecosystem/src/main/res/mipmap-xhdpi/ic_notification.png",
-  "3p-ecosystem/src/main/res/mipmap-xhdpi/ic_status_bar.png",
-  "3p-ecosystem/src/main/res/mipmap-xxhdpi/ic_launcher.png",
-  "3p-ecosystem/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png",
-  "3p-ecosystem/src/main/res/mipmap-xxhdpi/ic_launcher_round.png",
-  "3p-ecosystem/src/main/res/mipmap-xxhdpi/ic_notification.png",
-  "3p-ecosystem/src/main/res/mipmap-xxhdpi/ic_status_bar.png",
-  "3p-ecosystem/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
-  "3p-ecosystem/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png",
-  "3p-ecosystem/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png",
-  "3p-ecosystem/src/main/res/mipmap-xxxhdpi/ic_notification.png",
-  "3p-ecosystem/src/main/res/mipmap-xxxhdpi/ic_status_bar.png",
-]
+path = "app/src/main/res/drawable/emptystate_missing_content.png"
 SPDX-FileCopyrightText = "2022 Google LLC"
 SPDX-License-Identifier = "Apache-2.0"

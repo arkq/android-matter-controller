@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+SPDX-FileCopyrightText: 2026 The Authors
+SPDX-License-Identifier: Apache-2.0
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:aapt="http://schemas.android.com/aapt"
+	android:width="108dp"
+	android:height="108dp"
+	android:viewportWidth="1024"
+	android:viewportHeight="1024">
+
+	<!-- Solid Background Layer -->
+	<path android:pathData="M0,0h1024v1024h-1024z">
+		<aapt:attr name="android:fillColor">
+			<gradient
+				android:startX="512" android:startY="0"
+				android:endX="512" android:endY="1024"
+				android:type="linear">
+				<item android:offset="0" android:color="#FF3A7BD5" />
+				<item android:offset="1" android:color="#FF00D2FF" />
+			</gradient>
+		</aapt:attr>
+	</path>
+
+	<!-- Background Ripples -->
+	<path android:pathData="M512,512m-380,0a380,380 0,1 1,760 0a380,380 0,1 1,-760 0"
+		android:strokeWidth="8" android:strokeColor="#33FFFFFF" />
+	<path android:pathData="M512,512m-280,0a280,280 0,1 1,560 0a280,280 0,1 1,-560 0"
+		android:strokeWidth="8" android:strokeColor="#1AFFFFFF" />
+</vector>

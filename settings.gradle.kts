@@ -37,6 +37,5 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Google Home Mobile SDK Sample Apps"
-include(":3p-ecosystem")
-//include(":google-ecosystem")
+rootProject.name = "Æther Matter Controller"
+include(":app")
