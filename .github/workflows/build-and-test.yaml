@@ -26,7 +26,7 @@ jobs:
           java-version: "21"
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Build and run tests with Gradle cache
         uses: burrunan/gradle-cache-action@v3
