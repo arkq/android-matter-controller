@@ -94,6 +94,10 @@ android {
         compose = true
     }
 
+    compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+    }
+
     // Gradle will use the NDK that"s associated by default with its plugin.
     // If it"s not available (from the SDK Manager), then stripping the .so"s will not happen
     // (message: Unable to strip library...)
@@ -108,6 +112,9 @@ dependencies {
     // Connected Home
     implementation(libs.play.services.base)
     implementation(libs.play.services.home)
+
+    // Core library desugaring (required by play-services-threadnetwork)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     // Matter Android Demo SDK
     implementation(libs.matter.android.demo.sdk)

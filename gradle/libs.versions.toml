@@ -8,6 +8,7 @@ androidxActivityCompose = "1.10.1"
 androidxComposeBom = "2024.12.01"
 appcompat = "1.7.0"
 code-scanner = "16.1.0"
+desugar-jdk-libs = "2.1.4"
 core-ktx = "1.16.0"
 datastore = "1.1.2"
 espresso-core = "3.6.1"
@@ -51,6 +52,7 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 code-scanner = { module = "com.google.android.gms:play-services-code-scanner", version.ref = "code-scanner"}
+desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar-jdk-libs" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 datastore-core = { module = "androidx.datastore:datastore-core", version.ref = "datastore" }
