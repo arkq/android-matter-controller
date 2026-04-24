@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2024 Google LLC
+// SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
 package io.aether.android.screens.device
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -26,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -510,11 +513,19 @@ private fun TechnicalInfoSection(
 
 @Composable
 private fun RemoveDeviceSection(onClick: () -> Unit) {
-  Row {
-    TextButton(onClick = onClick) {
-      Icon(Icons.Outlined.Delete, contentDescription = "Localized description")
-      Text(stringResource(R.string.remove_device).uppercase())
-    }
+  Button(
+    onClick = onClick,
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(dimensionResource(R.dimen.margin_normal)),
+    colors = ButtonDefaults.buttonColors(
+      containerColor = MaterialTheme.colorScheme.error,
+      contentColor = MaterialTheme.colorScheme.onError,
+    ),
+  ) {
+    Icon(Icons.Outlined.Delete, contentDescription = null)
+    Spacer(modifier = Modifier.width(8.dp))
+    Text(stringResource(R.string.remove_device).uppercase())
   }
 }
 
