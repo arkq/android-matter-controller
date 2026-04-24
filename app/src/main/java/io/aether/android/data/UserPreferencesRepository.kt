@@ -42,13 +42,13 @@ class UserPreferencesRepository @Inject constructor(@ApplicationContext context:
     }
   }
 
-  suspend fun shouldShowHalfsheetNotification(): Boolean {
-    Timber.d("shouldShowHalfsheetNotification")
+  suspend fun shouldShowGpsMatterDiscoveryNotification(): Boolean {
+    Timber.d("shouldShowGpsMatterDiscoveryNotification")
     return userPreferencesFlow.first().showHalfsheetNotification
   }
 
-  suspend fun updateShowHalfsheetNotification(show: Boolean) {
-    Timber.d("updateShowHalfsheetNotification [$show]")
+  suspend fun updateShowGpsMatterDiscoveryNotification(show: Boolean) {
+    Timber.d("updateShowGpsMatterDiscoveryNotification [$show]")
     userPreferencesDataStore.updateData { prefs ->
       prefs.toBuilder().setShowHalfsheetNotification(show).build()
     }

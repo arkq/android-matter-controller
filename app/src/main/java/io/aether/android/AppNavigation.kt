@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2024 Google LLC
+// SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
 package io.aether.android
@@ -15,16 +16,12 @@ import io.aether.android.screens.commissionable.CommissionableRoute
 import io.aether.android.screens.device.DeviceRoute
 import io.aether.android.screens.home.HomeRoute
 import io.aether.android.screens.inspect.InspectRoute
-import io.aether.android.screens.settings.SettingsDeveloperUtilitiesRoute
-import io.aether.android.screens.settings.SettingsRoute
 import io.aether.android.screens.thread.ThreadRoute
 
 // Constants for Navigation destinations
 const val DEST_HOME = "home"
 const val DEST_DEVICE = "device"
 const val DEST_INSPECT = "inspect"
-const val DEST_SETTINGS = "settings"
-const val DEST_DEVELOPER_UTILITIES = "developer_utilities"
 const val DEST_COMMISSIONABLE_DEVICES = "commissionable_devices"
 const val DEST_THREAD = "thread"
 
@@ -42,24 +39,15 @@ fun AppNavigation(
     { navController.navigate(DEST_HOME) }
   }
   val navigateToDevice: (deviceId: Long) -> Unit = remember {
-    { navController.navigate("device/$it") }
+    { navController.navigate("$DEST_DEVICE/$it") }
   }
   val navigateToInspect: (deviceId: Long) -> Unit = remember {
-    { navController.navigate("inspect/$it") }
-  }
-  val navigateToDeveloperUtilities: () -> Unit = remember {
-    { navController.navigate(DEST_DEVELOPER_UTILITIES) }
-  }
-  val navigateToCommissionables: () -> Unit = remember {
-    { navController.navigate(DEST_COMMISSIONABLE_DEVICES) }
-  }
-  val navigateToThread: () -> Unit = remember {
-    { navController.navigate(DEST_THREAD) }
+    { navController.navigate("$DEST_INSPECT/$it") }
   }
 
   NavHost(navController = navController, startDestination = DEST_HOME) {
     // Home
-    composable("home") { backStackEntry ->
+    composable(DEST_HOME) { backStackEntry ->
         HomeRoute(innerPadding, updateTitle, navigateToDevice)
     }
     // Device
@@ -80,14 +68,6 @@ fun AppNavigation(
       arguments = listOf(navArgument("deviceId") { type = NavType.LongType }))
     {
       InspectRoute(innerPadding, updateTitle, it.arguments?.getLong("deviceId")!!)
-    }
-    // Settings
-    composable(DEST_SETTINGS) {
-      SettingsRoute(innerPadding, updateTitle, navigateToDeveloperUtilities)
-    }
-    // Developer Utilities
-    composable(DEST_DEVELOPER_UTILITIES) {
-      SettingsDeveloperUtilitiesRoute(innerPadding, updateTitle, navigateToCommissionables, navigateToThread)
     }
     // Commissionable devices
     composable(DEST_COMMISSIONABLE_DEVICES) {

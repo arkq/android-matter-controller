@@ -33,7 +33,7 @@ internal constructor(
   override fun onStart(owner: LifecycleOwner) {
     Timber.d("onStart()")
     scope.launch {
-      val suppressHalfSheetNotification = !preferencesRepository.shouldShowHalfsheetNotification()
+      val suppressHalfSheetNotification = !preferencesRepository.shouldShowGpsMatterDiscoveryNotification()
       if (suppressHalfSheetNotification) {
         try {
           Matter.getCommissioningClient(context).suppressHalfSheetNotification().await()
