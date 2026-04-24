@@ -1,13 +1,11 @@
 # SPDX-FileCopyrightText: 2026 The Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# Define variables that hold the versions of your dependencies and plugins.
-# You use these variables in the subsequent blocks (the versions and plugins blocks).
 [versions]
+androidGradlePlugin = "9.2.0"
+androidx-junit = "1.1.5"
 androidxActivityCompose = "1.8.2"
 androidxComposeBom = "2023.10.01"
-androidGradlePlugin = "8.9.1"
-androidx-junit = "1.1.5"
 appcompat = "1.6.1"
 code-scanner = "16.0.0"
 constraintlayout = "2.1.4"
@@ -16,7 +14,7 @@ core-ktx = "1.10.1"
 databinding-runtime = "8.9.1"
 datastore = "1.0.0"
 espresso-core = "3.5.1"
-google-protobuf = "0.9.1"
+google-protobuf = "0.10.0"
 guava = "31.1-jre"
 hilt-android = "2.56.2"
 hilt-android-testing = "2.56.2"
@@ -45,7 +43,6 @@ uiautomator = "2.2.0"
 zhanghai-compose-preference = "1.0.0"
 zxing = "4.1.0"
 
-# Dependencies
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
@@ -96,16 +93,15 @@ rules = { module = "androidx.test:rules", version.ref = "rules" }
 runner = { module = "androidx.test:runner", version.ref = "runner" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
-zxing = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxing"}
 zhanghai-compose-preference = { module = "me.zhanghai.compose.preference:library", version.ref = "zhanghai-compose-preference"}
+zxing = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxing"}
 
-# Plugins
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-protobuf = { id = "com.google.protobuf", version.ref = "google-protobuf" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt-android" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ktfmt-plugin = { id = "com.ncorti.ktfmt.gradle", version.ref = "ktfmt" }
