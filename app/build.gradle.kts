@@ -198,9 +198,15 @@ configurations.configureEach {
 
 protobuf {
     protoc {
-        // For Apple M1 Chip
-        val isMac = System.getProperty("os.name").lowercase().contains("mac")
-        val protocDepSuffix = if (isMac) ":osx-x86_64" else ""
+        // Choose the right protoc binary for the current OS and CPU architecture
+        val osName = System.getProperty("os.name").lowercase()
+        val osArch = System.getProperty("os.arch").lowercase()
+        val protocDepSuffix =
+            if (osName.contains("mac")) {
+                if (osArch == "aarch64" || osArch == "arm64") ":osx-aarch_64" else ":osx-x86_64"
+            } else {
+                ""
+            }
         artifact = "com.google.protobuf:protoc:3.25.5" + protocDepSuffix
     }
 
