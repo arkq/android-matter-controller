@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
   private fun initContextDependentConstants() {
     // versionName is set in build.gradle.
     val packageInfo = packageManager.getPackageInfo(packageName, 0)
-    VERSION_NAME = packageInfo.versionName
+    VERSION_NAME = packageInfo.versionName ?: "v?.?"
     APP_NAME = getString(R.string.app_name)
     packageInfo.packageName
     Timber.i(

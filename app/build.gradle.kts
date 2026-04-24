@@ -43,7 +43,7 @@ android {
      * compile your app. This means your app can use the API features included in
      * this API level and lower.
      */
-    compileSdk = 34
+    compileSdk = 35
 
     /**
      * The defaultConfig block encapsulates default settings and entries for all
@@ -59,7 +59,7 @@ android {
         minSdk = 27
 
         // Specifies the API level used to test the app.
-        targetSdk = 33
+        targetSdk = 35
 
         // Defines the version number of your app.
         versionCode = 1
@@ -91,15 +91,12 @@ android {
     }
 
     buildFeatures {
-        dataBinding = true
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
+    compileOptions {
+        isCoreLibraryDesugaringEnabled = true
     }
-
-    android.buildFeatures.viewBinding = true
 
     // Gradle will use the NDK that"s associated by default with its plugin.
     // If it"s not available (from the SDK Manager), then stripping the .so"s will not happen
@@ -116,6 +113,9 @@ dependencies {
     implementation(libs.play.services.base)
     implementation(libs.play.services.home)
 
+    // Core library desugaring (required by play-services-threadnetwork)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
     // Matter Android Demo SDK
     implementation(libs.matter.android.demo.sdk)
 
@@ -128,10 +128,7 @@ dependencies {
 
     // AndroidX
     implementation(libs.appcompat)
-    implementation(libs.constraintlayout)
     implementation(libs.core.ktx)
-    implementation(libs.databinding.runtime)
-    implementation(libs.legacy.support.v4)
     implementation(libs.preference)
 
     // Compose
@@ -145,7 +142,6 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.lifecycle.runtime.compose)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.material3)
@@ -157,12 +153,8 @@ dependencies {
 
     // Navigation
     implementation(libs.navigation.compose)
-    // OLD --- remove eventually
-    implementation(libs.navigation.fragment.ktx)
-    implementation(libs.navigation.ui.ktx)
 
     // Lifecycle
-    implementation(libs.lifecycle.extensions)
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
@@ -174,15 +166,9 @@ dependencies {
 
     // Hilt
     // https://dagger.dev/hilt/gradle-setup
-    // TODO: Upgrade to KSP when supported by Hilt/Dagger.
-    //      https://developer.android.com/build/migrate-to-ksp#replace-annotation
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(libs.core)
     implementation(libs.hilt.navigation.compose)
-    //implementation(libs.hilt.lifecycle)
-    //implementation(libs.hilt.navigation)
-
 
     // Hilt For instrumentation tests
     androidTestImplementation(libs.hilt.android.testing)
@@ -211,7 +197,7 @@ dependencies {
     androidTestImplementation(libs.uiautomator)
 }
 
-// Issue with androidx.test.espresso:espresso-contrib:3.5.1
+// Issue with androidx.test.espresso:espresso-contrib
 // https://github.com/android/android-test/issues/999
 configurations.configureEach {
     exclude(group = "com.google.protobuf", module = "protobuf-lite")
@@ -219,10 +205,16 @@ configurations.configureEach {
 
 protobuf {
     protoc {
-        // For Apple M1 Chip
-        val isMac = System.getProperty("os.name").lowercase().contains("mac")
-        val protocDepSuffix = if (isMac) ":osx-x86_64" else ""
-        artifact = "com.google.protobuf:protoc:3.14.0" + protocDepSuffix
+        // Choose the right protoc binary for the current OS and CPU architecture
+        val osName = System.getProperty("os.name").lowercase()
+        val osArch = System.getProperty("os.arch").lowercase()
+        val protocDepSuffix =
+            if (osName.contains("mac")) {
+                if (osArch == "aarch64" || osArch == "arm64") ":osx-aarch_64" else ":osx-x86_64"
+            } else {
+                ""
+            }
+        artifact = "com.google.protobuf:protoc:3.25.5" + protocDepSuffix
     }
 
     // Generates the java Protobuf-lite code for the Protobufs in this project. See

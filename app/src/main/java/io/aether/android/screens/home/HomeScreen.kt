@@ -206,7 +206,7 @@ internal fun HomeRoute(
     updateTitle("Home")
   }
 
-  LifecycleResumeEffect {
+  LifecycleResumeEffect(Unit) {
     Timber.d("HomeScreen: LifecycleResumeEffect")
     val intent = activity!!.intent
     Timber.d("intent [${intent}]")

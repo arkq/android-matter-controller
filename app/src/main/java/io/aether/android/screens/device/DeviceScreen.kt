@@ -219,7 +219,7 @@ internal fun DeviceRoute(
   }
 
   // When app is sent to the background, and pulled back, this kicks in.
-  LifecycleResumeEffect {
+  LifecycleResumeEffect(Unit) {
     Timber.d("LifecycleResumeEffect: deviceUiModel [${deviceUiModel?.device?.deviceId}]")
     deviceViewModel.loadDevice(deviceId)
     deviceViewModel.startMonitoringStateChanges()
