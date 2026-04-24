@@ -7,19 +7,11 @@
 // such as additional build types and product flavors, and override settings in the
 // main/ app manifest or top-level build script.
 
-/**
- * The first section in this file applies among other things the Android Gradle plugin
- * to this build and makes the android block available to specify
- * Android-specific build options.
- */
-
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.google.protobuf)
     alias(libs.plugins.hilt)
-    // FIXME: to be changed with KSP
-    id("org.jetbrains.kotlin.kapt")
     alias(libs.plugins.ktfmt.plugin)
     alias(libs.plugins.compose.compiler)
 }
@@ -102,9 +94,11 @@ android {
         dataBinding = true
         compose = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.15"
     }
+
     android.buildFeatures.viewBinding = true
 
     // Gradle will use the NDK that"s associated by default with its plugin.
@@ -183,7 +177,7 @@ dependencies {
     // TODO: Upgrade to KSP when supported by Hilt/Dagger.
     //      https://developer.android.com/build/migrate-to-ksp#replace-annotation
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.core)
     implementation(libs.hilt.navigation.compose)
     //implementation(libs.hilt.lifecycle)
@@ -192,7 +186,7 @@ dependencies {
 
     // Hilt For instrumentation tests
     androidTestImplementation(libs.hilt.android.testing)
-    kaptAndroidTest(libs.hilt.compiler)
+    kspAndroidTest(libs.hilt.compiler)
 
     // Task.await()
     implementation(libs.kotlinx.coroutines.play.services)
@@ -221,10 +215,6 @@ dependencies {
 // https://github.com/android/android-test/issues/999
 configurations.configureEach {
     exclude(group = "com.google.protobuf", module = "protobuf-lite")
-}
-
-kapt {
-    correctErrorTypes = true
 }
 
 protobuf {

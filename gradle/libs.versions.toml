@@ -16,11 +16,12 @@ datastore = "1.0.0"
 espresso-core = "3.5.1"
 google-protobuf = "0.10.0"
 guava = "31.1-jre"
-hilt-android = "2.56.2"
-hilt-android-testing = "2.56.2"
+hilt-android = "2.59.2"
+hilt-android-testing = "2.59.2"
 hilt-navigation = "1.2.0"
 junit = "4.13.2"
-kotlin = "2.2.0"
+kotlin = "2.3.0"
+ksp = "2.3.7"
 kotlinx-coroutines-play-services = "1.6.4"
 ktfmt = "0.12.0"
 legacy-support-v4 = "1.0.0"
@@ -104,4 +105,5 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 google-protobuf = { id = "com.google.protobuf", version.ref = "google-protobuf" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt-android" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktfmt-plugin = { id = "com.ncorti.ktfmt.gradle", version.ref = "ktfmt" }
