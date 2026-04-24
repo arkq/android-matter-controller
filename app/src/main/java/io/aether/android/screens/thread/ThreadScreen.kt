@@ -189,7 +189,7 @@ internal fun ThreadRoute(
     threadViewModel.setActionDialogInfo(ActionType.None, ActionState.None)
   }
 
-  LifecycleResumeEffect {
+  LifecycleResumeEffect(Unit) {
     Timber.d("LifecycleResumeEffect")
     threadNetworkUiState.startServiceDiscovery()
     onPauseOrDispose {
