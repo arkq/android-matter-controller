@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2024 Google LLC
+// SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
 package io.aether.android.screens.device
@@ -394,6 +395,11 @@ constructor(
   }
 
   fun stopMonitoringStateChanges() {
+    val deviceId = deviceUiModel.value?.device?.deviceId
+    if (deviceId == null) {
+      Timber.d("stopMonitoringStateChanges(): no loaded device; skipping.")
+      return
+    }
     when (STATE_CHANGES_MONITORING_MODE) {
       StateChangesMonitoringMode.Subscription -> unsubscribeToPeriodicUpdates()
       StateChangesMonitoringMode.PeriodicRead -> stopDevicePeriodicPing()
@@ -489,13 +495,17 @@ constructor(
 
   private fun unsubscribeToPeriodicUpdates() {
     Timber.d("unsubscribeToPeriodicUpdates()")
+    val deviceId = deviceUiModel.value?.device?.deviceId
+    if (deviceId == null) {
+      Timber.d("unsubscribeToPeriodicUpdates(): no loaded device; skipping.")
+      return
+    }
     viewModelScope.launch {
       try {
-        val connectedDevicePtr =
-          chipClient.getConnectedDevicePointer(deviceUiModel.value!!.device.deviceId)
+        val connectedDevicePtr = chipClient.getConnectedDevicePointer(deviceId)
         subscriptionHelper.awaitUnsubscribeToPeriodicUpdates(connectedDevicePtr)
       } catch (e: IllegalStateException) {
-        Timber.e("Can't get connectedDevicePointer for ${deviceUiModel.value!!.device.deviceId}.")
+        Timber.e("Can't get connectedDevicePointer for ${deviceId}.")
         return@launch
       }
     }

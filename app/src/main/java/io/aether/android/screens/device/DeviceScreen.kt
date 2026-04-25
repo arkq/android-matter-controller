@@ -101,6 +101,7 @@ internal fun DeviceRoute(
 
   // Launching GPS commissioning requires Activity.
   val activity = LocalContext.current.getActivity()
+  var isResumed by remember { mutableStateOf(false) }
 
   // Observes values needed by the DeviceScreen.
   val deviceUiModel by deviceViewModel.deviceUiModel.collectAsState()
@@ -223,15 +224,22 @@ internal fun DeviceRoute(
 
   // When app is sent to the background, and pulled back, this kicks in.
   LifecycleResumeEffect(Unit) {
+    isResumed = true
     Timber.d("LifecycleResumeEffect: deviceUiModel [${deviceUiModel?.device?.deviceId}]")
     deviceViewModel.loadDevice(deviceId)
-    deviceViewModel.startMonitoringStateChanges()
     onPauseOrDispose {
       // do any needed clean up here
+      isResumed = false
       Timber.d(
         "LifecycleResumeEffect:onPauseOrDispose deviceUiModel [${deviceUiModel?.device?.deviceId}]"
       )
       deviceViewModel.stopMonitoringStateChanges()
+    }
+  }
+
+  LaunchedEffect(isResumed, deviceUiModel?.device?.deviceId) {
+    if (isResumed && deviceUiModel != null) {
+      deviceViewModel.startMonitoringStateChanges()
     }
   }
 
