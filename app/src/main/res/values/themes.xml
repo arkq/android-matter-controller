@@ -6,10 +6,10 @@
 <resources>
     <!-- Base application theme. -->
     <!-- <style name="Theme.Aether" parent="Theme.MaterialComponent.DayNight.DarkActionBar"> -->
-    <style name="Theme.Aether" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Theme.Aether" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/md.sys.color.primary</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/md.sys.color.on_primary</item>
         <item name="colorOnPrimaryContainer">@color/md.sys.color.on_primary_container</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/md.sys.color.secondary</item>

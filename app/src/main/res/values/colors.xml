@@ -5,6 +5,7 @@
 -->
 <resources>
     <color name="white">#FFFFFFFF</color>
+    <color name="md.sys.color.on_primary">#FFFFFFFF</color>
     <color name="md.sys.color.primary_container">#FFEADDFF</color>
     <color name="md.sys.color.primary">#FF6750A4</color>
     <color name="md.sys.color.on_primary_container">#FF21005D</color>

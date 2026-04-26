@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
     displayPreferences(this)
 
     setContent {
-      MaterialTheme {
+      AetherTheme {
         ProvidePreferenceLocals {
           val navController = rememberNavController()
           AppLayout(navController)

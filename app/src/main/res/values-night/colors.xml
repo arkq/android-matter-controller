@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SPDX-FileCopyrightText: 2024 Google LLC
+  SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <color name="md.sys.color.on_primary">#FF381E72</color>
+    <color name="md.sys.color.primary_container">#FF4F378B</color>
+    <color name="md.sys.color.primary">#FFD0BCFF</color>
+    <color name="md.sys.color.on_primary_container">#FFEADDFF</color>
+    <color name="md.sys.color.secondary_container">#FF4A4458</color>
+    <color name="md.sys.color.secondary">#FFCCC2DC</color>
+    <color name="md.sys.color.background">#FF1C1B1F</color>
+    <color name="md.sys.color.on_background">#FFE6E1E5</color>
+</resources>
