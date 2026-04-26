@@ -20,6 +20,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -55,6 +56,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.dimensionResource
@@ -203,7 +205,7 @@ internal fun HomeRoute(
   }
 
   LaunchedEffect(Unit) {
-    updateTitle("Home")
+    updateTitle("")
   }
 
   LifecycleResumeEffect(Unit) {
@@ -491,32 +493,34 @@ private fun NewDeviceAlertDialog(
 
 @Composable
 private fun NoDevices() {
-  Column(
-    modifier = Modifier.fillMaxSize(), // Make the Column occupy the whole screen
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally,
-  ) {
+  BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    // Crop-scale fills the entire area on both axes without letterboxing —
+    // the image is scaled uniformly to whichever dimension (width or height)
+    // needs the least scaling, and the other axis is cropped.
     Image(
-      painter = painterResource(R.drawable.emptystate_missing_content),
-      contentDescription = stringResource(R.string.no_devices_image),
-      modifier = Modifier
-        .fillMaxWidth()
-        .height(200.dp),
+      painter = painterResource(R.drawable.bg_empty_dashboard),
+      contentDescription = null,
+      contentScale = ContentScale.Crop,
+      modifier = Modifier.fillMaxSize(),
     )
-    Text(
-      text = stringResource(R.string.no_devices_yet),
-      style = MaterialTheme.typography.bodyMedium,
+    // Place the title/subtitle in a column whose bottom sits 20 % above the
+    // bottom edge of the screen.
+    Column(
       modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentWidth(Alignment.CenterHorizontally),
-    )
-    Text(
-      text = stringResource(R.string.add_your_first),
-      style = MaterialTheme.typography.bodySmall,
-      modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentWidth(Alignment.CenterHorizontally),
-    )
+        .align(Alignment.BottomCenter)
+        .padding(bottom = maxHeight * 0.2f)
+        .fillMaxWidth(),
+      horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+      Text(
+        text = stringResource(R.string.empty_dashboard_title),
+        style = MaterialTheme.typography.bodyMedium,
+      )
+      Text(
+        text = stringResource(R.string.empty_dashboard_subtitle),
+        style = MaterialTheme.typography.bodySmall,
+      )
+    }
   }
 }
 

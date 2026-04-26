@@ -17,8 +17,3 @@ path = [
 ]
 SPDX-FileCopyrightText = "2015 the original authors"
 SPDX-License-Identifier = "Apache-2.0"
-
-[[annotations]]
-path = "app/src/main/res/drawable/emptystate_missing_content.png"
-SPDX-FileCopyrightText = "2022 Google LLC"
-SPDX-License-Identifier = "Apache-2.0"

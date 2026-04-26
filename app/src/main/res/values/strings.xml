@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
-  SPDX-FileCopyrightText: 2022 Google LLC
-  SPDX-License-Identifier: Apache-2.0
+SPDX-FileCopyrightText: 2022 Google LLC
+SPDX-FileCopyrightText: 2026 The Authors
+SPDX-License-Identifier: Apache-2.0
 -->
-
 <resources>
     <string name="app_name">Æther</string>
 
@@ -63,8 +64,8 @@
     <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="add_your_first">Start by adding your first Matter device</string>
-    <string name="no_devices_yet">No devices yet</string>
+    <string name="empty_dashboard_title">No devices yet</string>
+    <string name="empty_dashboard_subtitle">Start by adding your first Matter device</string>
     <string name="sample_app">Matter Controller</string>
     <string name="content_description_settings">Settings icon to manage app settings</string>
     <string name="general_settings">General settings</string>
