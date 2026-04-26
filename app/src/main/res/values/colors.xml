@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  SPDX-FileCopyrightText: 2022 Google LLC
-  SPDX-License-Identifier: Apache-2.0
+SPDX-FileCopyrightText: 2026 The Authors
+SPDX-License-Identifier: Apache-2.0
 -->
-<resources>
-    <color name="white">#FFFFFFFF</color>
-    <color name="md.sys.color.primary_container">#FFEADDFF</color>
-    <color name="md.sys.color.primary">#FF6750A4</color>
-    <color name="md.sys.color.on_primary_container">#FF21005D</color>
-    <color name="md.sys.color.secondary_container">#FFE8DEF8</color>
-    <color name="md.sys.color.secondary">#FF625B71</color>
-    <color name="md.sys.color.background">#FFFFFBFE</color>
-    <color name="md.sys.color.on_background">#FF1C1B1F</color>
-</resources>
+<resources />

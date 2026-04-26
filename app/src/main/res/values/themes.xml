@@ -1,21 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
-  SPDX-FileCopyrightText: 2022 Google LLC
-  SPDX-License-Identifier: Apache-2.0
+SPDX-FileCopyrightText: 2026 The Authors
+SPDX-License-Identifier: Apache-2.0
 -->
-
 <resources>
-    <!-- Base application theme. -->
-    <!-- <style name="Theme.Aether" parent="Theme.MaterialComponent.DayNight.DarkActionBar"> -->
-    <style name="Theme.Aether" parent="Theme.Material3.Light.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/md.sys.color.primary</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorOnPrimaryContainer">@color/md.sys.color.on_primary_container</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/md.sys.color.secondary</item>
-        <item name="colorSecondaryContainer">@color/md.sys.color.secondary_container</item>
-        <!-- Customize your theme here. -->
-        <item name="android:colorBackground">@color/md.sys.color.background</item>
-        <item name="colorOnBackground">@color/md.sys.color.on_background</item>
-    </style>
+	<style name="Theme.Aether" parent="Theme.Material3.DayNight.NoActionBar" />
 </resources>
