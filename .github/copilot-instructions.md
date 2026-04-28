@@ -9,16 +9,12 @@ SPDX-License-Identifier: Apache-2.0
 
 ### 1. Simplicity First
 
-- Make minimal changes that solve the problem. Nothing speculative.
-
+- Minimal change that solves the problem. Nothing speculative.
 - No features beyond what was asked.
-
 - No abstractions for single-use code.
-
 - No "flexibility" or "configurability" that wasn't requested.
-
 - No error handling for impossible scenarios.
-
+- Prefer standard library functions over custom logic.
 - If you write 200 lines and it could be 50, rewrite it.
 
 ### 2. UI Strings Must Come from Resources
@@ -41,10 +37,12 @@ SPDX-License-Identifier: Apache-2.0
 
 - Every **new file** must include an SPDX copyright header for the current
   year and "The Authors":
-  ```
+
+  ```text
   SPDX-FileCopyrightText: <current year> The Authors
   SPDX-License-Identifier: Apache-2.0
   ```
+
   Use the appropriate comment syntax for the file type (e.g. `//` for Kotlin,
   `#` for shell/TOML).
 
@@ -71,6 +69,7 @@ SPDX-License-Identifier: Apache-2.0
 ### 1. Do Not Review Generated Files
 
 - The Gradle wrapper files are generated - do not suggest changes to them:
+
   - `gradle/wrapper/gradle-wrapper.jar`
   - `gradle/wrapper/gradle-wrapper.properties`
   - `gradlew.bat`
