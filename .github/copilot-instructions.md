@@ -21,7 +21,7 @@ SPDX-License-Identifier: Apache-2.0
 
 - If you write 200 lines and it could be 50, rewrite it.
 
-### 1. UI Strings Must Come from Resources
+### 2. UI Strings Must Come from Resources
 
 - Every string displayed in the UI must be defined in `res/values/strings.xml`
   and referenced via `R.string.*` / `@string/*`.
@@ -29,7 +29,7 @@ SPDX-License-Identifier: Apache-2.0
 - Never hard-code user-visible strings directly in Kotlin/Java source or layout
   XML.
 
-### 1. Remove Orphaned Files
+### 3. Remove Orphaned Files
 
 - After making changes, check whether any files, classes, resources, or imports
   have become unused as a direct result of your changes.
@@ -37,7 +37,7 @@ SPDX-License-Identifier: Apache-2.0
 - Remove orphans that **your changes** created. Do not remove preexisting dead
   code unless that is the explicit goal of the task.
 
-### 1. Copyright Headers
+### 4. Copyright Headers
 
 - Every **new file** must include an SPDX copyright header for the current
   year and "The Authors":
