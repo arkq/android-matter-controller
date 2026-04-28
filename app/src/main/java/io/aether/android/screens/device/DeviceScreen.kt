@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -295,6 +296,7 @@ private fun DeviceScreen(
   var isOn by remember { mutableStateOf(false) }
   var brightness by remember { mutableFloatStateOf(0f) }
   var colorTemperature by remember { mutableFloatStateOf(0f) }
+  var showShareDeviceAlertDialog by remember { mutableStateOf(false) }
 
   val brightnessMax = 254f
   val colorTemperatureMax = 1667f
@@ -347,6 +349,14 @@ private fun DeviceScreen(
     showConfirmDeviceRemovalAlertDialog,
     onConfirmDeviceRemovalOutcome,
   )
+  ShareDeviceAlertDialog(
+    showShareDeviceAlertDialog,
+    onConfirm = {
+      showShareDeviceAlertDialog = false
+      onShareDevice()
+    },
+    onDismiss = { showShareDeviceAlertDialog = false },
+  )
 
   deviceUiModel.let { model ->
     Column(
@@ -383,10 +393,10 @@ private fun DeviceScreen(
           model.colorTemperature = colorTemperatureVal
         }
       )
-      ShareSection(name = model.device.name, onShareDevice)
       // TODO: Use HorizontalDivider when it becomes part of the stable Compose BOM.
       Spacer(modifier = Modifier)
       TechnicalInfoSection(model.device, onInspect, isOnline)
+      ShareDeviceSection { showShareDeviceAlertDialog = true }
       RemoveDeviceSection(onRemoveDeviceClick)
     }
   }
@@ -459,26 +469,42 @@ private fun LevelControl(
 }
 
 @Composable
-private fun ShareSection(name: String, onShareDevice: () -> Unit) {
-  Surface(
-    modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal)),
-    border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
-    shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
+private fun ShareDeviceSection(onClick: () -> Unit) {
+  Button(
+    onClick = onClick,
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(dimensionResource(R.dimen.margin_normal)),
   ) {
-    Column(modifier = Modifier.padding(8.dp)) {
-      Text(
-        text = stringResource(R.string.share_device_name, name),
-        style = MaterialTheme.typography.bodyLarge,
-      )
-      Text(
-        text = stringResource(R.string.share_device_body),
-        style = MaterialTheme.typography.bodySmall,
-      )
-      Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        TextButton(onClick = onShareDevice) { Text(stringResource(R.string.share)) }
-      }
-    }
+    Icon(Icons.Outlined.Share, contentDescription = null)
+    Spacer(modifier = Modifier.width(8.dp))
+    Text(stringResource(R.string.share_device).uppercase())
   }
+}
+
+@Composable
+private fun ShareDeviceAlertDialog(
+  show: Boolean,
+  onConfirm: () -> Unit,
+  onDismiss: () -> Unit,
+) {
+  if (!show) {
+    return
+  }
+
+  AlertDialog(
+    title = { Text(text = stringResource(R.string.share_device_dialog_title)) },
+    text = { Text(stringResource(R.string.share_device_body)) },
+    confirmButton = {
+      Button(onClick = onConfirm) {
+        Text(stringResource(R.string.yes_share_it))
+      }
+    },
+    onDismissRequest = onDismiss,
+    dismissButton = {
+      Button(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
+    },
+  )
 }
 
 @Composable
@@ -687,8 +713,8 @@ private fun OnOffStateSection_Offline() {
 
 @Preview(widthDp = 300)
 @Composable
-private fun ShareSectionPreview() {
-  MaterialTheme { ShareSection("Lightbulb", {}) }
+private fun ShareDeviceSectionPreview() {
+  MaterialTheme { ShareDeviceSection({}) }
 }
 
 @Preview(widthDp = 300)
