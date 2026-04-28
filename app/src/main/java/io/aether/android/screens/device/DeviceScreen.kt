@@ -364,6 +364,8 @@ private fun DeviceScreen(
         .fillMaxWidth()
         .padding(innerPadding)
         .verticalScroll(rememberScrollState())
+        .padding(dimensionResource(R.dimen.margin_normal)),
+      verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
     ) {
       OnOffStateSection(isOnline, isOn) {
         onOnOffClick(it)
@@ -393,8 +395,6 @@ private fun DeviceScreen(
           model.colorTemperature = colorTemperatureVal
         }
       )
-      // TODO: Use HorizontalDivider when it becomes part of the stable Compose BOM.
-      Spacer(modifier = Modifier)
       TechnicalInfoSection(model.device, onInspect, isOnline)
       ShareDeviceSection { showShareDeviceAlertDialog = true }
       RemoveDeviceSection(onRemoveDeviceClick)
@@ -416,7 +416,7 @@ private fun OnOffStateSection(
     else MaterialTheme.colorScheme.onSurface
   val text = stateDisplayString(isOnline, isOn)
   Surface(
-    modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal)),
+    modifier = Modifier.fillMaxWidth(),
     border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
     contentColor = contentColor,
     color = bgColor,
@@ -443,7 +443,7 @@ private fun LevelControl(
   onValueChangeFinished: () -> Unit,
 ) {
   Surface(
-    modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal)),
+    modifier = Modifier.fillMaxWidth(),
     border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
     shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
   ) {
@@ -472,9 +472,7 @@ private fun LevelControl(
 private fun ShareDeviceSection(onClick: () -> Unit) {
   Button(
     onClick = onClick,
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(dimensionResource(R.dimen.margin_normal)),
+    modifier = Modifier.fillMaxWidth(),
   ) {
     Icon(Icons.Outlined.Share, contentDescription = null)
     Spacer(modifier = Modifier.width(8.dp))
@@ -514,7 +512,7 @@ private fun TechnicalInfoSection(
   isOnline: Boolean,
 ) {
   Surface(
-    modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal)),
+    modifier = Modifier.fillMaxWidth(),
     border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
     shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
   ) {
@@ -549,9 +547,7 @@ private fun TechnicalInfoSection(
 private fun RemoveDeviceSection(onClick: () -> Unit) {
   Button(
     onClick = onClick,
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(dimensionResource(R.dimen.margin_normal)),
+    modifier = Modifier.fillMaxWidth(),
     colors = ButtonDefaults.buttonColors(
       containerColor = MaterialTheme.colorScheme.error,
       contentColor = MaterialTheme.colorScheme.onError,

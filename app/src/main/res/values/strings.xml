@@ -38,7 +38,7 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_type_unrecognized">unrecognized</string>
 
     <!-- Share Device -->
-    <string name="share_device">Share device</string>
+    <string name="share_device">Share</string>
     <string name="share_device_dialog_title">Share this device?</string>
     <string name="share_device_info" translatable="false">Added on %1$s \nID: %2$s  \nVendor: %3$s (VID:%4$s) \nProduct: %5$s (PID:%6$s)  \nDevice type: %7$s</string>
 
@@ -60,7 +60,7 @@ SPDX-License-Identifier: Apache-2.0
     <string name="back_button">Back</string>
     <string name="share_device_body">You can share this device to control it from other apps or services.</string>
     <string name="technical_information">Technical Information</string>
-    <string name="remove_device">Remove device</string>
+    <string name="remove_device">Remove</string>
     <string name="transport_icon">Transport icon</string>
 
 </resources>
