@@ -222,9 +222,8 @@ internal fun DeviceRoute(
     }
   }
 
-  val deviceScreenTitle = stringResource(R.string.device_screen_title)
   LaunchedEffect(Unit) {
-    updateTitle(deviceScreenTitle)
+    updateTitle(stringResource(R.string.device_screen_title))
   }
 
   DeviceScreen(
