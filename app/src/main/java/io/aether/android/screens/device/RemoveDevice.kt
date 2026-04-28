@@ -92,5 +92,5 @@ internal fun ConfirmDeviceRemovalAlertDialog(
 @Preview(widthDp = 300)
 @Composable
 private fun RemoveDeviceSectionPreview() {
-  MaterialTheme { RemoveDeviceSection({ Timber.d("preview", "button clicked") }) }
+  MaterialTheme { RemoveDeviceSection({ Timber.d("preview: button clicked") }) }
 }

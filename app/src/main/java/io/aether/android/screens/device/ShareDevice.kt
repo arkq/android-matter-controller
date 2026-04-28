@@ -71,7 +71,7 @@ internal fun ShareDeviceAlertDialog(
   )
 }
 
-fun shareDevice(
+internal fun shareDevice(
   context: Context,
   shareDeviceLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
   deviceViewModel: DeviceViewModel,
@@ -93,9 +93,7 @@ fun shareDevice(
       )
       .build()
   Timber.d(
-    "ShareDevice: shareDeviceRequest " +
-      "onboardingPayload [${shareDeviceRequest.commissioningWindow.passcode}] " +
-      "discriminator [${shareDeviceRequest.commissioningWindow.discriminator}]"
+    "ShareDevice: shareDeviceRequest discriminator [${shareDeviceRequest.commissioningWindow.discriminator}]"
   )
 
   // The call to shareDevice() creates the IntentSender that will eventually be launched

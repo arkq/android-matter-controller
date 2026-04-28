@@ -155,13 +155,11 @@ internal fun DeviceRoute(
   // isOnline must be provided in InspectScreen because it is updated there.
   val inspectDeviceOfflineTitle = stringResource(R.string.inspect_device_offline_title)
   val inspectDeviceOfflineMessage = stringResource(R.string.inspect_device_offline)
-  val onInspect: (isOnline: Boolean) -> Unit = remember {
-    { isOnline ->
-      if (isOnline) {
-        navigateToInspect(deviceUiModel!!.device.deviceId)
-      } else {
-        deviceViewModel.showMsgDialog(inspectDeviceOfflineTitle, inspectDeviceOfflineMessage)
-      }
+  val onInspect: (isOnline: Boolean) -> Unit = { isOnline ->
+    if (isOnline) {
+      navigateToInspect(deviceUiModel!!.device.deviceId)
+    } else {
+      deviceViewModel.showMsgDialog(inspectDeviceOfflineTitle, inspectDeviceOfflineMessage)
     }
   }
 
@@ -222,8 +220,9 @@ internal fun DeviceRoute(
     }
   }
 
+  val deviceScreenTitle = stringResource(R.string.device_screen_title)
   LaunchedEffect(Unit) {
-    updateTitle(stringResource(R.string.device_screen_title))
+    updateTitle(deviceScreenTitle)
   }
 
   DeviceScreen(
