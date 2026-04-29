@@ -109,9 +109,12 @@ android {
 
     splits {
         abi {
-            isEnable = true
-            reset()
-            include(findProperty("selectedAbi") as? String ?: "arm64-v8a")
+            val selectedAbi = findProperty("selectedAbi") as? String
+            isEnable = selectedAbi != null
+            if (selectedAbi != null) {
+                reset()
+                include(selectedAbi)
+            }
             isUniversalApk = false
         }
     }
