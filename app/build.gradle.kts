@@ -106,6 +106,17 @@ android {
     // If you want to use a specific NDK, then uncomment the statement below with the proper
     // NDK version.
     // ndkVersion = "25.2.9519653"
+
+    splits {
+        abi {
+            val selectedAbi = findProperty("selectedAbi") as? String
+            isEnable = selectedAbi != null
+            if (selectedAbi != null) {
+                reset()
+                include(selectedAbi)
+            }
+        }
+    }
 }
 
 dependencies {
