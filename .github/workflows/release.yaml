@@ -18,11 +18,11 @@ on:
           - assembleDebug
       abi:
         description: "Target ABI"
-        default: arm64
+        default: arm64-v8a
         type: choice
         options:
-          - arm64
-          - x64
+          - arm64-v8a
+          - x86_64
 
 permissions:
   contents: write
@@ -60,7 +60,7 @@ jobs:
         with:
           arguments: |
             -PsigningConfig=persistentDebug
-            -PselectedAbi=${{ inputs.abi || 'arm64' }}
+            -PselectedAbi=${{ inputs.abi || 'arm64-v8a' }}
             ${{ inputs.target || 'assembleRelease' }}
           gradle-version: wrapper
 

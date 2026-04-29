@@ -111,11 +111,7 @@ android {
         abi {
             isEnable = true
             reset()
-            val abiFilter = when (findProperty("selectedAbi") as? String) {
-                "x64" -> "x86_64"
-                else -> "arm64-v8a"
-            }
-            include(abiFilter)
+            include(findProperty("selectedAbi") as? String ?: "arm64-v8a")
             isUniversalApk = false
         }
     }
