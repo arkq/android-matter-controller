@@ -106,6 +106,19 @@ android {
     // If you want to use a specific NDK, then uncomment the statement below with the proper
     // NDK version.
     // ndkVersion = "25.2.9519653"
+
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            val abiFilter = when (findProperty("selectedAbi") as? String) {
+                "x64" -> "x86_64"
+                else -> "arm64-v8a"
+            }
+            include(abiFilter)
+            isUniversalApk = false
+        }
+    }
 }
 
 dependencies {
