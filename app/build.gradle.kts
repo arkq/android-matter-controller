@@ -115,7 +115,6 @@ android {
                 reset()
                 include(selectedAbi)
             }
-            isUniversalApk = false
         }
     }
 }
