@@ -5,12 +5,7 @@
 package io.aether.android.screens.device
 
 import android.app.Activity
-import android.content.Context
-import android.os.SystemClock
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -20,16 +15,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
@@ -55,17 +43,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
-import com.google.android.gms.home.matter.Matter
-import com.google.android.gms.home.matter.commissioning.CommissioningWindow
-import com.google.android.gms.home.matter.commissioning.ShareDeviceRequest
-import com.google.android.gms.home.matter.common.DeviceDescriptor
-import com.google.android.gms.home.matter.common.Discriminator
-import io.aether.android.DISCRIMINATOR
 import io.aether.android.Device
 import io.aether.android.DeviceState
-import io.aether.android.OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS
 import io.aether.android.R
-import io.aether.android.SETUP_PIN_CODE
 import io.aether.android.formatTimestamp
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
@@ -173,16 +153,13 @@ internal fun DeviceRoute(
 
   // Inspect button click handler.
   // isOnline must be provided in InspectScreen because it is updated there.
-  val onInspect: (isOnline: Boolean) -> Unit = remember {
-    { isOnline ->
-      if (isOnline) {
-        navigateToInspect(deviceUiModel!!.device.deviceId)
-      } else {
-        deviceViewModel.showMsgDialog(
-          "Inspect Device",
-          "Device is offline, so it cannot be inspected.",
-        )
-      }
+  val inspectDeviceOfflineTitle = stringResource(R.string.inspect_device_offline_title)
+  val inspectDeviceOfflineMessage = stringResource(R.string.inspect_device_offline)
+  val onInspect: (isOnline: Boolean) -> Unit = { isOnline ->
+    if (isOnline) {
+      navigateToInspect(deviceUiModel!!.device.deviceId)
+    } else {
+      deviceViewModel.showMsgDialog(inspectDeviceOfflineTitle, inspectDeviceOfflineMessage)
     }
   }
 
@@ -212,7 +189,7 @@ internal fun DeviceRoute(
     deviceViewModel.pairingWindowOpenForDeviceSharing.collectAsState()
   if (pairingWindowOpenForDeviceSharing) {
     deviceViewModel.resetPairingWindowOpenForDeviceSharing()
-    shareDevice(activity!!.applicationContext, shareDeviceLauncher, deviceViewModel)
+    shareDevice(activity!!.applicationContext, shareDeviceLauncher, deviceViewModel, deviceUiModel!!.device.name)
   }
 
   // Share Device button click.
@@ -243,8 +220,9 @@ internal fun DeviceRoute(
     }
   }
 
+  val deviceScreenTitle = stringResource(R.string.device_screen_title)
   LaunchedEffect(Unit) {
-    updateTitle("Device")
+    updateTitle(deviceScreenTitle)
   }
 
   DeviceScreen(
@@ -295,12 +273,13 @@ private fun DeviceScreen(
   var isOn by remember { mutableStateOf(false) }
   var brightness by remember { mutableFloatStateOf(0f) }
   var colorTemperature by remember { mutableFloatStateOf(0f) }
+  var showShareDeviceAlertDialog by remember { mutableStateOf(false) }
 
   val brightnessMax = 254f
   val colorTemperatureMax = 1667f
 
   if (deviceUiModel == null) {
-    Text("Still loading the device information")
+    Text(stringResource(R.string.loading_device_info))
     return
   }
 
@@ -347,6 +326,14 @@ private fun DeviceScreen(
     showConfirmDeviceRemovalAlertDialog,
     onConfirmDeviceRemovalOutcome,
   )
+  ShareDeviceAlertDialog(
+    showShareDeviceAlertDialog,
+    onConfirm = {
+      showShareDeviceAlertDialog = false
+      onShareDevice()
+    },
+    onDismiss = { showShareDeviceAlertDialog = false },
+  )
 
   deviceUiModel.let { model ->
     Column(
@@ -354,6 +341,8 @@ private fun DeviceScreen(
         .fillMaxWidth()
         .padding(innerPadding)
         .verticalScroll(rememberScrollState())
+        .padding(dimensionResource(R.dimen.margin_normal)),
+      verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
     ) {
       OnOffStateSection(isOnline, isOn) {
         onOnOffClick(it)
@@ -383,10 +372,8 @@ private fun DeviceScreen(
           model.colorTemperature = colorTemperatureVal
         }
       )
-      ShareSection(name = model.device.name, onShareDevice)
-      // TODO: Use HorizontalDivider when it becomes part of the stable Compose BOM.
-      Spacer(modifier = Modifier)
       TechnicalInfoSection(model.device, onInspect, isOnline)
+      ShareDeviceSection { showShareDeviceAlertDialog = true }
       RemoveDeviceSection(onRemoveDeviceClick)
     }
   }
@@ -406,7 +393,7 @@ private fun OnOffStateSection(
     else MaterialTheme.colorScheme.onSurface
   val text = stateDisplayString(isOnline, isOn)
   Surface(
-    modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal)),
+    modifier = Modifier.fillMaxWidth(),
     border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
     contentColor = contentColor,
     color = bgColor,
@@ -433,7 +420,7 @@ private fun LevelControl(
   onValueChangeFinished: () -> Unit,
 ) {
   Surface(
-    modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal)),
+    modifier = Modifier.fillMaxWidth(),
     border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
     shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
   ) {
@@ -459,36 +446,13 @@ private fun LevelControl(
 }
 
 @Composable
-private fun ShareSection(name: String, onShareDevice: () -> Unit) {
-  Surface(
-    modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal)),
-    border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
-    shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
-  ) {
-    Column(modifier = Modifier.padding(8.dp)) {
-      Text(
-        text = stringResource(R.string.share_device_name, name),
-        style = MaterialTheme.typography.bodyLarge,
-      )
-      Text(
-        text = stringResource(R.string.share_device_body),
-        style = MaterialTheme.typography.bodySmall,
-      )
-      Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        TextButton(onClick = onShareDevice) { Text(stringResource(R.string.share)) }
-      }
-    }
-  }
-}
-
-@Composable
 private fun TechnicalInfoSection(
   device: Device,
   onInspect: (isOnline: Boolean) -> Unit,
   isOnline: Boolean,
 ) {
   Surface(
-    modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal)),
+    modifier = Modifier.fillMaxWidth(),
     border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
     shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
   ) {
@@ -517,140 +481,6 @@ private fun TechnicalInfoSection(
       }
     }
   }
-}
-
-@Composable
-private fun RemoveDeviceSection(onClick: () -> Unit) {
-  Button(
-    onClick = onClick,
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(dimensionResource(R.dimen.margin_normal)),
-    colors = ButtonDefaults.buttonColors(
-      containerColor = MaterialTheme.colorScheme.error,
-      contentColor = MaterialTheme.colorScheme.onError,
-    ),
-  ) {
-    Icon(Icons.Outlined.Delete, contentDescription = null)
-    Spacer(modifier = Modifier.width(8.dp))
-    Text(stringResource(R.string.remove_device).uppercase())
-  }
-}
-
-@Composable
-private fun RemoveDeviceAlertDialog(
-  showRemoveDeviceAlertDialog: Boolean,
-  onRemoveDeviceOutcome: (doIt: Boolean) -> Unit,
-) {
-  Timber.d("RemoveDeviceAlertDialog [$showRemoveDeviceAlertDialog]")
-  if (!showRemoveDeviceAlertDialog) {
-    return
-  }
-
-  AlertDialog(
-    title = { Text(text = "Remove this device?") },
-    text = {
-      Text(
-        "This device will be removed and unlinked from this sample app. " +
-          "Other services and connection-types may still have access."
-      )
-    },
-    confirmButton = {
-      Button(onClick = { onRemoveDeviceOutcome(true) }) {
-        Text(stringResource(R.string.yes_remove_it))
-      }
-    },
-    onDismissRequest = {},
-    dismissButton = {
-      Button(onClick = { onRemoveDeviceOutcome(false) }) { Text(stringResource(R.string.cancel)) }
-    },
-  )
-}
-
-@Composable
-private fun ConfirmDeviceRemovalAlertDialog(
-  showConfirmDeviceRemovalAlertDialog: Boolean,
-  onConfirmDeviceRemovalOutcome: (doIt: Boolean) -> Unit,
-) {
-  if (!showConfirmDeviceRemovalAlertDialog) {
-    return
-  }
-
-  var showDialog by remember { mutableStateOf(false) }
-
-  AlertDialog(
-    title = { Text(text = "Error removing the fabric from the device") },
-    text = {
-      Text(
-        "Removing the fabric from the device failed. " +
-          "Do you still want to remove the device from the application?"
-      )
-    },
-    confirmButton = {
-      Button(
-        onClick = {
-          showDialog = false
-          onConfirmDeviceRemovalOutcome(true)
-        }
-      ) {
-        Text(stringResource(R.string.yes_remove_it))
-      }
-    },
-    onDismissRequest = {},
-    dismissButton = {
-      Button(
-        onClick = {
-          showDialog = false
-          onConfirmDeviceRemovalOutcome(false)
-        }
-      ) {
-        Text(stringResource(R.string.cancel))
-      }
-    },
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Share Device
-
-fun shareDevice(
-  context: Context,
-  shareDeviceLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
-  deviceViewModel: DeviceViewModel,
-) {
-  Timber.d("ShareDevice: starting")
-
-  val shareDeviceRequest =
-    ShareDeviceRequest.builder()
-      .setDeviceDescriptor(DeviceDescriptor.builder().build())
-      .setDeviceName("Æther temp device name")
-      .setCommissioningWindow(
-        CommissioningWindow.builder()
-          .setDiscriminator(Discriminator.forLongValue(DISCRIMINATOR))
-          .setPasscode(SETUP_PIN_CODE)
-          .setWindowOpenMillis(SystemClock.elapsedRealtime())
-          .setDurationSeconds(OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS.toLong())
-          .build()
-      )
-      .build()
-  Timber.d(
-    "ShareDevice: shareDeviceRequest " +
-      "onboardingPayload [${shareDeviceRequest.commissioningWindow.passcode}] " +
-      "discriminator [${shareDeviceRequest.commissioningWindow.discriminator}]"
-  )
-
-  // The call to shareDevice() creates the IntentSender that will eventually be launched
-  // in the fragment to trigger the multi-admin activity in GPS (step 3).
-  Matter.getCommissioningClient(context)
-    .shareDevice(shareDeviceRequest)
-    .addOnSuccessListener { result ->
-      Timber.d("ShareDevice: Success getting the IntentSender: result [${result}]")
-      shareDeviceLauncher.launch(IntentSenderRequest.Builder(result).build())
-    }
-    .addOnFailureListener { error ->
-      Timber.e(error)
-      deviceViewModel.showMsgDialog("Share device failed", error.toString())
-    }
 }
 
 // -----------------------------------------------------------------------------------------------
@@ -687,20 +517,8 @@ private fun OnOffStateSection_Offline() {
 
 @Preview(widthDp = 300)
 @Composable
-private fun ShareSectionPreview() {
-  MaterialTheme { ShareSection("Lightbulb", {}) }
-}
-
-@Preview(widthDp = 300)
-@Composable
 private fun TechnicalInfoSectionPreview() {
   MaterialTheme { TechnicalInfoSection(DeviceTest, {}, true) }
-}
-
-@Preview
-@Composable
-private fun RemoveDeviceSectionPreview() {
-  MaterialTheme { RemoveDeviceSection({ Timber.d("preview", "button clicked") }) }
 }
 
 @Preview(widthDp = 300)

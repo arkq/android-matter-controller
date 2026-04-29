@@ -38,16 +38,29 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_type_unrecognized">unrecognized</string>
 
     <!-- Share Device -->
-    <string name="share_device_name" translatable="false">Share %1$s</string>
+    <string name="share_device">Share</string>
+    <string name="share_device_dialog_title">Share this device?</string>
     <string name="share_device_info" translatable="false">Added on %1$s \nID: %2$s  \nVendor: %3$s (VID:%4$s) \nProduct: %5$s (PID:%6$s)  \nDevice type: %7$s</string>
 
     <string name="cancel">Cancel</string>
     <string name="empty_dashboard_title">No devices yet</string>
     <string name="empty_dashboard_subtitle">Start by adding your first Matter device</string>
     <string name="yes_remove_it">Yes, remove it</string>
+    <string name="yes_share_it">Yes, share it</string>
     <string name="inspect">Inspect</string>
     <string name="brightness">Brightness</string>
     <string name="color_temperature">Color Temperature</string>
+
+    <!-- Device Screen -->
+    <string name="device_screen_title">Device</string>
+    <string name="loading_device_info">Loading device information…</string>
+    <string name="inspect_device_offline_title">Device Offline</string>
+    <string name="inspect_device_offline">The device is offline and cannot be inspected.</string>
+    <string name="remove_device_dialog_title">Remove this device?</string>
+    <string name="remove_device_dialog_body">This device will be removed and unlinked from this controller. Other services and connection types may still have access.</string>
+    <string name="confirm_remove_device_dialog_title">Error removing the device</string>
+    <string name="confirm_remove_device_dialog_body">Removing the fabric from the device failed. Do you still want to remove it from this controller?</string>
+    <string name="share_device_failed">Share device failed</string>
 
     <!-- Matter Beacon -->
     <string name="beacon_detail_text" translatable="false">VID: 0x%04X PID: 0x%04X Disc: 0x%03X</string>
@@ -57,9 +70,8 @@ SPDX-License-Identifier: Apache-2.0
     <string name="menu_button">Menu</string>
     <string name="back_button">Back</string>
     <string name="share_device_body">You can share this device to control it from other apps or services.</string>
-    <string name="share">Share</string>
     <string name="technical_information">Technical Information</string>
-    <string name="remove_device">Remove device</string>
+    <string name="remove_device">Remove</string>
     <string name="transport_icon">Transport icon</string>
 
 </resources>
