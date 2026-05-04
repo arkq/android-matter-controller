@@ -34,6 +34,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -113,8 +114,7 @@ constructor(
       val device = devicesRepository.getDevice(deviceId)
       val updatedDevice = device.toBuilder().setName(newName).build()
       devicesRepository.updateDevice(updatedDevice)
-      val current = _deviceUiModel.value ?: return@launch
-      _deviceUiModel.value = current.copy(device = updatedDevice)
+      _deviceUiModel.update { current -> current?.copy(device = updatedDevice) }
     }
   }
 

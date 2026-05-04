@@ -70,7 +70,7 @@ fun AppNavigation(
         navigateToHome,
         navigateToInspect,
         it.arguments?.getLong("deviceId")!!,
-        it.arguments?.getString("deviceName") ?: "",
+        it.arguments?.getString("deviceName")!!,
       )
     }
     // Inspect device

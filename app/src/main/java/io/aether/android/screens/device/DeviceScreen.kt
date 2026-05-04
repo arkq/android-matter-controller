@@ -233,8 +233,9 @@ internal fun DeviceRoute(
 
   // Set the title to the device name from navigation args immediately (no lag),
   // then keep it in sync once the model is loaded (e.g. after a rename).
+  val defaultDeviceTitle = stringResource(R.string.device_screen_title)
   LaunchedEffect(Unit) {
-    updateTitle(deviceName)
+    updateTitle(deviceName.ifBlank { defaultDeviceTitle })
   }
   LaunchedEffect(deviceUiModel?.device?.name) {
     deviceUiModel?.device?.name?.let { updateTitle(it) }
@@ -244,14 +245,16 @@ internal fun DeviceRoute(
   var showRenameDialog by remember { mutableStateOf(false) }
   val onRenameDeviceClick: () -> Unit = remember { { showRenameDialog = true } }
 
-  // Set a pencil/edit action button in the TopAppBar for the duration of this screen.
-  DisposableEffect(Unit) {
-    updateActions {
-      IconButton(onClick = onRenameDeviceClick) {
-        Icon(
-          imageVector = Icons.Filled.Edit,
-          contentDescription = stringResource(R.string.rename_device),
-        )
+  // Set a pencil/edit action button in the TopAppBar only once the device model is loaded.
+  DisposableEffect(deviceUiModel != null) {
+    if (deviceUiModel != null) {
+      updateActions {
+        IconButton(onClick = onRenameDeviceClick) {
+          Icon(
+            imageVector = Icons.Filled.Edit,
+            contentDescription = stringResource(R.string.rename_device),
+          )
+        }
       }
     }
     onDispose { updateActions {} }
