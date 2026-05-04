@@ -260,7 +260,7 @@ internal fun DeviceRoute(
     RenameDeviceDialog(
       currentName = deviceUiModel?.device?.name ?: deviceName,
       onConfirm = { newName ->
-        deviceViewModel.renameDevice(deviceUiModel!!.device.deviceId, newName)
+        deviceViewModel.renameDevice(deviceId, newName)
         showRenameDialog = false
       },
       onDismiss = { showRenameDialog = false },
