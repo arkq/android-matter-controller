@@ -252,7 +252,8 @@ fun AppLayout(navController: NavHostController) {
       topBar = {
         TopAppBar(
           title = { Text(text = topAppBarTitle) },
-          navigationIcon = {            if (isHomeScreen) {
+          navigationIcon = {
+            if (isHomeScreen) {
               IconButton(onClick = { scope.launch { drawerState.open() } }) {
                 Icon(
                   Icons.Filled.Menu,
