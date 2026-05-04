@@ -36,6 +36,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -82,6 +83,13 @@ fun AppLayout(navController: NavHostController) {
   val navBackStackEntry by navController.currentBackStackEntryAsState()
   val currentRoute = navBackStackEntry?.destination?.route
   val isHomeScreen = currentRoute == DEST_HOME || currentRoute == null
+
+  // Clear TopAppBar actions on every route change so screen-specific actions
+  // (e.g. the edit icon on the device screen) disappear at the same time as the
+  // title, not only when the old screen's composable leaves composition.
+  LaunchedEffect(currentRoute) {
+    topAppBarActions = {}
+  }
 
   val developerUtilitiesViewModel: DeveloperUtilitiesViewModel = hiltViewModel()
   val msgDialogInfo by developerUtilitiesViewModel.msgDialogInfo.collectAsState()
