@@ -238,7 +238,7 @@ internal fun DeviceRoute(
     updateTitle(deviceName.ifBlank { defaultDeviceTitle })
   }
   LaunchedEffect(deviceUiModel?.device?.name) {
-    deviceUiModel?.device?.name?.let { updateTitle(it) }
+    deviceUiModel?.device?.name?.let { updateTitle(it.ifBlank { defaultDeviceTitle }) }
   }
 
   // Rename dialog state.
