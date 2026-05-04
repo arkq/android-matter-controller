@@ -119,7 +119,7 @@ import timber.log.Timber
 internal fun HomeRoute(
   innerPadding: PaddingValues,
   updateTitle: (title: String) -> Unit,
-  navigateToDevice: (deviceId: Long) -> Unit,
+  navigateToDevice: (deviceId: Long, deviceName: String) -> Unit,
   homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
   // Launching GPS commissioning requires Activity.
@@ -161,7 +161,7 @@ internal fun HomeRoute(
   // Functions invoked when UI controls are clicked on a specific device in the list.
   val onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit = remember {
     {
-      navigateToDevice(it.device.deviceId)
+      navigateToDevice(it.device.deviceId, it.device.name)
     }
   }
   val onOnOffClick: (deviceId: Long, value: Boolean) -> Unit = remember {

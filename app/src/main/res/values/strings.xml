@@ -53,6 +53,10 @@ SPDX-License-Identifier: Apache-2.0
 
     <!-- Device Screen -->
     <string name="device_screen_title">Device</string>
+    <string name="rename_device">Rename device</string>
+    <string name="rename_device_dialog_title">Rename device</string>
+    <string name="rename_device_label">Device name</string>
+    <string name="ok">OK</string>
     <string name="loading_device_info">Loading device information…</string>
     <string name="inspect_device_offline_title">Device Offline</string>
     <string name="inspect_device_offline">The device is offline and cannot be inspected.</string>

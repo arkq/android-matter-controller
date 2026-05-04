@@ -8,6 +8,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Row
@@ -65,6 +66,14 @@ fun AppLayout(navController: NavHostController) {
 
   val updateTopAppBarTitle: (title: String) -> Unit = remember {
     { title -> topAppBarTitle = title }
+  }
+
+  var topAppBarActions: @Composable RowScope.() -> Unit by remember {
+    mutableStateOf<@Composable RowScope.() -> Unit>({})
+  }
+
+  val updateTopAppBarActions: (@Composable RowScope.() -> Unit) -> Unit = remember {
+    { actions -> topAppBarActions = actions }
   }
 
   val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -235,8 +244,7 @@ fun AppLayout(navController: NavHostController) {
       topBar = {
         TopAppBar(
           title = { Text(text = topAppBarTitle) },
-          navigationIcon = {
-            if (isHomeScreen) {
+          navigationIcon = {            if (isHomeScreen) {
               IconButton(onClick = { scope.launch { drawerState.open() } }) {
                 Icon(
                   Icons.Filled.Menu,
@@ -252,10 +260,11 @@ fun AppLayout(navController: NavHostController) {
               }
             }
           },
+          actions = topAppBarActions,
         )
       },
     ) { innerPadding ->
-      AppNavigation(navController, innerPadding, updateTopAppBarTitle)
+      AppNavigation(navController, innerPadding, updateTopAppBarTitle, updateTopAppBarActions)
     }
   }
 

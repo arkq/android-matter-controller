@@ -106,6 +106,19 @@ constructor(
   }
 
   // -----------------------------------------------------------------------------------------------
+  // Rename device
+
+  fun renameDevice(deviceId: Long, newName: String) {
+    viewModelScope.launch {
+      val device = devicesRepository.getDevice(deviceId)
+      val updatedDevice = device.toBuilder().setName(newName).build()
+      devicesRepository.updateDevice(updatedDevice)
+      val current = _deviceUiModel.value ?: return@launch
+      _deviceUiModel.value = current.copy(device = updatedDevice)
+    }
+  }
+
+  // -----------------------------------------------------------------------------------------------
   // Share Device (aka Multi-Admin)
 
   fun openPairingWindow(deviceId: Long) {
