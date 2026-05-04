@@ -246,7 +246,10 @@ internal fun DeviceRoute(
   val onRenameDeviceClick: () -> Unit = remember { { showRenameDialog = true } }
 
   // Set a pencil/edit action button in the TopAppBar only once the device model is loaded.
-  DisposableEffect(deviceUiModel != null) {
+  // LaunchedEffect installs the action when the model becomes available.
+  // DisposableEffect(Unit) is kept separately so onDispose only fires when leaving composition,
+  // not on the null → non-null model transition.
+  LaunchedEffect(deviceUiModel != null) {
     if (deviceUiModel != null) {
       updateActions {
         IconButton(onClick = onRenameDeviceClick) {
@@ -257,6 +260,8 @@ internal fun DeviceRoute(
         }
       }
     }
+  }
+  DisposableEffect(Unit) {
     onDispose { updateActions {} }
   }
 

@@ -43,7 +43,7 @@ fun AppNavigation(
   }
   val navigateToDevice: (deviceId: Long, deviceName: String) -> Unit = remember {
     { deviceId, deviceName ->
-      navController.navigate("$DEST_DEVICE/$deviceId/${Uri.encode(deviceName)}")
+      navController.navigate("$DEST_DEVICE/$deviceId?deviceName=${Uri.encode(deviceName)}")
     }
   }
   val navigateToInspect: (deviceId: Long) -> Unit = remember {
@@ -57,10 +57,10 @@ fun AppNavigation(
     }
     // Device
     composable(
-      "$DEST_DEVICE/{deviceId}/{deviceName}",
+      "$DEST_DEVICE/{deviceId}?deviceName={deviceName}",
         arguments = listOf(
           navArgument("deviceId") { type = NavType.LongType },
-          navArgument("deviceName") { type = NavType.StringType },
+          navArgument("deviceName") { type = NavType.StringType; defaultValue = "" },
         ))
     {
       DeviceRoute(
@@ -70,7 +70,7 @@ fun AppNavigation(
         navigateToHome,
         navigateToInspect,
         it.arguments?.getLong("deviceId")!!,
-        it.arguments?.getString("deviceName")!!,
+        it.arguments?.getString("deviceName") ?: "",
       )
     }
     // Inspect device
