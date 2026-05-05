@@ -41,6 +41,7 @@ import io.aether.android.data.DevicesStateRepository
 import io.aether.android.data.UserPreferencesRepository
 import io.aether.android.getTimestampForNow
 import io.aether.android.screens.common.DialogInfo
+import io.aether.android.screens.shared.SetDeviceNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -98,6 +99,7 @@ constructor(
   private val clustersHelper: ClustersHelper,
   private val chipClient: ChipClient,
   private val subscriptionHelper: SubscriptionHelper,
+  private val setDeviceNameUseCase: SetDeviceNameUseCase,
 ) : ViewModel() {
 
   // Controls whether the "Message" AlertDialog should be shown in the UI.
@@ -365,9 +367,8 @@ constructor(
       }
 
       // update device name
-      try {
-        clustersHelper.writeBasicClusterNodeLabelAttribute(deviceId, deviceName)
-      } catch (ex: Exception) {
+      val ex = setDeviceNameUseCase.execute(deviceId, deviceName)
+      if (ex != null) {
         val title = "Failed to write NodeLabel"
         Timber.e(title, ex)
         showMsgDialog(title, "$ex")

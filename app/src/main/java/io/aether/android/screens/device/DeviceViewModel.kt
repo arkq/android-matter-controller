@@ -26,6 +26,7 @@ import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.home.DeviceUiModel
+import io.aether.android.screens.shared.SetDeviceNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -48,6 +49,7 @@ constructor(
   private val chipClient: ChipClient,
   private val clustersHelper: ClustersHelper,
   private val subscriptionHelper: SubscriptionHelper,
+  private val setDeviceNameUseCase: SetDeviceNameUseCase,
 ) : ViewModel() {
 
   // The UI model for device shown on the Device screen.
@@ -111,10 +113,15 @@ constructor(
 
   fun renameDevice(deviceId: Long, newName: String) {
     viewModelScope.launch {
-      val device = devicesRepository.getDevice(deviceId)
-      val updatedDevice = device.toBuilder().setName(newName).build()
-      devicesRepository.updateDevice(updatedDevice)
-      _deviceUiModel.update { current -> current?.copy(device = updatedDevice) }
+      val ex = setDeviceNameUseCase.execute(deviceId, newName)
+      _deviceUiModel.update { current ->
+        current?.copy(device = current.device.toBuilder().setName(newName).build())
+      }
+      if (ex != null) {
+        val title = "Failed to write NodeLabel"
+        Timber.e(title, ex)
+        showMsgDialog(title, "$ex")
+      }
     }
   }
 
