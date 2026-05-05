@@ -26,6 +26,7 @@ import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.home.DeviceUiModel
+import io.aether.android.screens.shared.SetDeviceNameResult
 import io.aether.android.screens.shared.SetDeviceNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
@@ -113,16 +114,23 @@ constructor(
 
   fun renameDevice(deviceId: Long, newName: String) {
     viewModelScope.launch {
-      val ex =
-        setDeviceNameUseCase.execute(deviceId, newName) {
-          _deviceUiModel.update { current ->
-            current?.copy(device = current.device.toBuilder().setName(newName).build())
+      when (
+        val result =
+          setDeviceNameUseCase.execute(deviceId, newName) {
+            _deviceUiModel.update { current ->
+              current?.copy(device = current.device.toBuilder().setName(newName).build())
+            }
           }
+      ) {
+        is SetDeviceNameResult.LocalError -> {
+          Timber.e("Failed to save device name", result.exception)
+          showMsgDialog("Failed to save device name", "${result.exception}")
         }
-      if (ex != null) {
-        val title = "Failed to write NodeLabel"
-        Timber.e(title, ex)
-        showMsgDialog(title, "$ex")
+        is SetDeviceNameResult.NodeLabelError -> {
+          Timber.e("Failed to write NodeLabel", result.exception)
+          showMsgDialog("Failed to write NodeLabel", "${result.exception}")
+        }
+        SetDeviceNameResult.Success -> {}
       }
     }
   }

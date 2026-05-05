@@ -41,6 +41,7 @@ import io.aether.android.data.DevicesStateRepository
 import io.aether.android.data.UserPreferencesRepository
 import io.aether.android.getTimestampForNow
 import io.aether.android.screens.common.DialogInfo
+import io.aether.android.screens.shared.SetDeviceNameResult
 import io.aether.android.screens.shared.SetDeviceNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
@@ -367,11 +368,16 @@ constructor(
       }
 
       // update device name
-      val ex = setDeviceNameUseCase.execute(deviceId, deviceName)
-      if (ex != null) {
-        val title = "Failed to write NodeLabel"
-        Timber.e(title, ex)
-        showMsgDialog(title, "$ex")
+      when (val result = setDeviceNameUseCase.execute(deviceId, deviceName)) {
+        is SetDeviceNameResult.LocalError -> {
+          Timber.e("Failed to save device name", result.exception)
+          showMsgDialog("Failed to save device name", "${result.exception}")
+        }
+        is SetDeviceNameResult.NodeLabelError -> {
+          Timber.e("Failed to write NodeLabel", result.exception)
+          showMsgDialog("Failed to write NodeLabel", "${result.exception}")
+        }
+        SetDeviceNameResult.Success -> {}
       }
     }
   }
