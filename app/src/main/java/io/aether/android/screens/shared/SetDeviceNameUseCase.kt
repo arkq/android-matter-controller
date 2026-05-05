@@ -7,6 +7,7 @@ import io.aether.android.chip.ClustersHelper
 import io.aether.android.data.DevicesRepository
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CancellationException
 import timber.log.Timber
 
 /** Result of [SetDeviceNameUseCase.execute]. */
@@ -56,6 +57,8 @@ constructor(
     try {
       val device = devicesRepository.getDevice(deviceId)
       devicesRepository.updateDevice(device.toBuilder().setName(name).build())
+    } catch (e: CancellationException) {
+      throw e
     } catch (e: Exception) {
       Timber.e(e, "SetDeviceNameUseCase: failed to persist name locally")
       return SetDeviceNameResult.LocalError(e)
@@ -64,6 +67,8 @@ constructor(
     return try {
       clustersHelper.writeBasicClusterNodeLabelAttribute(deviceId, name)
       SetDeviceNameResult.Success
+    } catch (e: CancellationException) {
+      throw e
     } catch (e: Exception) {
       Timber.e(e, "SetDeviceNameUseCase: failed to write NodeLabel")
       SetDeviceNameResult.NodeLabelError(e)

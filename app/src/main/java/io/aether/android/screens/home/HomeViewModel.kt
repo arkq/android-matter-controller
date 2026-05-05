@@ -43,6 +43,8 @@ import io.aether.android.getTimestampForNow
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.shared.SetDeviceNameResult
 import io.aether.android.screens.shared.SetDeviceNameUseCase
+import io.aether.android.R
+import androidx.annotation.StringRes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -371,11 +373,11 @@ constructor(
       when (val result = setDeviceNameUseCase.execute(deviceId, deviceName)) {
         is SetDeviceNameResult.LocalError -> {
           Timber.e("Failed to save device name", result.exception)
-          showMsgDialog("Failed to save device name", "${result.exception}")
+          showMsgDialog(R.string.save_device_name_failed, "${result.exception}")
         }
         is SetDeviceNameResult.NodeLabelError -> {
           Timber.e("Failed to write NodeLabel", result.exception)
-          showMsgDialog("Failed to write NodeLabel", "${result.exception}")
+          showMsgDialog(R.string.write_node_label_failed, "${result.exception}")
         }
         SetDeviceNameResult.Success -> {}
       }
@@ -621,6 +623,10 @@ constructor(
 
   fun showMsgDialog(title: String, msg: String) {
     _msgDialogInfo.value = DialogInfo(title, msg)
+  }
+
+  fun showMsgDialog(@StringRes titleRes: Int, msg: String?) {
+    _msgDialogInfo.value = DialogInfo(message = msg, titleRes = titleRes)
   }
 
   // Called after user dismisses the Info dialog. If we don't consume, a config change redisplays
