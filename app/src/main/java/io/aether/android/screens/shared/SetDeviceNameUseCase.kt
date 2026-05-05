@@ -25,15 +25,30 @@ constructor(
    * Updates the device name in the local DataStore and writes it to the on-device BasicInformation
    * NodeLabel attribute.
    *
+   * [onLocalPersisted] is invoked after the local DataStore update succeeds but before the
+   * on-device write, so callers can update UI state immediately without waiting for the slower
+   * network operation.
+   *
    * @param deviceId the device to update
    * @param name the new name
-   * @return null on full success, or the [Exception] thrown by the on-device write (the local
-   *   DataStore is always updated regardless)
+   * @param onLocalPersisted optional callback invoked after local persistence succeeds
+   * @return null on full success, or the [Exception] from either the DataStore update or the
+   *   on-device NodeLabel write
    */
-  suspend fun execute(deviceId: Long, name: String): Exception? {
+  suspend fun execute(
+    deviceId: Long,
+    name: String,
+    onLocalPersisted: suspend () -> Unit = {},
+  ): Exception? {
     Timber.d("SetDeviceNameUseCase: deviceId [$deviceId] name [$name]")
-    val device = devicesRepository.getDevice(deviceId)
-    devicesRepository.updateDevice(device.toBuilder().setName(name).build())
+    try {
+      val device = devicesRepository.getDevice(deviceId)
+      devicesRepository.updateDevice(device.toBuilder().setName(name).build())
+    } catch (e: Exception) {
+      Timber.e(e, "SetDeviceNameUseCase: failed to persist name locally")
+      return e
+    }
+    onLocalPersisted()
     return try {
       clustersHelper.writeBasicClusterNodeLabelAttribute(deviceId, name)
       null

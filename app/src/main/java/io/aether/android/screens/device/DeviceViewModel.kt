@@ -113,10 +113,12 @@ constructor(
 
   fun renameDevice(deviceId: Long, newName: String) {
     viewModelScope.launch {
-      val ex = setDeviceNameUseCase.execute(deviceId, newName)
-      _deviceUiModel.update { current ->
-        current?.copy(device = current.device.toBuilder().setName(newName).build())
-      }
+      val ex =
+        setDeviceNameUseCase.execute(deviceId, newName) {
+          _deviceUiModel.update { current ->
+            current?.copy(device = current.device.toBuilder().setName(newName).build())
+          }
+        }
       if (ex != null) {
         val title = "Failed to write NodeLabel"
         Timber.e(title, ex)
