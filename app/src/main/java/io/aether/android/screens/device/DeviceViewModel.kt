@@ -125,11 +125,11 @@ constructor(
           }
       ) {
         is SetDeviceNameResult.LocalError -> {
-          Timber.e("Failed to save device name", result.exception)
+          Timber.e(result.exception, "Failed to save device name")
           showMsgDialog(R.string.save_device_name_failed, "${result.exception}")
         }
         is SetDeviceNameResult.NodeLabelError -> {
-          Timber.e("Failed to write NodeLabel", result.exception)
+          Timber.e(result.exception, "Failed to write NodeLabel")
           showMsgDialog(R.string.write_node_label_failed, "${result.exception}")
         }
         SetDeviceNameResult.Success -> {}

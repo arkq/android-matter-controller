@@ -559,7 +559,7 @@ private fun RenameDeviceDialog(
     confirmButton = {
       Button(
         onClick = { onConfirm(inputText.trim()) },
-        enabled = inputText.isNotBlank(),
+        enabled = inputText.trim().isNotBlank(),
       ) {
         Text(stringResource(R.string.ok))
       }
