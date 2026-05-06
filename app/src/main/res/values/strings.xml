@@ -54,7 +54,6 @@ SPDX-License-Identifier: Apache-2.0
     <!-- Device Screen -->
     <string name="device_screen_title">Device</string>
     <string name="rename_device">Rename device</string>
-    <string name="rename_device_dialog_title">Rename device</string>
     <string name="rename_device_label">Device name</string>
     <string name="save_device_name_failed">Failed to save device name</string>
     <string name="write_node_label_failed">Failed to write NodeLabel</string>

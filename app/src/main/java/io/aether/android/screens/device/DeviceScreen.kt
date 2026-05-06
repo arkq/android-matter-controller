@@ -546,7 +546,7 @@ private fun RenameDeviceDialog(
   var inputText by remember(currentName) { mutableStateOf(currentName) }
 
   AlertDialog(
-    title = { Text(stringResource(R.string.rename_device_dialog_title)) },
+    title = { Text(stringResource(R.string.rename_device)) },
     text = {
       TextField(
         value = inputText,

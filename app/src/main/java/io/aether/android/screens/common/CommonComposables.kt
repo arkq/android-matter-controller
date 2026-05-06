@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.text.HtmlCompat
 import com.google.android.material.textview.MaterialTextView
+import io.aether.android.R
 import timber.log.Timber
 
 // Information used for [MsgAlertDialog].
@@ -46,7 +47,7 @@ fun MsgAlertDialog(dialogInfo: DialogInfo?, onDismissMsgAlertDialog: () -> Unit)
     },
     confirmButton = {
       if (dialogInfo.showConfirmButton) {
-        TextButton(onClick = onDismissMsgAlertDialog) { Text("OK") }
+        TextButton(onClick = onDismissMsgAlertDialog) { Text(stringResource(R.string.ok)) }
       }
     },
     onDismissRequest = {},
