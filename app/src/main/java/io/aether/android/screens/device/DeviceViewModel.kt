@@ -125,8 +125,8 @@ constructor(
           }
       ) {
         is SetDeviceNameResult.LocalError -> {
-          Timber.e(result.exception, "Failed to save device name")
-          showMsgDialog(R.string.save_device_name_failed, "${result.exception}")
+          Timber.e(result.exception, "Failed to set device name")
+          showMsgDialog(R.string.set_device_name_failed, result.exception.message ?: result.exception.toString())
         }
         SetDeviceNameResult.Success -> {}
       }

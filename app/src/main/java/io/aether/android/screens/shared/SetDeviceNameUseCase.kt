@@ -86,7 +86,7 @@ constructor(
       } catch (e: Exception) {
         Timber.e(e, "SetDeviceNameUseCase: failed to write NodeLabel")
         appErrorNotifier.notify(
-          DialogInfo(titleRes = R.string.write_node_label_failed, message = "$e")
+          DialogInfo(titleRes = R.string.set_device_name_failed, message = e.message ?: e.toString())
         )
       }
     }
