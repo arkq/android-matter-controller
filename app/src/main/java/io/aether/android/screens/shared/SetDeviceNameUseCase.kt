@@ -67,7 +67,7 @@ constructor(
     name: String,
     onLocalPersisted: suspend () -> Unit = {},
   ): SetDeviceNameResult {
-    Timber.d("SetDeviceNameUseCase: deviceId [$deviceId] name [$name]")
+    Timber.d("SetDeviceNameUseCase: deviceId [$deviceId] nameLength [${name.length}]")
     try {
       val device = devicesRepository.getDevice(deviceId)
       devicesRepository.updateDevice(device.toBuilder().setName(name).build())
