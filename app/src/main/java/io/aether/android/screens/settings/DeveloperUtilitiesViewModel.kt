@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2024 Google LLC
+// SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
 package io.aether.android.screens.settings
@@ -10,6 +11,7 @@ import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.aether.android.AppErrorNotifier
 import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.data.UserPreferencesRepository
@@ -29,6 +31,7 @@ constructor(
   private val devicesRepository: DevicesRepository,
   private val userPreferencesRepository: UserPreferencesRepository,
   private val devicesStateRepository: DevicesStateRepository,
+  private val appErrorNotifier: AppErrorNotifier,
 ) : ViewModel() {
 
   // Controls whether the "Message" AlertDialog should be shown in the UI.
@@ -38,6 +41,12 @@ constructor(
   // Controls whether the "Show Log Repos" AlertDialog should be shown in the UI.
   private var _showLogReposDialog = MutableStateFlow(false)
   val showLogReposDialog: StateFlow<Boolean> = _showLogReposDialog.asStateFlow()
+
+  init {
+    // Collect app-level errors from singletons (e.g. background NodeLabel writes that survive
+    // screen navigation) and surface them as dialogs visible regardless of current screen.
+    viewModelScope.launch { appErrorNotifier.errors.collect { showMsgDialog(it) } }
+  }
 
   // -----------------------------------------------------------------------------------------------
   // Log repositories
@@ -97,7 +106,11 @@ constructor(
   // State related functions
 
   fun showMsgDialog(title: String, msg: String) {
-    _msgDialogInfo.value = DialogInfo(title, msg)
+    _msgDialogInfo.value = DialogInfo(title = title, message = msg)
+  }
+
+  private fun showMsgDialog(dialogInfo: DialogInfo) {
+    _msgDialogInfo.value = dialogInfo
   }
 
   // Called after user dismisses the Info dialog. If we don't consume, a config change redisplays
@@ -110,3 +123,4 @@ constructor(
     _showLogReposDialog.value = false
   }
 }
+

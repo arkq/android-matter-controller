@@ -128,10 +128,6 @@ constructor(
           Timber.e(result.exception, "Failed to save device name")
           showMsgDialog(R.string.save_device_name_failed, "${result.exception}")
         }
-        is SetDeviceNameResult.NodeLabelError -> {
-          Timber.e(result.exception, "Failed to write NodeLabel")
-          showMsgDialog(R.string.write_node_label_failed, "${result.exception}")
-        }
         SetDeviceNameResult.Success -> {}
       }
     }
@@ -602,7 +598,7 @@ constructor(
 
   fun showMsgDialog(title: String?, msg: String?, showConfirmButton: Boolean = true) {
     Timber.d("showMsgDialog [$title]")
-    _msgDialogInfo.value = DialogInfo(title, msg, showConfirmButton)
+    _msgDialogInfo.value = DialogInfo(title = title, message = msg, showConfirmButton = showConfirmButton)
   }
 
   fun showMsgDialog(@StringRes titleRes: Int, msg: String?, showConfirmButton: Boolean = true) {
