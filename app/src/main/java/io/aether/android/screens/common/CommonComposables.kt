@@ -1,22 +1,27 @@
 // SPDX-FileCopyrightText: 2024 Google LLC
+// SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
 package io.aether.android.screens.common
 
 import android.text.method.LinkMovementMethod
+import androidx.annotation.StringRes
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.text.HtmlCompat
 import com.google.android.material.textview.MaterialTextView
+import io.aether.android.R
 import timber.log.Timber
 
 // Information used for [MsgAlertDialog].
 data class DialogInfo(
-  val title: String?,
-  val message: String?,
+  @StringRes val titleRes: Int? = null,
+  val title: String? = null,
+  val message: String? = null,
   val showConfirmButton: Boolean = true,
 )
 
@@ -26,10 +31,13 @@ fun MsgAlertDialog(dialogInfo: DialogInfo?, onDismissMsgAlertDialog: () -> Unit)
   Timber.d("MsgAlertDialog [$dialogInfo]")
   if (dialogInfo == null) return
 
+  val resolvedTitle =
+    dialogInfo.titleRes?.let { stringResource(it) } ?: dialogInfo.title
+
   AlertDialog(
     title = {
-      if (!dialogInfo.title.isNullOrEmpty()) {
-        Text(dialogInfo.title)
+      if (!resolvedTitle.isNullOrEmpty()) {
+        Text(resolvedTitle)
       }
     },
     text = {
@@ -39,7 +47,7 @@ fun MsgAlertDialog(dialogInfo: DialogInfo?, onDismissMsgAlertDialog: () -> Unit)
     },
     confirmButton = {
       if (dialogInfo.showConfirmButton) {
-        TextButton(onClick = onDismissMsgAlertDialog) { Text("OK") }
+        TextButton(onClick = onDismissMsgAlertDialog) { Text(stringResource(R.string.ok)) }
       }
     },
     onDismissRequest = {},

@@ -73,7 +73,7 @@ class InspectViewModel @Inject constructor(private val clustersHelper: ClustersH
 
   private fun showMsgDialog(title: String?, msg: String?, showConfirmButton: Boolean = true) {
     Timber.d("showMsgDialog [$title]")
-    _msgDialogInfo.value = DialogInfo(title, msg, showConfirmButton)
+    _msgDialogInfo.value = DialogInfo(title = title, message = msg, showConfirmButton = showConfirmButton)
   }
 
   // Called after user dismiss the Info dialog. If we don't consume, a config change redisplays the

@@ -55,7 +55,7 @@ fun InspectRoute(
   // Observes values needed by the InspectScreen.
   val deviceMatterInfoList by inspectViewModel.deviceMatterInfoList.collectAsState()
 
-  LifecycleResumeEffect {
+  LifecycleResumeEffect(Unit) {
     Timber.d("LifecycleResumeEffect: selectedDeviceId [$deviceId]")
     inspectViewModel.inspectDevice(deviceId)
     onPauseOrDispose {

@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2024 Google LLC
+// SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
 package io.aether.android.screens.commissionable
@@ -21,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -83,19 +85,19 @@ fun MatterBeaconItem(beacon: MatterBeacon) {
     )
     Column(modifier = Modifier.padding(8.dp).align(Alignment.CenterVertically)) {
       val text: String
-      val color: androidx.compose.ui.graphics.Color
+      val color: Color
       if (beacon.transport is Transport.Mdns) {
         val active = beacon.transport.active
         if (!active) {
           text = beacon.name + " [off]"
-          color = androidx.compose.ui.graphics.Color.Red
+          color = MaterialTheme.colorScheme.error
         } else {
           text = beacon.name
-          color = androidx.compose.ui.graphics.Color.Black
+          color = MaterialTheme.colorScheme.onSurface
         }
       } else {
         text = beacon.name
-        color = androidx.compose.ui.graphics.Color.Black
+        color = MaterialTheme.colorScheme.onSurface
       }
       Text(text = text, color = color, style = MaterialTheme.typography.titleMedium)
       Text(

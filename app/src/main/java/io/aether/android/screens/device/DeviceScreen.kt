@@ -1,21 +1,18 @@
 // SPDX-FileCopyrightText: 2024 Google LLC
+// SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
 package io.aether.android.screens.device
 
 import android.app.Activity
-import android.content.Context
-import android.os.SystemClock
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,17 +20,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -52,23 +52,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
-import com.google.android.gms.home.matter.Matter
-import com.google.android.gms.home.matter.commissioning.CommissioningWindow
-import com.google.android.gms.home.matter.commissioning.ShareDeviceRequest
-import com.google.android.gms.home.matter.common.DeviceDescriptor
-import com.google.android.gms.home.matter.common.Discriminator
-import io.aether.android.DISCRIMINATOR
 import io.aether.android.Device
 import io.aether.android.DeviceState
-import io.aether.android.OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS
 import io.aether.android.R
-import io.aether.android.SETUP_PIN_CODE
 import io.aether.android.formatTimestamp
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.home.DeviceUiModel
 import io.aether.android.screens.thread.getActivity
 import io.aether.android.stateDisplayString
+import io.aether.android.nodeIdFor
 import com.google.protobuf.Timestamp
 import timber.log.Timber
 
@@ -89,15 +82,18 @@ import timber.log.Timber
 internal fun DeviceRoute(
   innerPadding: PaddingValues,
   updateTitle: (title: String) -> Unit,
+  updateActions: (@Composable RowScope.() -> Unit) -> Unit,
   navigateToHome: () -> Unit,
   navigateToInspect: (deviceId: Long) -> Unit,
   deviceId: Long,
+  deviceName: String,
   deviceViewModel: DeviceViewModel = hiltViewModel(),
 ) {
   Timber.d("DeviceRoute deviceId [$deviceId]")
 
   // Launching GPS commissioning requires Activity.
   val activity = LocalContext.current.getActivity()
+  var isResumed by remember { mutableStateOf(false) }
 
   // Observes values needed by the DeviceScreen.
   val deviceUiModel by deviceViewModel.deviceUiModel.collectAsState()
@@ -170,22 +166,13 @@ internal fun DeviceRoute(
 
   // Inspect button click handler.
   // isOnline must be provided in InspectScreen because it is updated there.
-  val onInspect: (isOnline: Boolean) -> Unit = remember {
-    { isOnline ->
-      if (isOnline) {
-        val nodeId =
-          if (deviceUiModel!!.device.nodeId != 0L) {
-            deviceUiModel!!.device.nodeId
-          } else {
-            deviceUiModel!!.device.deviceId
-          }
-        navigateToInspect(nodeId)
-      } else {
-        deviceViewModel.showMsgDialog(
-          "Inspect Device",
-          "Device is offline, so it cannot be inspected.",
-        )
-      }
+  val inspectDeviceOfflineTitle = stringResource(R.string.inspect_device_offline_title)
+  val inspectDeviceOfflineMessage = stringResource(R.string.inspect_device_offline)
+  val onInspect: (isOnline: Boolean) -> Unit = { isOnline ->
+    if (isOnline) {
+      navigateToInspect(nodeIdFor(deviceUiModel!!.device))
+    } else {
+      deviceViewModel.showMsgDialog(inspectDeviceOfflineTitle, inspectDeviceOfflineMessage)
     }
   }
 
@@ -215,7 +202,7 @@ internal fun DeviceRoute(
     deviceViewModel.pairingWindowOpenForDeviceSharing.collectAsState()
   if (pairingWindowOpenForDeviceSharing) {
     deviceViewModel.resetPairingWindowOpenForDeviceSharing()
-    shareDevice(activity!!.applicationContext, shareDeviceLauncher, deviceViewModel)
+    shareDevice(activity!!.applicationContext, shareDeviceLauncher, deviceViewModel, deviceUiModel!!.device.name)
   }
 
   // Share Device button click.
@@ -226,12 +213,13 @@ internal fun DeviceRoute(
   }
 
   // When app is sent to the background, and pulled back, this kicks in.
-  LifecycleResumeEffect {
+  LifecycleResumeEffect(Unit) {
+    isResumed = true
     Timber.d("LifecycleResumeEffect: deviceUiModel [${deviceUiModel?.device?.deviceId}]")
     deviceViewModel.loadDevice(deviceId)
-    deviceViewModel.startMonitoringStateChanges()
     onPauseOrDispose {
       // do any needed clean up here
+      isResumed = false
       Timber.d(
         "LifecycleResumeEffect:onPauseOrDispose deviceUiModel [${deviceUiModel?.device?.deviceId}]"
       )
@@ -239,8 +227,55 @@ internal fun DeviceRoute(
     }
   }
 
+  LaunchedEffect(isResumed, deviceUiModel?.device?.deviceId) {
+    if (isResumed && deviceUiModel != null) {
+      deviceViewModel.startMonitoringStateChanges()
+    }
+  }
+
+  // Set the title to the device name from navigation args immediately (no lag),
+  // then keep it in sync once the model is loaded (e.g. after a rename).
+  val defaultDeviceTitle = stringResource(R.string.device_screen_title)
   LaunchedEffect(Unit) {
-    updateTitle("Device")
+    updateTitle(deviceName.ifBlank { defaultDeviceTitle })
+  }
+  LaunchedEffect(deviceUiModel?.device?.name) {
+    deviceUiModel?.device?.name?.let { updateTitle(it.ifBlank { defaultDeviceTitle }) }
+  }
+
+  // Rename dialog state.
+  var showRenameDialog by remember { mutableStateOf(false) }
+  val onRenameDeviceClick: () -> Unit = remember { { showRenameDialog = true } }
+
+  // Set a pencil/edit action button in the TopAppBar only once the device model is loaded.
+  // LaunchedEffect installs the action when the model becomes available.
+  // DisposableEffect(Unit) is kept separately so onDispose only fires when leaving composition,
+  // not on the null → non-null model transition.
+  LaunchedEffect(deviceUiModel != null) {
+    if (deviceUiModel != null) {
+      updateActions {
+        IconButton(onClick = onRenameDeviceClick) {
+          Icon(
+            imageVector = Icons.Filled.Edit,
+            contentDescription = stringResource(R.string.rename_device),
+          )
+        }
+      }
+    }
+  }
+  DisposableEffect(Unit) {
+    onDispose { updateActions {} }
+  }
+
+  if (showRenameDialog) {
+    RenameDeviceDialog(
+      currentName = deviceUiModel?.device?.name ?: deviceName,
+      onConfirm = { newName ->
+        deviceViewModel.renameDevice(deviceId, newName)
+        showRenameDialog = false
+      },
+      onDismiss = { showRenameDialog = false },
+    )
   }
 
   DeviceScreen(
@@ -282,8 +317,25 @@ private fun DeviceScreen(
   showConfirmDeviceRemovalAlertDialog: Boolean,
   onConfirmDeviceRemovalOutcome: (Boolean) -> Unit,
 ) {
+  // The current state of the device.
+  // The DeviceUiModel is not updated whenever we observe changes in the state of the device.
+  // This is an issue for the "Inspect Device" onClick listener which relies on the device
+  // state to decide whether to show a dialog stating that the device is offline and therefore
+  // the inspect screen cannot be shown, or go show the inspect information (when device is
+  // online).
+  // This is why the state of the device is cached in local variables.
+  var isOnline by remember { mutableStateOf(false) }
+  var isOn by remember { mutableStateOf(false) }
+  var brightness by remember { mutableFloatStateOf(0f) }
+  var colorTemperature by remember { mutableFloatStateOf(0f) }
+  var showShareDeviceAlertDialog by remember { mutableStateOf(false) }
+
+  val brightnessMax = 254f
+  val colorTemperatureMax = 1667f
+
+
   if (deviceUiModel == null) {
-    Text("Still loading the device information")
+    Text(stringResource(R.string.loading_device_info))
     return
   }
 
@@ -293,6 +345,14 @@ private fun DeviceScreen(
   ConfirmDeviceRemovalAlertDialog(
     showConfirmDeviceRemovalAlertDialog,
     onConfirmDeviceRemovalOutcome,
+  )
+  ShareDeviceAlertDialog(
+    showShareDeviceAlertDialog,
+    onConfirm = {
+      showShareDeviceAlertDialog = false
+      onShareDevice()
+    },
+    onDismiss = { showShareDeviceAlertDialog = false },
   )
 
   // Determine whether to use the endpoint list or fall back to the single primary model.
@@ -336,16 +396,14 @@ private fun DeviceScreen(
       )
     }
     // Shared sections (node level).
-    ShareSection(name = deviceUiModel.device.name, onShareDevice)
-    Spacer(modifier = Modifier)
+    ShareDeviceSection { showShareDeviceAlertDialog = true }
     TechnicalInfoSection(deviceUiModel.device, onInspect, anyOnline)
     RemoveDeviceSection(onRemoveDeviceClick)
   }
 }
 
 /**
- * A framed section showing all controls for a single endpoint grouped in one Surface,
- * similar in style to [ShareSection] and [TechnicalInfoSection].
+ * A framed section showing all controls for a single endpoint grouped in one Surface.
  * The label "Endpoint N" is shown when the device has multiple endpoints.
  */
 @Composable
@@ -400,7 +458,7 @@ private fun EndpointControlSection(
     else MaterialTheme.colorScheme.onSurface
 
   Surface(
-    modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal)),
+    modifier = Modifier.fillMaxWidth(),
     border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
     color = bgColor,
     contentColor = contentColor,
@@ -416,65 +474,34 @@ private fun EndpointControlSection(
           modifier = Modifier.padding(bottom = 4.dp),
         )
       }
-      // On/Off row
-      Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth(),
-      ) {
-        Text(
-          text = stateDisplayString(isOnline, isOn),
-          style = MaterialTheme.typography.bodyLarge,
-        )
-        Spacer(Modifier.weight(1f))
-        Switch(
-          checked = isOn,
-          onCheckedChange = { value ->
-            onOnOffClick(value)
-          },
-        )
+      OnOffStateSection(isOnline, isOn) { value ->
+        onOnOffClick(value)
+        isOn = value
       }
-      // Brightness slider
       if (supportsLevelControl) {
-        Text(
-          text = stringResource(R.string.brightness),
-          modifier = Modifier.padding(top = 8.dp),
-        )
-        Slider(
-          enabled = isOnline && isOn,
-          value = brightness,
-          onValueChange = { brightness = it },
+        LevelControl(
+          title = stringResource(R.string.brightness),
+          isOnline = isOnline,
+          isOn = isOn,
+          level = brightness,
+          onStateChange = { brightness = it },
           onValueChangeFinished = {
             val brightnessVal = (brightness * brightnessMax).toInt()
             onBrightnessChange(brightnessVal)
           },
-          valueRange = 0f..1f,
-        )
-        Text(
-          text = (brightness * 100).toInt().toString(),
-          textAlign = TextAlign.Center,
-          modifier = Modifier.fillMaxWidth(),
         )
       }
-      // Color temperature slider
       if (supportsColorTemperature) {
-        Text(
-          text = stringResource(R.string.color_temperature),
-          modifier = Modifier.padding(top = 8.dp),
-        )
-        Slider(
-          enabled = isOnline && isOn,
-          value = colorTemperature,
-          onValueChange = { colorTemperature = it },
+        LevelControl(
+          title = stringResource(R.string.color_temperature),
+          isOnline = isOnline,
+          isOn = isOn,
+          level = colorTemperature,
+          onStateChange = { colorTemperature = it },
           onValueChangeFinished = {
             val colorTemperatureVal = (colorTemperature * colorTemperatureMax).toInt()
             onColorTemperatureChange(colorTemperatureVal)
           },
-          valueRange = 0f..1f,
-        )
-        Text(
-          text = (colorTemperature * 100).toInt().toString(),
-          textAlign = TextAlign.Center,
-          modifier = Modifier.fillMaxWidth(),
         )
       }
     }
@@ -495,7 +522,7 @@ private fun OnOffStateSection(
     else MaterialTheme.colorScheme.onSurface
   val text = stateDisplayString(isOnline, isOn)
   Surface(
-    modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal)),
+    modifier = Modifier.fillMaxWidth(),
     border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
     contentColor = contentColor,
     color = bgColor,
@@ -522,7 +549,7 @@ private fun LevelControl(
   onValueChangeFinished: () -> Unit,
 ) {
   Surface(
-    modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal)),
+    modifier = Modifier.fillMaxWidth(),
     border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
     shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
   ) {
@@ -548,36 +575,13 @@ private fun LevelControl(
 }
 
 @Composable
-private fun ShareSection(name: String, onShareDevice: () -> Unit) {
-  Surface(
-    modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal)),
-    border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
-    shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
-  ) {
-    Column(modifier = Modifier.padding(8.dp)) {
-      Text(
-        text = stringResource(R.string.share_device_name, name),
-        style = MaterialTheme.typography.bodyLarge,
-      )
-      Text(
-        text = stringResource(R.string.share_device_body),
-        style = MaterialTheme.typography.bodySmall,
-      )
-      Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        TextButton(onClick = onShareDevice) { Text(stringResource(R.string.share)) }
-      }
-    }
-  }
-}
-
-@Composable
 private fun TechnicalInfoSection(
   device: Device,
   onInspect: (isOnline: Boolean) -> Unit,
   isOnline: Boolean,
 ) {
   Surface(
-    modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal)),
+    modifier = Modifier.fillMaxWidth(),
     border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
     shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
   ) {
@@ -608,130 +612,43 @@ private fun TechnicalInfoSection(
   }
 }
 
-@Composable
-private fun RemoveDeviceSection(onClick: () -> Unit) {
-  Row {
-    TextButton(onClick = onClick) {
-      Icon(Icons.Outlined.Delete, contentDescription = "Localized description")
-      Text(stringResource(R.string.remove_device).uppercase())
-    }
-  }
-}
+// -----------------------------------------------------------------------------------------------
+// Rename Device Dialog
 
 @Composable
-private fun RemoveDeviceAlertDialog(
-  showRemoveDeviceAlertDialog: Boolean,
-  onRemoveDeviceOutcome: (doIt: Boolean) -> Unit,
+private fun RenameDeviceDialog(
+  currentName: String,
+  onConfirm: (name: String) -> Unit,
+  onDismiss: () -> Unit,
 ) {
-  Timber.d("RemoveDeviceAlertDialog [$showRemoveDeviceAlertDialog]")
-  if (!showRemoveDeviceAlertDialog) {
-    return
-  }
+  var inputText by remember(currentName) { mutableStateOf(currentName) }
 
   AlertDialog(
-    title = { Text(text = "Remove this device?") },
+    title = { Text(stringResource(R.string.rename_device)) },
     text = {
-      Text(
-        "This device will be removed and unlinked from this sample app. " +
-          "Other services and connection-types may still have access."
-      )
-    },
-    confirmButton = {
-      Button(onClick = { onRemoveDeviceOutcome(true) }) {
-        Text(stringResource(R.string.yes_remove_it))
-      }
-    },
-    onDismissRequest = {},
-    dismissButton = {
-      Button(onClick = { onRemoveDeviceOutcome(false) }) { Text(stringResource(R.string.cancel)) }
-    },
-  )
-}
-
-@Composable
-private fun ConfirmDeviceRemovalAlertDialog(
-  showConfirmDeviceRemovalAlertDialog: Boolean,
-  onConfirmDeviceRemovalOutcome: (doIt: Boolean) -> Unit,
-) {
-  if (!showConfirmDeviceRemovalAlertDialog) {
-    return
-  }
-
-  var showDialog by remember { mutableStateOf(false) }
-
-  AlertDialog(
-    title = { Text(text = "Error removing the fabric from the device") },
-    text = {
-      Text(
-        "Removing the fabric from the device failed. " +
-          "Do you still want to remove the device from the application?"
+      TextField(
+        value = inputText,
+        onValueChange = { inputText = it },
+        label = { Text(stringResource(R.string.rename_device_label)) },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = true,
       )
     },
     confirmButton = {
       Button(
-        onClick = {
-          showDialog = false
-          onConfirmDeviceRemovalOutcome(true)
-        }
+        onClick = { onConfirm(inputText.trim()) },
+        enabled = inputText.trim().isNotBlank(),
       ) {
-        Text(stringResource(R.string.yes_remove_it))
+        Text(stringResource(R.string.ok))
       }
     },
-    onDismissRequest = {},
     dismissButton = {
-      Button(
-        onClick = {
-          showDialog = false
-          onConfirmDeviceRemovalOutcome(false)
-        }
-      ) {
+      TextButton(onClick = onDismiss) {
         Text(stringResource(R.string.cancel))
       }
     },
+    onDismissRequest = onDismiss,
   )
-}
-
-// ---------------------------------------------------------------------------
-// Share Device
-
-fun shareDevice(
-  context: Context,
-  shareDeviceLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
-  deviceViewModel: DeviceViewModel,
-) {
-  Timber.d("ShareDevice: starting")
-
-  val shareDeviceRequest =
-    ShareDeviceRequest.builder()
-      .setDeviceDescriptor(DeviceDescriptor.builder().build())
-      .setDeviceName("Æther temp device name")
-      .setCommissioningWindow(
-        CommissioningWindow.builder()
-          .setDiscriminator(Discriminator.forLongValue(DISCRIMINATOR))
-          .setPasscode(SETUP_PIN_CODE)
-          .setWindowOpenMillis(SystemClock.elapsedRealtime())
-          .setDurationSeconds(OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS.toLong())
-          .build()
-      )
-      .build()
-  Timber.d(
-    "ShareDevice: shareDeviceRequest " +
-      "onboardingPayload [${shareDeviceRequest.commissioningWindow.passcode}] " +
-      "discriminator [${shareDeviceRequest.commissioningWindow.discriminator}]"
-  )
-
-  // The call to shareDevice() creates the IntentSender that will eventually be launched
-  // in the fragment to trigger the multi-admin activity in GPS (step 3).
-  Matter.getCommissioningClient(context)
-    .shareDevice(shareDeviceRequest)
-    .addOnSuccessListener { result ->
-      Timber.d("ShareDevice: Success getting the IntentSender: result [${result}]")
-      shareDeviceLauncher.launch(IntentSenderRequest.Builder(result).build())
-    }
-    .addOnFailureListener { error ->
-      Timber.e(error)
-      deviceViewModel.showMsgDialog("Share device failed", error.toString())
-    }
 }
 
 // -----------------------------------------------------------------------------------------------
@@ -768,20 +685,8 @@ private fun OnOffStateSection_Offline() {
 
 @Preview(widthDp = 300)
 @Composable
-private fun ShareSectionPreview() {
-  MaterialTheme { ShareSection("Lightbulb", {}) }
-}
-
-@Preview(widthDp = 300)
-@Composable
 private fun TechnicalInfoSectionPreview() {
   MaterialTheme { TechnicalInfoSection(DeviceTest, {}, true) }
-}
-
-@Preview
-@Composable
-private fun RemoveDeviceSectionPreview() {
-  MaterialTheme { RemoveDeviceSection({ Timber.d("preview", "button clicked") }) }
 }
 
 @Preview(widthDp = 300)

@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2024 Google LLC
+// SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
 package io.aether.android.screens.device
@@ -35,6 +36,10 @@ import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.home.DeviceUiModel
 import io.aether.android.supportsColorTemperature
 import io.aether.android.supportsLevelControl
+import io.aether.android.screens.shared.SetDeviceNameResult
+import io.aether.android.screens.shared.SetDeviceNameUseCase
+import io.aether.android.R
+import androidx.annotation.StringRes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -43,6 +48,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -56,6 +62,7 @@ constructor(
   private val chipClient: ChipClient,
   private val clustersHelper: ClustersHelper,
   private val subscriptionHelper: SubscriptionHelper,
+  private val setDeviceNameUseCase: SetDeviceNameUseCase,
 ) : ViewModel() {
 
   // The UI model for device shown on the Device screen.
@@ -265,6 +272,28 @@ constructor(
   }
 
   // -----------------------------------------------------------------------------------------------
+  // Rename device
+
+  fun renameDevice(deviceId: Long, newName: String) {
+    viewModelScope.launch {
+      when (
+        val result =
+          setDeviceNameUseCase.execute(deviceId, newName) {
+            _deviceUiModel.update { current ->
+              current?.copy(device = current.device.toBuilder().setName(newName).build())
+            }
+          }
+      ) {
+        is SetDeviceNameResult.LocalError -> {
+          Timber.e(result.exception, "Failed to set device name")
+          showMsgDialog(R.string.set_device_name_failed, result.exception.message ?: result.exception.toString())
+        }
+        SetDeviceNameResult.Success -> {}
+      }
+    }
+  }
+
+  // -----------------------------------------------------------------------------------------------
   // Share Device (aka Multi-Admin)
 
   fun openPairingWindow(deviceId: Long) {
@@ -385,7 +414,7 @@ constructor(
     Timber.d("Removing device [${deviceId}]")
     showMsgDialog(
       "Unlinking the device",
-      "Calling the device to remove the sample app's fabric. " +
+      "Calling the device to remove this controller's fabric. " +
         "If the device is offline, this will fail when the call times out, " +
         "and this may take a while.\n\n" +
         "Unlinking the device...",
@@ -596,6 +625,11 @@ constructor(
   }
 
   fun stopMonitoringStateChanges() {
+    val deviceId = deviceUiModel.value?.device?.deviceId
+    if (deviceId == null) {
+      Timber.d("stopMonitoringStateChanges(): no loaded device; skipping.")
+      return
+    }
     when (STATE_CHANGES_MONITORING_MODE) {
       StateChangesMonitoringMode.Subscription -> unsubscribeToPeriodicUpdates()
       StateChangesMonitoringMode.PeriodicRead -> stopDevicePeriodicPing()
@@ -797,7 +831,12 @@ constructor(
 
   fun showMsgDialog(title: String?, msg: String?, showConfirmButton: Boolean = true) {
     Timber.d("showMsgDialog [$title]")
-    _msgDialogInfo.value = DialogInfo(title, msg, showConfirmButton)
+    _msgDialogInfo.value = DialogInfo(title = title, message = msg, showConfirmButton = showConfirmButton)
+  }
+
+  fun showMsgDialog(@StringRes titleRes: Int, msg: String?, showConfirmButton: Boolean = true) {
+    Timber.d("showMsgDialog [titleRes=$titleRes]")
+    _msgDialogInfo.value = DialogInfo(titleRes = titleRes, message = msg, showConfirmButton = showConfirmButton)
   }
 
   // Called after user dismisss the Info dialog. If we don't consume, a config change redisplays the

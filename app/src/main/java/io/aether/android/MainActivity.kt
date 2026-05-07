@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2024 Google LLC
+// SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
 package io.aether.android
@@ -6,7 +7,6 @@ package io.aether.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
 import androidx.navigation.compose.rememberNavController
 import io.aether.android.lifecycle.AppLifecycleObserver
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
     displayPreferences(this)
 
     setContent {
-      MaterialTheme {
+      AetherTheme {
         ProvidePreferenceLocals {
           val navController = rememberNavController()
           AppLayout(navController)
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
   private fun initContextDependentConstants() {
     // versionName is set in build.gradle.
     val packageInfo = packageManager.getPackageInfo(packageName, 0)
-    VERSION_NAME = packageInfo.versionName
+    VERSION_NAME = packageInfo.versionName ?: "v?.?"
     APP_NAME = getString(R.string.app_name)
     packageInfo.packageName
     Timber.i(

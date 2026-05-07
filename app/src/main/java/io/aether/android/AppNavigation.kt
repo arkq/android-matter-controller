@@ -1,9 +1,12 @@
 // SPDX-FileCopyrightText: 2024 Google LLC
+// SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
 package io.aether.android
 
+import android.net.Uri
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
@@ -15,16 +18,12 @@ import io.aether.android.screens.commissionable.CommissionableRoute
 import io.aether.android.screens.device.DeviceRoute
 import io.aether.android.screens.home.HomeRoute
 import io.aether.android.screens.inspect.InspectRoute
-import io.aether.android.screens.settings.SettingsDeveloperUtilitiesRoute
-import io.aether.android.screens.settings.SettingsRoute
 import io.aether.android.screens.thread.ThreadRoute
 
 // Constants for Navigation destinations
 const val DEST_HOME = "home"
 const val DEST_DEVICE = "device"
 const val DEST_INSPECT = "inspect"
-const val DEST_SETTINGS = "settings"
-const val DEST_DEVELOPER_UTILITIES = "developer_utilities"
 const val DEST_COMMISSIONABLE_DEVICES = "commissionable_devices"
 const val DEST_THREAD = "thread"
 
@@ -33,6 +32,7 @@ fun AppNavigation(
   navController: NavHostController,
   innerPadding: PaddingValues,
   updateTitle: (title: String) -> Unit,
+  updateActions: (@Composable RowScope.() -> Unit) -> Unit,
   ) {
   // Lambdas to all destinations needed in our various routes.
   // [Top level Route Composables should not be passed the navController explicitly,
@@ -41,38 +41,37 @@ fun AppNavigation(
   val navigateToHome: () -> Unit = remember {
     { navController.navigate(DEST_HOME) }
   }
-  val navigateToDevice: (deviceId: Long) -> Unit = remember {
-    { navController.navigate("device/$it") }
+  val navigateToDevice: (deviceId: Long, deviceName: String) -> Unit = remember {
+    { deviceId, deviceName ->
+      navController.navigate("$DEST_DEVICE/$deviceId?deviceName=${Uri.encode(deviceName)}")
+    }
   }
   val navigateToInspect: (deviceId: Long) -> Unit = remember {
-    { navController.navigate("inspect/$it") }
-  }
-  val navigateToDeveloperUtilities: () -> Unit = remember {
-    { navController.navigate(DEST_DEVELOPER_UTILITIES) }
-  }
-  val navigateToCommissionables: () -> Unit = remember {
-    { navController.navigate(DEST_COMMISSIONABLE_DEVICES) }
-  }
-  val navigateToThread: () -> Unit = remember {
-    { navController.navigate(DEST_THREAD) }
+    { navController.navigate("$DEST_INSPECT/$it") }
   }
 
   NavHost(navController = navController, startDestination = DEST_HOME) {
     // Home
-    composable("home") { backStackEntry ->
+    composable(DEST_HOME) { backStackEntry ->
         HomeRoute(innerPadding, updateTitle, navigateToDevice)
     }
     // Device
     composable(
-      "$DEST_DEVICE/{deviceId}",
-        arguments = listOf(navArgument("deviceId") { type = NavType.LongType }))
+      "$DEST_DEVICE/{deviceId}?deviceName={deviceName}",
+        arguments = listOf(
+          navArgument("deviceId") { type = NavType.LongType },
+          navArgument("deviceName") { type = NavType.StringType; defaultValue = "" },
+        ))
     {
       DeviceRoute(
         innerPadding,
         updateTitle,
+        updateActions,
         navigateToHome,
         navigateToInspect,
-        it.arguments?.getLong("deviceId")!!)
+        it.arguments?.getLong("deviceId")!!,
+        it.arguments?.getString("deviceName") ?: "",
+      )
     }
     // Inspect device
     composable(
@@ -80,14 +79,6 @@ fun AppNavigation(
       arguments = listOf(navArgument("deviceId") { type = NavType.LongType }))
     {
       InspectRoute(innerPadding, updateTitle, it.arguments?.getLong("deviceId")!!)
-    }
-    // Settings
-    composable(DEST_SETTINGS) {
-      SettingsRoute(innerPadding, updateTitle, navigateToDeveloperUtilities)
-    }
-    // Developer Utilities
-    composable(DEST_DEVELOPER_UTILITIES) {
-      SettingsDeveloperUtilitiesRoute(innerPadding, updateTitle, navigateToCommissionables, navigateToThread)
     }
     // Commissionable devices
     composable(DEST_COMMISSIONABLE_DEVICES) {

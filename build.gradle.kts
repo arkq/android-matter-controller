@@ -12,11 +12,11 @@ plugins {
 
   // Gradle Plugin
   alias(libs.plugins.android.application) apply false
-  alias(libs.plugins.android.library) apply false
 
   // Kotlin plugin
   alias(libs.plugins.kotlin.android) apply false
   alias(libs.plugins.compose.compiler) apply false
+  alias(libs.plugins.ksp) apply false
 
   // Hilt
   alias(libs.plugins.hilt) apply false
