@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -26,9 +25,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -38,16 +35,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -56,12 +50,13 @@ import io.aether.android.Device
 import io.aether.android.DeviceState
 import io.aether.android.R
 import io.aether.android.formatTimestamp
+import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.home.DeviceUiModel
 import io.aether.android.screens.thread.getActivity
-import io.aether.android.stateDisplayString
-import io.aether.android.nodeIdFor
+import io.aether.android.supportsColorTemperature
+import io.aether.android.supportsLevelControl
 import com.google.protobuf.Timestamp
 import timber.log.Timber
 
@@ -298,6 +293,9 @@ internal fun DeviceRoute(
   )
 }
 
+// -----------------------------------------------------------------------------------------------
+// Node-level screen: renders one device-type control per endpoint plus node-level actions.
+
 @Composable
 private fun DeviceScreen(
   innerPadding: PaddingValues,
@@ -317,22 +315,7 @@ private fun DeviceScreen(
   showConfirmDeviceRemovalAlertDialog: Boolean,
   onConfirmDeviceRemovalOutcome: (Boolean) -> Unit,
 ) {
-  // The current state of the device.
-  // The DeviceUiModel is not updated whenever we observe changes in the state of the device.
-  // This is an issue for the "Inspect Device" onClick listener which relies on the device
-  // state to decide whether to show a dialog stating that the device is offline and therefore
-  // the inspect screen cannot be shown, or go show the inspect information (when device is
-  // online).
-  // This is why the state of the device is cached in local variables.
-  var isOnline by remember { mutableStateOf(false) }
-  var isOn by remember { mutableStateOf(false) }
-  var brightness by remember { mutableFloatStateOf(0f) }
-  var colorTemperature by remember { mutableFloatStateOf(0f) }
   var showShareDeviceAlertDialog by remember { mutableStateOf(false) }
-
-  val brightnessMax = 254f
-  val colorTemperatureMax = 1667f
-
 
   if (deviceUiModel == null) {
     Text(stringResource(R.string.loading_device_info))
@@ -355,224 +338,80 @@ private fun DeviceScreen(
     onDismiss = { showShareDeviceAlertDialog = false },
   )
 
-  // Determine whether to use the endpoint list or fall back to the single primary model.
   val endpointsToShow = allEndpointUiModels.ifEmpty { listOf(deviceUiModel) }
   val showEndpointLabel = endpointsToShow.size > 1
 
-  // Track live online status per endpoint so `anyOnline` stays accurate as updates arrive.
-  // The map is keyed by deviceId and seeded from the loaded DeviceUiModel values.
-  var endpointOnlineStates by remember(endpointsToShow) {
-    mutableStateOf(endpointsToShow.associate { it.device.deviceId to it.isOnline })
-  }
-  LaunchedEffect(endpointsToShow, lastUpdatedDeviceState) {
-    val updatedDeviceState = lastUpdatedDeviceState
-    if (updatedDeviceState != null &&
-      endpointsToShow.any { it.device.deviceId == updatedDeviceState.deviceId }
-    ) {
-      endpointOnlineStates = endpointOnlineStates.toMutableMap().apply {
-        put(updatedDeviceState.deviceId, updatedDeviceState.online)
-      }
+  // Derive whether any endpoint is currently online; used to gate the Inspect button.
+  val anyOnline = remember(endpointsToShow, lastUpdatedDeviceState) {
+    val state = lastUpdatedDeviceState
+    endpointsToShow.any { ep ->
+      if (state != null && state.deviceId == ep.device.deviceId) state.online else ep.isOnline
     }
-  }
-  val anyOnline = endpointsToShow.any { endpointModel ->
-    endpointOnlineStates[endpointModel.device.deviceId] ?: endpointModel.isOnline
   }
 
   Column(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(innerPadding)
-      .verticalScroll(rememberScrollState())
+    modifier =
+      Modifier.fillMaxWidth()
+        .padding(innerPadding)
+        .verticalScroll(rememberScrollState())
+        .padding(dimensionResource(R.dimen.margin_normal)),
+    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {
-    // Render one endpoint control section per endpoint.
     endpointsToShow.forEach { endpointModel ->
-      EndpointControlSection(
+      val label = if (showEndpointLabel) "Endpoint ${endpointModel.device.endpoint}" else null
+      EndpointDeviceControl(
         endpointModel = endpointModel,
-        showEndpointLabel = showEndpointLabel,
         lastUpdatedDeviceState = lastUpdatedDeviceState,
+        label = label,
         onOnOffClick = { value -> onOnOffClick(endpointModel, value) },
         onBrightnessChange = { value -> onBrightnessChange(endpointModel, value) },
         onColorTemperatureChange = { value -> onColorTemperatureChange(endpointModel, value) },
       )
     }
-    // Shared sections (node level).
     ShareDeviceSection { showShareDeviceAlertDialog = true }
     TechnicalInfoSection(deviceUiModel.device, onInspect, anyOnline)
     RemoveDeviceSection(onRemoveDeviceClick)
   }
 }
 
-/**
- * A framed section showing all controls for a single endpoint grouped in one Surface.
- * The label "Endpoint N" is shown when the device has multiple endpoints.
- */
+// -----------------------------------------------------------------------------------------------
+// Endpoint dispatcher: selects the device-type control that matches the endpoint's capabilities.
+
 @Composable
-private fun EndpointControlSection(
+private fun EndpointDeviceControl(
   endpointModel: DeviceUiModel,
-  showEndpointLabel: Boolean,
   lastUpdatedDeviceState: DeviceState?,
+  label: String?,
   onOnOffClick: (Boolean) -> Unit,
   onBrightnessChange: (Int) -> Unit,
   onColorTemperatureChange: (Int) -> Unit,
 ) {
-  val brightnessMax = 254f
-  val colorTemperatureMax = 1667f
-
-  var isOnline by remember(endpointModel) { mutableStateOf(endpointModel.isOnline) }
-  var isOn by remember(endpointModel) { mutableStateOf(endpointModel.isOn) }
-  var brightness by remember(endpointModel) { mutableFloatStateOf(endpointModel.level / brightnessMax) }
-  var colorTemperature by remember(endpointModel) { mutableFloatStateOf(endpointModel.colorTemperature / colorTemperatureMax) }
-
-  // Respond to live state updates for this specific endpoint's device.
-  LaunchedEffect(endpointModel, lastUpdatedDeviceState) {
-    if (lastUpdatedDeviceState != null &&
-      lastUpdatedDeviceState.deviceId == endpointModel.device.deviceId
-    ) {
-      isOnline = lastUpdatedDeviceState.online
-      isOn = lastUpdatedDeviceState.on
-      brightness = lastUpdatedDeviceState.level / brightnessMax
-      colorTemperature = lastUpdatedDeviceState.colorTemperature / colorTemperatureMax
-    } else if (lastUpdatedDeviceState == null) {
-      isOnline = endpointModel.isOnline
-      isOn = endpointModel.isOn
-      brightness = endpointModel.level / brightnessMax
-      colorTemperature = endpointModel.colorTemperature / colorTemperatureMax
-    }
-  }
-
-  val supportsLevelControl =
-    endpointModel.device.supportsLevelControl ||
-      endpointModel.device.deviceType == Device.DeviceType.TYPE_DIMMABLE_LIGHT ||
-      endpointModel.device.deviceType == Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT ||
-      endpointModel.device.deviceType == Device.DeviceType.TYPE_EXTENDED_COLOR_LIGHT
-  val supportsColorTemperature =
-    endpointModel.device.supportsColorTemperature ||
-      endpointModel.device.deviceType == Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT ||
-      endpointModel.device.deviceType == Device.DeviceType.TYPE_EXTENDED_COLOR_LIGHT
-
-  val bgColor =
-    if (isOnline && isOn) MaterialTheme.colorScheme.surfaceVariant
-    else MaterialTheme.colorScheme.surface
-  val contentColor =
-    if (isOnline && isOn) MaterialTheme.colorScheme.onSurfaceVariant
-    else MaterialTheme.colorScheme.onSurface
-
-  Surface(
-    modifier = Modifier.fillMaxWidth(),
-    border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
-    color = bgColor,
-    contentColor = contentColor,
-    shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
-  ) {
-    Column(
-      modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content))
-    ) {
-      if (showEndpointLabel) {
-        Text(
-          text = "Endpoint ${endpointModel.device.endpoint}",
-          style = MaterialTheme.typography.labelMedium,
-          modifier = Modifier.padding(bottom = 4.dp),
-        )
-      }
-      OnOffStateSection(isOnline, isOn) { value ->
-        onOnOffClick(value)
-        isOn = value
-      }
-      if (supportsLevelControl) {
-        LevelControl(
-          title = stringResource(R.string.brightness),
-          isOnline = isOnline,
-          isOn = isOn,
-          level = brightness,
-          onStateChange = { brightness = it },
-          onValueChangeFinished = {
-            val brightnessVal = (brightness * brightnessMax).toInt()
-            onBrightnessChange(brightnessVal)
-          },
-        )
-      }
-      if (supportsColorTemperature) {
-        LevelControl(
-          title = stringResource(R.string.color_temperature),
-          isOnline = isOnline,
-          isOn = isOn,
-          level = colorTemperature,
-          onStateChange = { colorTemperature = it },
-          onValueChangeFinished = {
-            val colorTemperatureVal = (colorTemperature * colorTemperatureMax).toInt()
-            onColorTemperatureChange(colorTemperatureVal)
-          },
-        )
-      }
-    }
-  }
-}
-
-@Composable
-private fun OnOffStateSection(
-  isOnline: Boolean,
-  isOn: Boolean,
-  onStateChange: ((Boolean) -> Unit)?,
-) {
-  val bgColor =
-    if (isOnline && isOn) MaterialTheme.colorScheme.surfaceVariant
-    else MaterialTheme.colorScheme.surface
-  val contentColor =
-    if (isOnline && isOn) MaterialTheme.colorScheme.onSurfaceVariant
-    else MaterialTheme.colorScheme.onSurface
-  val text = stateDisplayString(isOnline, isOn)
-  Surface(
-    modifier = Modifier.fillMaxWidth(),
-    border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
-    contentColor = contentColor,
-    color = bgColor,
-    shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
-  ) {
-    Row(
-      verticalAlignment = Alignment.CenterVertically,
-      modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content)),
-    ) {
-      Text(text = text, style = MaterialTheme.typography.bodyLarge)
-      Spacer(Modifier.weight(1f))
-      Switch(checked = isOn, onCheckedChange = onStateChange)
-    }
-  }
-}
-
-@Composable
-private fun LevelControl(
-  title: String,
-  isOnline: Boolean,
-  isOn: Boolean,
-  level: Float,
-  onStateChange: (Float) -> Unit,
-  onValueChangeFinished: () -> Unit,
-) {
-  Surface(
-    modifier = Modifier.fillMaxWidth(),
-    border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
-    shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
-  ) {
-    Column (
-      modifier = Modifier
-        .padding(dimensionResource(R.dimen.padding_surface_content))
-    ) {
-      Text(text = title)
-      Slider(
-        enabled = isOnline && isOn,
-        value = level,
-        onValueChange = onStateChange,
-        onValueChangeFinished = onValueChangeFinished,
-        valueRange = 0f..1f,
+  val device = endpointModel.device
+  when {
+    supportsColorTemperature(device) ->
+      ColorTemperatureDeviceControl(
+        endpointModel,
+        lastUpdatedDeviceState,
+        label,
+        onOnOffClick,
+        onBrightnessChange,
+        onColorTemperatureChange,
       )
-      Text(
-        (level * 100).toInt().toString(),
-        textAlign = TextAlign.Center,
-        modifier = Modifier.fillMaxWidth()
+    supportsLevelControl(device) ->
+      DimmableDeviceControl(
+        endpointModel,
+        lastUpdatedDeviceState,
+        label,
+        onOnOffClick,
+        onBrightnessChange,
       )
-    }
+    else ->
+      OnOffDeviceControl(endpointModel, lastUpdatedDeviceState, label, onOnOffClick)
   }
 }
+
+// -----------------------------------------------------------------------------------------------
+// Technical info section (node level).
 
 @Composable
 private fun TechnicalInfoSection(
@@ -656,35 +495,6 @@ private fun RenameDeviceDialog(
 
 @Preview(widthDp = 300)
 @Composable
-private fun OnOffStateSection_OnlineOn() {
-  MaterialTheme { OnOffStateSection(isOnline = true, isOn = true)
-    { Timber.d("OnOff state changed to $it") }
-  }
-}
-
-@Preview(widthDp = 300)
-@Composable
-private fun BrightnessControl_50() {
-  MaterialTheme {
-    LevelControl(
-      title = stringResource(R.string.brightness),
-      isOnline = true,
-      isOn = true,
-      level = 0.45f,
-      onStateChange = { Timber.d("Brightness changed to $it") },
-      onValueChangeFinished = { Timber.d("Brightness change finished") }
-    )
-  }
-}
-
-@Preview(widthDp = 300)
-@Composable
-private fun OnOffStateSection_Offline() {
-  MaterialTheme { OnOffStateSection(false, true, { Timber.d("OnOff state changed to $it") }) }
-}
-
-@Preview(widthDp = 300)
-@Composable
 private fun TechnicalInfoSectionPreview() {
   MaterialTheme { TechnicalInfoSection(DeviceTest, {}, true) }
 }
@@ -696,17 +506,11 @@ private fun DeviceScreenOnlineOnPreview() {
   val device = DeviceTest
   val deviceUiModel = DeviceUiModel(device, true, true, level = 127)
   val onOnOffClick: (endpointModel: DeviceUiModel, value: Boolean) -> Unit =
-    { _, value ->
-      Timber.d("deviceUiModel [$deviceUiModel] value [$value]")
-    }
+    { _, value -> Timber.d("deviceUiModel [$deviceUiModel] value [$value]") }
   val onBrightnessChange: (endpointModel: DeviceUiModel, value: Int) -> Unit =
-    { _, value ->
-      Timber.d("deviceUiModel [$deviceUiModel] value [$value]")
-    }
+    { _, value -> Timber.d("deviceUiModel [$deviceUiModel] value [$value]") }
   val onColorTemperatureChange: (endpointModel: DeviceUiModel, value: Int) -> Unit =
-    { _, value ->
-      Timber.d("deviceUiModel [$deviceUiModel] value [$value]")
-    }
+    { _, value -> Timber.d("deviceUiModel [$deviceUiModel] value [$value]") }
   MaterialTheme {
     DeviceScreen(
       PaddingValues(),
@@ -739,15 +543,6 @@ private val DeviceState_OnlineOn =
     .setDeviceId(1L)
     .setOn(true)
     .setOnline(true)
-    .build()
-
-// DeviceState -- Offline
-private val DeviceState_Offline =
-  DeviceState.newBuilder()
-    .setDateCaptured(Timestamp.getDefaultInstance())
-    .setDeviceId(1L)
-    .setOn(false)
-    .setOnline(false)
     .build()
 
 private val DeviceTest =
