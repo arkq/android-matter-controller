@@ -4,6 +4,7 @@
 package io.aether.android.screens.inspect
 
 import androidx.lifecycle.*
+import io.aether.android.R
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.screens.common.DialogInfo
@@ -42,7 +43,7 @@ class InspectViewModel @Inject constructor(private val clustersHelper: ClustersH
       } catch (e: Exception) {
         Timber.e("*** EXCEPTION GETTING DEVICE MATTER INFO *****", e)
         _deviceMatterInfoList.value = emptyList()
-        showMsgDialog(R.string.error_introspecting_device, e.message ?: e.toString())
+        showMsgDialog("Error introspecting the device", e.message ?: e.toString())
       }
     }
   }
