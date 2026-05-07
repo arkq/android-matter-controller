@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
- package io.aether.android.screens.device.cluster
+package io.aether.android.screens.device.cluster
 
 /** Raw maximum value for the Level Control cluster's `CurrentLevel` attribute (0–254). */
 internal const val LEVEL_MAX = 254f

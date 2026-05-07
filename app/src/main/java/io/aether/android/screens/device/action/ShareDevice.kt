@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
- package io.aether.android.screens.device.action
+package io.aether.android.screens.device.action
 
 import android.content.Context
 import android.os.SystemClock

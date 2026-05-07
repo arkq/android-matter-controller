@@ -348,7 +348,6 @@ private fun DeviceScreen(
   )
 
   val endpointsToShow = allEndpointUiModels.ifEmpty { listOf(deviceUiModel) }
-  val showEndpointLabel = endpointsToShow.size > 1
 
   // Derive whether any endpoint is currently online; used to gate the Inspect button.
   val anyOnline = remember(endpointsToShow, lastUpdatedDeviceState) {
@@ -367,18 +366,24 @@ private fun DeviceScreen(
     verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {
     endpointsToShow.forEach { endpointModel ->
-      val label = if (showEndpointLabel) "Endpoint ${endpointModel.device.endpoint}" else null
-      EndpointDeviceControl(
-        endpointModel = endpointModel,
-        lastUpdatedDeviceState = lastUpdatedDeviceState,
-        label = label,
-        onOnOffClick = { value -> onOnOffClick(endpointModel, value) },
-        onBrightnessChange = { value -> onBrightnessChange(endpointModel, value) },
-        onColorTemperatureChange = { value -> onColorTemperatureChange(endpointModel, value) },
-      )
+      Surface(
+        modifier = Modifier.fillMaxWidth(),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+        shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
+      ) {
+        Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content))) {
+          EndpointDeviceControl(
+            endpointModel = endpointModel,
+            lastUpdatedDeviceState = lastUpdatedDeviceState,
+            onOnOffClick = { value -> onOnOffClick(endpointModel, value) },
+            onBrightnessChange = { value -> onBrightnessChange(endpointModel, value) },
+            onColorTemperatureChange = { value -> onColorTemperatureChange(endpointModel, value) },
+          )
+        }
+      }
     }
-    ShareDeviceSection { showShareDeviceAlertDialog = true }
     TechnicalInfoSection(deviceUiModel.device, onInspect, anyOnline)
+    ShareDeviceSection { showShareDeviceAlertDialog = true }
     RemoveDeviceSection(onRemoveDeviceClick)
   }
 }
@@ -390,7 +395,6 @@ private fun DeviceScreen(
 private fun EndpointDeviceControl(
   endpointModel: DeviceUiModel,
   lastUpdatedDeviceState: DeviceState?,
-  label: String?,
   onOnOffClick: (Boolean) -> Unit,
   onBrightnessChange: (Int) -> Unit,
   onColorTemperatureChange: (Int) -> Unit,
@@ -401,7 +405,6 @@ private fun EndpointDeviceControl(
       ColorTemperatureDeviceControl(
         endpointModel,
         lastUpdatedDeviceState,
-        label,
         onOnOffClick,
         onBrightnessChange,
         onColorTemperatureChange,
@@ -410,12 +413,11 @@ private fun EndpointDeviceControl(
       DimmableDeviceControl(
         endpointModel,
         lastUpdatedDeviceState,
-        label,
         onOnOffClick,
         onBrightnessChange,
       )
     else ->
-      OnOffDeviceControl(endpointModel, lastUpdatedDeviceState, label, onOnOffClick)
+      OnOffDeviceControl(endpointModel, lastUpdatedDeviceState, onOnOffClick)
   }
 }
 

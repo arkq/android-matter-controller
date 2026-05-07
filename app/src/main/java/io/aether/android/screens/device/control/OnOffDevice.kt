@@ -29,14 +29,12 @@ import timber.log.Timber
  * @param endpointModel the endpoint whose state is shown
  * @param lastUpdatedDeviceState the most recent state broadcast from the repository; used to keep
  *   local state in sync without a full model reload
- * @param label optional label shown above the controls (e.g. "Endpoint 2")
  * @param onOnOffClick called when the user toggles the switch; receives the new on/off value
  */
 @Composable
 internal fun OnOffDeviceControl(
   endpointModel: DeviceUiModel,
   lastUpdatedDeviceState: DeviceState?,
-  label: String?,
   onOnOffClick: (Boolean) -> Unit,
 ) {
   var isOnline by remember(endpointModel) { mutableStateOf(endpointModel.isOnline) }
@@ -56,7 +54,6 @@ internal fun OnOffDeviceControl(
   }
 
   Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal))) {
-    EndpointLabel(label)
     OnOffClusterControl(
       isOnline = isOnline,
       isOn = isOn,
@@ -88,7 +85,6 @@ private fun OnOffDeviceControl_Online() {
     OnOffDeviceControl(
       endpointModel = model,
       lastUpdatedDeviceState = null,
-      label = null,
       onOnOffClick = { Timber.d("onOff: $it") },
     )
   }

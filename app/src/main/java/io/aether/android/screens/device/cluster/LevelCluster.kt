@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
- package io.aether.android.screens.device.cluster
+package io.aether.android.screens.device.cluster
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column

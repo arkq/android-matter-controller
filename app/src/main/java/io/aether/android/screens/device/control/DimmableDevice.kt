@@ -33,7 +33,6 @@ import timber.log.Timber
  *
  * @param endpointModel the endpoint whose state is shown
  * @param lastUpdatedDeviceState the most recent state broadcast from the repository
- * @param label optional label shown above the controls (e.g. "Endpoint 2")
  * @param onOnOffClick called when the user toggles the switch
  * @param onBrightnessChange called when the user finishes moving the brightness slider; receives
  *   the raw cluster value in the range `0..254`
@@ -42,7 +41,6 @@ import timber.log.Timber
 internal fun DimmableDeviceControl(
   endpointModel: DeviceUiModel,
   lastUpdatedDeviceState: DeviceState?,
-  label: String?,
   onOnOffClick: (Boolean) -> Unit,
   onBrightnessChange: (Int) -> Unit,
 ) {
@@ -66,7 +64,6 @@ internal fun DimmableDeviceControl(
   }
 
   Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal))) {
-    EndpointLabel(label)
     OnOffClusterControl(
       isOnline = isOnline,
       isOn = isOn,
@@ -107,7 +104,6 @@ private fun DimmableDeviceControl_Online() {
     DimmableDeviceControl(
       endpointModel = model,
       lastUpdatedDeviceState = null,
-      label = null,
       onOnOffClick = { Timber.d("onOff: $it") },
       onBrightnessChange = { Timber.d("brightness: $it") },
     )

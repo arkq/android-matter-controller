@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
- package io.aether.android.screens.device.control
+package io.aether.android.screens.device.control
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,7 +34,6 @@ import timber.log.Timber
  *
  * @param endpointModel the endpoint whose state is shown
  * @param lastUpdatedDeviceState the most recent state broadcast from the repository
- * @param label optional label shown above the controls (e.g. "Endpoint 2")
  * @param onOnOffClick called when the user toggles the switch
  * @param onBrightnessChange called when the brightness slider is released; raw value `0..254`
  * @param onColorTemperatureChange called when the colour-temperature slider is released; raw
@@ -44,7 +43,6 @@ import timber.log.Timber
 internal fun ColorTemperatureDeviceControl(
   endpointModel: DeviceUiModel,
   lastUpdatedDeviceState: DeviceState?,
-  label: String?,
   onOnOffClick: (Boolean) -> Unit,
   onBrightnessChange: (Int) -> Unit,
   onColorTemperatureChange: (Int) -> Unit,
@@ -73,7 +71,6 @@ internal fun ColorTemperatureDeviceControl(
   }
 
   Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal))) {
-    EndpointLabel(label)
     OnOffClusterControl(
       isOnline = isOnline,
       isOn = isOn,
@@ -127,7 +124,6 @@ private fun ColorTemperatureDeviceControl_Online() {
     ColorTemperatureDeviceControl(
       endpointModel = model,
       lastUpdatedDeviceState = null,
-      label = null,
       onOnOffClick = { Timber.d("onOff: $it") },
       onBrightnessChange = { Timber.d("brightness: $it") },
       onColorTemperatureChange = { Timber.d("colorTemp: $it") },
