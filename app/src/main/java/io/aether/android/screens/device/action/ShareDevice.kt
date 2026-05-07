@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.device
+ package io.aether.android.screens.device.action
 
 import android.content.Context
 import android.os.SystemClock
@@ -32,6 +32,7 @@ import io.aether.android.DISCRIMINATOR
 import io.aether.android.OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS
 import io.aether.android.R
 import io.aether.android.SETUP_PIN_CODE
+import io.aether.android.screens.device.DeviceViewModel
 import timber.log.Timber
 
 @Composable

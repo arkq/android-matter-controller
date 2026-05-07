@@ -51,6 +51,15 @@ import io.aether.android.DeviceState
 import io.aether.android.R
 import io.aether.android.formatTimestamp
 import io.aether.android.nodeIdFor
+import io.aether.android.screens.device.action.ConfirmDeviceRemovalAlertDialog
+import io.aether.android.screens.device.action.RemoveDeviceAlertDialog
+import io.aether.android.screens.device.action.RemoveDeviceSection
+import io.aether.android.screens.device.action.ShareDeviceAlertDialog
+import io.aether.android.screens.device.action.ShareDeviceSection
+import io.aether.android.screens.device.action.shareDevice
+import io.aether.android.screens.device.control.ColorTemperatureDeviceControl
+import io.aether.android.screens.device.control.DimmableDeviceControl
+import io.aether.android.screens.device.control.OnOffDeviceControl
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.home.DeviceUiModel

@@ -34,12 +34,13 @@ SPDX-License-Identifier: Apache-2.0
 - Add a custom drawable only when no suitable icon exists anywhere in the
   Material Icons library.
 
-### 4. One Responsibility Per File
+### 4. No Monster Files and God Classes
 
 - Each file must contain a **single, well-defined responsibility**. No
-  "cathedral files" that bundle unrelated composables, classes, or logic.
+  monster files that bundle unrelated composables, classes, or logic.
 
 - Concretely for Compose UI:
+
   - Each Matter **cluster control** lives in its own file
     (e.g. `OnOffCluster.kt`, `LevelCluster.kt`).
   - Each **device-type control** (a cluster aggregate tailored to a specific

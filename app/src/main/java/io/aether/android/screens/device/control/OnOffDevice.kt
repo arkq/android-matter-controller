@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.device
+package io.aether.android.screens.device.control
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +18,7 @@ import com.google.protobuf.Timestamp
 import io.aether.android.Device
 import io.aether.android.DeviceState
 import io.aether.android.R
+import io.aether.android.screens.device.cluster.OnOffClusterControl
 import io.aether.android.screens.home.DeviceUiModel
 import timber.log.Timber
 

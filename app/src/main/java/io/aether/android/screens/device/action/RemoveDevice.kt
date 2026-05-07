@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.device
+ package io.aether.android.screens.device.action
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth

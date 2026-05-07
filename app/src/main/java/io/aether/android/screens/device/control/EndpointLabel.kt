@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.device
+package io.aether.android.screens.device.control
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
