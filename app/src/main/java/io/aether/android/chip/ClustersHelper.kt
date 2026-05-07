@@ -695,7 +695,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
                       override fun onError(ex: Exception) {
                           Timber.e(ex, "readColorControlClusterAttributeList failure")
-                          continuation.resumeWithException(ex)
+                          continuation.resume(emptyList())
                       }
                   })
       }

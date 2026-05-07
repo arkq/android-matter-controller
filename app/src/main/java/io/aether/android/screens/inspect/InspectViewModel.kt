@@ -42,7 +42,7 @@ class InspectViewModel @Inject constructor(private val clustersHelper: ClustersH
       } catch (e: Exception) {
         Timber.e("*** EXCEPTION GETTING DEVICE MATTER INFO *****", e)
         _deviceMatterInfoList.value = emptyList()
-        showMsgDialog("Error introspecting the device", e.toString())
+        showMsgDialog("Error introspecting the device", e.message ?: e.toString())
       }
     }
   }

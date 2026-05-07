@@ -110,6 +110,16 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
     return devicesStateFlow.first()
   }
 
+  suspend fun removeDeviceState(deviceId: Long) {
+    val devicesState = devicesStateFlow.first()
+    val index = (0 until devicesState.devicesStateCount)
+        .firstOrNull { devicesState.getDevicesState(it).deviceId == deviceId }
+        ?: return
+    devicesStateDataStore.updateData { state ->
+      state.toBuilder().removeDevicesState(index).build()
+    }
+  }
+
   suspend fun clearAllData() {
     devicesStateDataStore.updateData { devicesStateList ->
       devicesStateList.toBuilder().clear().build()

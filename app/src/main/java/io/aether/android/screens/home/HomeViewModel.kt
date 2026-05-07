@@ -330,6 +330,7 @@ constructor(
             info.endpoint != 0 && info.serverClusters.contains(OnOffClusterId)
           }
 
+        devicesRepository.seedLastDeviceIdIfNeeded()
         if (appEndpoints.isEmpty()) {
           // Fallback for devices that expose no application endpoints with On/Off cluster
           // (e.g. legacy or non-standard devices). Fall back to endpoint 1 and infer
@@ -401,19 +402,17 @@ constructor(
           }
         }
       } catch (e: Exception) {
-        val title = "Adding device to app's repository failed"
         val msg = "Adding device [${nodeId}] [${deviceName}] to app's repository failed."
-        Timber.e(msg, e)
-        showMsgDialog(title, "$msg\n\n$e")
+        Timber.e(e, msg)
+        showMsgDialog(R.string.add_device_to_repository_failed, "$msg\n\n${e.message ?: e}")
       }
 
       // update device name
       try {
         clustersHelper.writeBasicClusterNodeLabelAttribute(nodeId, deviceName)
       } catch (ex: Exception) {
-        val title = "Failed to write NodeLabel"
-        Timber.e(title, ex)
-        showMsgDialog(title, "$ex")
+        Timber.e(ex, "Failed to write NodeLabel")
+        showMsgDialog(R.string.write_node_label_failed, ex.message ?: ex.toString())
       }
     }
   }

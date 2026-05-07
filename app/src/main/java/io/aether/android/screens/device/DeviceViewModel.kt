@@ -102,10 +102,12 @@ constructor(
     _pairingWindowOpenForDeviceSharing.asStateFlow()
 
   private suspend fun removeAllLogicalDevicesForNode(nodeId: Long) {
-    val devices = devicesRepository.getAllDevices().devicesList
-    devices
+    val devicesForNode = devicesRepository.getAllDevices().devicesList
       .filter { nodeIdFor(it) == nodeId }
-      .forEach { devicesRepository.removeDevice(it.deviceId) }
+    devicesForNode.forEach { device ->
+      devicesStateRepository.removeDeviceState(device.deviceId)
+      devicesRepository.removeDevice(device.deviceId)
+    }
   }
 
   // -----------------------------------------------------------------------------------------------
@@ -317,7 +319,7 @@ constructor(
         dismissMsgDialog()
         val msg = "Failed to open the commissioning window"
         Timber.d("ShareDevice: $msg [$e]")
-        showMsgDialog(msg, e.toString())
+        showMsgDialog(msg, e.message ?: e.toString())
       }
     }
   }
@@ -480,7 +482,7 @@ constructor(
           current?.colorTemperature ?: deviceUiModel.colorTemperature,
         )
       } catch (e: Throwable) {
-        Timber.e("Failed setting on/off state")
+        Timber.e(e, "Failed setting on/off state")
       }
     }
   }
@@ -510,7 +512,7 @@ constructor(
           current?.colorTemperature ?: deviceUiModel.colorTemperature,
         )
       } catch (e: Throwable) {
-        Timber.e("Failed setting level")
+        Timber.e(e, "Failed setting level")
       }
     }
   }
@@ -540,7 +542,7 @@ constructor(
           colorTemperature,
         )
       } catch (e: Throwable) {
-        Timber.e("Failed setting color temperature")
+        Timber.e(e, "Failed setting color temperature")
       }
     }
   }
@@ -762,15 +764,16 @@ constructor(
       "${LocalDateTime.now()} startDevicePeriodicPing every $PERIODIC_READ_INTERVAL_DEVICE_SCREEN_SECONDS seconds"
     )
     devicePeriodicPingEnabled = true
-    runDevicePeriodicUpdate(allEndpointUiModels.value.ifEmpty { listOfNotNull(deviceUiModel.value) })
+    runDevicePeriodicUpdate()
   }
 
-  private fun runDevicePeriodicUpdate(endpointModels: List<DeviceUiModel>) {
+  private fun runDevicePeriodicUpdate() {
     if (PERIODIC_READ_INTERVAL_DEVICE_SCREEN_SECONDS == -1) {
       return
     }
     viewModelScope.launch {
       while (devicePeriodicPingEnabled) {
+        val endpointModels = allEndpointUiModels.value.ifEmpty { listOfNotNull(deviceUiModel.value) }
         endpointModels.forEach { endpointUiModel ->
           var isOn: Boolean?
           var isOnline: Boolean

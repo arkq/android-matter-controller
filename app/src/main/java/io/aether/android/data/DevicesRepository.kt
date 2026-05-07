@@ -99,6 +99,20 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
     return devicesFlow.first()
   }
 
+  /**
+   * Ensures last_device_id is at least as large as the largest existing deviceId.
+   * Guards against collisions on installs that previously used Matter nodeIds as deviceIds.
+   */
+  suspend fun seedLastDeviceIdIfNeeded() {
+    val devices = devicesFlow.first()
+    val maxExistingId = devices.devicesList.maxOfOrNull { it.deviceId } ?: 0L
+    if (maxExistingId > devices.lastDeviceId) {
+      devicesDataStore.updateData { d ->
+        d.toBuilder().setLastDeviceId(maxExistingId).build()
+      }
+    }
+  }
+
   suspend fun clearAllData() {
     devicesDataStore.updateData { devicesList -> devicesList.toBuilder().clear().build() }
   }
