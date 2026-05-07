@@ -19,18 +19,13 @@ import io.aether.android.STATE_CHANGES_MONITORING_MODE
 import io.aether.android.StateChangesMonitoringMode
 import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
-import io.aether.android.chip.MatterConstants.ColorControlClusterId
-import io.aether.android.chip.MatterConstants.LevelControlClusterId
-import io.aether.android.chip.MatterConstants.OnOffClusterId
 import io.aether.android.chip.MatterConstants.OnOffAttribute
 import io.aether.android.chip.MatterConstants.LevelAttribute
 import io.aether.android.chip.MatterConstants.ColorTemperatureAttribute
 import io.aether.android.chip.SubscriptionHelper
-import io.aether.android.convertToAppDeviceType
 import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.endpointFor
-import io.aether.android.LEGACY_DEVICE_NODE_ID
 import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.home.DeviceUiModel
@@ -149,132 +144,7 @@ constructor(
           }
         }
         _allEndpointUiModels.value = models
-
-        // If only 1 sibling was found, the device may have been commissioned before
-        // multi-endpoint support was added (nodeId=0) or the commissioning may have
-        // fallen through to the single-endpoint fallback path. Try to discover any
-        // additional endpoints from the live Matter node and persist them so the
-        // user sees all endpoint controls without needing to re-commission.
-        if (siblings.size == 1) {
-          discoverLiveEndpoints(device, nId)
-        }
       }
-    }
-  }
-
-  // -----------------------------------------------------------------------------------------------
-  // Endpoint discovery / migration
-
-  /**
-   * Attempts to enumerate the Matter node's application endpoints from the live device and
-   * persists any that are missing from the local repository.
-   *
-   * This covers two situations that result in only one Device record being stored for a physical
-   * node that has multiple endpoints:
-   *  1. Old-format devices commissioned before multi-endpoint support was added. In those records
-   *     [Device.nodeId] is 0 and [Device.deviceId] carries the Matter node ID. The function also
-   *     patches the existing record to set the proper [Device.nodeId] and [Device.endpoint] fields
-   *     so future loads find all siblings without another network round-trip.
-   *  2. New-format devices where the commissioning fell through to the single-endpoint fallback
-   *     path (e.g. because [ClustersHelper.fetchDeviceMatterInfo] returned an empty parts list for
-   *     the root node).
-   *
-   * On success [_allEndpointUiModels] is updated to include all discovered endpoints. On any
-   * error the function logs the failure and leaves [_allEndpointUiModels] unchanged.
-   */
-  private suspend fun discoverLiveEndpoints(primaryDevice: Device, nodeId: Long) {
-    try {
-      Timber.d("discoverLiveEndpoints: probing node $nodeId for additional endpoints")
-      val deviceMatterInfoList = clustersHelper.fetchDeviceMatterInfo(nodeId)
-      val liveAppEndpoints = deviceMatterInfoList.filter { info ->
-        info.endpoint != 0 && info.serverClusters.contains(OnOffClusterId)
-      }
-      if (liveAppEndpoints.size <= 1) {
-        Timber.d("discoverLiveEndpoints: node $nodeId has only 1 app endpoint; nothing to migrate")
-        return
-      }
-      Timber.d("discoverLiveEndpoints: found ${liveAppEndpoints.size} endpoints for node $nodeId; migrating")
-
-      // For old-format devices (nodeId == 0) the deviceId IS the Matter node ID. Patch the
-      // existing record so that nodeId and endpoint are filled in; subsequent loads will then
-      // find all siblings via the normal nodeIdFor filter without a network call.
-      if (primaryDevice.nodeId == LEGACY_DEVICE_NODE_ID) {
-        val smallestEndpoint = liveAppEndpoints.minOf { it.endpoint }
-        val updatedPrimary = Device.newBuilder(primaryDevice)
-          .setNodeId(nodeId)
-          .setEndpoint(smallestEndpoint)
-          .build()
-        devicesRepository.updateDevice(updatedPrimary)
-        Timber.d("discoverLiveEndpoints: patched primary device ${primaryDevice.deviceId} to nodeId=$nodeId endpoint=$smallestEndpoint")
-      }
-
-      // Reload allDevices after patching the primary device to ensure alreadyStored checks
-      // use the updated repository state.
-      val allDevices = devicesRepository.getAllDevices().devicesList
-
-      // Seed lastDeviceId before allocating new IDs to avoid collisions with legacy records.
-      devicesRepository.seedLastDeviceIdIfNeeded()
-
-      // Create Device and DeviceState records for endpoints not yet in the repository.
-      liveAppEndpoints.forEach { info ->
-        val alreadyStored = allDevices.any {
-          nodeIdFor(it) == nodeId && endpointFor(it) == info.endpoint
-        }
-        if (alreadyStored) return@forEach
-
-        val newDeviceId = devicesRepository.incrementAndReturnLastDeviceId()
-        val endpointType =
-          if (info.types.isNotEmpty()) convertToAppDeviceType(info.types.first())
-          else primaryDevice.deviceType
-        val supportsLevel = info.serverClusters.contains(LevelControlClusterId)
-        // Mirror the commissioning logic: only set supportsColorTemperature when the
-        // Color Control cluster's AttributeList actually contains the color temperature
-        // attribute (id 7). Fall back to false if the read fails.
-        val supportsColorTemperature =
-          if (info.serverClusters.contains(ColorControlClusterId)) {
-            try {
-              clustersHelper.readColorControlClusterAttributeList(nodeId, info.endpoint)
-                .contains(ColorTemperatureAttribute.attributeId)
-            } catch (e: Exception) {
-              Timber.w(e, "discoverLiveEndpoints: could not read Color Control attribute list for endpoint ${info.endpoint}; assuming color temperature unsupported")
-              false
-            }
-          } else false
-        val newDevice = Device.newBuilder()
-          .setName(primaryDevice.name)
-          .setDeviceId(newDeviceId)
-          .setNodeId(nodeId)
-          .setEndpoint(info.endpoint)
-          .setSupportsLevelControl(supportsLevel)
-          .setSupportsColorTemperature(supportsColorTemperature)
-          .setVendorId(primaryDevice.vendorId)
-          .setVendorName(primaryDevice.vendorName)
-          .setProductId(primaryDevice.productId)
-          .setProductName(primaryDevice.productName)
-          .setDeviceType(endpointType)
-          .build()
-        devicesRepository.addDevice(newDevice)
-        devicesStateRepository.addDeviceState(newDeviceId, isOnline = false, isOn = false, level = 0, colorTemperature = 0)
-        Timber.d("discoverLiveEndpoints: added device $newDeviceId for nodeId=$nodeId endpoint=${info.endpoint}")
-      }
-
-      // Reload siblings from the now-updated repository and refresh the UI state.
-      val updatedAllDevices = devicesRepository.getAllDevices().devicesList
-      val updatedSiblings = updatedAllDevices
-        .filter { nodeIdFor(it) == nodeId }
-        .sortedBy { endpointFor(it) }
-      val updatedModels = updatedSiblings.map { sibling ->
-        val siblingState = devicesStateRepository.loadDeviceState(sibling.deviceId)
-        if (siblingState != null) {
-          DeviceUiModel(sibling, siblingState.online, siblingState.on, siblingState.level, siblingState.colorTemperature)
-        } else {
-          DeviceUiModel(sibling, false, false)
-        }
-      }
-      _allEndpointUiModels.value = updatedModels
-      Timber.d("discoverLiveEndpoints: updated _allEndpointUiModels to ${updatedModels.size} entries")
-    } catch (e: Exception) {
-      Timber.e(e, "discoverLiveEndpoints: failed to enumerate live endpoints for node $nodeId")
     }
   }
 
@@ -730,8 +600,9 @@ constructor(
       }
     viewModelScope.launch {
       try {
+        val nodeId = nodeIdFor(primaryDevice)
         val connectedDevicePointer =
-          chipClient.getConnectedDevicePointer(nodeIdFor(primaryDevice))
+          chipClient.getConnectedDevicePointer(nodeId)
         subscriptionHelper.awaitSubscribeToPeriodicUpdates(
           connectedDevicePointer,
           SubscriptionHelper.SubscriptionEstablishedCallbackForDevice(primaryDevice.deviceId),
@@ -739,7 +610,10 @@ constructor(
           reportCallback,
         )
       } catch (e: IllegalStateException) {
-        Timber.e("Can't get connectedDevicePointer for ${primaryDevice.deviceId}.")
+        Timber.e(
+          "Can't get connectedDevicePointer for nodeId=${nodeIdFor(primaryDevice)} " +
+            "(deviceId=${primaryDevice.deviceId})."
+        )
         return@launch
       }
     }
@@ -753,11 +627,15 @@ constructor(
     }
     viewModelScope.launch {
       try {
+        val nodeId = nodeIdFor(primaryDevice)
         val connectedDevicePtr =
-          chipClient.getConnectedDevicePointer(nodeIdFor(primaryDevice))
+          chipClient.getConnectedDevicePointer(nodeId)
         subscriptionHelper.awaitUnsubscribeToPeriodicUpdates(connectedDevicePtr)
       } catch (e: IllegalStateException) {
-        Timber.e("Can't get connectedDevicePointer for ${primaryDevice.deviceId}.")
+        Timber.e(
+          "Can't get connectedDevicePointer for nodeId=${nodeIdFor(primaryDevice)} " +
+            "(deviceId=${primaryDevice.deviceId})."
+        )
         return@launch
       }
     }

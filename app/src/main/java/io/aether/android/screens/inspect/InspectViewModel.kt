@@ -73,11 +73,6 @@ class InspectViewModel @Inject constructor(private val clustersHelper: ClustersH
   // -----------------------------------------------------------------------------------------------
   // UI State update
 
-  private fun showMsgDialog(title: String?, msg: String?, showConfirmButton: Boolean = true) {
-    Timber.d("showMsgDialog [$title]")
-    _msgDialogInfo.value = DialogInfo(title = title, message = msg, showConfirmButton = showConfirmButton)
-  }
-
   private fun showMsgDialog(@StringRes titleRes: Int, msg: String?, showConfirmButton: Boolean = true) {
     Timber.d("showMsgDialog [titleRes=$titleRes]")
     _msgDialogInfo.value = DialogInfo(titleRes = titleRes, message = msg, showConfirmButton = showConfirmButton)

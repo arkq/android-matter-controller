@@ -48,6 +48,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.Device
 import io.aether.android.DeviceState
+import io.aether.android.DevicesState
 import io.aether.android.R
 import io.aether.android.formatTimestamp
 import io.aether.android.nodeIdFor
@@ -148,6 +149,13 @@ internal fun DeviceRoute(
 
   val lastUpdatedDeviceState by
     deviceViewModel.devicesStateRepository.lastUpdatedDeviceState.observeAsState()
+  val devicesState by
+    deviceViewModel.devicesStateRepository.devicesStateFlow.collectAsState(
+      initial = DevicesState.getDefaultInstance()
+    )
+  val endpointOnlineByDeviceId = remember(devicesState) {
+    devicesState.devicesStateList.associate { it.deviceId to it.online }
+  }
 
   // Per-endpoint callbacks: each accepts the specific endpoint DeviceUiModel.
   val onOnOffClick: (endpointModel: DeviceUiModel, value: Boolean) -> Unit = remember {
@@ -287,6 +295,7 @@ internal fun DeviceRoute(
     deviceUiModel,
     allEndpointUiModels,
     lastUpdatedDeviceState,
+    endpointOnlineByDeviceId,
     onOnOffClick,
     onBrightnessChange,
     onColorTemperatureChange,
@@ -311,6 +320,7 @@ private fun DeviceScreen(
   deviceUiModel: DeviceUiModel?,
   allEndpointUiModels: List<DeviceUiModel>,
   lastUpdatedDeviceState: DeviceState?,
+  endpointOnlineByDeviceId: Map<Long, Boolean>,
   onOnOffClick: (endpointModel: DeviceUiModel, value: Boolean) -> Unit,
   onBrightnessChange: (endpointModel: DeviceUiModel, value: Int) -> Unit,
   onColorTemperatureChange: (endpointModel: DeviceUiModel, value: Int) -> Unit,
@@ -349,12 +359,9 @@ private fun DeviceScreen(
 
   val endpointsToShow = allEndpointUiModels.ifEmpty { listOf(deviceUiModel) }
 
-  // Derive whether any endpoint is currently online; used to gate the Inspect button.
-  val anyOnline = remember(endpointsToShow, lastUpdatedDeviceState) {
-    val state = lastUpdatedDeviceState
-    endpointsToShow.any { ep ->
-      if (state != null && state.deviceId == ep.device.deviceId) state.online else ep.isOnline
-    }
+  // Derive whether any endpoint is currently online from repository-backed state.
+  val anyOnline = remember(endpointsToShow, endpointOnlineByDeviceId) {
+    endpointsToShow.any { ep -> endpointOnlineByDeviceId[ep.device.deviceId] ?: ep.isOnline }
   }
 
   Column(
@@ -524,22 +531,23 @@ private fun DeviceScreenOnlineOnPreview() {
     { _, value -> Timber.d("deviceUiModel [$deviceUiModel] value [$value]") }
   MaterialTheme {
     DeviceScreen(
-      PaddingValues(),
-      deviceUiModel,
-      listOf(deviceUiModel),
-      deviceState,
-      onOnOffClick,
-      onBrightnessChange,
-      onColorTemperatureChange,
-      {},
-      {},
-      {},
-      null,
-      {},
-      false,
-      {},
-      false,
-      {},
+      innerPadding = PaddingValues(),
+      deviceUiModel = deviceUiModel,
+      allEndpointUiModels = listOf(deviceUiModel),
+      lastUpdatedDeviceState = deviceState,
+      endpointOnlineByDeviceId = mapOf(deviceUiModel.device.deviceId to true),
+      onOnOffClick = onOnOffClick,
+      onBrightnessChange = onBrightnessChange,
+      onColorTemperatureChange = onColorTemperatureChange,
+      onRemoveDeviceClick = {},
+      onShareDevice = {},
+      onInspect = {},
+      msgDialogInfo = null,
+      onDismissMsgDialog = {},
+      showRemoveDeviceAlertDialog = false,
+      onRemoveDeviceOutcome = {},
+      showConfirmDeviceRemovalAlertDialog = false,
+      onConfirmDeviceRemovalOutcome = {},
     )
   }
 }
