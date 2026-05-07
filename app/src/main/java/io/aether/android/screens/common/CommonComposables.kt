@@ -21,6 +21,7 @@ import timber.log.Timber
 data class DialogInfo(
   @StringRes val titleRes: Int? = null,
   val title: String? = null,
+  @StringRes val messageRes: Int? = null,
   val message: String? = null,
   val showConfirmButton: Boolean = true,
 )
@@ -33,6 +34,8 @@ fun MsgAlertDialog(dialogInfo: DialogInfo?, onDismissMsgAlertDialog: () -> Unit)
 
   val resolvedTitle =
     dialogInfo.titleRes?.let { stringResource(it) } ?: dialogInfo.title
+  val resolvedMessage =
+    dialogInfo.messageRes?.let { stringResource(it) } ?: dialogInfo.message
 
   AlertDialog(
     title = {
@@ -41,8 +44,8 @@ fun MsgAlertDialog(dialogInfo: DialogInfo?, onDismissMsgAlertDialog: () -> Unit)
       }
     },
     text = {
-      if (!dialogInfo.message.isNullOrEmpty()) {
-        Text(dialogInfo.message)
+      if (!resolvedMessage.isNullOrEmpty()) {
+        Text(resolvedMessage)
       }
     },
     confirmButton = {

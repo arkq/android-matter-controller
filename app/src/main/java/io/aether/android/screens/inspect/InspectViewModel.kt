@@ -3,6 +3,7 @@
 
 package io.aether.android.screens.inspect
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.*
 import io.aether.android.R
 import io.aether.android.chip.ClustersHelper
@@ -43,7 +44,7 @@ class InspectViewModel @Inject constructor(private val clustersHelper: ClustersH
       } catch (e: Exception) {
         Timber.e("*** EXCEPTION GETTING DEVICE MATTER INFO *****", e)
         _deviceMatterInfoList.value = emptyList()
-        showMsgDialog("Error introspecting the device", e.message ?: e.toString())
+        showMsgDialog(R.string.error_introspecting_device, e.message ?: e.toString())
       }
     }
   }
@@ -75,6 +76,11 @@ class InspectViewModel @Inject constructor(private val clustersHelper: ClustersH
   private fun showMsgDialog(title: String?, msg: String?, showConfirmButton: Boolean = true) {
     Timber.d("showMsgDialog [$title]")
     _msgDialogInfo.value = DialogInfo(title = title, message = msg, showConfirmButton = showConfirmButton)
+  }
+
+  private fun showMsgDialog(@StringRes titleRes: Int, msg: String?, showConfirmButton: Boolean = true) {
+    Timber.d("showMsgDialog [titleRes=$titleRes]")
+    _msgDialogInfo.value = DialogInfo(titleRes = titleRes, message = msg, showConfirmButton = showConfirmButton)
   }
 
   // Called after user dismiss the Info dialog. If we don't consume, a config change redisplays the

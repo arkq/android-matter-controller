@@ -48,8 +48,6 @@ import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.supportsColorTemperature
 import io.aether.android.supportsLevelControl
-import io.aether.android.screens.shared.SetDeviceNameResult
-import io.aether.android.screens.shared.SetDeviceNameUseCase
 import io.aether.android.R
 import androidx.annotation.StringRes
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -109,7 +107,6 @@ constructor(
   private val clustersHelper: ClustersHelper,
   private val chipClient: ChipClient,
   private val subscriptionHelper: SubscriptionHelper,
-  private val setDeviceNameUseCase: SetDeviceNameUseCase,
 ) : ViewModel() {
 
   // Controls whether the "Message" AlertDialog should be shown in the UI.

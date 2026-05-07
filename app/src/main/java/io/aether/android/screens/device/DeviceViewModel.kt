@@ -305,7 +305,11 @@ constructor(
 
   fun openPairingWindow(deviceId: Long) {
     stopMonitoringStateChanges()
-    showMsgDialog(R.string.opening_pairing_window_title, "This may take a few seconds...", false)
+    showMsgDialog(
+      R.string.opening_pairing_window_title,
+      R.string.opening_pairing_window_message,
+      false,
+    )
     viewModelScope.launch {
       val nodeId = nodeIdFor(devicesRepository.getDevice(deviceId))
       // First we need to open a commissioning window.
@@ -344,11 +348,11 @@ constructor(
     startDevicePeriodicPing()
   }
 
-  private suspend fun openCommissioningWindowUsingOpenPairingWindowWithPin(deviceId: Long) {
+  private suspend fun openCommissioningWindowUsingOpenPairingWindowWithPin(nodeId: Long) {
     // TODO: Should generate random 64 bit value for SETUP_PIN_CODE (taking into account
     // spec constraints)
-    Timber.d("ShareDevice: chipClient.awaitGetConnectedDevicePointer(${deviceId})")
-    val connectedDevicePointer = chipClient.awaitGetConnectedDevicePointer(deviceId)
+    Timber.d("ShareDevice: chipClient.awaitGetConnectedDevicePointer(nodeId=${nodeId})")
+    val connectedDevicePointer = chipClient.awaitGetConnectedDevicePointer(nodeId)
 
     try {
       // Check if there is a commission window that's already open.
@@ -383,16 +387,16 @@ constructor(
 
   // TODO: Was not working when tested. Use openCommissioningWindowUsingOpenPairingWindowWithPin
   // for now.
-  private suspend fun openCommissioningWindowWithAdministratorCommissioningCluster(deviceId: Long) {
+  private suspend fun openCommissioningWindowWithAdministratorCommissioningCluster(nodeId: Long) {
     Timber.d(
-      "ShareDevice: openCommissioningWindowWithAdministratorCommissioningCluster [${deviceId}]"
+      "ShareDevice: openCommissioningWindowWithAdministratorCommissioningCluster [nodeId=${nodeId}]"
     )
     val salt = Random.nextBytes(32)
     val timedInvokeTimeoutMs = 10000
-    val devicePtr = chipClient.awaitGetConnectedDevicePointer(deviceId)
+    val devicePtr = chipClient.awaitGetConnectedDevicePointer(nodeId)
     val verifier = chipClient.computePaseVerifier(devicePtr, SETUP_PIN_CODE, ITERATION, salt)
     clustersHelper.openCommissioningWindowAdministratorCommissioningCluster(
-      deviceId,
+      nodeId,
       0,
       180,
       verifier.pakeVerifier,
@@ -683,36 +687,36 @@ constructor(
       object : SubscriptionHelper.ReportCallbackForDevice(primaryDevice.deviceId) {
         override fun onReport(nodeState: NodeState) {
           super.onReport(nodeState)
-          // Look up the current endpoint list on every report rather than capturing a snapshot at
-          // subscription time, so endpoints that finish loading after the subscription is set up
-          // are also updated.
-          val currentEndpoints = allEndpointUiModels.value.map { it.device }
-          val devicesToUpdate = currentEndpoints.ifEmpty { listOf(primaryDevice) }
-          devicesToUpdate.forEach { device ->
-            val endpoint = endpointFor(device)
-            val onOffState =
-              subscriptionHelper.extractAttribute(nodeState, endpoint, OnOffAttribute) as Boolean?
-            val levelState =
-              subscriptionHelper.extractAttribute(nodeState, endpoint, LevelAttribute) as Int?
-            val colorTemperatureState =
-              subscriptionHelper.extractAttribute(nodeState, endpoint, ColorTemperatureAttribute) as Int?
-            Timber.d("onOffState [${onOffState}] for endpoint $endpoint")
-            if (onOffState == null) {
-              Timber.e("onReport(): WARNING -> onOffState is NULL for endpoint $endpoint. Ignoring.")
-              return@forEach
-            }
-            if (supportsLevelControl(device) && levelState == null) {
-              Timber.e("onReport(): WARNING -> levelState is NULL for endpoint $endpoint. Ignoring.")
-              return@forEach
-            }
-            if (supportsColorTemperature(device) && colorTemperatureState == null) {
-              Timber.e("onReport(): WARNING -> colorTemperatureState is NULL for endpoint $endpoint. Ignoring.")
-              return@forEach
-            }
-            val level = if (supportsLevelControl(device)) levelState!! else 0
-            val colorTemperature =
-              if (supportsColorTemperature(device)) colorTemperatureState!! else 0
-            viewModelScope.launch {
+          viewModelScope.launch {
+            // Look up the current endpoint list on every report rather than capturing a snapshot
+            // at subscription time, so endpoints that finish loading after the subscription is
+            // set up are also updated.
+            val currentEndpoints = allEndpointUiModels.value.map { it.device }
+            val devicesToUpdate = currentEndpoints.ifEmpty { listOf(primaryDevice) }
+            devicesToUpdate.forEach { device ->
+              val endpoint = endpointFor(device)
+              val onOffState =
+                subscriptionHelper.extractAttribute(nodeState, endpoint, OnOffAttribute) as Boolean?
+              val levelState =
+                subscriptionHelper.extractAttribute(nodeState, endpoint, LevelAttribute) as Int?
+              val colorTemperatureState =
+                subscriptionHelper.extractAttribute(nodeState, endpoint, ColorTemperatureAttribute) as Int?
+              Timber.d("onOffState [${onOffState}] for endpoint $endpoint")
+              if (onOffState == null) {
+                Timber.e("onReport(): WARNING -> onOffState is NULL for endpoint $endpoint. Ignoring.")
+                return@forEach
+              }
+              if (supportsLevelControl(device) && levelState == null) {
+                Timber.e("onReport(): WARNING -> levelState is NULL for endpoint $endpoint. Ignoring.")
+                return@forEach
+              }
+              if (supportsColorTemperature(device) && colorTemperatureState == null) {
+                Timber.e("onReport(): WARNING -> colorTemperatureState is NULL for endpoint $endpoint. Ignoring.")
+                return@forEach
+              }
+              val level = if (supportsLevelControl(device)) levelState!! else 0
+              val colorTemperature =
+                if (supportsColorTemperature(device)) colorTemperatureState!! else 0
               devicesStateRepository.updateDeviceState(
                 device.deviceId,
                 isOnline = true,
@@ -845,6 +849,11 @@ constructor(
   fun showMsgDialog(@StringRes titleRes: Int, msg: String?, showConfirmButton: Boolean = true) {
     Timber.d("showMsgDialog [titleRes=$titleRes]")
     _msgDialogInfo.value = DialogInfo(titleRes = titleRes, message = msg, showConfirmButton = showConfirmButton)
+  }
+
+  fun showMsgDialog(@StringRes titleRes: Int, @StringRes msgRes: Int, showConfirmButton: Boolean = true) {
+    Timber.d("showMsgDialog [titleRes=$titleRes msgRes=$msgRes]")
+    _msgDialogInfo.value = DialogInfo(titleRes = titleRes, messageRes = msgRes, showConfirmButton = showConfirmButton)
   }
 
   // Called after user dismisss the Info dialog. If we don't consume, a config change redisplays the
