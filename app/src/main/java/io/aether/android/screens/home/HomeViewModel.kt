@@ -593,20 +593,19 @@ constructor(
           val nId = nodeIdFor(device)
           if (!seenNodes.add(nId)) return@forEach
           Timber.d("runDevicesPeriodicPing deviceId [${device.deviceId}]")
-          val nodeId = nId
           val endpoint = endpointFor(device)
           val hasLevelControl = supportsLevelControl(device)
           val hasColorTemperature = supportsColorTemperature(device)
-          var isOn = clustersHelper.getDeviceStateOnOffCluster(nodeId, endpoint)
+          var isOn = clustersHelper.getDeviceStateOnOffCluster(nId, endpoint)
           val levelRead =
             if (hasLevelControl) {
-              clustersHelper.getDeviceStateLevelControlCluster(nodeId, endpoint)
+              clustersHelper.getDeviceStateLevelControlCluster(nId, endpoint)
             } else {
               null
             }
           val colorTemperatureRead =
             if (hasColorTemperature) {
-              clustersHelper.getColorTemperatureColorControlCluster(nodeId, endpoint)
+              clustersHelper.getColorTemperatureColorControlCluster(nId, endpoint)
             } else {
               null
             }

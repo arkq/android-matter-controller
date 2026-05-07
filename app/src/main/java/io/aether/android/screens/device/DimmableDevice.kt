@@ -23,8 +23,6 @@ import io.aether.android.R
 import io.aether.android.screens.home.DeviceUiModel
 import timber.log.Timber
 
-private const val LEVEL_MAX = 254f
-
 /**
  * Device-type control for endpoints that expose the **OnOff** and **Level Control** clusters
  * (e.g. dimmable lights). Manages local state and delegates rendering to [OnOffClusterControl]

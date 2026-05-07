@@ -23,9 +23,6 @@ import io.aether.android.R
 import io.aether.android.screens.home.DeviceUiModel
 import timber.log.Timber
 
-private const val LEVEL_MAX = 254f
-private const val COLOR_TEMPERATURE_MAX = 1667f
-
 /**
  * Device-type control for endpoints that expose the **OnOff**, **Level Control**, and **Color
  * Control** (colour temperature) clusters (e.g. colour-temperature and extended-colour lights).
