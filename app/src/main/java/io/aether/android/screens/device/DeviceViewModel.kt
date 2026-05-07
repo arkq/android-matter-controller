@@ -195,8 +195,6 @@ constructor(
       }
       Timber.d("discoverLiveEndpoints: found ${liveAppEndpoints.size} endpoints for node $nodeId; migrating")
 
-      val allDevices = devicesRepository.getAllDevices().devicesList
-
       // For old-format devices (nodeId == 0) the deviceId IS the Matter node ID. Patch the
       // existing record so that nodeId and endpoint are filled in; subsequent loads will then
       // find all siblings via the normal nodeIdFor filter without a network call.
@@ -209,6 +207,13 @@ constructor(
         devicesRepository.updateDevice(updatedPrimary)
         Timber.d("discoverLiveEndpoints: patched primary device ${primaryDevice.deviceId} to nodeId=$nodeId endpoint=$smallestEndpoint")
       }
+
+      // Reload allDevices after patching the primary device to ensure alreadyStored checks
+      // use the updated repository state.
+      val allDevices = devicesRepository.getAllDevices().devicesList
+
+      // Seed lastDeviceId before allocating new IDs to avoid collisions with legacy records.
+      devicesRepository.seedLastDeviceIdIfNeeded()
 
       // Create Device and DeviceState records for endpoints not yet in the repository.
       liveAppEndpoints.forEach { info ->
@@ -300,7 +305,7 @@ constructor(
 
   fun openPairingWindow(deviceId: Long) {
     stopMonitoringStateChanges()
-    showMsgDialog("Opening pairing window", "This may take a few seconds...", false)
+    showMsgDialog(R.string.opening_pairing_window_title, "This may take a few seconds...", false)
     viewModelScope.launch {
       val nodeId = nodeIdFor(devicesRepository.getDevice(deviceId))
       // First we need to open a commissioning window.

@@ -67,6 +67,9 @@ SPDX-License-Identifier: Apache-2.0
     <string name="share_device_failed">Share device failed</string>
     <string name="add_device_to_repository_failed">Adding device to app\'s repository failed</string>
     <string name="write_node_label_failed">Failed to write NodeLabel</string>
+    <string name="opening_pairing_window_title">Opening pairing window</string>
+    <string name="opening_pairing_window_message">This may take a few seconds...</string>
+    <string name="error_introspecting_device">Error introspecting the device</string>
 
     <!-- Matter Beacon -->
     <string name="beacon_detail_text" translatable="false">VID: 0x%04X PID: 0x%04X Disc: 0x%03X</string>
