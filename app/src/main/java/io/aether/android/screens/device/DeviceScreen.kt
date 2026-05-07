@@ -12,19 +12,28 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -72,9 +81,11 @@ import timber.log.Timber
 internal fun DeviceRoute(
   innerPadding: PaddingValues,
   updateTitle: (title: String) -> Unit,
+  updateActions: (@Composable RowScope.() -> Unit) -> Unit,
   navigateToHome: () -> Unit,
   navigateToInspect: (deviceId: Long) -> Unit,
   deviceId: Long,
+  deviceName: String,
   deviceViewModel: DeviceViewModel = hiltViewModel(),
 ) {
   Timber.d("DeviceRoute deviceId [$deviceId]")
@@ -220,9 +231,49 @@ internal fun DeviceRoute(
     }
   }
 
-  val deviceScreenTitle = stringResource(R.string.device_screen_title)
+  // Set the title to the device name from navigation args immediately (no lag),
+  // then keep it in sync once the model is loaded (e.g. after a rename).
+  val defaultDeviceTitle = stringResource(R.string.device_screen_title)
   LaunchedEffect(Unit) {
-    updateTitle(deviceScreenTitle)
+    updateTitle(deviceName.ifBlank { defaultDeviceTitle })
+  }
+  LaunchedEffect(deviceUiModel?.device?.name) {
+    deviceUiModel?.device?.name?.let { updateTitle(it.ifBlank { defaultDeviceTitle }) }
+  }
+
+  // Rename dialog state.
+  var showRenameDialog by remember { mutableStateOf(false) }
+  val onRenameDeviceClick: () -> Unit = remember { { showRenameDialog = true } }
+
+  // Set a pencil/edit action button in the TopAppBar only once the device model is loaded.
+  // LaunchedEffect installs the action when the model becomes available.
+  // DisposableEffect(Unit) is kept separately so onDispose only fires when leaving composition,
+  // not on the null → non-null model transition.
+  LaunchedEffect(deviceUiModel != null) {
+    if (deviceUiModel != null) {
+      updateActions {
+        IconButton(onClick = onRenameDeviceClick) {
+          Icon(
+            imageVector = Icons.Filled.Edit,
+            contentDescription = stringResource(R.string.rename_device),
+          )
+        }
+      }
+    }
+  }
+  DisposableEffect(Unit) {
+    onDispose { updateActions {} }
+  }
+
+  if (showRenameDialog) {
+    RenameDeviceDialog(
+      currentName = deviceUiModel?.device?.name ?: deviceName,
+      onConfirm = { newName ->
+        deviceViewModel.renameDevice(deviceId, newName)
+        showRenameDialog = false
+      },
+      onDismiss = { showRenameDialog = false },
+    )
   }
 
   DeviceScreen(
@@ -481,6 +532,45 @@ private fun TechnicalInfoSection(
       }
     }
   }
+}
+
+// -----------------------------------------------------------------------------------------------
+// Rename Device Dialog
+
+@Composable
+private fun RenameDeviceDialog(
+  currentName: String,
+  onConfirm: (name: String) -> Unit,
+  onDismiss: () -> Unit,
+) {
+  var inputText by remember(currentName) { mutableStateOf(currentName) }
+
+  AlertDialog(
+    title = { Text(stringResource(R.string.rename_device)) },
+    text = {
+      TextField(
+        value = inputText,
+        onValueChange = { inputText = it },
+        label = { Text(stringResource(R.string.rename_device_label)) },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = true,
+      )
+    },
+    confirmButton = {
+      Button(
+        onClick = { onConfirm(inputText.trim()) },
+        enabled = inputText.trim().isNotBlank(),
+      ) {
+        Text(stringResource(R.string.ok))
+      }
+    },
+    dismissButton = {
+      TextButton(onClick = onDismiss) {
+        Text(stringResource(R.string.cancel))
+      }
+    },
+    onDismissRequest = onDismiss,
+  )
 }
 
 // -----------------------------------------------------------------------------------------------

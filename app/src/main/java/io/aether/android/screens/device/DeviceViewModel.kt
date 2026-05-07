@@ -26,6 +26,10 @@ import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.home.DeviceUiModel
+import io.aether.android.screens.shared.SetDeviceNameResult
+import io.aether.android.screens.shared.SetDeviceNameUseCase
+import io.aether.android.R
+import androidx.annotation.StringRes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -34,6 +38,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -47,6 +52,7 @@ constructor(
   private val chipClient: ChipClient,
   private val clustersHelper: ClustersHelper,
   private val subscriptionHelper: SubscriptionHelper,
+  private val setDeviceNameUseCase: SetDeviceNameUseCase,
 ) : ViewModel() {
 
   // The UI model for device shown on the Device screen.
@@ -101,6 +107,28 @@ constructor(
           level = deviceState.level
         }
         _deviceUiModel.value = DeviceUiModel(device, isOnline, isOn, level)
+      }
+    }
+  }
+
+  // -----------------------------------------------------------------------------------------------
+  // Rename device
+
+  fun renameDevice(deviceId: Long, newName: String) {
+    viewModelScope.launch {
+      when (
+        val result =
+          setDeviceNameUseCase.execute(deviceId, newName) {
+            _deviceUiModel.update { current ->
+              current?.copy(device = current.device.toBuilder().setName(newName).build())
+            }
+          }
+      ) {
+        is SetDeviceNameResult.LocalError -> {
+          Timber.e(result.exception, "Failed to set device name")
+          showMsgDialog(R.string.set_device_name_failed, result.exception.message ?: result.exception.toString())
+        }
+        SetDeviceNameResult.Success -> {}
       }
     }
   }
@@ -570,7 +598,12 @@ constructor(
 
   fun showMsgDialog(title: String?, msg: String?, showConfirmButton: Boolean = true) {
     Timber.d("showMsgDialog [$title]")
-    _msgDialogInfo.value = DialogInfo(title, msg, showConfirmButton)
+    _msgDialogInfo.value = DialogInfo(title = title, message = msg, showConfirmButton = showConfirmButton)
+  }
+
+  fun showMsgDialog(@StringRes titleRes: Int, msg: String?, showConfirmButton: Boolean = true) {
+    Timber.d("showMsgDialog [titleRes=$titleRes]")
+    _msgDialogInfo.value = DialogInfo(titleRes = titleRes, message = msg, showConfirmButton = showConfirmButton)
   }
 
   // Called after user dismisss the Info dialog. If we don't consume, a config change redisplays the

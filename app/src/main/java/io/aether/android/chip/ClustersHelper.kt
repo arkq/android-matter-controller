@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2022 Google LLC
+// SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
 package io.aether.android.chip
@@ -323,13 +324,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
    * @param nodeLabel device name/node label
    */
   suspend fun writeBasicClusterNodeLabelAttribute(deviceId: Long, nodeLabel: String) {
-    val connectedDevicePtr =
-        try {
-          chipClient.getConnectedDevicePointer(deviceId)
-        } catch (e: IllegalStateException) {
-          Timber.e("Can't get connectedDevicePointer.")
-          return
-        }
+    val connectedDevicePtr = chipClient.getConnectedDevicePointer(deviceId)
 
     return suspendCoroutine { continuation ->
       val callback =

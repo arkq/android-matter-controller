@@ -8,6 +8,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Row
@@ -35,6 +36,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -67,12 +69,27 @@ fun AppLayout(navController: NavHostController) {
     { title -> topAppBarTitle = title }
   }
 
+  var topAppBarActions: @Composable RowScope.() -> Unit by remember {
+    mutableStateOf<@Composable RowScope.() -> Unit>({})
+  }
+
+  val updateTopAppBarActions: (@Composable RowScope.() -> Unit) -> Unit = remember {
+    { actions -> topAppBarActions = actions }
+  }
+
   val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
   val scope = rememberCoroutineScope()
 
   val navBackStackEntry by navController.currentBackStackEntryAsState()
   val currentRoute = navBackStackEntry?.destination?.route
   val isHomeScreen = currentRoute == DEST_HOME || currentRoute == null
+
+  // Clear TopAppBar actions on every route change so screen-specific actions
+  // (e.g. the edit icon on the device screen) disappear at the same time as the
+  // title, not only when the old screen's composable leaves composition.
+  LaunchedEffect(currentRoute) {
+    topAppBarActions = {}
+  }
 
   val developerUtilitiesViewModel: DeveloperUtilitiesViewModel = hiltViewModel()
   val msgDialogInfo by developerUtilitiesViewModel.msgDialogInfo.collectAsState()
@@ -252,10 +269,11 @@ fun AppLayout(navController: NavHostController) {
               }
             }
           },
+          actions = topAppBarActions,
         )
       },
     ) { innerPadding ->
-      AppNavigation(navController, innerPadding, updateTopAppBarTitle)
+      AppNavigation(navController, innerPadding, updateTopAppBarTitle, updateTopAppBarActions)
     }
   }
 

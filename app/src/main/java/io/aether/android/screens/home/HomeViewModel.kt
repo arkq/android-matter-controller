@@ -41,6 +41,10 @@ import io.aether.android.data.DevicesStateRepository
 import io.aether.android.data.UserPreferencesRepository
 import io.aether.android.getTimestampForNow
 import io.aether.android.screens.common.DialogInfo
+import io.aether.android.screens.shared.SetDeviceNameResult
+import io.aether.android.screens.shared.SetDeviceNameUseCase
+import io.aether.android.R
+import androidx.annotation.StringRes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -98,6 +102,7 @@ constructor(
   private val clustersHelper: ClustersHelper,
   private val chipClient: ChipClient,
   private val subscriptionHelper: SubscriptionHelper,
+  private val setDeviceNameUseCase: SetDeviceNameUseCase,
 ) : ViewModel() {
 
   // Controls whether the "Message" AlertDialog should be shown in the UI.
@@ -365,12 +370,12 @@ constructor(
       }
 
       // update device name
-      try {
-        clustersHelper.writeBasicClusterNodeLabelAttribute(deviceId, deviceName)
-      } catch (ex: Exception) {
-        val title = "Failed to write NodeLabel"
-        Timber.e(title, ex)
-        showMsgDialog(title, "$ex")
+      when (val result = setDeviceNameUseCase.execute(deviceId, deviceName)) {
+        is SetDeviceNameResult.LocalError -> {
+          Timber.e(result.exception, "Failed to set device name")
+          showMsgDialog(R.string.set_device_name_failed, result.exception.message ?: result.exception.toString())
+        }
+        SetDeviceNameResult.Success -> {}
       }
     }
   }
@@ -613,7 +618,11 @@ constructor(
   // UI State update
 
   fun showMsgDialog(title: String, msg: String) {
-    _msgDialogInfo.value = DialogInfo(title, msg)
+    _msgDialogInfo.value = DialogInfo(title = title, message = msg)
+  }
+
+  fun showMsgDialog(@StringRes titleRes: Int, msg: String?) {
+    _msgDialogInfo.value = DialogInfo(message = msg, titleRes = titleRes)
   }
 
   // Called after user dismisses the Info dialog. If we don't consume, a config change redisplays

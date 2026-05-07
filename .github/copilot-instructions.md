@@ -25,7 +25,16 @@ SPDX-License-Identifier: Apache-2.0
 - Never hard-code user-visible strings directly in Kotlin/Java source or layout
   XML.
 
-### 3. Remove Orphaned Files
+### 3. Icons Must Use Material Icons
+
+- Always use icons from `androidx.compose.material.icons` (e.g. `Icons.Filled.*`,
+  `Icons.Outlined.*`, `Icons.AutoMirrored.*`) rather than bundling custom
+  drawable XML.
+
+- Add a custom drawable only when no suitable icon exists anywhere in the
+  Material Icons library.
+
+### 4. Remove Orphaned Files
 
 - After making changes, check whether any files, classes, resources, or imports
   have become unused as a direct result of your changes.
@@ -33,7 +42,7 @@ SPDX-License-Identifier: Apache-2.0
 - Remove orphans that **your changes** created. Do not remove preexisting dead
   code unless that is the explicit goal of the task.
 
-### 4. Copyright Headers
+### 5. Copyright Headers
 
 - Every **new file** must include an SPDX copyright header for the current
   year and "The Authors":

@@ -4,7 +4,9 @@
 
 package io.aether.android
 
+import android.net.Uri
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
@@ -30,6 +32,7 @@ fun AppNavigation(
   navController: NavHostController,
   innerPadding: PaddingValues,
   updateTitle: (title: String) -> Unit,
+  updateActions: (@Composable RowScope.() -> Unit) -> Unit,
   ) {
   // Lambdas to all destinations needed in our various routes.
   // [Top level Route Composables should not be passed the navController explicitly,
@@ -38,8 +41,10 @@ fun AppNavigation(
   val navigateToHome: () -> Unit = remember {
     { navController.navigate(DEST_HOME) }
   }
-  val navigateToDevice: (deviceId: Long) -> Unit = remember {
-    { navController.navigate("$DEST_DEVICE/$it") }
+  val navigateToDevice: (deviceId: Long, deviceName: String) -> Unit = remember {
+    { deviceId, deviceName ->
+      navController.navigate("$DEST_DEVICE/$deviceId?deviceName=${Uri.encode(deviceName)}")
+    }
   }
   val navigateToInspect: (deviceId: Long) -> Unit = remember {
     { navController.navigate("$DEST_INSPECT/$it") }
@@ -52,15 +57,21 @@ fun AppNavigation(
     }
     // Device
     composable(
-      "$DEST_DEVICE/{deviceId}",
-        arguments = listOf(navArgument("deviceId") { type = NavType.LongType }))
+      "$DEST_DEVICE/{deviceId}?deviceName={deviceName}",
+        arguments = listOf(
+          navArgument("deviceId") { type = NavType.LongType },
+          navArgument("deviceName") { type = NavType.StringType; defaultValue = "" },
+        ))
     {
       DeviceRoute(
         innerPadding,
         updateTitle,
+        updateActions,
         navigateToHome,
         navigateToInspect,
-        it.arguments?.getLong("deviceId")!!)
+        it.arguments?.getLong("deviceId")!!,
+        it.arguments?.getString("deviceName") ?: "",
+      )
     }
     // Inspect device
     composable(
