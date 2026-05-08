@@ -20,14 +20,21 @@ fun EndpointDetails(endpointInfo: DeviceMatterInfo, modifier: Modifier = Modifie
         text = stringResource(R.string.inspect_device_types),
         style = MaterialTheme.typography.titleSmall,
     )
-    endpointInfo.types.sorted().forEach { deviceType ->
-      val hex = String.format("0x%04X", deviceType)
-      val typeString =
-          MatterConstants.DeviceTypesMap.getOrDefault(
-              deviceType,
-              stringResource(R.string.inspect_unknown),
-          )
-      Text(text = "[${hex}] $typeString", style = MaterialTheme.typography.bodySmall)
+    if (endpointInfo.types.isEmpty()) {
+      Text(
+          text = stringResource(R.string.inspect_none),
+          style = MaterialTheme.typography.bodySmall,
+      )
+    } else {
+      endpointInfo.types.sorted().forEach { deviceType ->
+        val hex = String.format("0x%04X", deviceType)
+        val typeString =
+            MatterConstants.DeviceTypesMap.getOrDefault(
+                deviceType,
+                stringResource(R.string.inspect_unknown),
+            )
+        Text(text = "[${hex}] $typeString", style = MaterialTheme.typography.bodySmall)
+      }
     }
 
     Text(
