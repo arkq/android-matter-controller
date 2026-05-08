@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2024 Google LLC
+// SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
 package io.aether.android.screens.inspect
@@ -16,17 +17,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
-import com.google.protobuf.Timestamp
-import io.aether.android.Device
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
-import io.aether.android.chip.MatterConstants
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import timber.log.Timber
@@ -61,7 +62,8 @@ fun InspectRoute(
     }
   }
 
-  LaunchedEffect(Unit) { updateTitle("Inspect") }
+  val title = stringResource(R.string.inspect)
+  LaunchedEffect(title) { updateTitle(title) }
 
   InspectScreen(innerPadding, deviceMatterInfoList, msgDialogInfo, onDismissMsgDialog)
 }
@@ -81,70 +83,52 @@ private fun InspectScreen(
         modifier =
             Modifier.fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(dimensionResource(R.dimen.margin_normal))
+                .padding(
+                    start = dimensionResource(R.dimen.margin_normal),
+                    top = 0.dp,
+                    end = dimensionResource(R.dimen.margin_normal),
+                    bottom = dimensionResource(R.dimen.margin_normal),
+                )
     ) {
       if (deviceMatterInfoList == null) {
         Text(
-            text =
-                "Fetching device information...\n" +
-                    "Note that this may take a while if the device is offline.",
+            text = stringResource(R.string.inspect_fetching_device_information_message),
             style = MaterialTheme.typography.bodyMedium,
         )
       } else {
         if (deviceMatterInfoList.isEmpty()) {
           Text(
-              text =
-                  "Oops... We could not retrieve any information from the Descriptor Cluster. " +
-                      "This is probably because the device just recently turned \"offline\".",
+              text = stringResource(R.string.inspect_no_information_offline),
               style = MaterialTheme.typography.bodyMedium,
           )
         } else {
-          // Add the Descriptor Cluster Title
-          Text(text = "Descriptor Cluster", style = MaterialTheme.typography.titleLarge)
-          // For each endpoint
-          for (deviceMatterInfo in deviceMatterInfoList) {
-            // Endpoint ID
-            Text(
-                text = "<<< Endpoint ${deviceMatterInfo.endpoint} >>>",
-                style = MaterialTheme.typography.titleMedium,
+          val expandedEndpoints = remember { mutableStateMapOf<Int, Boolean>() }
+          val infosByEndpoint =
+              remember(deviceMatterInfoList) { deviceMatterInfoList.associateBy { it.endpoint } }
+          val childEndpoints =
+              remember(deviceMatterInfoList) {
+                deviceMatterInfoList.flatMap { info -> info.parts }.toSet()
+              }
+          val rootEndpoints =
+              remember(deviceMatterInfoList) {
+                deviceMatterInfoList
+                    .asSequence()
+                    .map { it.endpoint }
+                    .filterNot { endpoint -> endpoint in childEndpoints }
+                    .toList()
+                    .ifEmpty {
+                      deviceMatterInfoList.firstOrNull()?.let { listOf(it.endpoint) } ?: emptyList()
+                    }
+              }
+
+          rootEndpoints.forEach { endpoint ->
+            EndpointTree(
+                endpoint = endpoint,
+                infosByEndpoint = infosByEndpoint,
+                expandedEndpoints = expandedEndpoints,
+                depth = 0,
+                visited = emptySet(),
             )
-            // Device Types
-            Text(text = "Device Types", style = MaterialTheme.typography.titleSmall)
-            for (deviceType in deviceMatterInfo.types) {
-              val hex = String.format("0x%04X", deviceType)
-              val typeString = MatterConstants.DeviceTypesMap.getOrDefault(deviceType, "Unknown")
-              Text(text = "[${hex}] $typeString", style = MaterialTheme.typography.bodySmall)
-            }
-            // Server Clusters
-            Text(text = "Server Clusters", style = MaterialTheme.typography.titleSmall)
-            if (deviceMatterInfo.serverClusters.isEmpty()) {
-              Text(text = "None", style = MaterialTheme.typography.bodySmall)
-            } else {
-              for (serverCluster in deviceMatterInfo.serverClusters) {
-                val hex = String.format("0x%04X", serverCluster)
-                val serverClusterString =
-                    MatterConstants.ClustersMap.getOrDefault(serverCluster, "Unknown")
-                Text(
-                    text = "[${hex}] $serverClusterString",
-                    style = MaterialTheme.typography.bodySmall,
-                )
-              }
-            }
-            // Client Clusters
-            Text(text = "Client Clusters", style = MaterialTheme.typography.titleSmall)
-            if (deviceMatterInfo.clientClusters.isEmpty()) {
-              Text(text = "None", style = MaterialTheme.typography.bodySmall)
-            } else {
-              for (clientCluster in deviceMatterInfo.clientClusters) {
-                val hex = String.format("0x%04X", clientCluster)
-                val clientClusterString =
-                    MatterConstants.ClustersMap.getOrDefault(clientCluster, "Unknown")
-                Text(
-                    text = "[${hex}] $clientClusterString",
-                    style = MaterialTheme.typography.bodySmall,
-                )
-              }
-            }
           }
         }
       }
@@ -173,7 +157,7 @@ private fun InspectScreenOnlineNoClustersPreview() {
   MaterialTheme {
     InspectScreen(
         PaddingValues(),
-        listOf(DeviceMatterInfo(1, listOf(15L, 22L), emptyList(), emptyList())),
+        listOf(DeviceMatterInfo(1, listOf(15L, 22L), emptyList(), emptyList(), emptyList())),
         null,
         {},
     )
@@ -187,22 +171,18 @@ private fun InspectScreenOnlineWithClustersPreview() {
     InspectScreen(
         PaddingValues(),
         listOf(
-            DeviceMatterInfo(0, listOf(15L, 22L), listOf(3L), listOf(43L, 48L)),
-            DeviceMatterInfo(1, listOf(15L, 22L), listOf(3L, 4L, 5L), listOf(43L, 44L, 45L, 48L)),
+            DeviceMatterInfo(0, listOf(22L), listOf(3L), listOf(43L, 48L), listOf(1, 2)),
+            DeviceMatterInfo(
+                1,
+                listOf(256L),
+                listOf(3L, 4L, 5L),
+                listOf(43L, 44L, 45L, 48L),
+                emptyList(),
+            ),
+            DeviceMatterInfo(2, listOf(266L), listOf(4L, 6L, 29L), listOf(43L, 44L), emptyList()),
         ),
         null,
         {},
     )
   }
 }
-
-private val DeviceTest =
-    Device.newBuilder()
-        .setDeviceId(1L)
-        .setDeviceType(Device.DeviceType.TYPE_OUTLET)
-        .setDateCommissioned(Timestamp.getDefaultInstance())
-        .setName("MyOutlet")
-        .setProductId("8785")
-        .setVendorId("6006")
-        .setRoom("Office")
-        .build()
