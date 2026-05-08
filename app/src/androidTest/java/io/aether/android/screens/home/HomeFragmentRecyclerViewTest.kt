@@ -6,6 +6,8 @@ package io.aether.android.screens.home
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import io.aether.android.Device
 import io.aether.android.DeviceScreen
 import io.aether.android.HomeScreen
@@ -14,8 +16,6 @@ import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.getTimestampForNow
 import io.aether.android.navigateBack
-import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltAndroidTest
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -65,7 +65,7 @@ class HomeFragmentRecyclerViewTest {
       val productId: String,
       val deviceType: String,
       val isOnline: Boolean,
-      val isOn: Boolean
+      val isOn: Boolean,
   ) {
     fun getName(deviceId: Long): String {
       val testDeviceNamePrefix = "[Test-"
@@ -103,7 +103,10 @@ class HomeFragmentRecyclerViewTest {
       // Add the device to the repository.
       devicesRepository.addDevice(deviceUiModel.device)
       devicesStateRepository.addDeviceState(
-          deviceUiModel.device.deviceId, deviceUiModel.isOnline, deviceUiModel.isOn)
+          deviceUiModel.device.deviceId,
+          deviceUiModel.isOnline,
+          deviceUiModel.isOn,
+      )
     }
   }
 

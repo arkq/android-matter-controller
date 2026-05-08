@@ -4,10 +4,10 @@
 package io.aether.android.screens.commissionable.mdns
 
 import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.aether.android.screens.commissionable.MatterBeacon
 import io.aether.android.screens.commissionable.MatterBeaconProducer
 import io.aether.android.screens.commissionable.Transport
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
@@ -35,7 +35,8 @@ constructor(@ApplicationContext private val context: Context) : MatterBeaconProd
               vendorId = 2,
               productId = 22,
               discriminator = 222,
-              Transport.Mdns("2.2.2.2", 2, active))
+              Transport.Mdns("2.2.2.2", 2, active),
+          )
 
       trySend(beacon)
 

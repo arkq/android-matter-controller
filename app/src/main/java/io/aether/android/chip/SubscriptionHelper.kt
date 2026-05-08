@@ -25,7 +25,7 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
       connectedDevicePtr: Long,
       subscriptionEstablishedCallback: SubscriptionEstablishedCallback,
       resubscriptionAttemptCallback: ResubscriptionAttemptCallback,
-      reportCallback: ReportCallback
+      reportCallback: ReportCallback,
   ) {
     return suspendCoroutine { continuation ->
       Timber.d("subscribeToPeriodicUpdates()")
@@ -56,7 +56,8 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
           // fabric-scoped,
           // i.e. isFabricFiltered = false, to allow reading all values not just the one for the
           // current fabric
-          false)
+          false,
+      )
       continuation.resume(Unit)
     }
   }
@@ -92,7 +93,7 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
     override fun onError(
         attributePath: ChipAttributePath?,
         eventPath: ChipEventPath?,
-        ex: Exception
+        ex: Exception,
     ) {
       if (attributePath != null) {
         Timber.e(ex, "reportCallback: error on device [${deviceId}] for [${attributePath}]")
@@ -103,11 +104,11 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
     }
 
     override fun onReport(nodeState: NodeState) {
-      //Timber.d("reportCallback: onReport")
+      // Timber.d("reportCallback: onReport")
       val debugString = nodeStateToDebugString(nodeState)
-      //Timber.d("------- BEGIN REPORT -----")
-      //Timber.d(debugString)
-      //Timber.d("------- END REPORT -----")
+      // Timber.d("------- BEGIN REPORT -----")
+      // Timber.d(debugString)
+      // Timber.d("------- END REPORT -----")
     }
 
     override fun onDone() {
@@ -126,7 +127,8 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
       ResubscriptionAttemptCallback {
     override fun onResubscriptionAttempt(terminationCause: Int, nextResubscribeIntervalMsec: Int) {
       Timber.d(
-          "onResubscriptionAttempt(): device [$deviceId] terminationCause [$terminationCause] nextResubscribeIntervalMsec [$nextResubscribeIntervalMsec]")
+          "onResubscriptionAttempt(): device [$deviceId] terminationCause [$terminationCause] nextResubscribeIntervalMsec [$nextResubscribeIntervalMsec]"
+      )
     }
   }
 }
@@ -142,7 +144,8 @@ fun nodeStateToDebugString(nodeState: NodeState): String {
     // Map<Long, ClusterState>
     endpointState.clusterStates.forEach { (clusterId, clusterState) ->
       stringBuilder.append(
-          "\tCluster [${clusterId}] [${ChipIdLookup.clusterIdToName(clusterId)}] {\n")
+          "\tCluster [${clusterId}] [${ChipIdLookup.clusterIdToName(clusterId)}] {\n"
+      )
       clusterState.attributeStates.forEach { (attributeId, attributeState) ->
         val attributeName = ChipIdLookup.attributeIdToName(clusterId, attributeId)
         stringBuilder.append("\t\t[${attributeId}] [${attributeName}] ${attributeState.value}\n")

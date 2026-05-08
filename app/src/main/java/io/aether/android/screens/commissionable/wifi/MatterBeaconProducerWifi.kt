@@ -68,7 +68,12 @@ private fun ScanResult.toMatterBeaconOrNull(): MatterBeacon? {
   return MATTER_SSID_PATTERN.find(ssid)?.let { result ->
     val (discriminator, vid, pid) = result.destructured
     MatterBeacon(
-        ssid, vid.toInt(16), pid.toInt(16), discriminator.toInt(16), Transport.Hotspot(ssid))
+        ssid,
+        vid.toInt(16),
+        pid.toInt(16),
+        discriminator.toInt(16),
+        Transport.Hotspot(ssid),
+    )
   }
 }
 

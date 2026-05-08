@@ -58,7 +58,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
-import androidx.navigation.NavController
 import com.google.android.gms.threadnetwork.ThreadNetworkCredentials
 import com.google.common.io.BaseEncoding
 import io.aether.android.R
@@ -67,42 +66,33 @@ import timber.log.Timber
 /**
  * The Thread Screen.
  *
- * Quite a lot of UI logic and business logic needed in this fragment.
- * All logic calls are directed to the UIState class, which then has the ability
- * to call into the ViewModel for business logic.
- * [It's ok for UIState to call into ViewModel since the lifetime of ViewModel is longer
- * than UIState.]
+ * Quite a lot of UI logic and business logic needed in this fragment. All logic calls are directed
+ * to the UIState class, which then has the ability to call into the ViewModel for business logic.
+ * [It's ok for UIState to call into ViewModel since the lifetime of ViewModel is longer than UIState.]
  *
  * See https://developer.android.com/jetpack/compose/state-hoisting#ui-element-state.
  *
  * There are 3 key components in this fragment.
  *
- * (1) Action Buttons
- * There is a total of 8 ThreadNetwork-related action buttons that the user can trigger in this fragment.
- * They are divided in 3 categories:
- *   1.1 Actions on GPS Preferred Thread Credentials
- *     Exist, Get, Set, Clear
- *   1.2 Actions on credentials for OpenThread Border Routers running on Raspberry Pis
- *     Get, Set
- *   1.3 Actions related to QR-code Thread credentials
- *     Read, Show
+ * (1) Action Buttons There is a total of 8 ThreadNetwork-related action buttons that the user can
+ * trigger in this fragment. They are divided in 3 categories: 1.1 Actions on GPS Preferred Thread
+ * Credentials Exist, Get, Set, Clear 1.2 Actions on credentials for OpenThread Border Routers
+ * running on Raspberry Pis Get, Set 1.3 Actions related to QR-code Thread credentials Read, Show
  *
- * (2) Action Dialogs
- * There are two different dialogs that support the processing of the actions described in (1)
- *   2.1 SimpleDialog is used for (1.1) and (1.3) actions.
- *   2.2 OtbrDialog is used for (1.2) actions. This dialog is a bit more complex because it supports
- *       the selection of a border router.
+ * (2) Action Dialogs There are two different dialogs that support the processing of the actions
+ * described in (1) 2.1 SimpleDialog is used for (1.1) and (1.3) actions. 2.2 OtbrDialog is used for
+ * (1.2) actions. This dialog is a bit more complex because it supports the selection of a border
+ * router.
  *
- * (3) Thread Credentials Working Dataset
- * This shows the Thread credentials that were read from a specific source. That source can be:
- *   - (1.1-Get)  GPS Preferred Thread credentials
- *   - (1.2-Get)  OpenThread BorderRouter active credentials (includes a border router id)
- *   - (1.3-Read) Thread credentials read from a QR Code.
- * The Tread Credentials Working data set can then be used to set these credentials for a specific
- * destination. That destination can be:
- *   - (1.1-Set)  GPS Preferred Thread credentials (border router id required)
- *   - (1.2-Set)  OpenThread BorderRouter pending credentials
- *   - (1.3-Show) QR Code for these Thread credentials
+ * (3) Thread Credentials Working Dataset This shows the Thread credentials that were read from a
+ * specific source. That source can be:
+ * - (1.1-Get) GPS Preferred Thread credentials
+ * - (1.2-Get) OpenThread BorderRouter active credentials (includes a border router id)
+ * - (1.3-Read) Thread credentials read from a QR Code. The Tread Credentials Working data set can
+ *   then be used to set these credentials for a specific destination. That destination can be:
+ * - (1.1-Set) GPS Preferred Thread credentials (border router id required)
+ * - (1.2-Set) OpenThread BorderRouter pending credentials
+ * - (1.3-Show) QR Code for these Thread credentials
  */
 
 // -----------------------------------------------------------------------------------------------
@@ -110,9 +100,9 @@ import timber.log.Timber
 
 @Composable
 internal fun ThreadRoute(
-  innerPadding: PaddingValues,
-  updateTitle: (title: String) -> Unit,
-  threadViewModel: ThreadViewModel = hiltViewModel(),
+    innerPadding: PaddingValues,
+    updateTitle: (title: String) -> Unit,
+    threadViewModel: ThreadViewModel = hiltViewModel(),
 ) {
   // UI Logic implemented in ThreadNetworkUiState requires Activity.
   val activity = LocalContext.current.getActivity()
@@ -121,7 +111,7 @@ internal fun ThreadRoute(
   // We are not using a ViewModel because ThreadNetwork actions require Activity
   // and the lifetime of a ViewModel is longer than Activity.
   val threadNetworkUiState =
-    remember(activity) { ThreadNetworkUiState(activity!!, threadViewModel) }
+      remember(activity) { ThreadNetworkUiState(activity!!, threadViewModel) }
 
   // All calls into the ThreadNetworkUiState are encapsulated within this lambda which makes
   // it possible to avoid exposing ThreadNetworkUiState into the composable ThreadScreen
@@ -140,11 +130,10 @@ internal fun ThreadRoute(
   // [Not possible to have a lambda for a suspend function that needs arguments:
   // https://youtrack.jetbrains.com/issue/KT-51067/Function-for-creating-suspending-lambdas-doesnt-allow-lambda-parameters
   // https://medium.com/livefront/suspending-lambdas-in-kotlin-7319d2d7092a]
-  val onThreadNetworkAction = remember(threadNetworkUiState) {
-    { actionRequest: ActionRequest ->
-      threadNetworkUiState.processAction(actionRequest)
-    }
-  }
+  val onThreadNetworkAction =
+      remember(threadNetworkUiState) {
+        { actionRequest: ActionRequest -> threadNetworkUiState.processAction(actionRequest) }
+      }
 
   // The processing performed in ThreadNetworkUiState/ThreadViewModel impacts the Action Dialog
   // to be shown in the UI.
@@ -159,24 +148,23 @@ internal fun ThreadRoute(
   // for the state of the Working Dataset for the Thread Credentials.
   val threadCredentialsInfo by threadViewModel.threadCredentialsInfoStateFlow.collectAsState()
 
-
   // Registers for activity result from Google Play Services.
   // This defines a launcher for the IntentSender of an Activity to
   // access Thread network credentials.
   val threadClientLauncher =
-    rememberLauncherForActivityResult(
-      contract = ActivityResultContracts.StartIntentSenderForResult()
-    ) { result ->
-      if (result.resultCode == RESULT_OK) {
-        val threadNetworkCredentials =
-          ThreadNetworkCredentials.fromIntentSenderResultData(result.data!!)
-        threadViewModel.setThreadCredentialsInfo(null, threadNetworkCredentials)
-      } else {
-        val error = "User denied request."
-        Timber.d(error)
-        threadViewModel.setThreadCredentialsInfo(null, null)
+      rememberLauncherForActivityResult(
+          contract = ActivityResultContracts.StartIntentSenderForResult()
+      ) { result ->
+        if (result.resultCode == RESULT_OK) {
+          val threadNetworkCredentials =
+              ThreadNetworkCredentials.fromIntentSenderResultData(result.data!!)
+          threadViewModel.setThreadCredentialsInfo(null, threadNetworkCredentials)
+        } else {
+          val error = "User denied request."
+          Timber.d(error)
+          threadViewModel.setThreadCredentialsInfo(null, null)
+        }
       }
-    }
 
   // The IntentSender used to trigger the ThreadClient GPS activity.
   val threadClientIntentSender by threadViewModel.threadClientIntentSender.observeAsState()
@@ -199,42 +187,38 @@ internal fun ThreadRoute(
     }
   }
 
-  LaunchedEffect(Unit) {
-    updateTitle("Thread Network")
-  }
+  LaunchedEffect(Unit) { updateTitle("Thread Network") }
 
   ThreadScreen(innerPadding, currentActionInfo, threadCredentialsInfo, onThreadNetworkAction)
 }
 
 @Composable
 private fun ThreadScreen(
-  innerPadding: PaddingValues,
-  currentActionInfo: ActionDialogInfo,
-  threadCredentialsInfo: ThreadCredentialsInfo,
-  onThreadNetworkAction: (ActionRequest) -> Unit,
+    innerPadding: PaddingValues,
+    currentActionInfo: ActionDialogInfo,
+    threadCredentialsInfo: ThreadCredentialsInfo,
+    onThreadNetworkAction: (ActionRequest) -> Unit,
 ) {
   // The action dialogs.
   SimpleActionDialog(currentActionInfo, onThreadNetworkAction)
   OtbrActionDialog(currentActionInfo, onThreadNetworkAction)
 
   Box(
-    modifier = Modifier
-      .fillMaxSize()
+      modifier = Modifier.fillMaxSize()
       // Not needed it seems.
-      //.padding(innerPadding)
+      // .padding(innerPadding)
   ) {
-    Column (
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(dimensionResource(R.dimen.padding_surface_content))
-    ){
-                                                                   // TODO: Hack to handle issue with Fragment's top appbar.
+    Column(
+        modifier =
+            Modifier.fillMaxWidth().padding(dimensionResource(R.dimen.padding_surface_content))
+    ) {
+      // TODO: Hack to handle issue with Fragment's top appbar.
       Spacer(Modifier.padding(30.dp))
 
       // The Actions section is the main section with all possible Thread network actions
       // exposed as clickable cards.
       Box(
-        modifier = Modifier.border(BorderStroke(1.dp, Color.Red), shape = RoundedCornerShape(4))
+          modifier = Modifier.border(BorderStroke(1.dp, Color.Red), shape = RoundedCornerShape(4))
       ) {
         ActionsSection(onThreadNetworkAction)
       }
@@ -252,126 +236,123 @@ private fun ThreadScreen(
 
 @Composable
 private fun ActionsSection(
-  onThreadNetworkAction: (ActionRequest) -> Unit,
+    onThreadNetworkAction: (ActionRequest) -> Unit,
 ) {
 
   // These constants can only be declared in Composable.
-  val gpsPrefColors = CardDefaults.cardColors(
-    containerColor = Color(0, 99, 155, 255),
-    contentColor = Color.White,
-  )
-  val rpiOtbrColors = CardDefaults.cardColors(
-    containerColor = Color(62, 118, 109, 255),
-    contentColor = Color.White,
-  )
-  val qrCodeColors = CardDefaults.cardColors(
-    containerColor = Color(255, 133, 105, 255),
-    contentColor = Color.White,
-  )
+  val gpsPrefColors =
+      CardDefaults.cardColors(
+          containerColor = Color(0, 99, 155, 255),
+          contentColor = Color.White,
+      )
+  val rpiOtbrColors =
+      CardDefaults.cardColors(
+          containerColor = Color(62, 118, 109, 255),
+          contentColor = Color.White,
+      )
+  val qrCodeColors =
+      CardDefaults.cardColors(
+          containerColor = Color(255, 133, 105, 255),
+          contentColor = Color.White,
+      )
 
   LazyVerticalGrid(
-    modifier = Modifier.padding(10.dp),
-    columns = GridCells.Fixed(3),
+      modifier = Modifier.padding(10.dp),
+      columns = GridCells.Fixed(3),
   ) {
     // Top to Bottom, Left to Right.
+    item { ActionGroupHeader("GPS Preferred\nCredentials") }
+    item { ActionGroupHeader("RPi OTBR\nCredentials") }
+    item { ActionGroupHeader("QR Code\nCredentials") }
     item {
-      ActionGroupHeader("GPS Preferred\nCredentials")
-    }
-    item {
-      ActionGroupHeader("RPi OTBR\nCredentials")
-    }
-    item {
-      ActionGroupHeader("QR Code\nCredentials")
-    }
-    item {
-      ActionItem("Exist?", gpsPrefColors,
-        onClick = {
-          onThreadNetworkAction(
-            ActionRequest(
-              ActionType.doGpsPreferredCredentialsExist,
-              ActionTask.Process
+      ActionItem(
+          "Exist?",
+          gpsPrefColors,
+          onClick = {
+            onThreadNetworkAction(
+                ActionRequest(ActionType.doGpsPreferredCredentialsExist, ActionTask.Process)
             )
-          )
-        })
+          },
+      )
     }
     item {
-      ActionItem("Get", rpiOtbrColors,
-        onClick = {
-          onThreadNetworkAction(
-            ActionRequest(
-              ActionType.getOtbrActiveThreadCredentials,
-              ActionTask.Init
+      ActionItem(
+          "Get",
+          rpiOtbrColors,
+          onClick = {
+            onThreadNetworkAction(
+                ActionRequest(ActionType.getOtbrActiveThreadCredentials, ActionTask.Init)
             )
-          )
-        })
+          },
+      )
     }
     item {
-      ActionItem("Read", qrCodeColors,
-        onClick = {
-          onThreadNetworkAction(
-            ActionRequest(
-              ActionType.readQrCodeCredentials,
-              ActionTask.Process
+      ActionItem(
+          "Read",
+          qrCodeColors,
+          onClick = {
+            onThreadNetworkAction(
+                ActionRequest(ActionType.readQrCodeCredentials, ActionTask.Process)
             )
-          )
-        })
+          },
+      )
     }
     item {
-      ActionItem("Get", gpsPrefColors,
-        onClick = {
-          onThreadNetworkAction(
-            ActionRequest(
-              ActionType.getGpsPreferredCredentials,
-              ActionTask.Process
+      ActionItem(
+          "Get",
+          gpsPrefColors,
+          onClick = {
+            onThreadNetworkAction(
+                ActionRequest(ActionType.getGpsPreferredCredentials, ActionTask.Process)
             )
-          )
-        })
+          },
+      )
     }
     item {
-      ActionItem("Set", rpiOtbrColors,
-        onClick = {
-          onThreadNetworkAction(
-            ActionRequest(
-              ActionType.setOtbrPendingThreadCredentials,
-              ActionTask.Init
+      ActionItem(
+          "Set",
+          rpiOtbrColors,
+          onClick = {
+            onThreadNetworkAction(
+                ActionRequest(ActionType.setOtbrPendingThreadCredentials, ActionTask.Init)
             )
-          )
-        })
+          },
+      )
     }
     item {
-      ActionItem("Show", qrCodeColors,
-        onClick = {
-          onThreadNetworkAction(
-            ActionRequest(
-              ActionType.showQrCodeCredentials,
-              ActionTask.Process
+      ActionItem(
+          "Show",
+          qrCodeColors,
+          onClick = {
+            onThreadNetworkAction(
+                ActionRequest(ActionType.showQrCodeCredentials, ActionTask.Process)
             )
-          )
-        })
+          },
+      )
     }
     item {
-      ActionItem("Set", gpsPrefColors,
-        onClick = {
-          onThreadNetworkAction(
-            ActionRequest(
-              ActionType.setGpsPreferredCredentials,
-              ActionTask.Process
+      ActionItem(
+          "Set",
+          gpsPrefColors,
+          onClick = {
+            onThreadNetworkAction(
+                ActionRequest(ActionType.setGpsPreferredCredentials, ActionTask.Process)
             )
-          )
-        })
+          },
+      )
     }
     item {} // empty slot
     item {} // empty slot
     item {
-      ActionItem("Clear", gpsPrefColors,
-        onClick = {
-          onThreadNetworkAction(
-            ActionRequest(
-              ActionType.clearGpsPreferredCredentials,
-              ActionTask.Process
+      ActionItem(
+          "Clear",
+          gpsPrefColors,
+          onClick = {
+            onThreadNetworkAction(
+                ActionRequest(ActionType.clearGpsPreferredCredentials, ActionTask.Process)
             )
-          )
-        })
+          },
+      )
     }
   }
 }
@@ -381,34 +362,30 @@ private fun ActionsSection(
 @Composable
 private fun ActionItem(text: String, colors: CardColors, onClick: () -> Unit) {
   Card(
-    modifier = Modifier.padding(4.dp),
-    colors = colors,
-    onClick = {
-      Timber.d("onClick: $text")
-      onClick()
-      Timber.d("after calling onClick")
-    }
+      modifier = Modifier.padding(4.dp),
+      colors = colors,
+      onClick = {
+        Timber.d("onClick: $text")
+        onClick()
+        Timber.d("after calling onClick")
+      },
   ) {
     Text(
-      text = text,
-      textAlign = TextAlign.Center,
-      style = MaterialTheme.typography.bodyLarge,
-      modifier = Modifier
-        .padding(bottom = 12.dp, top = 12.dp)
-        .fillMaxWidth()
+        text = text,
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.bodyLarge,
+        modifier = Modifier.padding(bottom = 12.dp, top = 12.dp).fillMaxWidth(),
     )
   }
 }
 
-/**
- * The Header for an Action Group (e.g. GPS preferred credentials)
- */
+/** The Header for an Action Group (e.g. GPS preferred credentials) */
 @Composable
 private fun ActionGroupHeader(text: String) {
   Text(
-    text = text,
-    textAlign = TextAlign.Center,
-    style = MaterialTheme.typography.labelMedium,
+      text = text,
+      textAlign = TextAlign.Center,
+      style = MaterialTheme.typography.labelMedium,
   )
 }
 
@@ -418,33 +395,29 @@ private fun ActionGroupHeader(text: String) {
 @Composable
 private fun WorkingDatasetSection(threadCredentialsInfo: ThreadCredentialsInfo) {
   if (threadCredentialsInfo.credentials != null) {
-    Box(
-      modifier = Modifier
-        .border(BorderStroke(1.dp, Color.Red), shape = RoundedCornerShape(4))
-    ) {
-      Column(
-        modifier = Modifier.padding(10.dp)
-      ) {
+    Box(modifier = Modifier.border(BorderStroke(1.dp, Color.Red), shape = RoundedCornerShape(4))) {
+      Column(modifier = Modifier.padding(10.dp)) {
         Text(
-          text = "Thread Credentials Working Dataset",
-          style = MaterialTheme.typography.titleMedium,
+            text = "Thread Credentials Working Dataset",
+            style = MaterialTheme.typography.titleMedium,
         )
         Spacer(Modifier.padding(4.dp))
         if (threadCredentialsInfo.selectedThreadBorderRouterId != null) {
           Text(
-            text = "Selected Thread Border Router: ${threadCredentialsInfo.selectedThreadBorderRouterId}",
-            style = MaterialTheme.typography.bodyLarge,
+              text =
+                  "Selected Thread Border Router: ${threadCredentialsInfo.selectedThreadBorderRouterId}",
+              style = MaterialTheme.typography.bodyLarge,
           )
           Spacer(Modifier.padding(4.dp))
         }
         Text(
-          text = threadNetworkInfo(threadCredentialsInfo.credentials),
-          style = MaterialTheme.typography.bodyMedium,
+            text = threadNetworkInfo(threadCredentialsInfo.credentials),
+            style = MaterialTheme.typography.bodyMedium,
         )
         Spacer(Modifier.padding(4.dp))
         Text(
-          text = threadTlv(threadCredentialsInfo.credentials),
-          style = MaterialTheme.typography.bodyMedium,
+            text = threadTlv(threadCredentialsInfo.credentials),
+            style = MaterialTheme.typography.bodyMedium,
         )
       }
     }
@@ -455,15 +428,14 @@ private fun WorkingDatasetSection(threadCredentialsInfo: ThreadCredentialsInfo) 
 // Action Dialogs Composables
 
 /**
- * Dialog associated with the processing of "simple" actions, i.e. actions that do not
- * require any interactions with the user.
- * The dialog lets the user know that the action is being processed, and optionally,
- * the result of that action.
+ * Dialog associated with the processing of "simple" actions, i.e. actions that do not require any
+ * interactions with the user. The dialog lets the user know that the action is being processed, and
+ * optionally, the result of that action.
  */
 @Composable
 private fun SimpleActionDialog(
-  currentActionInfo: ActionDialogInfo,
-  onThreadNetworkAction: (ActionRequest) -> Unit
+    currentActionInfo: ActionDialogInfo,
+    onThreadNetworkAction: (ActionRequest) -> Unit,
 ) {
   // Filter out actions that are not "simple".
   if (currentActionInfo.type == ActionType.None || isOtbrAction(currentActionInfo.type)) {
@@ -471,69 +443,63 @@ private fun SimpleActionDialog(
   }
 
   AlertDialog(
-    title = { Text(text = currentActionInfo.type.title) },
-    text = {
-      // Circular progress indicator while the action executes.
-      if (currentActionInfo.state == ActionState.Processing) {
-        CircularProgressIndicator(
-          modifier = Modifier
-            .width(64.dp)
-            .wrapContentSize(Alignment.Center),
-          color = MaterialTheme.colorScheme.secondary,
-          trackColor = MaterialTheme.colorScheme.surfaceVariant,
-        )
-      } else if (currentActionInfo.state == ActionState.Completed) {
-        if (currentActionInfo.type == ActionType.doGpsPreferredCredentialsExist) {
-          Text("Thread network credentials exist.")
-        } else if (currentActionInfo.type == ActionType.clearGpsPreferredCredentials) {
-          Text(clearGpsPreferredCredsMsg())
-        } else if (currentActionInfo.type == ActionType.showQrCodeCredentials) {
-          Image(
-            bitmap = currentActionInfo.qrCodeBitmap!!.asImageBitmap(),
-            contentDescription = "The QR Code",
+      title = { Text(text = currentActionInfo.type.title) },
+      text = {
+        // Circular progress indicator while the action executes.
+        if (currentActionInfo.state == ActionState.Processing) {
+          CircularProgressIndicator(
+              modifier = Modifier.width(64.dp).wrapContentSize(Alignment.Center),
+              color = MaterialTheme.colorScheme.secondary,
+              trackColor = MaterialTheme.colorScheme.surfaceVariant,
           )
-        }
-      } else if (currentActionInfo.state == ActionState.Error) {
-        Text(currentActionInfo.data)
-      }
-    },
-    confirmButton = {
-      if (currentActionInfo.state == ActionState.Completed || currentActionInfo.state == ActionState.Error) {
-        TextButton(
-          onClick = {
-            onThreadNetworkAction(
-              ActionRequest(
-                ActionType.None,
-                ActionTask.Complete
-              )
+        } else if (currentActionInfo.state == ActionState.Completed) {
+          if (currentActionInfo.type == ActionType.doGpsPreferredCredentialsExist) {
+            Text("Thread network credentials exist.")
+          } else if (currentActionInfo.type == ActionType.clearGpsPreferredCredentials) {
+            Text(clearGpsPreferredCredsMsg())
+          } else if (currentActionInfo.type == ActionType.showQrCodeCredentials) {
+            Image(
+                bitmap = currentActionInfo.qrCodeBitmap!!.asImageBitmap(),
+                contentDescription = "The QR Code",
             )
           }
-        ) {
-          Text("OK")
+        } else if (currentActionInfo.state == ActionState.Error) {
+          Text(currentActionInfo.data)
         }
-      }
-    },
-    onDismissRequest = {},
-    dismissButton = {}
+      },
+      confirmButton = {
+        if (
+            currentActionInfo.state == ActionState.Completed ||
+                currentActionInfo.state == ActionState.Error
+        ) {
+          TextButton(
+              onClick = {
+                onThreadNetworkAction(ActionRequest(ActionType.None, ActionTask.Complete))
+              }
+          ) {
+            Text("OK")
+          }
+        }
+      },
+      onDismissRequest = {},
+      dismissButton = {},
   )
 }
 
 /**
  * Dialog associated with the processing of an OTBR_related action.
  *
- * These actions first require the selection of a Border Router
- * before they can then proceed with their specific processing.
+ * These actions first require the selection of a Border Router before they can then proceed with
+ * their specific processing.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun OtbrActionDialog(
-  currentActionInfo: ActionDialogInfo,
-  onThreadNetworkAction: (ActionRequest) -> Unit,
+    currentActionInfo: ActionDialogInfo,
+    onThreadNetworkAction: (ActionRequest) -> Unit,
 ) {
   // Filter out any action other than OTBR-related action.
-  if (currentActionInfo.type == ActionType.None ||
-    !isOtbrAction(currentActionInfo.type)
-  ) {
+  if (currentActionInfo.type == ActionType.None || !isOtbrAction(currentActionInfo.type)) {
     return
   }
 
@@ -542,118 +508,99 @@ private fun OtbrActionDialog(
   var otbr: NsdServiceInfo? by remember { mutableStateOf(value = null) }
 
   AlertDialog(
-    title = { Text(text = currentActionInfo.type.title) },
-    text = {
-      Column {
-        if (currentActionInfo.type == ActionType.setOtbrPendingThreadCredentials && currentActionInfo.state == ActionState.Error && !hasOtbrs) {
-          Text(currentActionInfo.data)
-        } else if (currentActionInfo.state == ActionState.BorderRoutersProvided && !hasOtbrs) {
-          Text("No OpenThread Border Routers discovered.")
-        } else {
-          ExposedDropdownMenuBox(
-            expanded = false,
-            onExpandedChange = { isExpanded = it }
+      title = { Text(text = currentActionInfo.type.title) },
+      text = {
+        Column {
+          if (
+              currentActionInfo.type == ActionType.setOtbrPendingThreadCredentials &&
+                  currentActionInfo.state == ActionState.Error &&
+                  !hasOtbrs
           ) {
-            TextField(
-              // The `menuAnchor` modifier must be passed to the text field for correctness.
-              modifier = Modifier.menuAnchor(),
-              readOnly = true,
-              value = if (otbr == null) "" else otbr!!.serviceName,
-              onValueChange = { Timber.d("FIXME: value changed") },
-              label = { Text("Select OTBR to use") },
-              trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
-              colors = ExposedDropdownMenuDefaults.textFieldColors(),
-            )
-            ExposedDropdownMenu(
-              expanded = isExpanded,
-              onDismissRequest = { /*TODO*/ }
-            ) {
-              currentActionInfo.borderRoutersList.forEach {
-                Timber.d("OTBR: $it")
-                DropdownMenuItem(
-                  text = { Text(it.serviceName) },
-                  onClick = {
-                    otbr = it
-                    isExpanded = false
-                  }
-                )
+            Text(currentActionInfo.data)
+          } else if (currentActionInfo.state == ActionState.BorderRoutersProvided && !hasOtbrs) {
+            Text("No OpenThread Border Routers discovered.")
+          } else {
+            ExposedDropdownMenuBox(expanded = false, onExpandedChange = { isExpanded = it }) {
+              TextField(
+                  // The `menuAnchor` modifier must be passed to the text field for correctness.
+                  modifier = Modifier.menuAnchor(),
+                  readOnly = true,
+                  value = if (otbr == null) "" else otbr!!.serviceName,
+                  onValueChange = { Timber.d("FIXME: value changed") },
+                  label = { Text("Select OTBR to use") },
+                  trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                  },
+                  colors = ExposedDropdownMenuDefaults.textFieldColors(),
+              )
+              ExposedDropdownMenu(expanded = isExpanded, onDismissRequest = { /*TODO*/ }) {
+                currentActionInfo.borderRoutersList.forEach {
+                  Timber.d("OTBR: $it")
+                  DropdownMenuItem(
+                      text = { Text(it.serviceName) },
+                      onClick = {
+                        otbr = it
+                        isExpanded = false
+                      },
+                  )
+                }
               }
             }
-          }
-          if (currentActionInfo.state == ActionState.Processing) {
-            CircularProgressIndicator(
-              modifier = Modifier
-                .width(64.dp)
-                //.fillMaxSize()
-                .wrapContentSize(Alignment.Center),
-              color = MaterialTheme.colorScheme.secondary,
-              trackColor = MaterialTheme.colorScheme.surfaceVariant,
-            )
-          }
-          if (currentActionInfo.state == ActionState.Completed) {
-            Text(currentActionInfo.data)
-          }
-          if (currentActionInfo.state == ActionState.Error) {
-            Text(currentActionInfo.data)
-          }
-        }
-      }
-    },
-    confirmButton = {
-      if (!hasOtbrs) {
-        TextButton(
-          onClick = {
-            onThreadNetworkAction(
-              ActionRequest(
-                ActionType.None,
-                ActionTask.Complete
+            if (currentActionInfo.state == ActionState.Processing) {
+              CircularProgressIndicator(
+                  modifier =
+                      Modifier.width(64.dp)
+                          // .fillMaxSize()
+                          .wrapContentSize(Alignment.Center),
+                  color = MaterialTheme.colorScheme.secondary,
+                  trackColor = MaterialTheme.colorScheme.surfaceVariant,
               )
-            )
+            }
+            if (currentActionInfo.state == ActionState.Completed) {
+              Text(currentActionInfo.data)
+            }
+            if (currentActionInfo.state == ActionState.Error) {
+              Text(currentActionInfo.data)
+            }
           }
-        ) {
-          Text("OK")
         }
-      } else {
-        TextButton(
-          onClick = {
-            // Trigger the processing of the OTBR.
-            onThreadNetworkAction(
-              ActionRequest(
-                currentActionInfo.type,
-                ActionTask.Process,
-                serviceInfo = otbr
-              )
-            )
+      },
+      confirmButton = {
+        if (!hasOtbrs) {
+          TextButton(
+              onClick = {
+                onThreadNetworkAction(ActionRequest(ActionType.None, ActionTask.Complete))
+              }
+          ) {
+            Text("OK")
           }
-        ) {
-          Text("OK")
-        }
-      }
-    },
-    onDismissRequest = {
-      onThreadNetworkAction(
-        ActionRequest(
-          ActionType.None,
-          ActionTask.Complete
-        )
-      )
-    },
-    dismissButton = {
-      if (hasOtbrs) {
-        TextButton(
-          onClick = {
-            onThreadNetworkAction(
-              ActionRequest(
-                ActionType.None,
-                ActionTask.Complete
-              )
-            )
+        } else {
+          TextButton(
+              onClick = {
+                // Trigger the processing of the OTBR.
+                onThreadNetworkAction(
+                    ActionRequest(currentActionInfo.type, ActionTask.Process, serviceInfo = otbr)
+                )
+              }
+          ) {
+            Text("OK")
           }
-        ) {
-          Text("Cancel")
         }
-      }
-    }
+      },
+      onDismissRequest = {
+        onThreadNetworkAction(ActionRequest(ActionType.None, ActionTask.Complete))
+      },
+      dismissButton = {
+        if (hasOtbrs) {
+          TextButton(
+              onClick = {
+                onThreadNetworkAction(ActionRequest(ActionType.None, ActionTask.Complete))
+              }
+          ) {
+            Text("Cancel")
+          }
+        }
+      },
   )
 }
 
@@ -664,7 +611,6 @@ private fun isOtbrAction(actionType: ActionType): Boolean {
   return actionType == ActionType.getOtbrActiveThreadCredentials ||
       actionType == ActionType.setOtbrPendingThreadCredentials
 }
-
 
 private fun threadNetworkInfo(credentials: ThreadNetworkCredentials): String {
   return "NetworkName: " +
@@ -706,13 +652,7 @@ private fun clearGpsPreferredCredsMsg(): String {
 @Preview
 @Composable
 private fun ThreadScreenPreview() {
-  MaterialTheme {
-    ThreadScreen(
-      PaddingValues(),
-      ActionDialogInfo(),
-      ThreadCredentialsInfo()
-    ) {}
-  }
+  MaterialTheme { ThreadScreen(PaddingValues(), ActionDialogInfo(), ThreadCredentialsInfo()) {} }
 }
 
 @Preview
@@ -721,9 +661,9 @@ private fun ThreadScreenWithThreadCredentialsPreview() {
   val threadNetworkCredentials = ThreadNetworkCredentials.newRandomizedBuilder().build()
   MaterialTheme {
     ThreadScreen(
-      PaddingValues(),
-      ActionDialogInfo(),
-      ThreadCredentialsInfo(null, threadNetworkCredentials)
+        PaddingValues(),
+        ActionDialogInfo(),
+        ThreadCredentialsInfo(null, threadNetworkCredentials),
     ) {}
   }
 }
@@ -731,11 +671,7 @@ private fun ThreadScreenWithThreadCredentialsPreview() {
 @Preview
 @Composable
 private fun StandardActionDialogPreviewNoAction() {
-  MaterialTheme {
-    SimpleActionDialog(
-      ActionDialogInfo()
-    ) {}
-  }
+  MaterialTheme { SimpleActionDialog(ActionDialogInfo()) {} }
 }
 
 @Preview
@@ -743,11 +679,8 @@ private fun StandardActionDialogPreviewNoAction() {
 private fun StandardActionDialogPreviewAction() {
   MaterialTheme {
     SimpleActionDialog(
-      currentActionInfo =
-      ActionDialogInfo(
-        ActionType.doGpsPreferredCredentialsExist,
-        ActionState.Processing
-      )
+        currentActionInfo =
+            ActionDialogInfo(ActionType.doGpsPreferredCredentialsExist, ActionState.Processing)
     ) {}
   }
 }
@@ -757,11 +690,8 @@ private fun StandardActionDialogPreviewAction() {
 private fun OtbrActionDialogPreviewNotOtbrAction() {
   MaterialTheme {
     OtbrActionDialog(
-      currentActionInfo =
-      ActionDialogInfo(
-        ActionType.doGpsPreferredCredentialsExist,
-        ActionState.Processing
-      )
+        currentActionInfo =
+            ActionDialogInfo(ActionType.doGpsPreferredCredentialsExist, ActionState.Processing)
     ) {}
   }
 }
@@ -772,12 +702,13 @@ private fun OtbrActionDialogNoOtbrsPreview() {
   val borderRoutersList = emptyList<NsdServiceInfo>()
   MaterialTheme {
     OtbrActionDialog(
-      currentActionInfo =
-      ActionDialogInfo(
-        ActionType.getOtbrActiveThreadCredentials,
-        ActionState.Processing,
-        "", borderRoutersList
-      )
+        currentActionInfo =
+            ActionDialogInfo(
+                ActionType.getOtbrActiveThreadCredentials,
+                ActionState.Processing,
+                "",
+                borderRoutersList,
+            )
     ) {}
   }
 }
@@ -785,20 +716,22 @@ private fun OtbrActionDialogNoOtbrsPreview() {
 @Preview
 @Composable
 private fun OtbrActionDialogPreview() {
-  val borderRoutersList = listOf(
-    buildNsdServiceInfo("OTBR uno"),
-    buildNsdServiceInfo("OTBR duo"),
-    buildNsdServiceInfo("OTBR trio"),
-    buildNsdServiceInfo("OTBR quatro"),
-  )
+  val borderRoutersList =
+      listOf(
+          buildNsdServiceInfo("OTBR uno"),
+          buildNsdServiceInfo("OTBR duo"),
+          buildNsdServiceInfo("OTBR trio"),
+          buildNsdServiceInfo("OTBR quatro"),
+      )
   MaterialTheme {
     OtbrActionDialog(
-      currentActionInfo =
-      ActionDialogInfo(
-        ActionType.getOtbrActiveThreadCredentials,
-        ActionState.Processing,
-        "", borderRoutersList
-      )
+        currentActionInfo =
+            ActionDialogInfo(
+                ActionType.getOtbrActiveThreadCredentials,
+                ActionState.Processing,
+                "",
+                borderRoutersList,
+            )
     ) {}
   }
 }
@@ -807,9 +740,7 @@ private fun OtbrActionDialogPreview() {
 @Composable
 private fun WorkingDatasetPreview() {
   val threadNetworkCredentials = ThreadNetworkCredentials.newRandomizedBuilder().build()
-  MaterialTheme {
-    WorkingDatasetSection(ThreadCredentialsInfo(null, threadNetworkCredentials))
-  }
+  MaterialTheme { WorkingDatasetSection(ThreadCredentialsInfo(null, threadNetworkCredentials)) }
 }
 
 @Preview
@@ -829,9 +760,9 @@ private fun buildNsdServiceInfo(name: String): NsdServiceInfo {
   return nsdServiceInfo
 }
 
-
-fun Context.getActivity(): ComponentActivity? = when (this) {
-  is ComponentActivity -> this
-  is ContextWrapper -> baseContext.getActivity()
-  else -> null
-}
+fun Context.getActivity(): ComponentActivity? =
+    when (this) {
+      is ComponentActivity -> this
+      is ContextWrapper -> baseContext.getActivity()
+      else -> null
+    }

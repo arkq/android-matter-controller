@@ -36,22 +36,24 @@ import timber.log.Timber
  * @param lastUpdatedDeviceState the most recent state broadcast from the repository
  * @param onOnOffClick called when the user toggles the switch
  * @param onBrightnessChange called when the brightness slider is released; raw value `0..254`
- * @param onColorTemperatureChange called when the colour-temperature slider is released; raw
- *   mireds value `0..1667`
+ * @param onColorTemperatureChange called when the colour-temperature slider is released; raw mireds
+ *   value `0..1667`
  */
 @Composable
 internal fun ColorTemperatureDeviceControl(
-  endpointModel: DeviceUiModel,
-  lastUpdatedDeviceState: DeviceState?,
-  onOnOffClick: (Boolean) -> Unit,
-  onBrightnessChange: (Int) -> Unit,
-  onColorTemperatureChange: (Int) -> Unit,
+    endpointModel: DeviceUiModel,
+    lastUpdatedDeviceState: DeviceState?,
+    onOnOffClick: (Boolean) -> Unit,
+    onBrightnessChange: (Int) -> Unit,
+    onColorTemperatureChange: (Int) -> Unit,
 ) {
   var isOnline by remember(endpointModel) { mutableStateOf(endpointModel.isOnline) }
   var isOn by remember(endpointModel) { mutableStateOf(endpointModel.isOn) }
   var brightness by remember(endpointModel) { mutableFloatStateOf(endpointModel.level / LEVEL_MAX) }
   var colorTemperature by
-    remember(endpointModel) { mutableFloatStateOf(endpointModel.colorTemperature / COLOR_TEMPERATURE_MAX) }
+      remember(endpointModel) {
+        mutableFloatStateOf(endpointModel.colorTemperature / COLOR_TEMPERATURE_MAX)
+      }
 
   LaunchedEffect(endpointModel, lastUpdatedDeviceState) {
     when {
@@ -72,30 +74,30 @@ internal fun ColorTemperatureDeviceControl(
 
   Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal))) {
     OnOffClusterControl(
-      isOnline = isOnline,
-      isOn = isOn,
-      onToggle = { value ->
-        isOn = value
-        onOnOffClick(value)
-      },
+        isOnline = isOnline,
+        isOn = isOn,
+        onToggle = { value ->
+          isOn = value
+          onOnOffClick(value)
+        },
     )
     LevelClusterControl(
-      title = stringResource(R.string.brightness),
-      isOnline = isOnline,
-      isOn = isOn,
-      level = brightness,
-      onLevelChange = { brightness = it },
-      onLevelChangeFinished = { onBrightnessChange((brightness * LEVEL_MAX).toInt()) },
+        title = stringResource(R.string.brightness),
+        isOnline = isOnline,
+        isOn = isOn,
+        level = brightness,
+        onLevelChange = { brightness = it },
+        onLevelChangeFinished = { onBrightnessChange((brightness * LEVEL_MAX).toInt()) },
     )
     LevelClusterControl(
-      title = stringResource(R.string.color_temperature),
-      isOnline = isOnline,
-      isOn = isOn,
-      level = colorTemperature,
-      onLevelChange = { colorTemperature = it },
-      onLevelChangeFinished = {
-        onColorTemperatureChange((colorTemperature * COLOR_TEMPERATURE_MAX).toInt())
-      },
+        title = stringResource(R.string.color_temperature),
+        isOnline = isOnline,
+        isOn = isOn,
+        level = colorTemperature,
+        onLevelChange = { colorTemperature = it },
+        onLevelChangeFinished = {
+          onColorTemperatureChange((colorTemperature * COLOR_TEMPERATURE_MAX).toInt())
+        },
     )
   }
 }
@@ -106,27 +108,29 @@ internal fun ColorTemperatureDeviceControl(
 @Preview(widthDp = 300)
 @Composable
 private fun ColorTemperatureDeviceControl_Online() {
-  val model = DeviceUiModel(
-    device = Device.newBuilder()
-      .setDeviceId(1L)
-      .setDeviceType(Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT)
-      .setDateCommissioned(Timestamp.getDefaultInstance())
-      .setName("CTLight")
-      .setSupportsLevelControl(true)
-      .setSupportsColorTemperature(true)
-      .build(),
-    isOnline = true,
-    isOn = true,
-    level = 127,
-    colorTemperature = 833,
-  )
+  val model =
+      DeviceUiModel(
+          device =
+              Device.newBuilder()
+                  .setDeviceId(1L)
+                  .setDeviceType(Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT)
+                  .setDateCommissioned(Timestamp.getDefaultInstance())
+                  .setName("CTLight")
+                  .setSupportsLevelControl(true)
+                  .setSupportsColorTemperature(true)
+                  .build(),
+          isOnline = true,
+          isOn = true,
+          level = 127,
+          colorTemperature = 833,
+      )
   MaterialTheme {
     ColorTemperatureDeviceControl(
-      endpointModel = model,
-      lastUpdatedDeviceState = null,
-      onOnOffClick = { Timber.d("onOff: $it") },
-      onBrightnessChange = { Timber.d("brightness: $it") },
-      onColorTemperatureChange = { Timber.d("colorTemp: $it") },
+        endpointModel = model,
+        lastUpdatedDeviceState = null,
+        onOnOffClick = { Timber.d("onOff: $it") },
+        onBrightnessChange = { Timber.d("brightness: $it") },
+        onColorTemperatureChange = { Timber.d("colorTemp: $it") },
     )
   }
 }

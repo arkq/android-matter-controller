@@ -11,12 +11,12 @@ import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.aether.android.AppErrorNotifier
 import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.data.UserPreferencesRepository
 import io.aether.android.screens.common.DialogInfo
-import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,10 +28,10 @@ import timber.log.Timber
 class DeveloperUtilitiesViewModel
 @Inject
 constructor(
-  private val devicesRepository: DevicesRepository,
-  private val userPreferencesRepository: UserPreferencesRepository,
-  private val devicesStateRepository: DevicesStateRepository,
-  private val appErrorNotifier: AppErrorNotifier,
+    private val devicesRepository: DevicesRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val devicesStateRepository: DevicesStateRepository,
+    private val appErrorNotifier: AppErrorNotifier,
 ) : ViewModel() {
 
   // Controls whether the "Message" AlertDialog should be shown in the UI.
@@ -57,15 +57,15 @@ constructor(
       val divider = "-".repeat(20)
       val userPreferences = userPreferencesRepository.getData()
       Timber.d(
-        "UserPreferences Repository\n${divider} [UserPreferences Repository] ${divider}\n${userPreferences}\n${divider} End of [UserPreferences Repository] $divider"
+          "UserPreferences Repository\n${divider} [UserPreferences Repository] ${divider}\n${userPreferences}\n${divider} End of [UserPreferences Repository] $divider"
       )
       val devices = devicesRepository.getAllDevices()
       Timber.d(
-        "Devices Repository\n${divider} [Devices Repository] ${divider}\n${devices}\n${divider} End of [Devices Repository] $divider"
+          "Devices Repository\n${divider} [Devices Repository] ${divider}\n${devices}\n${divider} End of [Devices Repository] $divider"
       )
       val devicesState = devicesStateRepository.getAllDevicesState()
       Timber.d(
-        "DevicesState Repository\n${divider} [DevicesState Repository] ${divider}\n${devicesState}\n${divider} End of [DevicesState Repository] $divider"
+          "DevicesState Repository\n${divider} [DevicesState Repository] ${divider}\n${devicesState}\n${divider} End of [DevicesState Repository] $divider"
       )
     }
   }
@@ -77,7 +77,7 @@ constructor(
     val permissions = getRequiredScanningPermissions()
     permissions.forEach { permission ->
       Timber.d(
-        "Permission [${permission}] Granted [${
+          "Permission [${permission}] Granted [${
           ContextCompat.checkSelfPermission(
             context,
             permission,
@@ -97,7 +97,7 @@ constructor(
     Timber.d("getRequiredScanningPermissions(): Build.VERSION.SDK_INT is ${Build.VERSION.SDK_INT}")
     return when {
       Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
-        arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.ACCESS_FINE_LOCATION)
+          arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.ACCESS_FINE_LOCATION)
       else -> arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
     }
   }
@@ -123,4 +123,3 @@ constructor(
     _showLogReposDialog.value = false
   }
 }
-

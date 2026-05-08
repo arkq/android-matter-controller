@@ -4,9 +4,9 @@
 package io.aether.android.data
 
 import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.aether.android.Device
 import io.aether.android.Devices
-import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -61,7 +61,8 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
     val (index, device) = getIndexAndDevice(deviceId)
     if (index == null) {
       Timber.e(
-          "Unable to get device information to update its type: deviceId [${deviceId}] deviceType [${deviceType}]")
+          "Unable to get device information to update its type: deviceId [${deviceId}] deviceType [${deviceType}]"
+      )
       return
     }
     val deviceBuilder = Device.newBuilder(device)
@@ -100,16 +101,14 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
   }
 
   /**
-   * Ensures last_device_id is at least as large as the largest existing deviceId.
-   * Guards against collisions on installs that previously used Matter nodeIds as deviceIds.
+   * Ensures last_device_id is at least as large as the largest existing deviceId. Guards against
+   * collisions on installs that previously used Matter nodeIds as deviceIds.
    */
   suspend fun seedLastDeviceIdIfNeeded() {
     val devices = devicesFlow.first()
     val maxExistingId = devices.devicesList.maxOfOrNull { it.deviceId } ?: 0L
     if (maxExistingId > devices.lastDeviceId) {
-      devicesDataStore.updateData { d ->
-        d.toBuilder().setLastDeviceId(maxExistingId).build()
-      }
+      devicesDataStore.updateData { d -> d.toBuilder().setLastDeviceId(maxExistingId).build() }
     }
   }
 

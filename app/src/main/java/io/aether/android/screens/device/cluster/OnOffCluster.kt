@@ -26,26 +26,26 @@ import timber.log.Timber
 /** Displays the on/off state of a single OnOff cluster and lets the user toggle it. */
 @Composable
 internal fun OnOffClusterControl(
-  isOnline: Boolean,
-  isOn: Boolean,
-  onToggle: (Boolean) -> Unit,
+    isOnline: Boolean,
+    isOn: Boolean,
+    onToggle: (Boolean) -> Unit,
 ) {
   val bgColor =
-    if (isOnline && isOn) MaterialTheme.colorScheme.surfaceVariant
-    else MaterialTheme.colorScheme.surface
+      if (isOnline && isOn) MaterialTheme.colorScheme.surfaceVariant
+      else MaterialTheme.colorScheme.surface
   val contentColor =
-    if (isOnline && isOn) MaterialTheme.colorScheme.onSurfaceVariant
-    else MaterialTheme.colorScheme.onSurface
+      if (isOnline && isOn) MaterialTheme.colorScheme.onSurfaceVariant
+      else MaterialTheme.colorScheme.onSurface
   Surface(
-    modifier = Modifier.fillMaxWidth(),
-    border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
-    color = bgColor,
-    contentColor = contentColor,
-    shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
+      modifier = Modifier.fillMaxWidth(),
+      border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+      color = bgColor,
+      contentColor = contentColor,
+      shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
   ) {
     Row(
-      verticalAlignment = Alignment.CenterVertically,
-      modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content)),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content)),
     ) {
       Text(text = stateDisplayString(isOnline, isOn), style = MaterialTheme.typography.bodyLarge)
       Spacer(Modifier.weight(1f))

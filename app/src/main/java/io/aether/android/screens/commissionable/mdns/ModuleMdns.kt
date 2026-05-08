@@ -3,12 +3,12 @@
 
 package io.aether.android.screens.commissionable.mdns
 
-import io.aether.android.screens.commissionable.MatterBeaconProducer
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
+import io.aether.android.screens.commissionable.MatterBeaconProducer
 
 @Module
 @InstallIn(SingletonComponent::class)

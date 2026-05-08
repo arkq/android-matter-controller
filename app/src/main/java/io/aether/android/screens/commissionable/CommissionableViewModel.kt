@@ -28,9 +28,13 @@ constructor(producers: Set<@JvmSuppressWildcards MatterBeaconProducer>) : ViewMo
    * view.
    */
   private val beaconsFlow: Flow<Set<MatterBeacon>> =
-    merge(*producers.map { it.getBeaconsFlow() }.toTypedArray())
-      .runningFold(setOf<MatterBeacon>()) { set, item -> set + item }
-      .stateIn(scope = viewModelScope, started = WhileSubscribed(2000), initialValue = emptySet())
+      merge(*producers.map { it.getBeaconsFlow() }.toTypedArray())
+          .runningFold(setOf<MatterBeacon>()) { set, item -> set + item }
+          .stateIn(
+              scope = viewModelScope,
+              started = WhileSubscribed(2000),
+              initialValue = emptySet(),
+          )
 
   val beaconsLiveData = beaconsFlow.asLiveData()
 }

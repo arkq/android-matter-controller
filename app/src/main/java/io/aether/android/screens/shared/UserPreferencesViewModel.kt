@@ -5,12 +5,12 @@ package io.aether.android.screens.shared
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.aether.android.data.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.aether.android.data.UserPreferencesRepository
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 /**

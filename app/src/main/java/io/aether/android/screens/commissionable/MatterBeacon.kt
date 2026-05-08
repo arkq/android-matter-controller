@@ -29,7 +29,8 @@ data class MatterBeacon(
         vendorId,
         productId,
         discriminator,
-        transport)
+        transport,
+    )
   }
 }
 

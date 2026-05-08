@@ -10,8 +10,8 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
-import io.aether.android.Device.DeviceType
 import com.google.protobuf.Timestamp
+import io.aether.android.Device.DeviceType
 import java.io.File
 import java.lang.Long.max
 import java.security.SecureRandom
@@ -76,12 +76,12 @@ lateinit var DeviceTypeStrings: MutableMap<DeviceType, String>
 
 fun setDeviceTypeStrings(unspecified: String, light: String, outlet: String, unknown: String) {
   DeviceTypeStrings =
-    mutableMapOf(
-      DeviceType.TYPE_UNSPECIFIED to unspecified,
-      DeviceType.TYPE_LIGHT to light,
-      DeviceType.TYPE_OUTLET to outlet,
-      DeviceType.TYPE_UNKNOWN to unknown,
-    )
+      mutableMapOf(
+          DeviceType.TYPE_UNSPECIFIED to unspecified,
+          DeviceType.TYPE_LIGHT to light,
+          DeviceType.TYPE_OUTLET to outlet,
+          DeviceType.TYPE_UNKNOWN to unknown,
+      )
 }
 
 /** Converts the Device.DeviceType enum to a string used in the UI. */
@@ -92,8 +92,7 @@ fun DeviceType.displayString(): String {
 // -----------------------------------------------------------------------------
 // Matter Device Type Display Icon
 
-
-fun getDeviceTypeIconId(deviceType: DeviceType) : Int {
+fun getDeviceTypeIconId(deviceType: DeviceType): Int {
   return when (deviceType) {
     DeviceType.TYPE_UNSPECIFIED -> R.drawable.ic_baseline_device_unknown_24
     DeviceType.TYPE_UNKNOWN -> R.drawable.ic_baseline_device_unknown_24
@@ -107,7 +106,7 @@ fun getDeviceTypeIconId(deviceType: DeviceType) : Int {
   }
 }
 
-fun getDeviceTypeDisplayStringId(deviceType: DeviceType) : Int {
+fun getDeviceTypeDisplayStringId(deviceType: DeviceType): Int {
   return when (deviceType) {
     DeviceType.TYPE_UNSPECIFIED -> R.string.device_type_unspecified
     DeviceType.TYPE_UNKNOWN -> R.string.device_type_unknown
@@ -157,12 +156,12 @@ fun stateDisplayString(isOnline: Boolean, isOn: Boolean): String {
 
 fun stringToBoolean(s: String): Boolean {
   val boolValue =
-    when (s) {
-      "true",
-      "True",
-      "TRUE" -> true
-      else -> false
-    }
+      when (s) {
+        "true",
+        "True",
+        "TRUE" -> true
+        else -> false
+      }
   return boolValue
 }
 
@@ -193,7 +192,7 @@ fun displayPreferences(context: Context) {
       val sharedPreferencesFileKey = element.substringBefore(".xml")
       Timber.d("*** FileKey: [${sharedPreferencesFileKey}] ***")
       val sharedPreferences =
-        context.getSharedPreferences(sharedPreferencesFileKey, Context.MODE_PRIVATE)
+          context.getSharedPreferences(sharedPreferencesFileKey, Context.MODE_PRIVATE)
       val allPreferences = sharedPreferences.all
       for ((key, value) in allPreferences.entries) Timber.d("$key [$value]")
     }
@@ -241,13 +240,13 @@ fun <T> MutableList<T>.mapButReplace(targetItem: T, newItem: T) = map {
 /** Generates a random number to be used as a device identifier during device commissioning */
 fun generateNextDeviceId(): Long {
   val secureRandom =
-    try {
-      SecureRandom.getInstance("SHA1PRNG")
-    } catch (ex: Exception) {
-      Timber.w(ex, "Failed to instantiate SecureRandom with SHA1PRNG")
-      // instantiate with the default algorithm
-      SecureRandom()
-    }
+      try {
+        SecureRandom.getInstance("SHA1PRNG")
+      } catch (ex: Exception) {
+        Timber.w(ex, "Failed to instantiate SecureRandom with SHA1PRNG")
+        // instantiate with the default algorithm
+        SecureRandom()
+      }
 
   return max(abs(secureRandom.nextLong()), 1)
 }
@@ -330,7 +329,7 @@ enum class StateChangesMonitoringMode {
   // Subscription is what should normally be used.
   Subscription,
   // Left for historical reasons when we had issues with Subscription.
-  PeriodicRead
+  PeriodicRead,
 }
 
 val STATE_CHANGES_MONITORING_MODE = StateChangesMonitoringMode.Subscription
@@ -349,13 +348,13 @@ const val DEVICE_SHARING_WITH_GPS = true
 // Which API should be used for opening the commissioning window for DeviceSharing.
 enum class OpenCommissioningWindowApi {
   ChipDeviceController,
-  AdministratorCommissioningCluster
+  AdministratorCommissioningCluster,
 }
 
 // Which method should be used to generate identifiers for devices being commissioned
 enum class DeviceIdGenerator {
   Random,
-  Incremental
+  Incremental,
 }
 
 /**
@@ -377,7 +376,7 @@ enum class CommissioningWindowStatus(val status: Int) {
   EnhancedWindowOpen(1),
 
   /** A Basic Commissioning Method window is open */
-  BasicWindowOpen(2)
+  BasicWindowOpen(2),
 }
 
 val OPEN_COMMISSIONING_WINDOW_API = OpenCommissioningWindowApi.ChipDeviceController

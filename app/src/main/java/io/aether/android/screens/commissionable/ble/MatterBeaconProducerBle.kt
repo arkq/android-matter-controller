@@ -15,11 +15,11 @@ import android.content.Context
 import android.content.Context.BLUETOOTH_SERVICE
 import android.os.ParcelUuid
 import android.os.SystemClock
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.aether.android.screens.commissionable.MatterBeacon
 import io.aether.android.screens.commissionable.MatterBeaconInject
 import io.aether.android.screens.commissionable.MatterBeaconProducer
 import io.aether.android.screens.commissionable.Transport
-import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
@@ -64,7 +64,8 @@ constructor(
           listOf(
               ScanFilter.Builder()
                   .setServiceData(MATTER_UUID, byteArrayOf(0), byteArrayOf(0))
-                  .build()),
+                  .build()
+          ),
           ScanSettings.Builder()
               .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
               .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
@@ -113,7 +114,8 @@ constructor(
         vendorId = ((data[10].toInt() or (data[11].toInt() shl 8)) and 0xFFFF),
         productId = ((data[12].toInt() or (data[13].toInt() shl 8)) and 0xFFFF),
         discriminator = ((data[8].toInt() or (data[9].toInt() shl 8)) and 0xFFF),
-        Transport.Ble(device.address))
+        Transport.Ble(device.address),
+    )
   }
 
   // ---------------------------------------------------------------------------

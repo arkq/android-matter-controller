@@ -6,18 +6,18 @@ package io.aether.android
 import android.bluetooth.BluetoothAdapter
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -28,15 +28,15 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -50,8 +50,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import io.aether.android.screens.common.HtmlInfoDialog
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.settings.DeveloperUtilitiesViewModel
@@ -87,13 +87,13 @@ fun AppLayout(navController: NavHostController) {
   // Clear TopAppBar actions on every route change so screen-specific actions
   // (e.g. the edit icon on the device screen) disappear at the same time as the
   // title, not only when the old screen's composable leaves composition.
-  LaunchedEffect(currentRoute) {
-    topAppBarActions = {}
-  }
+  LaunchedEffect(currentRoute) { topAppBarActions = {} }
 
   val developerUtilitiesViewModel: DeveloperUtilitiesViewModel = hiltViewModel()
   val msgDialogInfo by developerUtilitiesViewModel.msgDialogInfo.collectAsState()
-  val onDismissMsgDialog: () -> Unit = remember { { developerUtilitiesViewModel.dismissMsgDialog() } }
+  val onDismissMsgDialog: () -> Unit = remember {
+    { developerUtilitiesViewModel.dismissMsgDialog() }
+  }
 
   val showGpsMatterDiscoveryPref = rememberPreferenceState("halfsheet_preference", false)
   var showGpsMatterDiscoveryDialog by remember { mutableStateOf(false) }
@@ -105,19 +105,19 @@ fun AppLayout(navController: NavHostController) {
   val drawerWidthDp = (screenWidthDp * 0.8f).dp
 
   val scanningPermissionsLauncher =
-    rememberLauncherForActivityResult(
-      contract = ActivityResultContracts.RequestMultiplePermissions()
-    ) { results ->
-      if (results.values.any { !it }) {
-        developerUtilitiesViewModel.showMsgDialog(
-          "Scanning Permissions",
-          "Scanning permissions were not granted, so unfortunately " +
-            "the \"Commissionable Devices\" feature is not available.",
-        )
-      } else {
-        navController.navigate(DEST_COMMISSIONABLE_DEVICES)
+      rememberLauncherForActivityResult(
+          contract = ActivityResultContracts.RequestMultiplePermissions()
+      ) { results ->
+        if (results.values.any { !it }) {
+          developerUtilitiesViewModel.showMsgDialog(
+              "Scanning Permissions",
+              "Scanning permissions were not granted, so unfortunately " +
+                  "the \"Commissionable Devices\" feature is not available.",
+          )
+        } else {
+          navController.navigate(DEST_COMMISSIONABLE_DEVICES)
+        }
       }
-    }
 
   val onCommissionableDevicesClick: () -> Unit = {
     scope.launch { drawerState.close() }
@@ -128,16 +128,17 @@ fun AppLayout(navController: NavHostController) {
       developerUtilitiesViewModel.logScanningPermissions(ctx)
       if (!developerUtilitiesViewModel.allScanningPermissionsGranted(ctx)) {
         Timber.d("All scanning permissions NOT granted. Asking for them.")
-        scanningPermissionsLauncher.launch(developerUtilitiesViewModel.getRequiredScanningPermissions())
+        scanningPermissionsLauncher.launch(
+            developerUtilitiesViewModel.getRequiredScanningPermissions()
+        )
       } else {
-        @Suppress("DEPRECATION")
-        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        @Suppress("DEPRECATION") val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         if (bluetoothAdapter.isEnabled) {
           navController.navigate(DEST_COMMISSIONABLE_DEVICES)
         } else {
           developerUtilitiesViewModel.showMsgDialog(
-            "Bluetooth is not enabled",
-            "Bluetooth must be enabled on your phone to allow discovery of matter devices",
+              "Bluetooth is not enabled",
+              "Bluetooth must be enabled on your phone to allow discovery of matter devices",
           )
         }
       }
@@ -147,131 +148,129 @@ fun AppLayout(navController: NavHostController) {
   MsgAlertDialog(msgDialogInfo, onDismissMsgDialog)
 
   ModalNavigationDrawer(
-    drawerState = drawerState,
-    // Gestures are enabled only when the drawer is already open, so the user can swipe it
-    // closed. Opening is intentionally restricted to the hamburger icon tap only.
-    gesturesEnabled = drawerState.isOpen,
-    drawerContent = {
-      ModalDrawerSheet(modifier = Modifier.width(drawerWidthDp)) {
-        // Menu header with app icon and name
-        Row(
-          modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 20.dp),
-          verticalAlignment = Alignment.CenterVertically,
-        ) {
-          Image(
-            painter = painterResource(id = R.drawable.ic_launcher_aether),
-            contentDescription = null,
-            modifier = Modifier.size(48.dp),
+      drawerState = drawerState,
+      // Gestures are enabled only when the drawer is already open, so the user can swipe it
+      // closed. Opening is intentionally restricted to the hamburger icon tap only.
+      gesturesEnabled = drawerState.isOpen,
+      drawerContent = {
+        ModalDrawerSheet(modifier = Modifier.width(drawerWidthDp)) {
+          // Menu header with app icon and name
+          Row(
+              modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 20.dp),
+              verticalAlignment = Alignment.CenterVertically,
+          ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcher_aether),
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = stringResource(R.string.app_name),
+                style = MaterialTheme.typography.headlineMedium,
+            )
+          }
+          HorizontalDivider()
+          NavigationDrawerItem(
+              icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_search_24),
+                    contentDescription = null,
+                )
+              },
+              label = { Text(stringResource(R.string.menu_item_scanner)) },
+              selected = currentRoute == DEST_COMMISSIONABLE_DEVICES,
+              onClick = onCommissionableDevicesClick,
+              modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
           )
-          Spacer(modifier = Modifier.width(12.dp))
-          Text(
-            text = stringResource(R.string.app_name),
-            style = MaterialTheme.typography.headlineMedium,
+          NavigationDrawerItem(
+              icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_device_hub_24),
+                    contentDescription = null,
+                )
+              },
+              label = { Text(stringResource(R.string.menu_item_thread)) },
+              selected = currentRoute == DEST_THREAD,
+              onClick = {
+                scope.launch { drawerState.close() }
+                navController.navigate(DEST_THREAD)
+              },
+              modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+          )
+          HorizontalDivider()
+          // GPS Matter Discovery Notification toggle
+          var gpsDiscoveryValue by showGpsMatterDiscoveryPref
+          Row(
+              modifier =
+                  Modifier.fillMaxWidth()
+                      .clickable {
+                        gpsDiscoveryValue = !gpsDiscoveryValue
+                        showGpsMatterDiscoveryDialog = true
+                      }
+                      .padding(horizontal = 28.dp, vertical = 12.dp),
+              verticalAlignment = Alignment.CenterVertically,
+          ) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_notifications_24),
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = stringResource(R.string.menu_item_matter_gps_notification),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f),
+            )
+            Switch(
+                checked = gpsDiscoveryValue,
+                onCheckedChange = {
+                  gpsDiscoveryValue = it
+                  showGpsMatterDiscoveryDialog = true
+                },
+            )
+          }
+          NavigationDrawerItem(
+              icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_help_24),
+                    contentDescription = null,
+                )
+              },
+              label = { Text(stringResource(R.string.menu_item_about)) },
+              selected = false,
+              onClick = {
+                scope.launch { drawerState.close() }
+                showAboutDialog = true
+              },
+              modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
           )
         }
-        HorizontalDivider()
-        NavigationDrawerItem(
-          icon = {
-            Icon(
-              painter = painterResource(id = R.drawable.ic_baseline_search_24),
-              contentDescription = null,
-            )
-          },
-          label = { Text(stringResource(R.string.menu_item_scanner)) },
-          selected = currentRoute == DEST_COMMISSIONABLE_DEVICES,
-          onClick = onCommissionableDevicesClick,
-          modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-        )
-        NavigationDrawerItem(
-          icon = {
-            Icon(
-              painter = painterResource(id = R.drawable.baseline_device_hub_24),
-              contentDescription = null,
-            )
-          },
-          label = { Text(stringResource(R.string.menu_item_thread)) },
-          selected = currentRoute == DEST_THREAD,
-          onClick = {
-            scope.launch { drawerState.close() }
-            navController.navigate(DEST_THREAD)
-          },
-          modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-        )
-        HorizontalDivider()
-        // GPS Matter Discovery Notification toggle
-        var gpsDiscoveryValue by showGpsMatterDiscoveryPref
-        Row(
-          modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-              gpsDiscoveryValue = !gpsDiscoveryValue
-              showGpsMatterDiscoveryDialog = true
-            }
-            .padding(horizontal = 28.dp, vertical = 12.dp),
-          verticalAlignment = Alignment.CenterVertically,
-        ) {
-          Icon(
-            painter = painterResource(id = R.drawable.baseline_notifications_24),
-            contentDescription = null,
-          )
-          Spacer(modifier = Modifier.width(12.dp))
-          Text(
-            text = stringResource(R.string.menu_item_matter_gps_notification),
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.weight(1f),
-          )
-          Switch(
-            checked = gpsDiscoveryValue,
-            onCheckedChange = {
-              gpsDiscoveryValue = it
-              showGpsMatterDiscoveryDialog = true
-            },
-          )
-        }
-        NavigationDrawerItem(
-          icon = {
-            Icon(
-              painter = painterResource(id = R.drawable.ic_baseline_help_24),
-              contentDescription = null,
-            )
-          },
-          label = { Text(stringResource(R.string.menu_item_about)) },
-          selected = false,
-          onClick = {
-            scope.launch { drawerState.close() }
-            showAboutDialog = true
-          },
-          modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-        )
-      }
-    },
+      },
   ) {
     Scaffold(
-      topBar = {
-        TopAppBar(
-          title = { Text(text = topAppBarTitle) },
-          navigationIcon = {
-            if (isHomeScreen) {
-              IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                Icon(
-                  Icons.Filled.Menu,
-                  contentDescription = stringResource(R.string.menu_button),
-                )
-              }
-            } else {
-              IconButton(onClick = { navController.navigateUp() }) {
-                Icon(
-                  Icons.AutoMirrored.Filled.ArrowBack,
-                  contentDescription = stringResource(R.string.back_button),
-                )
-              }
-            }
-          },
-          actions = topAppBarActions,
-        )
-      },
+        topBar = {
+          TopAppBar(
+              title = { Text(text = topAppBarTitle) },
+              navigationIcon = {
+                if (isHomeScreen) {
+                  IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                    Icon(
+                        Icons.Filled.Menu,
+                        contentDescription = stringResource(R.string.menu_button),
+                    )
+                  }
+                } else {
+                  IconButton(onClick = { navController.navigateUp() }) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back_button),
+                    )
+                  }
+                }
+              },
+              actions = topAppBarActions,
+          )
+        },
     ) { innerPadding ->
       AppNavigation(navController, innerPadding, updateTopAppBarTitle, updateTopAppBarActions)
     }
@@ -279,16 +278,16 @@ fun AppLayout(navController: NavHostController) {
 
   if (showAboutDialog) {
     HtmlInfoDialog(
-      stringResource(R.string.menu_item_about),
-      stringResource(R.string.about_app, VERSION_NAME),
-      onClick = { showAboutDialog = false },
+        stringResource(R.string.menu_item_about),
+        stringResource(R.string.about_app, VERSION_NAME),
+        onClick = { showAboutDialog = false },
     )
   }
   if (showGpsMatterDiscoveryDialog) {
     HtmlInfoDialog(
-      stringResource(R.string.menu_item_matter_gps_notification),
-      stringResource(R.string.gps_matter_discovery_notification_alert),
-      onClick = { showGpsMatterDiscoveryDialog = false },
+        stringResource(R.string.menu_item_matter_gps_notification),
+        stringResource(R.string.gps_matter_discovery_notification_alert),
+        onClick = { showGpsMatterDiscoveryDialog = false },
     )
   }
 }

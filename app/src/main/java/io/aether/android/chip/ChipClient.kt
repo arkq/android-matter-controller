@@ -15,8 +15,8 @@ import chip.platform.NsdManagerServiceBrowser
 import chip.platform.NsdManagerServiceResolver
 import chip.platform.PreferencesConfigurationManager
 import chip.platform.PreferencesKeyValueStoreManager
-import io.aether.android.stripLinkLocalInIpAddress
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.aether.android.stripLinkLocalInIpAddress
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
@@ -43,9 +43,11 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
         NsdManagerServiceResolver(context),
         NsdManagerServiceBrowser(context),
         ChipMdnsCallbackImpl(),
-        DiagnosticDataProviderImpl(context))
+        DiagnosticDataProviderImpl(context),
+    )
     ChipDeviceController(
-        ControllerParams.newBuilder().setUdpListenPort(0).setControllerVendorId(VENDOR_ID).build())
+        ControllerParams.newBuilder().setUdpListenPort(0).setControllerVendorId(VENDOR_ID).build()
+    )
   }
 
   /**
@@ -66,7 +68,8 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
               Timber.e(errorMessage, error)
               continuation.resumeWithException(IllegalStateException(errorMessage))
             }
-          })
+          },
+      )
     }
   }
 
@@ -83,7 +86,9 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
             override fun onError(status: Int, nodeId: Long) {
               continuation.resumeWithException(
                   java.lang.IllegalStateException(
-                      "Failed unpairing device [$nodeId] with status [$status]"))
+                      "Failed unpairing device [$nodeId] with status [$status]"
+                  )
+              )
             }
 
             override fun onSuccess(nodeId: Long) {
@@ -99,10 +104,11 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
       devicePtr: Long,
       pinCode: Long,
       iterations: Long,
-      salt: ByteArray
+      salt: ByteArray,
   ): PaseVerifierParams {
     Timber.d(
-        "computePaseVerifier: devicePtr [${devicePtr}] pinCode [${pinCode}] iterations [${iterations}] salt [${salt}]")
+        "computePaseVerifier: devicePtr [${devicePtr}] pinCode [${pinCode}] iterations [${iterations}] salt [${salt}]"
+    )
     return chipDeviceController.computePaseVerifier(devicePtr, pinCode, iterations, salt)
   }
 
@@ -110,7 +116,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
       deviceId: Long,
       ipAddress: String,
       port: Int,
-      setupPinCode: Long
+      setupPinCode: Long,
   ) {
     return suspendCoroutine { continuation ->
       chipDeviceController.setCompletionListener(
@@ -126,7 +132,8 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
               super.onPairingComplete(code)
               if (code != 0) {
                 continuation.resumeWithException(
-                    IllegalStateException("Pairing failed with error code [${code}]"))
+                    IllegalStateException("Pairing failed with error code [${code}]")
+                )
               } else {
                 continuation.resume(Unit)
               }
@@ -141,7 +148,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
                 vendorId: Int,
                 productId: Int,
                 wifiEndpointId: Int,
-                threadEndpointId: Int
+                threadEndpointId: Int,
             ) {
               super.onReadCommissioningInfo(vendorId, productId, wifiEndpointId, threadEndpointId)
               continuation.resume(Unit)
@@ -151,12 +158,17 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
               super.onCommissioningStatusUpdate(nodeId, stage, errorCode)
               continuation.resume(Unit)
             }
-          })
+          }
+      )
 
       // Temporary workaround to remove interface indexes from ipAddress
       // due to https://github.com/project-chip/connectedhomeip/pull/19394/files
       chipDeviceController.establishPaseConnection(
-          deviceId, stripLinkLocalInIpAddress(ipAddress), port, setupPinCode)
+          deviceId,
+          stripLinkLocalInIpAddress(ipAddress),
+          port,
+          setupPinCode,
+      )
     }
   }
 
@@ -170,7 +182,8 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
               super.onCommissioningComplete(nodeId, errorCode)
               if (errorCode != 0) {
                 continuation.resumeWithException(
-                    IllegalStateException("Commissioning failed with error code [${errorCode}]"))
+                    IllegalStateException("Commissioning failed with error code [${errorCode}]")
+                )
               } else {
                 continuation.resume(Unit)
               }
@@ -180,7 +193,8 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
               super.onError(error)
               continuation.resumeWithException(error)
             }
-          })
+          }
+      )
       chipDeviceController.commissionDevice(deviceId, networkCredentials)
     }
   }
@@ -190,7 +204,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
       duration: Int,
       iteration: Long,
       discriminator: Int,
-      setupPinCode: Long
+      setupPinCode: Long,
   ) {
     return suspendCoroutine { continuation ->
       Timber.d("Calling chipDeviceController.openPairingWindowWithPIN")
@@ -198,20 +212,30 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
           object : OpenCommissioningCallback {
             override fun onError(status: Int, deviceId: Long) {
               Timber.e(
-                  "ShareDevice: awaitOpenPairingWindowWithPIN.onError: status [${status}] device [${deviceId}]")
+                  "ShareDevice: awaitOpenPairingWindowWithPIN.onError: status [${status}] device [${deviceId}]"
+              )
               continuation.resumeWithException(
                   java.lang.IllegalStateException(
-                      "Failed opening the pairing window with status [${status}]"))
+                      "Failed opening the pairing window with status [${status}]"
+                  )
+              )
             }
 
             override fun onSuccess(deviceId: Long, manualPairingCode: String?, qrCode: String?) {
               Timber.d(
-                  "ShareDevice: awaitOpenPairingWindowWithPIN.onSuccess: deviceId [${deviceId}]")
+                  "ShareDevice: awaitOpenPairingWindowWithPIN.onSuccess: deviceId [${deviceId}]"
+              )
               continuation.resume(Unit)
             }
           }
       chipDeviceController.openPairingWindowWithPINCallback(
-          connectedDevicePointer, duration, iteration, discriminator, setupPinCode, callback)
+          connectedDevicePointer,
+          duration,
+          iteration,
+          discriminator,
+          setupPinCode,
+          callback,
+      )
     }
   }
 
@@ -233,7 +257,8 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
               Timber.e(errorMessage, error)
               continuation.resumeWithException(IllegalStateException(errorMessage))
             }
-          })
+          },
+      )
     }
   }
 
@@ -258,10 +283,14 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
       attributePath: ChipAttributePath,
       tlv: ByteArray,
       timedRequestTimeoutMs: Int = DEFAULT_TIMEOUT,
-      imTimeoutMs: Int = DEFAULT_TIMEOUT
+      imTimeoutMs: Int = DEFAULT_TIMEOUT,
   ) {
     return writeAttributes(
-        devicePtr, mapOf(attributePath to tlv), timedRequestTimeoutMs, imTimeoutMs)
+        devicePtr,
+        mapOf(attributePath to tlv),
+        timedRequestTimeoutMs,
+        imTimeoutMs,
+    )
   }
 
   /** Wrapper around [ChipDeviceController.write] */
@@ -269,13 +298,17 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
       devicePtr: Long,
       attributes: Map<ChipAttributePath, ByteArray>,
       timedRequestTimeoutMs: Int = DEFAULT_TIMEOUT,
-      imTimeoutMs: Int = DEFAULT_TIMEOUT
+      imTimeoutMs: Int = DEFAULT_TIMEOUT,
   ) {
     return suspendCoroutine { continuation ->
       val requests: List<AttributeWriteRequest> =
           attributes.toList().map {
             AttributeWriteRequest.newInstance(
-                it.first.endpointId, it.first.clusterId, it.first.attributeId, it.second)
+                it.first.endpointId,
+                it.first.clusterId,
+                it.first.attributeId,
+                it.second,
+            )
           }
       val callback: WriteAttributesCallback =
           object : WriteAttributesCallback {
@@ -284,11 +317,14 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
             }
 
             override fun onResponse(attributePath: ChipAttributePath?) {
-              if (attributePath!! ==
-                  ChipAttributePath.newInstance(
-                      requests.last().endpointId,
-                      requests.last().clusterId,
-                      requests.last().attributeId)) {
+              if (
+                  attributePath!! ==
+                      ChipAttributePath.newInstance(
+                          requests.last().endpointId,
+                          requests.last().clusterId,
+                          requests.last().attributeId,
+                      )
+              ) {
                 continuation.resume(Unit)
               }
             }
@@ -305,7 +341,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
   /** Wrapper around [ChipDeviceController.readAttributePath] */
   suspend fun readAttributes(
       devicePtr: Long,
-      attributePaths: List<ChipAttributePath>
+      attributePaths: List<ChipAttributePath>,
   ): Map<ChipAttributePath, AttributeState> {
     return suspendCoroutine { continuation ->
       val callback: ReportCallback =
@@ -313,7 +349,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
             override fun onError(
                 attributePath: ChipAttributePath?,
                 eventPath: ChipEventPath?,
-                e: Exception?
+                e: Exception?,
             ) {
               continuation.resumeWithException(IllegalStateException("readAttributes failed", e))
             }
@@ -345,7 +381,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
       attributePath: ChipAttributePath,
       minInterval: Int,
       maxInterval: Int,
-      callback: ReportCallback
+      callback: ReportCallback,
   ) {
     return suspendCoroutine { continuation ->
       chipDeviceController.subscribeToAttributePath(
@@ -354,7 +390,8 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
           devicePtr,
           listOf(attributePath),
           minInterval,
-          maxInterval)
+          maxInterval,
+      )
     }
   }
 
@@ -363,7 +400,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
       devicePtr: Long,
       invokeElement: InvokeElement,
       timedRequestTimeoutMs: Int = DEFAULT_TIMEOUT,
-      imTimeoutMs: Int = DEFAULT_TIMEOUT
+      imTimeoutMs: Int = DEFAULT_TIMEOUT,
   ): Long {
     return suspendCoroutine { continuation ->
       val invokeCallback: InvokeCallback =
@@ -377,7 +414,12 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
             }
           }
       chipDeviceController.invoke(
-          invokeCallback, devicePtr, invokeElement, timedRequestTimeoutMs, imTimeoutMs)
+          invokeCallback,
+          devicePtr,
+          invokeElement,
+          timedRequestTimeoutMs,
+          imTimeoutMs,
+      )
     }
   }
 }

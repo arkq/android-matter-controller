@@ -5,13 +5,13 @@ package io.aether.android.screens.thread
 
 import com.google.android.gms.threadnetwork.ThreadNetworkCredentials
 import com.google.common.io.BaseEncoding
+import java.net.HttpURLConnection
+import java.net.URL
+import java.nio.charset.StandardCharsets
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import timber.log.Timber
-import java.net.HttpURLConnection
-import java.net.URL
-import java.nio.charset.StandardCharsets
 
 /**
  * OtbrHttp object has some useful methods, enums and properties for getting/setting information to
@@ -23,7 +23,7 @@ object OtbrHttpClient {
     GET,
     POST,
     PUT,
-    DELETE
+    DELETE,
   }
 
   /** what is generally an OK response */
@@ -35,7 +35,8 @@ object OtbrHttpClient {
           HttpURLConnection.HTTP_NOT_AUTHORITATIVE,
           HttpURLConnection.HTTP_NO_CONTENT,
           HttpURLConnection.HTTP_RESET,
-          HttpURLConnection.HTTP_PARTIAL)
+          HttpURLConnection.HTTP_PARTIAL,
+      )
 
   /**
    * Creates credentials in the format used by the OTBR HTTP server. See its documentation in
@@ -49,7 +50,9 @@ object OtbrHttpClient {
 
     val jsonQuery = JSONObject()
     jsonQuery.put(
-        "ActiveDataset", BaseEncoding.base16().encode(newCredentials.activeOperationalDataset))
+        "ActiveDataset",
+        BaseEncoding.base16().encode(newCredentials.activeOperationalDataset),
+    )
     jsonQuery.put("PendingTimestamp", jsonTimestamp)
     // delay of committing the pending set into active set: 10000ms
     jsonQuery.put("Delay", 10000)

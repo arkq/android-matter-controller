@@ -5,8 +5,8 @@ package io.aether.android.data
 
 import android.content.Context
 import androidx.lifecycle.asLiveData
-import io.aether.android.UserPreferences
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.aether.android.UserPreferences
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton

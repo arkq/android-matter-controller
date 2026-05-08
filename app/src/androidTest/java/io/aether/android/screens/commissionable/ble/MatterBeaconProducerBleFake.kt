@@ -4,10 +4,10 @@
 package io.aether.android.screens.commissionable.ble
 
 import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.aether.android.screens.commissionable.MatterBeacon
 import io.aether.android.screens.commissionable.MatterBeaconProducer
 import io.aether.android.screens.commissionable.Transport
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
@@ -33,7 +33,8 @@ constructor(@ApplicationContext private val context: Context) : MatterBeaconProd
               vendorId = 1,
               productId = 1,
               discriminator = 1,
-              Transport.Ble("1.1.1.1"))
+              Transport.Ble("1.1.1.1"),
+          )
 
       trySend(beacon)
 

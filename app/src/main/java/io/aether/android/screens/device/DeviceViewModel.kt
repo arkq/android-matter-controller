@@ -4,24 +4,26 @@
 
 package io.aether.android.screens.device
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import chip.devicecontroller.model.NodeState
-import io.aether.android.Device
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.aether.android.DISCRIMINATOR
 import io.aether.android.ITERATION
 import io.aether.android.OPEN_COMMISSIONING_WINDOW_API
 import io.aether.android.OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS
 import io.aether.android.OpenCommissioningWindowApi
 import io.aether.android.PERIODIC_READ_INTERVAL_DEVICE_SCREEN_SECONDS
+import io.aether.android.R
 import io.aether.android.SETUP_PIN_CODE
 import io.aether.android.STATE_CHANGES_MONITORING_MODE
 import io.aether.android.StateChangesMonitoringMode
 import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
-import io.aether.android.chip.MatterConstants.OnOffAttribute
-import io.aether.android.chip.MatterConstants.LevelAttribute
 import io.aether.android.chip.MatterConstants.ColorTemperatureAttribute
+import io.aether.android.chip.MatterConstants.LevelAttribute
+import io.aether.android.chip.MatterConstants.OnOffAttribute
 import io.aether.android.chip.SubscriptionHelper
 import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
@@ -29,13 +31,10 @@ import io.aether.android.endpointFor
 import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.home.DeviceUiModel
-import io.aether.android.supportsColorTemperature
-import io.aether.android.supportsLevelControl
 import io.aether.android.screens.shared.SetDeviceNameResult
 import io.aether.android.screens.shared.SetDeviceNameUseCase
-import io.aether.android.R
-import androidx.annotation.StringRes
-import dagger.hilt.android.lifecycle.HiltViewModel
+import io.aether.android.supportsColorTemperature
+import io.aether.android.supportsLevelControl
 import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlin.random.Random
@@ -52,12 +51,12 @@ import timber.log.Timber
 class DeviceViewModel
 @Inject
 constructor(
-  private val devicesRepository: DevicesRepository,
-  val devicesStateRepository: DevicesStateRepository,
-  private val chipClient: ChipClient,
-  private val clustersHelper: ClustersHelper,
-  private val subscriptionHelper: SubscriptionHelper,
-  private val setDeviceNameUseCase: SetDeviceNameUseCase,
+    private val devicesRepository: DevicesRepository,
+    val devicesStateRepository: DevicesStateRepository,
+    private val chipClient: ChipClient,
+    private val clustersHelper: ClustersHelper,
+    private val subscriptionHelper: SubscriptionHelper,
+    private val setDeviceNameUseCase: SetDeviceNameUseCase,
 ) : ViewModel() {
 
   // The UI model for device shown on the Device screen.
@@ -83,7 +82,7 @@ constructor(
   // Controls whether the "Confirm Device Removal" AlertDialog should be shown in the UI.
   private var _showConfirmDeviceRemovalAlertDialog = MutableStateFlow(false)
   val showConfirmDeviceRemovalAlertDialog: StateFlow<Boolean> =
-    _showConfirmDeviceRemovalAlertDialog.asStateFlow()
+      _showConfirmDeviceRemovalAlertDialog.asStateFlow()
 
   // Communicates to the UI that removal of the device has completed successfully.
   // See resetDeviceRemovalCompleted() to reset this state after being handled by the UI.
@@ -94,11 +93,11 @@ constructor(
   // See resetPairingWindowOpenForDeviceSharing() to reset this state after being handled by the UI.
   private var _pairingWindowOpenForDeviceSharing = MutableStateFlow(false)
   val pairingWindowOpenForDeviceSharing: StateFlow<Boolean> =
-    _pairingWindowOpenForDeviceSharing.asStateFlow()
+      _pairingWindowOpenForDeviceSharing.asStateFlow()
 
   private suspend fun removeAllLogicalDevicesForNode(nodeId: Long) {
-    val devicesForNode = devicesRepository.getAllDevices().devicesList
-      .filter { nodeIdFor(it) == nodeId }
+    val devicesForNode =
+        devicesRepository.getAllDevices().devicesList.filter { nodeIdFor(it) == nodeId }
     devicesForNode.forEach { device ->
       devicesStateRepository.removeDeviceState(device.deviceId)
       devicesRepository.removeDevice(device.deviceId)
@@ -132,13 +131,17 @@ constructor(
         // Load all endpoint devices (siblings) for the same physical node.
         val nId = nodeIdFor(device)
         val allDevices = devicesRepository.getAllDevices().devicesList
-        val siblings = allDevices
-          .filter { nodeIdFor(it) == nId }
-          .sortedBy { endpointFor(it) }
+        val siblings = allDevices.filter { nodeIdFor(it) == nId }.sortedBy { endpointFor(it) }
         val models = siblings.map { sibling ->
           val siblingState = devicesStateRepository.loadDeviceState(sibling.deviceId)
           if (siblingState != null) {
-            DeviceUiModel(sibling, siblingState.online, siblingState.on, siblingState.level, siblingState.colorTemperature)
+            DeviceUiModel(
+                sibling,
+                siblingState.online,
+                siblingState.on,
+                siblingState.level,
+                siblingState.colorTemperature,
+            )
           } else {
             DeviceUiModel(sibling, false, false)
           }
@@ -154,16 +157,19 @@ constructor(
   fun renameDevice(deviceId: Long, newName: String) {
     viewModelScope.launch {
       when (
-        val result =
-          setDeviceNameUseCase.execute(deviceId, newName) {
-            _deviceUiModel.update { current ->
-              current?.copy(device = current.device.toBuilder().setName(newName).build())
-            }
-          }
+          val result =
+              setDeviceNameUseCase.execute(deviceId, newName) {
+                _deviceUiModel.update { current ->
+                  current?.copy(device = current.device.toBuilder().setName(newName).build())
+                }
+              }
       ) {
         is SetDeviceNameResult.LocalError -> {
           Timber.e(result.exception, "Failed to set device name")
-          showMsgDialog(R.string.set_device_name_failed, result.exception.message ?: result.exception.toString())
+          showMsgDialog(
+              R.string.set_device_name_failed,
+              result.exception.message ?: result.exception.toString(),
+          )
         }
         SetDeviceNameResult.Success -> {}
       }
@@ -176,9 +182,9 @@ constructor(
   fun openPairingWindow(deviceId: Long) {
     stopMonitoringStateChanges()
     showMsgDialog(
-      R.string.opening_pairing_window_title,
-      R.string.opening_pairing_window_message,
-      false,
+        R.string.opening_pairing_window_title,
+        R.string.opening_pairing_window_message,
+        false,
     )
     viewModelScope.launch {
       val nodeId = nodeIdFor(devicesRepository.getDevice(deviceId))
@@ -186,9 +192,9 @@ constructor(
       try {
         when (OPEN_COMMISSIONING_WINDOW_API) {
           OpenCommissioningWindowApi.ChipDeviceController ->
-            openCommissioningWindowUsingOpenPairingWindowWithPin(nodeId)
+              openCommissioningWindowUsingOpenPairingWindowWithPin(nodeId)
           OpenCommissioningWindowApi.AdministratorCommissioningCluster ->
-            openCommissioningWindowWithAdministratorCommissioningCluster(nodeId)
+              openCommissioningWindowWithAdministratorCommissioningCluster(nodeId)
         }
         dismissMsgDialog()
         // Communicate to the UI that the pairing window is open.
@@ -241,16 +247,16 @@ constructor(
 
     val duration = OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS
     Timber.d(
-      "ShareDevice: chipClient.chipClient.awaitOpenPairingWindowWithPIN " +
-        "duration [${duration}] iteration [${ITERATION}] discriminator [${DISCRIMINATOR}] " +
-        "setupPinCode [${SETUP_PIN_CODE}]"
+        "ShareDevice: chipClient.chipClient.awaitOpenPairingWindowWithPIN " +
+            "duration [${duration}] iteration [${ITERATION}] discriminator [${DISCRIMINATOR}] " +
+            "setupPinCode [${SETUP_PIN_CODE}]"
     )
     chipClient.awaitOpenPairingWindowWithPIN(
-      connectedDevicePointer,
-      duration,
-      ITERATION,
-      DISCRIMINATOR,
-      SETUP_PIN_CODE,
+        connectedDevicePointer,
+        duration,
+        ITERATION,
+        DISCRIMINATOR,
+        SETUP_PIN_CODE,
     )
     Timber.d("ShareDevice: After chipClient.awaitOpenPairingWindowWithPIN")
   }
@@ -259,21 +265,21 @@ constructor(
   // for now.
   private suspend fun openCommissioningWindowWithAdministratorCommissioningCluster(nodeId: Long) {
     Timber.d(
-      "ShareDevice: openCommissioningWindowWithAdministratorCommissioningCluster [nodeId=${nodeId}]"
+        "ShareDevice: openCommissioningWindowWithAdministratorCommissioningCluster [nodeId=${nodeId}]"
     )
     val salt = Random.nextBytes(32)
     val timedInvokeTimeoutMs = 10000
     val devicePtr = chipClient.awaitGetConnectedDevicePointer(nodeId)
     val verifier = chipClient.computePaseVerifier(devicePtr, SETUP_PIN_CODE, ITERATION, salt)
     clustersHelper.openCommissioningWindowAdministratorCommissioningCluster(
-      nodeId,
-      0,
-      180,
-      verifier.pakeVerifier,
-      DISCRIMINATOR,
-      ITERATION,
-      salt,
-      timedInvokeTimeoutMs,
+        nodeId,
+        0,
+        180,
+        verifier.pakeVerifier,
+        DISCRIMINATOR,
+        ITERATION,
+        salt,
+        timedInvokeTimeoutMs,
     )
   }
 
@@ -294,12 +300,12 @@ constructor(
   fun removeDevice(deviceId: Long) {
     Timber.d("Removing device [${deviceId}]")
     showMsgDialog(
-      "Unlinking the device",
-      "Calling the device to remove this controller's fabric. " +
-        "If the device is offline, this will fail when the call times out, " +
-        "and this may take a while.\n\n" +
-        "Unlinking the device...",
-      false,
+        "Unlinking the device",
+        "Calling the device to remove this controller's fabric. " +
+            "If the device is offline, this will fail when the call times out, " +
+            "and this may take a while.\n\n" +
+            "Unlinking the device...",
+        false,
     )
     viewModelScope.launch {
       val device = devicesRepository.getDevice(deviceId)
@@ -348,17 +354,19 @@ constructor(
       Timber.d("Handling real device")
       try {
         clustersHelper.setOnOffDeviceStateOnOffCluster(
-          nodeIdFor(deviceUiModel.device),
-          isOn,
-          endpointFor(deviceUiModel.device),
+            nodeIdFor(deviceUiModel.device),
+            isOn,
+            endpointFor(deviceUiModel.device),
         )
         // Read the current stored state to avoid overwriting fresh level/colorTemperature values
         // with whatever was loaded at screen-open time.
         val current = devicesStateRepository.loadDeviceState(deviceId)
         devicesStateRepository.updateDeviceState(
-          deviceId, true, isOn,
-          current?.level ?: deviceUiModel.level,
-          current?.colorTemperature ?: deviceUiModel.colorTemperature,
+            deviceId,
+            true,
+            isOn,
+            current?.level ?: deviceUiModel.level,
+            current?.colorTemperature ?: deviceUiModel.colorTemperature,
         )
       } catch (e: Throwable) {
         Timber.e(e, "Failed setting on/off state")
@@ -378,17 +386,18 @@ constructor(
       Timber.d("Handling real device")
       try {
         clustersHelper.setLevelStateLevelControlCluster(
-          nodeIdFor(deviceUiModel.device),
-          level,
-          endpointFor(deviceUiModel.device),
+            nodeIdFor(deviceUiModel.device),
+            level,
+            endpointFor(deviceUiModel.device),
         )
         // Read the current stored state to avoid overwriting fresh isOn/colorTemperature values.
         val current = devicesStateRepository.loadDeviceState(deviceId)
         devicesStateRepository.updateDeviceState(
-          deviceId, true,
-          current?.on ?: deviceUiModel.isOn,
-          level,
-          current?.colorTemperature ?: deviceUiModel.colorTemperature,
+            deviceId,
+            true,
+            current?.on ?: deviceUiModel.isOn,
+            level,
+            current?.colorTemperature ?: deviceUiModel.colorTemperature,
         )
       } catch (e: Throwable) {
         Timber.e(e, "Failed setting level")
@@ -408,17 +417,18 @@ constructor(
       Timber.d("Handling real device")
       try {
         clustersHelper.setColorTemperatureColorControlCluster(
-          nodeIdFor(deviceUiModel.device),
-          colorTemperature,
-          endpointFor(deviceUiModel.device),
+            nodeIdFor(deviceUiModel.device),
+            colorTemperature,
+            endpointFor(deviceUiModel.device),
         )
         // Read the current stored state to avoid overwriting fresh isOn/level values.
         val current = devicesStateRepository.loadDeviceState(deviceId)
         devicesStateRepository.updateDeviceState(
-          deviceId, true,
-          current?.on ?: deviceUiModel.isOn,
-          current?.level ?: deviceUiModel.level,
-          colorTemperature,
+            deviceId,
+            true,
+            current?.on ?: deviceUiModel.isOn,
+            current?.level ?: deviceUiModel.level,
+            colorTemperature,
         )
       } catch (e: Throwable) {
         Timber.e(e, "Failed setting color temperature")
@@ -437,33 +447,33 @@ constructor(
     Timber.d("\n${divider} Inspect Device [${name}] [${nodeId}] $divider")
     viewModelScope.launch {
       val partsListAttribute =
-        clustersHelper.readDescriptorClusterPartsListAttribute(
-          chipClient.getConnectedDevicePointer(nodeId),
-          0,
-        )
+          clustersHelper.readDescriptorClusterPartsListAttribute(
+              chipClient.getConnectedDevicePointer(nodeId),
+              0,
+          )
       Timber.d("partsListAttribute [${partsListAttribute}]")
 
       partsListAttribute?.forEach { part ->
         Timber.d("part [$part] is [${part.javaClass}]")
         val endpoint =
-          when (part) {
-            is Int -> part.toInt()
-            else -> return@forEach
-          }
+            when (part) {
+              is Int -> part.toInt()
+              else -> return@forEach
+            }
         Timber.d("Processing part [$part]")
 
         val deviceListAttribute =
-          clustersHelper.readDescriptorClusterDeviceListAttribute(
-            chipClient.getConnectedDevicePointer(nodeId),
-            endpoint,
-          )
+            clustersHelper.readDescriptorClusterDeviceListAttribute(
+                chipClient.getConnectedDevicePointer(nodeId),
+                endpoint,
+            )
         deviceListAttribute.forEach { Timber.d("device attribute: [${it}]") }
 
         val serverListAttribute =
-          clustersHelper.readDescriptorClusterServerListAttribute(
-            chipClient.getConnectedDevicePointer(nodeId),
-            endpoint,
-          )
+            clustersHelper.readDescriptorClusterServerListAttribute(
+                chipClient.getConnectedDevicePointer(nodeId),
+                endpoint,
+            )
         serverListAttribute.forEach { Timber.d("server attribute: [${it}]") }
       }
     }
@@ -549,70 +559,84 @@ constructor(
   */
   private fun subscribeToPeriodicUpdates() {
     Timber.d("subscribeToPeriodicUpdates()")
-    val primaryDevice = deviceUiModel.value?.device ?: run {
-      Timber.w("subscribeToPeriodicUpdates(): deviceUiModel not yet loaded, skipping subscription")
-      return
-    }
-    val reportCallback =
-      object : SubscriptionHelper.ReportCallbackForDevice(primaryDevice.deviceId) {
-        override fun onReport(nodeState: NodeState) {
-          super.onReport(nodeState)
-          viewModelScope.launch {
-            // Look up the current endpoint list on every report rather than capturing a snapshot
-            // at subscription time, so endpoints that finish loading after the subscription is
-            // set up are also updated.
-            val currentEndpoints = allEndpointUiModels.value.map { it.device }
-            val devicesToUpdate = currentEndpoints.ifEmpty { listOf(primaryDevice) }
-            devicesToUpdate.forEach { device ->
-              val endpoint = endpointFor(device)
-              val onOffState =
-                subscriptionHelper.extractAttribute(nodeState, endpoint, OnOffAttribute) as Boolean?
-              val levelState =
-                subscriptionHelper.extractAttribute(nodeState, endpoint, LevelAttribute) as Int?
-              val colorTemperatureState =
-                subscriptionHelper.extractAttribute(nodeState, endpoint, ColorTemperatureAttribute) as Int?
-              Timber.d("onOffState [${onOffState}] for endpoint $endpoint")
-              if (onOffState == null) {
-                Timber.e("onReport(): WARNING -> onOffState is NULL for endpoint $endpoint. Ignoring.")
-                return@forEach
-              }
-              if (supportsLevelControl(device) && levelState == null) {
-                Timber.e("onReport(): WARNING -> levelState is NULL for endpoint $endpoint. Ignoring.")
-                return@forEach
-              }
-              if (supportsColorTemperature(device) && colorTemperatureState == null) {
-                Timber.e("onReport(): WARNING -> colorTemperatureState is NULL for endpoint $endpoint. Ignoring.")
-                return@forEach
-              }
-              val level = if (supportsLevelControl(device)) levelState!! else 0
-              val colorTemperature =
-                if (supportsColorTemperature(device)) colorTemperatureState!! else 0
-              devicesStateRepository.updateDeviceState(
-                device.deviceId,
-                isOnline = true,
-                isOn = onOffState,
-                level = level,
-                colorTemperature = colorTemperature,
+    val primaryDevice =
+        deviceUiModel.value?.device
+            ?: run {
+              Timber.w(
+                  "subscribeToPeriodicUpdates(): deviceUiModel not yet loaded, skipping subscription"
               )
+              return
+            }
+    val reportCallback =
+        object : SubscriptionHelper.ReportCallbackForDevice(primaryDevice.deviceId) {
+          override fun onReport(nodeState: NodeState) {
+            super.onReport(nodeState)
+            viewModelScope.launch {
+              // Look up the current endpoint list on every report rather than capturing a snapshot
+              // at subscription time, so endpoints that finish loading after the subscription is
+              // set up are also updated.
+              val currentEndpoints = allEndpointUiModels.value.map { it.device }
+              val devicesToUpdate = currentEndpoints.ifEmpty { listOf(primaryDevice) }
+              devicesToUpdate.forEach { device ->
+                val endpoint = endpointFor(device)
+                val onOffState =
+                    subscriptionHelper.extractAttribute(nodeState, endpoint, OnOffAttribute)
+                        as Boolean?
+                val levelState =
+                    subscriptionHelper.extractAttribute(nodeState, endpoint, LevelAttribute) as Int?
+                val colorTemperatureState =
+                    subscriptionHelper.extractAttribute(
+                        nodeState,
+                        endpoint,
+                        ColorTemperatureAttribute,
+                    ) as Int?
+                Timber.d("onOffState [${onOffState}] for endpoint $endpoint")
+                if (onOffState == null) {
+                  Timber.e(
+                      "onReport(): WARNING -> onOffState is NULL for endpoint $endpoint. Ignoring."
+                  )
+                  return@forEach
+                }
+                if (supportsLevelControl(device) && levelState == null) {
+                  Timber.e(
+                      "onReport(): WARNING -> levelState is NULL for endpoint $endpoint. Ignoring."
+                  )
+                  return@forEach
+                }
+                if (supportsColorTemperature(device) && colorTemperatureState == null) {
+                  Timber.e(
+                      "onReport(): WARNING -> colorTemperatureState is NULL for endpoint $endpoint. Ignoring."
+                  )
+                  return@forEach
+                }
+                val level = if (supportsLevelControl(device)) levelState!! else 0
+                val colorTemperature =
+                    if (supportsColorTemperature(device)) colorTemperatureState!! else 0
+                devicesStateRepository.updateDeviceState(
+                    device.deviceId,
+                    isOnline = true,
+                    isOn = onOffState,
+                    level = level,
+                    colorTemperature = colorTemperature,
+                )
+              }
             }
           }
         }
-      }
     viewModelScope.launch {
       try {
         val nodeId = nodeIdFor(primaryDevice)
-        val connectedDevicePointer =
-          chipClient.getConnectedDevicePointer(nodeId)
+        val connectedDevicePointer = chipClient.getConnectedDevicePointer(nodeId)
         subscriptionHelper.awaitSubscribeToPeriodicUpdates(
-          connectedDevicePointer,
-          SubscriptionHelper.SubscriptionEstablishedCallbackForDevice(primaryDevice.deviceId),
-          SubscriptionHelper.ResubscriptionAttemptCallbackForDevice(primaryDevice.deviceId),
-          reportCallback,
+            connectedDevicePointer,
+            SubscriptionHelper.SubscriptionEstablishedCallbackForDevice(primaryDevice.deviceId),
+            SubscriptionHelper.ResubscriptionAttemptCallbackForDevice(primaryDevice.deviceId),
+            reportCallback,
         )
       } catch (e: IllegalStateException) {
         Timber.e(
-          "Can't get connectedDevicePointer for nodeId=${nodeIdFor(primaryDevice)} " +
-            "(deviceId=${primaryDevice.deviceId})."
+            "Can't get connectedDevicePointer for nodeId=${nodeIdFor(primaryDevice)} " +
+                "(deviceId=${primaryDevice.deviceId})."
         )
         return@launch
       }
@@ -621,20 +645,23 @@ constructor(
 
   private fun unsubscribeToPeriodicUpdates() {
     Timber.d("unsubscribeToPeriodicUpdates()")
-    val primaryDevice = deviceUiModel.value?.device ?: run {
-      Timber.d("unsubscribeToPeriodicUpdates(): nothing to unsubscribe, deviceUiModel is null")
-      return
-    }
+    val primaryDevice =
+        deviceUiModel.value?.device
+            ?: run {
+              Timber.d(
+                  "unsubscribeToPeriodicUpdates(): nothing to unsubscribe, deviceUiModel is null"
+              )
+              return
+            }
     viewModelScope.launch {
       try {
         val nodeId = nodeIdFor(primaryDevice)
-        val connectedDevicePtr =
-          chipClient.getConnectedDevicePointer(nodeId)
+        val connectedDevicePtr = chipClient.getConnectedDevicePointer(nodeId)
         subscriptionHelper.awaitUnsubscribeToPeriodicUpdates(connectedDevicePtr)
       } catch (e: IllegalStateException) {
         Timber.e(
-          "Can't get connectedDevicePointer for nodeId=${nodeIdFor(primaryDevice)} " +
-            "(deviceId=${primaryDevice.deviceId})."
+            "Can't get connectedDevicePointer for nodeId=${nodeIdFor(primaryDevice)} " +
+                "(deviceId=${primaryDevice.deviceId})."
         )
         return@launch
       }
@@ -648,7 +675,7 @@ constructor(
 
   private fun startDevicePeriodicPing() {
     Timber.d(
-      "${LocalDateTime.now()} startDevicePeriodicPing every $PERIODIC_READ_INTERVAL_DEVICE_SCREEN_SECONDS seconds"
+        "${LocalDateTime.now()} startDevicePeriodicPing every $PERIODIC_READ_INTERVAL_DEVICE_SCREEN_SECONDS seconds"
     )
     devicePeriodicPingEnabled = true
     runDevicePeriodicUpdate()
@@ -660,7 +687,8 @@ constructor(
     }
     viewModelScope.launch {
       while (devicePeriodicPingEnabled) {
-        val endpointModels = allEndpointUiModels.value.ifEmpty { listOfNotNull(deviceUiModel.value) }
+        val endpointModels =
+            allEndpointUiModels.value.ifEmpty { listOfNotNull(deviceUiModel.value) }
         endpointModels.forEach { endpointUiModel ->
           var isOn: Boolean?
           var isOnline: Boolean
@@ -672,21 +700,21 @@ constructor(
           val hasColorTemperature = supportsColorTemperature(endpointUiModel.device)
           isOn = clustersHelper.getDeviceStateOnOffCluster(nodeId, endpoint)
           val levelRead =
-            if (hasLevelControl) {
-              clustersHelper.getDeviceStateLevelControlCluster(nodeId, endpoint)
-            } else {
-              null
-            }
+              if (hasLevelControl) {
+                clustersHelper.getDeviceStateLevelControlCluster(nodeId, endpoint)
+              } else {
+                null
+              }
           val colorTemperatureRead =
-            if (hasColorTemperature) {
-              clustersHelper.getColorTemperatureColorControlCluster(nodeId, endpoint)
-            } else {
-              null
-            }
+              if (hasColorTemperature) {
+                clustersHelper.getColorTemperatureColorControlCluster(nodeId, endpoint)
+              } else {
+                null
+              }
           if (
-            isOn == null ||
-              (hasLevelControl && levelRead == null) ||
-              (hasColorTemperature && colorTemperatureRead == null)
+              isOn == null ||
+                  (hasLevelControl && levelRead == null) ||
+                  (hasColorTemperature && colorTemperatureRead == null)
           ) {
             Timber.e("[device ping] failed for endpoint $endpoint")
             isOn = false
@@ -700,11 +728,11 @@ constructor(
             isOnline = true
           }
           devicesStateRepository.updateDeviceState(
-            endpointUiModel.device.deviceId,
-            isOnline = isOnline,
-            isOn = isOn == true,
-            level = level,
-            colorTemperature = colorTemperature,
+              endpointUiModel.device.deviceId,
+              isOnline = isOnline,
+              isOn = isOn == true,
+              level = level,
+              colorTemperature = colorTemperature,
           )
         }
         delay(PERIODIC_READ_INTERVAL_DEVICE_SCREEN_SECONDS * 1000L)
@@ -721,17 +749,24 @@ constructor(
 
   fun showMsgDialog(title: String?, msg: String?, showConfirmButton: Boolean = true) {
     Timber.d("showMsgDialog [$title]")
-    _msgDialogInfo.value = DialogInfo(title = title, message = msg, showConfirmButton = showConfirmButton)
+    _msgDialogInfo.value =
+        DialogInfo(title = title, message = msg, showConfirmButton = showConfirmButton)
   }
 
   fun showMsgDialog(@StringRes titleRes: Int, msg: String?, showConfirmButton: Boolean = true) {
     Timber.d("showMsgDialog [titleRes=$titleRes]")
-    _msgDialogInfo.value = DialogInfo(titleRes = titleRes, message = msg, showConfirmButton = showConfirmButton)
+    _msgDialogInfo.value =
+        DialogInfo(titleRes = titleRes, message = msg, showConfirmButton = showConfirmButton)
   }
 
-  fun showMsgDialog(@StringRes titleRes: Int, @StringRes msgRes: Int, showConfirmButton: Boolean = true) {
+  fun showMsgDialog(
+      @StringRes titleRes: Int,
+      @StringRes msgRes: Int,
+      showConfirmButton: Boolean = true,
+  ) {
     Timber.d("showMsgDialog [titleRes=$titleRes msgRes=$msgRes]")
-    _msgDialogInfo.value = DialogInfo(titleRes = titleRes, messageRes = msgRes, showConfirmButton = showConfirmButton)
+    _msgDialogInfo.value =
+        DialogInfo(titleRes = titleRes, messageRes = msgRes, showConfirmButton = showConfirmButton)
   }
 
   // Called after user dismisss the Info dialog. If we don't consume, a config change redisplays the

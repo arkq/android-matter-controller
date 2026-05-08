@@ -29,7 +29,8 @@ abstract class BaseCompletionListener : ChipDeviceController.CompletionListener 
 
   override fun onCommissioningComplete(nodeId: Long, errorCode: Int) {
     Timber.d(
-        "BaseCompletionListener onCommissioningComplete(): nodeId [${nodeId}] errorCode [${errorCode}]")
+        "BaseCompletionListener onCommissioningComplete(): nodeId [${nodeId}] errorCode [${errorCode}]"
+    )
   }
 
   override fun onNotifyChipConnectionClosed() {
@@ -52,14 +53,16 @@ abstract class BaseCompletionListener : ChipDeviceController.CompletionListener 
       vendorId: Int,
       productId: Int,
       wifiEndpointId: Int,
-      threadEndpointId: Int
+      threadEndpointId: Int,
   ) {
     Timber.d(
-        "onReadCommissioningInfo: vendorId [${vendorId}]  productId [${productId}]  wifiEndpointId [${wifiEndpointId}] threadEndpointId [${threadEndpointId}]")
+        "onReadCommissioningInfo: vendorId [${vendorId}]  productId [${productId}]  wifiEndpointId [${wifiEndpointId}] threadEndpointId [${threadEndpointId}]"
+    )
   }
 
   override fun onCommissioningStatusUpdate(nodeId: Long, stage: String?, errorCode: Int) {
     Timber.d(
-        "onCommissioningStatusUpdate nodeId [${nodeId}]  stage [${stage}]  errorCode [${errorCode}]")
+        "onCommissioningStatusUpdate nodeId [${nodeId}]  stage [${stage}]  errorCode [${errorCode}]"
+    )
   }
 }

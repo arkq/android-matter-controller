@@ -25,12 +25,13 @@ import timber.log.Timber
 @Composable
 internal fun RemoveDeviceSection(onClick: () -> Unit) {
   Button(
-    onClick = onClick,
-    modifier = Modifier.fillMaxWidth(),
-    colors = ButtonDefaults.buttonColors(
-      containerColor = MaterialTheme.colorScheme.error,
-      contentColor = MaterialTheme.colorScheme.onError,
-    ),
+      onClick = onClick,
+      modifier = Modifier.fillMaxWidth(),
+      colors =
+          ButtonDefaults.buttonColors(
+              containerColor = MaterialTheme.colorScheme.error,
+              contentColor = MaterialTheme.colorScheme.onError,
+          ),
   ) {
     Icon(Icons.Outlined.Delete, contentDescription = null)
     Spacer(modifier = Modifier.width(8.dp))
@@ -40,8 +41,8 @@ internal fun RemoveDeviceSection(onClick: () -> Unit) {
 
 @Composable
 internal fun RemoveDeviceAlertDialog(
-  showRemoveDeviceAlertDialog: Boolean,
-  onRemoveDeviceOutcome: (doIt: Boolean) -> Unit,
+    showRemoveDeviceAlertDialog: Boolean,
+    onRemoveDeviceOutcome: (doIt: Boolean) -> Unit,
 ) {
   Timber.d("RemoveDeviceAlertDialog [$showRemoveDeviceAlertDialog]")
   if (!showRemoveDeviceAlertDialog) {
@@ -49,43 +50,43 @@ internal fun RemoveDeviceAlertDialog(
   }
 
   AlertDialog(
-    title = { Text(text = stringResource(R.string.remove_device_dialog_title)) },
-    text = { Text(stringResource(R.string.remove_device_dialog_body)) },
-    confirmButton = {
-      Button(onClick = { onRemoveDeviceOutcome(true) }) {
-        Text(stringResource(R.string.yes_remove_it))
-      }
-    },
-    onDismissRequest = {},
-    dismissButton = {
-      Button(onClick = { onRemoveDeviceOutcome(false) }) { Text(stringResource(R.string.cancel)) }
-    },
+      title = { Text(text = stringResource(R.string.remove_device_dialog_title)) },
+      text = { Text(stringResource(R.string.remove_device_dialog_body)) },
+      confirmButton = {
+        Button(onClick = { onRemoveDeviceOutcome(true) }) {
+          Text(stringResource(R.string.yes_remove_it))
+        }
+      },
+      onDismissRequest = {},
+      dismissButton = {
+        Button(onClick = { onRemoveDeviceOutcome(false) }) { Text(stringResource(R.string.cancel)) }
+      },
   )
 }
 
 @Composable
 internal fun ConfirmDeviceRemovalAlertDialog(
-  showConfirmDeviceRemovalAlertDialog: Boolean,
-  onConfirmDeviceRemovalOutcome: (doIt: Boolean) -> Unit,
+    showConfirmDeviceRemovalAlertDialog: Boolean,
+    onConfirmDeviceRemovalOutcome: (doIt: Boolean) -> Unit,
 ) {
   if (!showConfirmDeviceRemovalAlertDialog) {
     return
   }
 
   AlertDialog(
-    title = { Text(text = stringResource(R.string.confirm_remove_device_dialog_title)) },
-    text = { Text(stringResource(R.string.confirm_remove_device_dialog_body)) },
-    confirmButton = {
-      Button(onClick = { onConfirmDeviceRemovalOutcome(true) }) {
-        Text(stringResource(R.string.yes_remove_it))
-      }
-    },
-    onDismissRequest = {},
-    dismissButton = {
-      Button(onClick = { onConfirmDeviceRemovalOutcome(false) }) {
-        Text(stringResource(R.string.cancel))
-      }
-    },
+      title = { Text(text = stringResource(R.string.confirm_remove_device_dialog_title)) },
+      text = { Text(stringResource(R.string.confirm_remove_device_dialog_body)) },
+      confirmButton = {
+        Button(onClick = { onConfirmDeviceRemovalOutcome(true) }) {
+          Text(stringResource(R.string.yes_remove_it))
+        }
+      },
+      onDismissRequest = {},
+      dismissButton = {
+        Button(onClick = { onConfirmDeviceRemovalOutcome(false) }) {
+          Text(stringResource(R.string.cancel))
+        }
+      },
   )
 }
 

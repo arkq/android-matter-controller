@@ -6,8 +6,8 @@ package io.aether.android.lifecycle
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.gms.home.matter.Matter
-import io.aether.android.data.UserPreferencesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.aether.android.data.UserPreferencesRepository
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,7 @@ class HalfSheetSuppressionObserver
 @Inject
 internal constructor(
     @ApplicationContext private val context: Context,
-    private val preferencesRepository: UserPreferencesRepository
+    private val preferencesRepository: UserPreferencesRepository,
 ) : AppLifecycleObserver {
 
   private val scope = CoroutineScope(Dispatchers.Main)
@@ -33,7 +33,8 @@ internal constructor(
   override fun onStart(owner: LifecycleOwner) {
     Timber.d("onStart()")
     scope.launch {
-      val suppressHalfSheetNotification = !preferencesRepository.shouldShowGpsMatterDiscoveryNotification()
+      val suppressHalfSheetNotification =
+          !preferencesRepository.shouldShowGpsMatterDiscoveryNotification()
       if (suppressHalfSheetNotification) {
         try {
           Matter.getCommissioningClient(context).suppressHalfSheetNotification().await()

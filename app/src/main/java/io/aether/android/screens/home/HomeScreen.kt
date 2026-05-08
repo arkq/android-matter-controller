@@ -27,9 +27,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -83,7 +81,7 @@ import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_M
 import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_PRODUCT_ID
 import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_VENDOR_ID
 import com.google.android.material.textview.MaterialTextView
-import io.aether.android.AppViewModel
+import com.google.protobuf.Timestamp
 import io.aether.android.Device
 import io.aether.android.MIN_COMMISSIONING_WINDOW_EXPIRATION_SECONDS
 import io.aether.android.R
@@ -95,7 +93,6 @@ import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.thread.getActivity
 import io.aether.android.stateDisplayString
-import com.google.protobuf.Timestamp
 import timber.log.Timber
 
 /**
@@ -108,8 +105,7 @@ import timber.log.Timber
  *    It's possible to hide the devices that are currently offline via a setting in the Settings
  *    screen.
  * 2. Top App Bar. Settings icon to navigate to the Settings screen.
- * 3. "Add Device" button. Triggers the commissioning of a new device.
- * Note:
+ * 3. "Add Device" button. Triggers the commissioning of a new device. Note:
  * - The app currently only supports Matter devices with server attribute "ON/OFF".
  *
  * TODO:
@@ -117,10 +113,10 @@ import timber.log.Timber
  */
 @Composable
 internal fun HomeRoute(
-  innerPadding: PaddingValues,
-  updateTitle: (title: String) -> Unit,
-  navigateToDevice: (deviceId: Long, deviceName: String) -> Unit,
-  homeViewModel: HomeViewModel = hiltViewModel(),
+    innerPadding: PaddingValues,
+    updateTitle: (title: String) -> Unit,
+    navigateToDevice: (deviceId: Long, deviceName: String) -> Unit,
+    homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
   // Launching GPS commissioning requires Activity.
   val activity = LocalContext.current.getActivity()
@@ -135,39 +131,31 @@ internal fun HomeRoute(
   // We're doing it this way as we cannot ask permission to the user while the
   // decision has to be made because UI is fully controlled by GPS at that point.
   val deviceAttestationFailureIgnored by
-    homeViewModel.deviceAttestationFailureIgnored.collectAsState()
+      homeViewModel.deviceAttestationFailureIgnored.collectAsState()
 
   // Controls when the "New Device" alert dialog is shown.
   // When that alert dialog completes, control needs to go back to the ViewModel to complete
   // the commissioning flow.
   val showNewDeviceAlertDialog by homeViewModel.showNewDeviceNameAlertDialog.collectAsState()
   val onCommissionedDeviceNameCaptured: (name: String) -> Unit = remember {
-    {
-      homeViewModel.onCommissionedDeviceNameCaptured(it)
-    }
+    { homeViewModel.onCommissionedDeviceNameCaptured(it) }
   }
 
   // Controls the Msg AlertDialog.
   // When the user dismisses the Msg AlertDialog, we "consume" the dialog.
   val msgDialogInfo by homeViewModel.msgDialogInfo.collectAsState()
-  val onDismissMsgDialog: () -> Unit = remember {
-    { homeViewModel.dismissMsgDialog() }
-  }
+  val onDismissMsgDialog: () -> Unit = remember { { homeViewModel.dismissMsgDialog() } }
 
   // Status of multiadmin commissioning.
   val multiadminCommissionDeviceTaskStatus by
-    homeViewModel.multiadminCommissionDeviceTaskStatus.collectAsState()
+      homeViewModel.multiadminCommissionDeviceTaskStatus.collectAsState()
 
   // Functions invoked when UI controls are clicked on a specific device in the list.
   val onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit = remember {
-    {
-      navigateToDevice(it.device.deviceId, it.device.name)
-    }
+    { navigateToDevice(it.device.deviceId, it.device.name) }
   }
   val onOnOffClick: (deviceId: Long, value: Boolean) -> Unit = remember {
-    { deviceId, value ->
-      homeViewModel.updateDeviceStateOn(deviceId, value)
-    }
+    { deviceId, value -> homeViewModel.updateDeviceStateOn(deviceId, value) }
   }
 
   // The device commissioning flow involves multiple steps as it is based on an Activity
@@ -179,22 +167,22 @@ internal fun HomeRoute(
   // Step 4 is when GPS takes over the commissioning flow.
   // Step 5 is when the GPS activity completes and the result is handled here.
   val commissionDeviceLauncher =
-    rememberLauncherForActivityResult(
-      contract = ActivityResultContracts.StartIntentSenderForResult()
-    ) { result ->
-      // Commission Device Step 5.
-      // The Commission Device activity in GPS (step 4) has completed.
-      val resultCode = result.resultCode
-      if (resultCode == Activity.RESULT_OK) {
-        Timber.d("CommissionDevice: Success")
-        // We let the ViewModel know that GPS commissioning has completed successfully.
-        // The ViewModel knows that we still need to capture the device name and will\
-        // update UI state to trigger the NewDeviceAlertDialog.
-        homeViewModel.gpsCommissioningDeviceSucceeded(result)
-      } else {
-        homeViewModel.commissionDeviceFailed(resultCode)
+      rememberLauncherForActivityResult(
+          contract = ActivityResultContracts.StartIntentSenderForResult()
+      ) { result ->
+        // Commission Device Step 5.
+        // The Commission Device activity in GPS (step 4) has completed.
+        val resultCode = result.resultCode
+        if (resultCode == Activity.RESULT_OK) {
+          Timber.d("CommissionDevice: Success")
+          // We let the ViewModel know that GPS commissioning has completed successfully.
+          // The ViewModel knows that we still need to capture the device name and will\
+          // update UI state to trigger the NewDeviceAlertDialog.
+          homeViewModel.gpsCommissioningDeviceSucceeded(result)
+        } else {
+          homeViewModel.commissionDeviceFailed(resultCode)
+        }
       }
-    }
   val onCommissionDevice: () -> Unit = remember {
     {
       Timber.d("onAddDeviceClick")
@@ -204,9 +192,7 @@ internal fun HomeRoute(
     }
   }
 
-  LaunchedEffect(Unit) {
-    updateTitle("")
-  }
+  LaunchedEffect(Unit) { updateTitle("") }
 
   LifecycleResumeEffect(Unit) {
     Timber.d("HomeScreen: LifecycleResumeEffect")
@@ -218,10 +204,10 @@ internal fun HomeRoute(
         Timber.d("TaskStatus.NotStarted so starting multiadmin commissioning")
         homeViewModel.setMultiadminCommissioningTaskStatus(TaskStatus.InProgress)
         multiAdminCommissionDevice(
-          activity.applicationContext,
-          intent,
-          homeViewModel,
-          commissionDeviceLauncher,
+            activity.applicationContext,
+            intent,
+            homeViewModel,
+            commissionDeviceLauncher,
         )
       } else {
         Timber.d("TaskStatus is *not* NotStarted: $multiadminCommissionDeviceTaskStatus")
@@ -248,78 +234,79 @@ internal fun HomeRoute(
   }
 
   HomeScreen(
-    innerPadding,
-    devicesList,
-    msgDialogInfo,
-    onDismissMsgDialog,
-    showNewDeviceAlertDialog,
-    deviceAttestationFailureIgnored,
-    onCommissionedDeviceNameCaptured,
-    onCommissionDevice,
-    onDeviceClick,
-    onOnOffClick,
+      innerPadding,
+      devicesList,
+      msgDialogInfo,
+      onDismissMsgDialog,
+      showNewDeviceAlertDialog,
+      deviceAttestationFailureIgnored,
+      onCommissionedDeviceNameCaptured,
+      onCommissionDevice,
+      onDeviceClick,
+      onOnOffClick,
   )
 }
+
 fun getPlayServicesVersion(context: Context): Long {
-     return PackageInfoCompat.getLongVersionCode(context.packageManager.getPackageInfo(GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE, 0))
+  return PackageInfoCompat.getLongVersionCode(
+      context.packageManager.getPackageInfo(GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE, 0)
+  )
 }
+
 @Composable
 private fun HomeScreen(
-        innerPadding: PaddingValues,
-        devicesList: List<DeviceUiModel>,
-        msgDialogInfo: DialogInfo?,
-        onConsumeMsgDialog: () -> Unit,
-        showNewDeviceAlertDialog: Boolean,
-        deviceAttestationFailureIgnored: Boolean,
-        onCommissionedDeviceNameCaptured: (name: String) -> Unit,
-        onCommissionDevice: () -> Unit,
-        onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit,
-        onOnOffClick: (deviceId: Long, value: Boolean) -> Unit,
-                      ) {
+    innerPadding: PaddingValues,
+    devicesList: List<DeviceUiModel>,
+    msgDialogInfo: DialogInfo?,
+    onConsumeMsgDialog: () -> Unit,
+    showNewDeviceAlertDialog: Boolean,
+    deviceAttestationFailureIgnored: Boolean,
+    onCommissionedDeviceNameCaptured: (name: String) -> Unit,
+    onCommissionDevice: () -> Unit,
+    onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit,
+    onOnOffClick: (deviceId: Long, value: Boolean) -> Unit,
+) {
 
-    val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    var showUpdateDialog by remember { mutableStateOf(false) }
-    var canAdd by remember { mutableStateOf(false) }
+  val context = LocalContext.current
+  val lifecycleOwner = LocalLifecycleOwner.current
+  var showUpdateDialog by remember { mutableStateOf(false) }
+  var canAdd by remember { mutableStateOf(false) }
 
-    // Check when entering or resuming
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                val status = GoogleApiAvailability.getInstance()
-                        .isGooglePlayServicesAvailable(context)
-                showUpdateDialog = status != ConnectionResult.SUCCESS
-                if (getPlayServicesVersion(context) < 223615000L) showUpdateDialog = true
-                if (!showUpdateDialog) {
-                    canAdd = true
-                }
-            }
+  // Check when entering or resuming
+  DisposableEffect(lifecycleOwner) {
+    val observer = LifecycleEventObserver { _, event ->
+      if (event == Lifecycle.Event.ON_RESUME) {
+        val status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
+        showUpdateDialog = status != ConnectionResult.SUCCESS
+        if (getPlayServicesVersion(context) < 223615000L) showUpdateDialog = true
+        if (!showUpdateDialog) {
+          canAdd = true
         }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+      }
     }
+    lifecycleOwner.lifecycle.addObserver(observer)
+    onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+  }
 
-    if (showUpdateDialog) {
-        AlertDialog(
-                onDismissRequest = {},
-                title = { Text("Update required") },
-                text = { Text("Please update Google Play services to continue.") },
-                confirmButton = {
-                    TextButton(onClick = { openPlayServicesInStore(context) }) {
-                        Text("Update")
-                    }
-                }
-                   )
-    }
+  if (showUpdateDialog) {
+    AlertDialog(
+        onDismissRequest = {},
+        title = { Text("Update required") },
+        text = { Text("Please update Google Play services to continue.") },
+        confirmButton = {
+          TextButton(onClick = { openPlayServicesInStore(context) }) { Text("Update") }
+        },
+    )
+  }
 
   // Alert Dialog for messages to be shown to the user.
   MsgAlertDialog(msgDialogInfo, onConsumeMsgDialog)
 
   // Alert Dialog shown when the name of the device must be captured in the commissioning flow.
   NewDeviceAlertDialog(
-    showNewDeviceAlertDialog,
-    onCommissionedDeviceNameCaptured,
-    deviceAttestationFailureIgnored,
+      showNewDeviceAlertDialog,
+      onCommissionedDeviceNameCaptured,
+      deviceAttestationFailureIgnored,
   )
 
   // Content for the screen.
@@ -329,31 +316,27 @@ private fun HomeScreen(
     } else {
       Box(Modifier.fillMaxSize()) {
         LazyColumn(
-          // verticalArrangement = Arrangement.spacedBy(1.dp),
-          modifier = Modifier
-            .fillMaxWidth()
-            .padding(innerPadding)
+            // verticalArrangement = Arrangement.spacedBy(1.dp),
+            modifier = Modifier.fillMaxWidth().padding(innerPadding)
         ) {
           this.items(devicesList) { device ->
             val onDeviceItemClick: () -> Unit = { onDeviceClick(device) }
             DeviceItem(
-              device.device.deviceId,
-              device.device.deviceType,
-              device.device.name,
-              device.isOnline,
-              device.isOn,
-              onOnOffClick,
-              onDeviceItemClick,
+                device.device.deviceId,
+                device.device.deviceType,
+                device.device.name,
+                device.isOnline,
+                device.isOn,
+                onOnOffClick,
+                onDeviceItemClick,
             )
           }
         }
       }
     }
     FloatingActionButton(
-      onClick = onCommissionDevice,
-      modifier = Modifier
-        .align(Alignment.BottomEnd)
-        .padding(16.dp),
+        onClick = onCommissionDevice,
+        modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
     ) {
       Icon(Icons.Filled.Add, contentDescription = "Add")
     }
@@ -361,70 +344,69 @@ private fun HomeScreen(
   LaunchedEffect(devicesList) { Timber.d("HomeRoute [$devicesList]") }
 }
 
-
 fun openPlayServicesInStore(context: Context) {
 
-    if (context is Activity) {
-        Timber.d("context is Activity")
-    }
-    else{
-        Timber.d("context is NOT Activity")
-    }
+  if (context is Activity) {
+    Timber.d("context is Activity")
+  } else {
+    Timber.d("context is NOT Activity")
+  }
 
-    val intent = Intent(Intent.ACTION_VIEW).apply {
+  val intent =
+      Intent(Intent.ACTION_VIEW).apply {
         data = Uri.parse("market://details?id=com.google.android.gms")
         setPackage("com.android.vending")
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    }
+      }
 
-    try {
-        context.startActivity(intent)
-    } catch (e: Exception) {
-        val webIntent = Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.gms")
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+  try {
+    context.startActivity(intent)
+  } catch (e: Exception) {
+    val webIntent =
+        Intent(Intent.ACTION_VIEW).apply {
+          data = Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.gms")
+          addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-        context.startActivity(webIntent)
-    }
+    context.startActivity(webIntent)
+  }
 }
+
 @Composable
 private fun DeviceItem(
-  deviceId: Long,
-  deviceType: Device.DeviceType,
-  name: String,
-  isOnline: Boolean,
-  isOn: Boolean,
-  onOnOffClick: (deviceId: Long, value: Boolean) -> Unit,
-  onDeviceClick: (() -> Unit),
+    deviceId: Long,
+    deviceType: Device.DeviceType,
+    name: String,
+    isOnline: Boolean,
+    isOn: Boolean,
+    onOnOffClick: (deviceId: Long, value: Boolean) -> Unit,
+    onDeviceClick: (() -> Unit),
 ) {
   val bgColor =
-    if (isOnline && isOn) MaterialTheme.colorScheme.surfaceVariant
-    else MaterialTheme.colorScheme.surface
+      if (isOnline && isOn) MaterialTheme.colorScheme.surfaceVariant
+      else MaterialTheme.colorScheme.surface
   val contentColor =
-    if (isOnline && isOn) MaterialTheme.colorScheme.onSurfaceVariant
-    else MaterialTheme.colorScheme.onSurface
+      if (isOnline && isOn) MaterialTheme.colorScheme.onSurfaceVariant
+      else MaterialTheme.colorScheme.onSurface
   val text = stateDisplayString(isOnline, isOn)
   val iconId = getDeviceTypeIconId(deviceType)
   val onCheckedChange: (value: Boolean) -> Unit = { onOnOffClick(deviceId, it) }
 
   Surface(
-    modifier = Modifier
-      .padding(top = 12.dp)
-      .padding(PaddingValues(horizontal = 12.dp)),
-    border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
-    contentColor = contentColor,
-    color = bgColor,
-    shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
-    onClick = onDeviceClick,
+      modifier = Modifier.padding(top = 12.dp).padding(PaddingValues(horizontal = 12.dp)),
+      border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+      contentColor = contentColor,
+      color = bgColor,
+      shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
+      onClick = onDeviceClick,
   ) {
     Row(
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.spacedBy(12.dp),
-      modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content)),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content)),
     ) {
       Icon(
-        painter = painterResource(id = iconId),
-        contentDescription = null, // decorative element
+          painter = painterResource(id = iconId),
+          contentDescription = null, // decorative element
       )
       Column {
         Text(text = name, style = MaterialTheme.typography.bodyLarge)
@@ -438,9 +420,9 @@ private fun DeviceItem(
 
 @Composable
 private fun NewDeviceAlertDialog(
-  showNewDeviceAlertDialog: Boolean,
-  onCommissionedDeviceNameCaptured: (name: String) -> Unit,
-  deviceAttestationFailureIgnored: Boolean,
+    showNewDeviceAlertDialog: Boolean,
+    onCommissionedDeviceNameCaptured: (name: String) -> Unit,
+    deviceAttestationFailureIgnored: Boolean,
 ) {
   if (!showNewDeviceAlertDialog) {
     return
@@ -449,45 +431,45 @@ private fun NewDeviceAlertDialog(
   var inputText by remember { mutableStateOf("") }
 
   AlertDialog(
-    title = { Text(text = "Specify device name") },
-    text = {
-      Column {
-        TextField(
-          value = inputText,
-          onValueChange = { inputText = it },
-          label = { Text("Device name") },
-          modifier = Modifier.fillMaxWidth(),
-        )
-        if (deviceAttestationFailureIgnored) {
-          val htmlText =
-            HtmlCompat.fromHtml(
-                stringResource(R.string.device_attestation_warning),
-                HtmlCompat.FROM_HTML_MODE_LEGACY,
-              )
-              .toString()
-          AndroidView(
-            modifier = Modifier.padding(top = 20.dp),
-            update = { it.text = htmlText },
-            factory = {
-              MaterialTextView(it).apply { movementMethod = LinkMovementMethod.getInstance() }
-            },
+      title = { Text(text = "Specify device name") },
+      text = {
+        Column {
+          TextField(
+              value = inputText,
+              onValueChange = { inputText = it },
+              label = { Text("Device name") },
+              modifier = Modifier.fillMaxWidth(),
           )
+          if (deviceAttestationFailureIgnored) {
+            val htmlText =
+                HtmlCompat.fromHtml(
+                        stringResource(R.string.device_attestation_warning),
+                        HtmlCompat.FROM_HTML_MODE_LEGACY,
+                    )
+                    .toString()
+            AndroidView(
+                modifier = Modifier.padding(top = 20.dp),
+                update = { it.text = htmlText },
+                factory = {
+                  MaterialTextView(it).apply { movementMethod = LinkMovementMethod.getInstance() }
+                },
+            )
+          }
         }
-      }
-    },
-    confirmButton = {
-      Button(
-        onClick = {
-          // Process inputText
-          onCommissionedDeviceNameCaptured(inputText)
-        },
-        enabled = inputText.isNotEmpty(),
-      ) {
-        Text("OK")
-      }
-    },
-    onDismissRequest = {},
-    dismissButton = {},
+      },
+      confirmButton = {
+        Button(
+            onClick = {
+              // Process inputText
+              onCommissionedDeviceNameCaptured(inputText)
+            },
+            enabled = inputText.isNotEmpty(),
+        ) {
+          Text("OK")
+        }
+      },
+      onDismissRequest = {},
+      dismissButton = {},
   )
 }
 
@@ -498,27 +480,27 @@ private fun NoDevices() {
     // the image is scaled uniformly to whichever dimension (width or height)
     // needs the least scaling, and the other axis is cropped.
     Image(
-      painter = painterResource(R.drawable.bg_empty_dashboard),
-      contentDescription = null,
-      contentScale = ContentScale.Crop,
-      modifier = Modifier.fillMaxSize(),
+        painter = painterResource(R.drawable.bg_empty_dashboard),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxSize(),
     )
     // Place the title/subtitle in a column whose bottom sits 20 % above the
     // bottom edge of the screen.
     Column(
-      modifier = Modifier
-        .align(Alignment.BottomCenter)
-        .padding(bottom = maxHeight * 0.2f)
-        .fillMaxWidth(),
-      horizontalAlignment = Alignment.CenterHorizontally,
+        modifier =
+            Modifier.align(Alignment.BottomCenter)
+                .padding(bottom = maxHeight * 0.2f)
+                .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       Text(
-        text = stringResource(R.string.empty_dashboard_title),
-        style = MaterialTheme.typography.bodyMedium,
+          text = stringResource(R.string.empty_dashboard_title),
+          style = MaterialTheme.typography.bodyMedium,
       )
       Text(
-        text = stringResource(R.string.empty_dashboard_subtitle),
-        style = MaterialTheme.typography.bodySmall,
+          text = stringResource(R.string.empty_dashboard_subtitle),
+          style = MaterialTheme.typography.bodySmall,
       )
     }
   }
@@ -528,36 +510,36 @@ private fun NoDevices() {
 // Launch GPS Activity
 
 fun commissionDevice(
-  context: Context,
-  commissionDeviceLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
+    context: Context,
+    commissionDeviceLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
 ) {
   Timber.d("CommissionDevice: starting")
 
   val commissionDeviceRequest =
-    CommissioningRequest.builder()
-      .setCommissioningService(ComponentName(context, AppCommissioningService::class.java))
-      .build()
+      CommissioningRequest.builder()
+          .setCommissioningService(ComponentName(context, AppCommissioningService::class.java))
+          .build()
 
   // The call to commissionDevice() creates the IntentSender that will eventually be launched
   // in the fragment to trigger the commissioning activity in GPS.
   Matter.getCommissioningClient(context)
-    .commissionDevice(commissionDeviceRequest)
-    .addOnSuccessListener { result ->
-      Timber.d("CommissionDevice: Success getting the IntentSender: result [${result}]")
-      commissionDeviceLauncher.launch(IntentSenderRequest.Builder(result).build())
-    }
-    .addOnFailureListener { error ->
-      Timber.e(error)
-      //      _commissionDeviceStatus.postValue(
-      //        TaskStatus.Failed("Setting up the IntentSender failed", error))
-    }
+      .commissionDevice(commissionDeviceRequest)
+      .addOnSuccessListener { result ->
+        Timber.d("CommissionDevice: Success getting the IntentSender: result [${result}]")
+        commissionDeviceLauncher.launch(IntentSenderRequest.Builder(result).build())
+      }
+      .addOnFailureListener { error ->
+        Timber.e(error)
+        //      _commissionDeviceStatus.postValue(
+        //        TaskStatus.Failed("Setting up the IntentSender failed", error))
+      }
 }
 
 fun multiAdminCommissionDevice(
-  context: Context,
-  intent: Intent,
-  homeViewModel: HomeViewModel,
-  commissionDeviceLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
+    context: Context,
+    intent: Intent,
+    homeViewModel: HomeViewModel,
+    commissionDeviceLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
 ) {
   Timber.d("CommissionDevice: starting")
 
@@ -566,8 +548,8 @@ fun multiAdminCommissionDevice(
   Timber.d("multiadminCommissioning: manualPairingCode [${sharedDeviceData.manualPairingCode}]")
 
   val commissionRequestBuilder =
-    CommissioningRequest.builder()
-      .setCommissioningService(ComponentName(context, AppCommissioningService::class.java))
+      CommissioningRequest.builder()
+          .setCommissioningService(ComponentName(context, AppCommissioningService::class.java))
 
   // Fill in the commissioning request...
 
@@ -576,28 +558,28 @@ fun multiAdminCommissionDevice(
   // If the user takes too long to select the target commissioning app, then there's not
   // enougj time to complete the multi-admin commissioning and we message it to the user.
   val commissioningWindowExpirationMillis =
-    intent.getLongExtra(EXTRA_COMMISSIONING_WINDOW_EXPIRATION, -1L)
+      intent.getLongExtra(EXTRA_COMMISSIONING_WINDOW_EXPIRATION, -1L)
   val currentUptimeMillis = SystemClock.elapsedRealtime()
   val timeLeftSeconds = (commissioningWindowExpirationMillis - currentUptimeMillis) / 1000
   Timber.d(
-    "commissionDevice: TargetCommissioner for MultiAdmin. " +
-      "uptime [${currentUptimeMillis}] " +
-      "commissioningWindowExpiration [${commissioningWindowExpirationMillis}] " +
-      "-> expires in $timeLeftSeconds seconds"
+      "commissionDevice: TargetCommissioner for MultiAdmin. " +
+          "uptime [${currentUptimeMillis}] " +
+          "commissioningWindowExpiration [${commissioningWindowExpirationMillis}] " +
+          "-> expires in $timeLeftSeconds seconds"
   )
 
   if (commissioningWindowExpirationMillis == -1L) {
     Timber.e(
-      "EXTRA_COMMISSIONING_WINDOW_EXPIRATION not specified in multi-admin call. " +
-        "Still going ahead with the multi-admin though."
+        "EXTRA_COMMISSIONING_WINDOW_EXPIRATION not specified in multi-admin call. " +
+            "Still going ahead with the multi-admin though."
     )
   } else if (timeLeftSeconds < MIN_COMMISSIONING_WINDOW_EXPIRATION_SECONDS) {
     homeViewModel.showMsgDialog(
-      title = "Commissioning Window Expiration",
-      msg =
-        "The commissioning window will " +
-          "expire in $timeLeftSeconds seconds, not long enough to complete the commissioning.\n\n" +
-          "In the future, please select the target commissioning application faster to avoid this situation.",
+        title = "Commissioning Window Expiration",
+        msg =
+            "The commissioning window will " +
+                "expire in $timeLeftSeconds seconds, not long enough to complete the commissioning.\n\n" +
+                "In the future, please select the target commissioning application faster to avoid this situation.",
     )
     return
   }
@@ -616,25 +598,25 @@ fun multiAdminCommissionDevice(
   val commissioningRequest = commissionRequestBuilder.build()
 
   Timber.d(
-    "multiadmin: commissioningRequest " +
-      "onboardingPayload [${commissioningRequest.onboardingPayload}] " +
-      "vendorId [${commissioningRequest.deviceInfo!!.vendorId}] " +
-      "productId [${commissioningRequest.deviceInfo!!.productId}]"
+      "multiadmin: commissioningRequest " +
+          "onboardingPayload [${commissioningRequest.onboardingPayload}] " +
+          "vendorId [${commissioningRequest.deviceInfo!!.vendorId}] " +
+          "productId [${commissioningRequest.deviceInfo!!.productId}]"
   )
 
   Matter.getCommissioningClient(context)
-    .commissionDevice(commissioningRequest)
-    .addOnSuccessListener { result ->
-      Timber.d("Success getting the IntentSender: result [${result}]")
-      commissionDeviceLauncher.launch(IntentSenderRequest.Builder(result).build())
-    }
-    .addOnFailureListener { error ->
-      Timber.e(error)
-      homeViewModel.showMsgDialog(
-        title = "Failed to to get the IntentSender",
-        msg = error.toString(),
-      )
-    }
+      .commissionDevice(commissioningRequest)
+      .addOnSuccessListener { result ->
+        Timber.d("Success getting the IntentSender: result [${result}]")
+        commissionDeviceLauncher.launch(IntentSenderRequest.Builder(result).build())
+      }
+      .addOnFailureListener { error ->
+        Timber.e(error)
+        homeViewModel.showMsgDialog(
+            title = "Failed to to get the IntentSender",
+            msg = error.toString(),
+        )
+      }
 }
 
 // -----------------------------------------------------------------------------
@@ -646,16 +628,16 @@ private fun HomeScreenNoDevicesPreview() {
   val bogus: (a: Long, b: Boolean) -> Unit = { _, _ -> }
   MaterialTheme {
     HomeScreen(
-      PaddingValues(8.dp),
-      emptyList(),
-      null,
-      {},
-      false,
-      false,
-      {},
-      {},
-      {},
-      bogus,
+        PaddingValues(8.dp),
+        emptyList(),
+        null,
+        {},
+        false,
+        false,
+        {},
+        {},
+        {},
+        bogus,
     )
   }
 }
@@ -665,23 +647,23 @@ private fun HomeScreenNoDevicesPreview() {
 private fun HomeScreenWithDevicesPreview() {
   val bogus: (a: Long, b: Boolean) -> Unit = { _, _ -> }
   val devicesList =
-    listOf(
-      DeviceUiModel(createDevice(), true, true),
-      DeviceUiModel(createDevice(name = "Smart Outlet"), true, false),
-      DeviceUiModel(createDevice(name = "My living room lamp"), false, true),
-    )
+      listOf(
+          DeviceUiModel(createDevice(), true, true),
+          DeviceUiModel(createDevice(name = "Smart Outlet"), true, false),
+          DeviceUiModel(createDevice(name = "My living room lamp"), false, true),
+      )
   MaterialTheme {
     HomeScreen(
-      PaddingValues(8.dp),
-      devicesList,
-      null,
-      {},
-      false,
-      false,
-      {},
-      {},
-      {},
-      bogus,
+        PaddingValues(8.dp),
+        devicesList,
+        null,
+        {},
+        false,
+        false,
+        {},
+        {},
+        {},
+        bogus,
     )
   }
 }
@@ -705,21 +687,21 @@ private fun NewDeviceAlertDialogAttestationFailureIgnoredPreview() {
 }
 
 private fun createDevice(
-  deviceId: Long = 1L,
-  deviceType: Device.DeviceType = Device.DeviceType.TYPE_OUTLET,
-  dateCommissioned: Timestamp = Timestamp.getDefaultInstance(),
-  name: String = "My Matter Device",
-  productId: String = "8785",
-  vendorId: String = "6006",
-  room: String = "Living Room",
+    deviceId: Long = 1L,
+    deviceType: Device.DeviceType = Device.DeviceType.TYPE_OUTLET,
+    dateCommissioned: Timestamp = Timestamp.getDefaultInstance(),
+    name: String = "My Matter Device",
+    productId: String = "8785",
+    vendorId: String = "6006",
+    room: String = "Living Room",
 ): Device {
   return Device.newBuilder()
-    .setDeviceId(deviceId)
-    .setDeviceType(deviceType)
-    .setDateCommissioned(dateCommissioned)
-    .setName(name)
-    .setProductId(productId)
-    .setVendorId(vendorId)
-    .setRoom(room)
-    .build()
+      .setDeviceId(deviceId)
+      .setDeviceType(deviceType)
+      .setDateCommissioned(dateCommissioned)
+      .setName(name)
+      .setProductId(productId)
+      .setVendorId(vendorId)
+      .setRoom(room)
+      .build()
 }

@@ -20,20 +20,19 @@ import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import timber.log.Timber
 
 /**
- * Implements UI logic associated with ThreadFragment.
- * That UI logic is mainly associated with API calls that require Activity.
- * Actions performed by the user in the Fragment trigger calls to processAction(),
- * and the impact of theses actions are communicated back to the UI via StateFlows.
+ * Implements UI logic associated with ThreadFragment. That UI logic is mainly associated with API
+ * calls that require Activity. Actions performed by the user in the Fragment trigger calls to
+ * processAction(), and the impact of theses actions are communicated back to the UI via StateFlows.
  *
- * Note: Adding the @Stable annotation to this class helps the compose compiler understand
- * that it doesn't need to eagerly recompose where this class is used and it explicitly
- * tells it we've taken care to make sure that variables that are read in composition
- * will tell the composition when it has changed.
+ * Note: Adding the @Stable annotation to this class helps the compose compiler understand that it
+ * doesn't need to eagerly recompose where this class is used and it explicitly tells it we've taken
+ * care to make sure that variables that are read in composition will tell the composition when it
+ * has changed.
  */
 @Stable
 class ThreadNetworkUiState(
-  private val activity: ComponentActivity,
-  private val viewModel: ThreadViewModel
+    private val activity: ComponentActivity,
+    private val viewModel: ThreadViewModel,
 ) {
 
   private lateinit var sd: ServiceDiscovery
@@ -42,7 +41,9 @@ class ThreadNetworkUiState(
   // Process Action triggered from the UI
 
   fun processAction(actionRequest: ActionRequest) {
-    Timber.d("processAction [${actionRequest.type}] [${actionRequest.task}] [${actionRequest.serviceInfo}]")
+    Timber.d(
+        "processAction [${actionRequest.type}] [${actionRequest.task}] [${actionRequest.serviceInfo}]"
+    )
 
     // Dispatch processing according to action type.
     when (actionRequest.type) {
@@ -93,78 +94,69 @@ class ThreadNetworkUiState(
    * Requires Activity.
    */
   private fun doGPSPreferredCredsExist(actionRequest: ActionRequest) {
-    viewModel.setActionDialogInfo(
-      actionRequest.type,
-      ActionState.Processing
-    )
+    viewModel.setActionDialogInfo(actionRequest.type, ActionState.Processing)
     try {
       ThreadNetwork.getClient(activity)
-        .preferredCredentials
-        .addOnSuccessListener { intentSenderResult ->
-          // Don't post the intent on `threadClientIntentSender` as we do when
-          // we really want to know what the credentials are as this would prompt a
-          // user consent. In this case we just want to know whether the credentials
-          // exist.
-          if (intentSenderResult.intentSender == null) {
+          .preferredCredentials
+          .addOnSuccessListener { intentSenderResult ->
+            // Don't post the intent on `threadClientIntentSender` as we do when
+            // we really want to know what the credentials are as this would prompt a
+            // user consent. In this case we just want to know whether the credentials
+            // exist.
+            if (intentSenderResult.intentSender == null) {
+              viewModel.setActionDialogInfoWithError(
+                  actionRequest.type,
+                  "No preferred credentials found.",
+              )
+            } else {
+              viewModel.setActionDialogInfo(actionRequest.type, ActionState.Completed)
+            }
+          }
+          .addOnFailureListener { e: Exception ->
             viewModel.setActionDialogInfoWithError(
-              actionRequest.type,
-              "No preferred credentials found."
-            )
-          } else {
-            viewModel.setActionDialogInfo(
-              actionRequest.type,
-              ActionState.Completed
+                actionRequest.type,
+                ThreadNetworkStatusCodes.getStatusCodeString((e as ApiException).statusCode),
             )
           }
-        }
-        .addOnFailureListener { e: Exception ->
-          viewModel.setActionDialogInfoWithError(
-            actionRequest.type,
-            ThreadNetworkStatusCodes.getStatusCodeString((e as ApiException).statusCode)
-          )
-        }
     } catch (e: Exception) {
       viewModel.setActionDialogInfoWithError(actionRequest.type, "Error: $e")
     }
   }
 
-  /**
-   * Gets preferred thread network credentials from Google Play Services.
-   * Requires Activity.
-   */
+  /** Gets preferred thread network credentials from Google Play Services. Requires Activity. */
   private fun getGPSPreferredCreds(actionRequest: ActionRequest) {
     viewModel.setActionDialogInfo(actionRequest.type, ActionState.Processing)
     try {
       ThreadNetwork.getClient(activity)
-        .preferredCredentials
-        .addOnSuccessListener { intentSenderResult ->
-          if (intentSenderResult.intentSender == null) {
-            viewModel.setActionDialogInfoWithError(
-              actionRequest.type,
-              "No preferred credentials found."
-            )
-          } else {
-            intentSenderResult.intentSender?.let { intentSender ->
-              Timber.d("threadClient: intent returned result")
-              viewModel.setThreadClientIntentSender(intentSender)
+          .preferredCredentials
+          .addOnSuccessListener { intentSenderResult ->
+            if (intentSenderResult.intentSender == null) {
+              viewModel.setActionDialogInfoWithError(
+                  actionRequest.type,
+                  "No preferred credentials found.",
+              )
+            } else {
+              intentSenderResult.intentSender?.let { intentSender ->
+                Timber.d("threadClient: intent returned result")
+                viewModel.setThreadClientIntentSender(intentSender)
+              }
             }
           }
-        }
-        .addOnFailureListener { e: Exception ->
-          viewModel.setActionDialogInfoWithError(
-            actionRequest.type,
-            ThreadNetworkStatusCodes.getStatusCodeString((e as ApiException).statusCode)
-          )
-        }
+          .addOnFailureListener { e: Exception ->
+            viewModel.setActionDialogInfoWithError(
+                actionRequest.type,
+                ThreadNetworkStatusCodes.getStatusCodeString((e as ApiException).statusCode),
+            )
+          }
     } catch (e: Exception) {
       viewModel.setActionDialogInfoWithError(actionRequest.type, "Error: $e")
     }
   }
 
   /**
-   * Sets the thread network credentials into Google Play Services, pertaining a specific BR.
-   * User must have used the "RPi OTBR Credentials - Get" action first to set the
-   * Thread Credentials Working Set.
+   * Sets the thread network credentials into Google Play Services, pertaining a specific BR. User
+   * must have used the "RPi OTBR Credentials - Get" action first to set the Thread Credentials
+   * Working Set.
    *
    * The first credentials set become the preferred credentials. Thus, whenever installing a new
    * border router, always follow the procedure
@@ -180,40 +172,44 @@ class ThreadNetworkUiState(
     if (viewModel.threadCredentialsExist()) {
       if (!viewModel.selectedThreadBorderRouterExists()) {
         viewModel.setActionDialogInfoWithError(
-          actionRequest.type, "Thread Credentials exist in the Working Dataset, " +
-              "but a selected Border Router ID is also required to set the GPS " +
-              "Thread credentials.\n\n" +
-              "Use action \"RPI OTBR Credentials - Get\" to setup " +
-              "a Thread Credentials Working Dataset that also includes a Border Router ID."
+            actionRequest.type,
+            "Thread Credentials exist in the Working Dataset, " +
+                "but a selected Border Router ID is also required to set the GPS " +
+                "Thread credentials.\n\n" +
+                "Use action \"RPI OTBR Credentials - Get\" to setup " +
+                "a Thread Credentials Working Dataset that also includes a Border Router ID.",
         )
         return
       }
     } else {
       viewModel.setActionDialogInfoWithError(
-        actionRequest.type, "No Thread Credentials Working Dataset currently exists.\n\n" +
-            "Use action \"RPI OTBR Credentials - Get\" to setup a Thread Credentials " +
-            "Working Dataset that also includes a Border Router ID.\""
+          actionRequest.type,
+          "No Thread Credentials Working Dataset currently exists.\n\n" +
+              "Use action \"RPI OTBR Credentials - Get\" to setup a Thread Credentials " +
+              "Working Dataset that also includes a Border Router ID.\"",
       )
       return
     }
 
     val threadBorderAgent =
-      ThreadBorderAgent.newBuilder(viewModel.getSelectedBorderRouterId()!!).build()
+        ThreadBorderAgent.newBuilder(viewModel.getSelectedBorderRouterId()!!).build()
     val credentials = viewModel.getThreadNetworkCredentials()
     credentials?.let {
       ThreadNetwork.getClient(activity)
-        .addCredentials(threadBorderAgent, credentials)
-        .addOnSuccessListener {
-          viewModel.setActionDialogInfoWithMessage(
-            actionRequest.type, "Thread credentials set successfully!"
-          )
-        }
-        .addOnFailureListener { e: Exception ->
-          viewModel.setActionDialogInfoWithError(
-            actionRequest.type, "Error adding the new credentials:\n" +
-                getStatusCodeString((e as ApiException).statusCode)
-          )
-        }
+          .addCredentials(threadBorderAgent, credentials)
+          .addOnSuccessListener {
+            viewModel.setActionDialogInfoWithMessage(
+                actionRequest.type,
+                "Thread credentials set successfully!",
+            )
+          }
+          .addOnFailureListener { e: Exception ->
+            viewModel.setActionDialogInfoWithError(
+                actionRequest.type,
+                "Error adding the new credentials:\n" +
+                    getStatusCodeString((e as ApiException).statusCode),
+            )
+          }
     }
   }
 
@@ -223,35 +219,29 @@ class ThreadNetworkUiState(
   // Requires Activity.
   private fun readQRCodeWorkingSet(actionRequest: ActionRequest) {
     val options =
-      GmsBarcodeScannerOptions.Builder()
-        .setBarcodeFormats(Barcode.FORMAT_QR_CODE, Barcode.FORMAT_AZTEC)
-        .build()
+        GmsBarcodeScannerOptions.Builder()
+            .setBarcodeFormats(Barcode.FORMAT_QR_CODE, Barcode.FORMAT_AZTEC)
+            .build()
     val scanner = GmsBarcodeScanning.getClient(activity, options)
     scanner
-      .startScan()
-      .addOnSuccessListener { barcode ->
-        try {
-          val qrCodeDataset =
-            ThreadNetworkCredentials.fromActiveOperationalDataset(
-              BaseEncoding.base16().decode(barcode.displayValue?.substringAfter(":"))
-            )
-          viewModel.setThreadCredentialsInfo(null, qrCodeDataset)
-        } catch (e: Exception) {
-          viewModel.setActionDialogInfoWithError(
-            actionRequest.type, e.toString()
-          )
+        .startScan()
+        .addOnSuccessListener { barcode ->
+          try {
+            val qrCodeDataset =
+                ThreadNetworkCredentials.fromActiveOperationalDataset(
+                    BaseEncoding.base16().decode(barcode.displayValue?.substringAfter(":"))
+                )
+            viewModel.setThreadCredentialsInfo(null, qrCodeDataset)
+          } catch (e: Exception) {
+            viewModel.setActionDialogInfoWithError(actionRequest.type, e.toString())
+          }
         }
-      }
-      .addOnCanceledListener {
-        viewModel.setActionDialogInfoWithError(
-          actionRequest.type, "QR Code scanning cancelled."
-        )
-      }
-      .addOnFailureListener {
-        viewModel.setActionDialogInfoWithError(
-          actionRequest.type, it.toString()
-        )
-      }
+        .addOnCanceledListener {
+          viewModel.setActionDialogInfoWithError(actionRequest.type, "QR Code scanning cancelled.")
+        }
+        .addOnFailureListener {
+          viewModel.setActionDialogInfoWithError(actionRequest.type, it.toString())
+        }
   }
 
   // -----------------------------------------------------------------------------------------------
@@ -276,6 +266,6 @@ class ThreadNetworkUiState(
     // creates a local immutable list Border Routers. Prevents an update of the list
     // mid operation and a possible invalid reference to a [sd.resolvedDevices] item
     return sd.resolvedDevices.toList()
-    //return borderRouterLocalList.map.toList()
+    // return borderRouterLocalList.map.toList()
   }
 }

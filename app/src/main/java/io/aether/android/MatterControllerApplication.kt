@@ -4,7 +4,6 @@
 package io.aether.android
 
 import android.app.Application
-import io.aether.android.APP_NAME
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
@@ -18,6 +17,7 @@ class MatterControllerApplication : Application() {
           override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
             super.log(priority, "${APP_NAME}-$tag", message, t)
           }
-        })
+        }
+    )
   }
 }

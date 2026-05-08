@@ -16,20 +16,21 @@ import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun AetherTheme(
-  darkTheme: Boolean = isSystemInDarkTheme(),
-  content: @Composable () -> Unit,
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit,
 ) {
   val context = LocalContext.current
-  val colorScheme = remember(context, darkTheme) {
-    when {
-      Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
-        if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-      darkTheme -> darkColorScheme()
-      else -> lightColorScheme()
-    }
-  }
+  val colorScheme =
+      remember(context, darkTheme) {
+        when {
+          Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
+              if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+          darkTheme -> darkColorScheme()
+          else -> lightColorScheme()
+        }
+      }
   MaterialTheme(
-    colorScheme = colorScheme,
-    content = content,
+      colorScheme = colorScheme,
+      content = content,
   )
 }
