@@ -4,9 +4,9 @@
 package io.aether.android.screens.commissionable.wifi
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
+import android.os.Build
 import io.aether.android.screens.commissionable.MatterBeacon
 import io.aether.android.screens.commissionable.MatterBeaconInject
 import io.aether.android.screens.commissionable.MatterBeaconProducer

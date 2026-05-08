@@ -29,8 +29,7 @@ class MatterBeaconProducerMdns
 constructor(
     private val chipClient: ChipClient,
     @param:ApplicationContext private val context: Context,
-) :
-    MatterBeaconProducer {
+) : MatterBeaconProducer {
 
   // Android's NSD Manager. Used to scan mDNS advertisements.
   private val nsdManager = getSystemService(context, NsdManager::class.java) as NsdManager

@@ -332,7 +332,8 @@ constructor(
           val commissionedDeviceType =
               fallbackEndpointInfo?.types?.firstOrNull()?.let { convertToAppDeviceType(it) }
                   ?: Device.DeviceType.TYPE_UNKNOWN
-          val supportsLevel = fallbackEndpointInfo?.serverClusters?.contains(LevelControlClusterId) == true
+          val supportsLevel =
+              fallbackEndpointInfo?.serverClusters?.contains(LevelControlClusterId) == true
           val supportsColorTemperature =
               if (fallbackEndpointInfo?.serverClusters?.contains(ColorControlClusterId) == true) {
                 try {
