@@ -46,6 +46,7 @@ jobs:
       - name: Build for CodeQL with Gradle cache
         uses: burrunan/gradle-cache-action@v3
         with:
+          concurrent: true
           arguments: assemble
 
       - name: Perform CodeQL Analysis
@@ -71,6 +72,7 @@ jobs:
       - name: Format Kotlin scripts and source files
         uses: burrunan/gradle-cache-action@v3
         with:
+          concurrent: true
           arguments: :app:ktfmtFormat
 
       - name: Check for formatting violations

@@ -58,11 +58,11 @@ jobs:
       - name: Build APK with Gradle cache
         uses: burrunan/gradle-cache-action@v3
         with:
+          concurrent: true
           arguments: |
             -PsigningConfig=persistentDebug
             ${{ inputs.abi && format('-PselectedAbi={0}', inputs.abi) || '' }}
             ${{ inputs.target || 'assembleRelease' }}
-          gradle-version: wrapper
 
       - name: Upload APK artifacts
         if: github.event_name == 'workflow_dispatch'
