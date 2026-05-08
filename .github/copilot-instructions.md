@@ -34,7 +34,24 @@ SPDX-License-Identifier: Apache-2.0
 - Add a custom drawable only when no suitable icon exists anywhere in the
   Material Icons library.
 
-### 4. Remove Orphaned Files
+### 4. No Monster Files and God Classes
+
+- Each file must contain a **single, well-defined responsibility**. No
+  monster files that bundle unrelated composables, classes, or logic.
+
+- Concretely for Compose UI:
+
+  - Each Matter **cluster control** lives in its own file
+    (e.g. `OnOffCluster.kt`, `LevelCluster.kt`).
+  - Each **device-type control** (a cluster aggregate tailored to a specific
+    device type) lives in its own file (e.g. `DimmableDevice.kt`).
+  - The **screen/route** file only orchestrates navigation, ViewModel wiring,
+    and top-level layout; it delegates rendering to the files above.
+
+- If a file grows beyond a single responsibility, split it before adding more
+  code.
+
+### 5. Remove Orphaned Files
 
 - After making changes, check whether any files, classes, resources, or imports
   have become unused as a direct result of your changes.
@@ -42,7 +59,7 @@ SPDX-License-Identifier: Apache-2.0
 - Remove orphans that **your changes** created. Do not remove preexisting dead
   code unless that is the explicit goal of the task.
 
-### 5. Copyright Headers
+### 6. Copyright Headers
 
 - Every **new file** must include an SPDX copyright header for the current
   year and "The Authors":
