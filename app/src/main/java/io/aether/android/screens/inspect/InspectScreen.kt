@@ -4,19 +4,12 @@
 
 package io.aether.android.screens.inspect
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,7 +19,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -34,11 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
-import com.google.protobuf.Timestamp
-import io.aether.android.Device
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
-import io.aether.android.chip.MatterConstants
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import timber.log.Timber
@@ -195,121 +184,5 @@ private fun InspectScreenOnlineWithClustersPreview() {
         null,
         {},
     )
-  }
-}
-
-private val DeviceTest =
-    Device.newBuilder()
-        .setDeviceId(1L)
-        .setDeviceType(Device.DeviceType.TYPE_OUTLET)
-        .setDateCommissioned(Timestamp.getDefaultInstance())
-        .setName("MyOutlet")
-        .setProductId("8785")
-        .setVendorId("6006")
-        .setRoom("Office")
-        .build()
-
-@Composable
-private fun EndpointTree(
-    endpoint: Int,
-    infosByEndpoint: Map<Int, DeviceMatterInfo>,
-    expandedEndpoints: MutableMap<Int, Boolean>,
-    depth: Int,
-    visited: Set<Int>,
-) {
-  if (endpoint in visited) return
-  val endpointInfo = infosByEndpoint[endpoint] ?: return
-  val nextVisited = visited + endpoint
-  val isExpanded = expandedEndpoints[endpoint] ?: true
-  val startPadding = dimensionResource(R.dimen.margin_normal) * depth
-
-  Row(
-      verticalAlignment = Alignment.CenterVertically,
-      modifier = Modifier.padding(start = startPadding),
-  ) {
-    IconButton(onClick = { expandedEndpoints[endpoint] = !isExpanded }) {
-      val icon =
-          if (isExpanded) Icons.Filled.KeyboardArrowDown
-          else Icons.AutoMirrored.Filled.KeyboardArrowRight
-      Icon(
-          imageVector = icon,
-          contentDescription =
-              if (isExpanded) stringResource(R.string.inspect_collapse_endpoint)
-              else stringResource(R.string.inspect_expand_endpoint),
-      )
-    }
-    Text(
-        text = stringResource(R.string.inspect_endpoint_title, endpoint),
-        style = MaterialTheme.typography.titleMedium,
-        modifier =
-            Modifier.clickable { expandedEndpoints[endpoint] = !isExpanded }.padding(start = 4.dp),
-    )
-  }
-
-  if (!isExpanded) return
-
-  EndpointDetails(
-      endpointInfo = endpointInfo,
-      modifier = Modifier.padding(start = startPadding + 28.dp, bottom = 8.dp),
-  )
-  endpointInfo.parts.forEach { child ->
-    EndpointTree(
-        endpoint = child,
-        infosByEndpoint = infosByEndpoint,
-        expandedEndpoints = expandedEndpoints,
-        depth = depth + 1,
-        visited = nextVisited,
-    )
-  }
-}
-
-@Composable
-private fun EndpointDetails(endpointInfo: DeviceMatterInfo, modifier: Modifier = Modifier) {
-  Column(modifier = modifier) {
-    Text(
-        text = stringResource(R.string.inspect_device_types),
-        style = MaterialTheme.typography.titleSmall,
-    )
-    endpointInfo.types.sorted().forEach { deviceType ->
-      val hex = String.format("0x%04X", deviceType)
-      val typeString =
-          MatterConstants.DeviceTypesMap.getOrDefault(
-              deviceType,
-              stringResource(R.string.inspect_unknown),
-          )
-      Text(text = "[${hex}] $typeString", style = MaterialTheme.typography.bodySmall)
-    }
-
-    Text(
-        text = stringResource(R.string.inspect_server_clusters),
-        style = MaterialTheme.typography.titleSmall,
-    )
-    ClusterList(endpointInfo.serverClusters)
-
-    Text(
-        text = stringResource(R.string.inspect_client_clusters),
-        style = MaterialTheme.typography.titleSmall,
-    )
-    ClusterList(endpointInfo.clientClusters)
-  }
-}
-
-@Composable
-private fun ClusterList(clusters: List<Long>) {
-  if (clusters.isEmpty()) {
-    Text(
-        text = stringResource(R.string.inspect_none),
-        style = MaterialTheme.typography.bodySmall,
-    )
-    return
-  }
-  clusters.sorted().forEach { cluster ->
-    val hex = String.format("0x%04X", cluster)
-    val clusterName =
-        MatterConstants.ClustersMap.getOrDefault(
-            cluster,
-            stringResource(R.string.inspect_unknown),
-        )
-    Text(text = "[${hex}] $clusterName", style = MaterialTheme.typography.bodySmall)
   }
 }
