@@ -125,7 +125,9 @@ private fun InspectScreen(
                     .map { it.endpoint }
                     .filterNot { endpoint -> endpoint in childEndpoints }
                     .toList()
-                    .ifEmpty { listOf(deviceMatterInfoList.first().endpoint) }
+                    .ifEmpty {
+                      deviceMatterInfoList.firstOrNull()?.let { listOf(it.endpoint) } ?: emptyList()
+                    }
               }
 
           rootEndpoints.forEach { endpoint ->
@@ -217,8 +219,8 @@ private fun EndpointTree(
   val endpointInfo = infosByEndpoint[endpoint] ?: return
   val nextVisited = visited + endpoint
   val hasChildren = endpointInfo.parts.any { child -> child in infosByEndpoint }
-  val isExpanded = expandedEndpoints[endpoint] ?: true
-  val startPadding = (depth * 16).dp
+  val isExpanded = expandedEndpoints.getOrPut(endpoint) { depth == 0 }
+  val startPadding = dimensionResource(R.dimen.margin_normal) * depth
 
   Row(
       verticalAlignment = Alignment.CenterVertically,
