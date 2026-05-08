@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -104,10 +103,7 @@ private fun InspectScreen(
     ) {
       if (deviceMatterInfoList == null) {
         Text(
-            text =
-                stringResource(R.string.inspect_fetching_device_information) +
-                    "\n" +
-                    stringResource(R.string.inspect_fetching_device_information_note),
+            text = stringResource(R.string.inspect_fetching_device_information_message),
             style = MaterialTheme.typography.bodyMedium,
         )
       } else {
@@ -224,17 +220,14 @@ private fun EndpointTree(
   if (endpoint in visited) return
   val endpointInfo = infosByEndpoint[endpoint] ?: return
   val nextVisited = visited + endpoint
-  val isExpanded = expandedEndpoints.getOrPut(endpoint) { true }
+  val isExpanded = expandedEndpoints[endpoint] ?: true
   val startPadding = dimensionResource(R.dimen.margin_normal) * depth
 
   Row(
       verticalAlignment = Alignment.CenterVertically,
       modifier = Modifier.padding(start = startPadding),
   ) {
-    IconButton(
-        onClick = { expandedEndpoints[endpoint] = !isExpanded },
-        modifier = Modifier.size(24.dp),
-    ) {
+    IconButton(onClick = { expandedEndpoints[endpoint] = !isExpanded }) {
       val icon =
           if (isExpanded) Icons.Filled.KeyboardArrowDown
           else Icons.AutoMirrored.Filled.KeyboardArrowRight

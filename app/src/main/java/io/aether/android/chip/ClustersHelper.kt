@@ -61,7 +61,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     val partsListAttribute =
         readDescriptorClusterPartsListAttribute(connectedDevicePtr, endpointInt)
     Timber.d("partsListAttribute [${partsListAttribute}]")
-    val parts = partsListAttribute?.filterIsInstance<Int>().orEmpty()
+    val parts = partsListAttribute.orEmpty()
 
     // DeviceListAttribute
     val deviceListAttribute =
@@ -107,7 +107,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
    *     sendReadPartsListAttribute part: [2]
    * ```
    */
-  suspend fun readDescriptorClusterPartsListAttribute(devicePtr: Long, endpoint: Int): List<Any>? {
+  suspend fun readDescriptorClusterPartsListAttribute(devicePtr: Long, endpoint: Int): List<Int>? {
     return suspendCoroutine { continuation ->
       getDescriptorClusterForDevice(devicePtr, endpoint)
           .readPartsListAttribute(

@@ -453,13 +453,8 @@ constructor(
           )
       Timber.d("partsListAttribute [${partsListAttribute}]")
 
-      partsListAttribute?.forEach { part ->
-        Timber.d("part [$part] is [${part.javaClass}]")
-        val endpoint =
-            when (part) {
-              is Int -> part
-              else -> return@forEach
-            }
+      partsListAttribute.orEmpty().forEach { part ->
+        val endpoint = part
         Timber.d("Processing part [$part]")
 
         val deviceListAttribute =
