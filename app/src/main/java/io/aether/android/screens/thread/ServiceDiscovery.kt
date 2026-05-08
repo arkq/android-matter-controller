@@ -6,6 +6,7 @@ package io.aether.android.screens.thread
 import android.content.Context
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
+import android.os.Build
 import com.google.common.io.BaseEncoding
 import java.util.concurrent.Semaphore
 import kotlinx.coroutines.CoroutineScope
@@ -105,6 +106,7 @@ class DiscoveryListener(
       coroutineScope.launch(Dispatchers.IO) {
         // NsdManager doesn't like simultaneous resolve calls. Thus using a lock
         lock.acquire()
+        @Suppress("DEPRECATION")
         nsdManager.resolveService(service, ResolveListener(resolvedServices))
         // NsdManager fails if several resolve requests are sent without delays between them
         delay(100)
@@ -153,19 +155,28 @@ class ResolveListener(
   }
 
   override fun onServiceResolved(serviceInfo: NsdServiceInfo) {
-    if ((serviceInfo.attributes["id"] != null && serviceInfo.attributes["id"]!!.isNotEmpty())) {
+    val serviceId = serviceInfo.attributes["id"]
+    if (serviceId != null && serviceId.isNotEmpty()) {
       Timber.d(
           "Resolve Succeeded\n" +
               "    Host Service Name: ${serviceInfo.serviceName}\n" +
               "                   ID: ${
-          BaseEncoding.base16().encode(serviceInfo.attributes["id"]?.let { it })
+          BaseEncoding.base16().encode(serviceId)
         }\n" +
               "                   NN: ${serviceInfo.attributes["nn"]?.let { String(it) }}\n" +
-              "                   IP: ${serviceInfo.host.hostAddress}\n"
+              "                   IP: ${serviceInfoHostAddress(serviceInfo)}\n"
       )
       resolvedDevices.add(serviceInfo)
     } else {
       Timber.e("Resolve failed")
     }
+  }
+}
+
+private fun serviceInfoHostAddress(serviceInfo: NsdServiceInfo): String? {
+  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+    serviceInfo.hostAddresses.firstOrNull()?.hostAddress
+  } else {
+    @Suppress("DEPRECATION") serviceInfo.host?.hostAddress
   }
 }

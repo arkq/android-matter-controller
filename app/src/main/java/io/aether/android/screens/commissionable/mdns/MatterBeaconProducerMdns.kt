@@ -26,8 +26,10 @@ import timber.log.Timber
 /** [MatterBeaconProducer] which emits mDNS beacons as they are discovered. */
 class MatterBeaconProducerMdns
 @Inject
-constructor(private val chipClient: ChipClient, @ApplicationContext private val context: Context) :
-    MatterBeaconProducer {
+constructor(
+    private val chipClient: ChipClient,
+    @param:ApplicationContext private val context: Context,
+) : MatterBeaconProducer {
 
   // Android's NSD Manager. Used to scan mDNS advertisements.
   private val nsdManager = getSystemService(context, NsdManager::class.java) as NsdManager
@@ -109,7 +111,7 @@ constructor(private val chipClient: ChipClient, @ApplicationContext private val 
             .getTxtAttributeValue("D")
             ?.takeIf { it.length <= 4 }
             ?.takeIf { it.all { char -> char.isDigit() } }
-            ?.toIntOrNull() ?: null
+            ?.toIntOrNull()
 
     val vidPid =
         dnsSdServiceInfo
@@ -117,7 +119,7 @@ constructor(private val chipClient: ChipClient, @ApplicationContext private val 
             .orEmpty()
             .split("+")
             .takeUnless { it.size > 2 }
-            ?.takeIf { it.all { value -> value.all { char -> char.isDigit() } } } ?: null
+            ?.takeIf { it.all { value -> value.all { char -> char.isDigit() } } }
 
     val address = dnsSdServiceInfo.networkLocations.get(0).formattedIpAddress
     val port = dnsSdServiceInfo.networkLocations.get(0).port

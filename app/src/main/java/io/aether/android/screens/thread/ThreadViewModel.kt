@@ -7,6 +7,7 @@ package io.aether.android.screens.thread
 import android.content.IntentSender
 import android.graphics.Bitmap
 import android.net.nsd.NsdServiceInfo
+import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -167,7 +168,7 @@ class ThreadViewModel @Inject constructor() : ViewModel() {
   private suspend fun getOtbrActiveThreadCredentialsProcess(
       serviceInfo: NsdServiceInfo
   ): ThreadNetworkCredentials? {
-    val ipAddress = serviceInfo.host.hostAddress
+    val ipAddress = serviceInfoHostAddress(serviceInfo)
     val response =
         OtbrHttpClient.createJsonHttpRequest(
             URL("http://$ipAddress:$otbrPort$otbrDatasetActiveEndpoint"),
@@ -208,7 +209,7 @@ class ThreadViewModel @Inject constructor() : ViewModel() {
       // Coroutine to get the Thread credentials for the ServiceInfo specified.
       viewModelScope.launch {
         try {
-          val ipAddress = actionRequest.serviceInfo!!.host.hostAddress
+          val ipAddress = serviceInfoHostAddress(actionRequest.serviceInfo!!)
           val jsonQuery =
               OtbrHttpClient.createJsonCredentialsObject(threadCredentialsInfo.credentials)
           val response =
@@ -282,5 +283,13 @@ class ThreadViewModel @Inject constructor() : ViewModel() {
         threadCredentialsInfoStateFlow.value.credentials
             ?: throw IllegalStateException("Credentials are null")
     return BaseEncoding.base16().encode(credentials.activeOperationalDataset)
+  }
+}
+
+private fun serviceInfoHostAddress(serviceInfo: NsdServiceInfo): String? {
+  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+    serviceInfo.hostAddresses.firstOrNull()?.hostAddress
+  } else {
+    @Suppress("DEPRECATION") serviceInfo.host?.hostAddress
   }
 }

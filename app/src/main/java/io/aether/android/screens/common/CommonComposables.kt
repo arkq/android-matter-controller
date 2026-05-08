@@ -19,9 +19,9 @@ import timber.log.Timber
 
 // Information used for [MsgAlertDialog].
 data class DialogInfo(
-    @StringRes val titleRes: Int? = null,
+    @field:StringRes @param:StringRes val titleRes: Int? = null,
     val title: String? = null,
-    @StringRes val messageRes: Int? = null,
+    @field:StringRes @param:StringRes val messageRes: Int? = null,
     val message: String? = null,
     val showConfirmButton: Boolean = true,
 )

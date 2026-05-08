@@ -6,6 +6,7 @@ package io.aether.android.screens.commissionable.wifi
 import android.annotation.SuppressLint
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
+import android.os.Build
 import io.aether.android.screens.commissionable.MatterBeacon
 import io.aether.android.screens.commissionable.MatterBeaconInject
 import io.aether.android.screens.commissionable.MatterBeaconProducer
@@ -34,7 +35,7 @@ private val MATTER_SSID_PATTERN =
 class MatterBeaconProducerWifi
 @Inject
 constructor(
-    @MatterBeaconInject private val wifiManager: WifiManager,
+    @param:MatterBeaconInject private val wifiManager: WifiManager,
 ) : MatterBeaconProducer {
   @SuppressLint("MissingPermission")
   override fun getBeaconsFlow(): Flow<MatterBeacon> = flow {
@@ -63,8 +64,12 @@ constructor(
 }
 
 private fun ScanResult.toMatterBeaconOrNull(): MatterBeacon? {
-  val ssid = SSID.stripSurroundingQuotes()
-  // TODO when minSdk is 33: val ssid = wifiSsid.toString().stripSurroundingQuotes()
+  val ssid =
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        wifiSsid?.toString().orEmpty().stripSurroundingQuotes()
+      } else {
+        @Suppress("DEPRECATION") SSID.stripSurroundingQuotes()
+      }
   return MATTER_SSID_PATTERN.find(ssid)?.let { result ->
     val (discriminator, vid, pid) = result.destructured
     MatterBeacon(

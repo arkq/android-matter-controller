@@ -114,9 +114,6 @@ object OtbrHttpClient {
             Timber.d("$verb response: $response")
           }
         }
-        else -> {
-          Timber.e("HTTP verb not supported")
-        }
       }
 
       Pair(urlConnection, content)

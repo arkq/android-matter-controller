@@ -36,6 +36,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -523,7 +524,7 @@ private fun OtbrActionDialog(
             ExposedDropdownMenuBox(expanded = false, onExpandedChange = { isExpanded = it }) {
               TextField(
                   // The `menuAnchor` modifier must be passed to the text field for correctness.
-                  modifier = Modifier.menuAnchor(),
+                  modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
                   readOnly = true,
                   value = if (otbr == null) "" else otbr!!.serviceName,
                   onValueChange = { Timber.d("FIXME: value changed") },

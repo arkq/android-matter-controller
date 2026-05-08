@@ -6,6 +6,7 @@ package io.aether.android.screens.commissionable.ble
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.BluetoothLeScanner
 import android.content.Context
+import android.content.Context.BLUETOOTH_SERVICE
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -31,7 +32,10 @@ internal abstract class ModuleBle {
     @Provides
     @MatterBeaconInject
     fun providesBluetoothLeScanner(@ApplicationContext context: Context): BluetoothLeScanner? {
-      return BluetoothAdapter.getDefaultAdapter()?.bluetoothLeScanner
+      val bluetoothAdapter =
+          (context.getSystemService(BLUETOOTH_SERVICE) as? android.bluetooth.BluetoothManager)
+              ?.adapter
+      return bluetoothAdapter?.takeIf { it.state == BluetoothAdapter.STATE_ON }?.bluetoothLeScanner
     }
   }
 }

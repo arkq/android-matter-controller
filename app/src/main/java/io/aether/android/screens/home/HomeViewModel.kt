@@ -284,7 +284,6 @@ constructor(
     Timber.i(
         "Device commissioned successfully! deviceName [${gpsCommissioningResult!!.deviceName}]"
     )
-    Timber.i("Device commissioned successfully! room [${gpsCommissioningResult!!.room}]")
     Timber.i(
         "Device commissioned successfully! DeviceDescriptor of device:\n" +
             "productId [${gpsCommissioningResult!!.commissionedDeviceDescriptor.productId}]\n" +
@@ -320,10 +319,6 @@ constructor(
           }
 
       try {
-        val commissionedDeviceType =
-            convertToAppDeviceType(
-                gpsCommissioningResult?.commissionedDeviceDescriptor?.deviceType?.toLong()!!
-            )
         val deviceMatterInfoList = clustersHelper.fetchDeviceMatterInfo(nodeId)
         val appEndpoints = deviceMatterInfoList.filter { info ->
           info.endpoint != 0 && info.serverClusters.contains(OnOffClusterId)
@@ -332,25 +327,38 @@ constructor(
         devicesRepository.seedLastDeviceIdIfNeeded()
         if (appEndpoints.isEmpty()) {
           // Fallback for devices that expose no application endpoints with On/Off cluster
-          // (e.g. legacy or non-standard devices). Fall back to endpoint 1 and infer
-          // capabilities from the device type reported by the commissioning result.
+          // (e.g. legacy or non-standard devices). Fall back to first non-root endpoint.
+          val fallbackEndpointInfo = deviceMatterInfoList.firstOrNull { info -> info.endpoint != 0 }
+          val commissionedDeviceType =
+              fallbackEndpointInfo?.types?.firstOrNull()?.let { convertToAppDeviceType(it) }
+                  ?: Device.DeviceType.TYPE_UNKNOWN
+          val supportsLevel =
+              fallbackEndpointInfo?.serverClusters?.contains(LevelControlClusterId) == true
+          val supportsColorTemperature =
+              if (fallbackEndpointInfo?.serverClusters?.contains(ColorControlClusterId) == true) {
+                try {
+                  clustersHelper
+                      .readColorControlClusterAttributeList(nodeId, fallbackEndpointInfo.endpoint)
+                      .contains(ColorTemperatureAttribute.attributeId)
+                } catch (e: Exception) {
+                  Timber.w(
+                      e,
+                      "Could not read Color Control attribute list for endpoint ${fallbackEndpointInfo.endpoint}; assuming color temperature unsupported",
+                  )
+                  false
+                }
+              } else {
+                false
+              }
           val localDeviceId = devicesRepository.incrementAndReturnLastDeviceId()
           val device =
               Device.newBuilder()
                   .setName(deviceName)
                   .setDeviceId(localDeviceId)
                   .setNodeId(nodeId)
-                  .setEndpoint(1)
-                  .setSupportsLevelControl(
-                      commissionedDeviceType == Device.DeviceType.TYPE_DIMMABLE_LIGHT ||
-                          commissionedDeviceType ==
-                              Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT ||
-                          commissionedDeviceType == Device.DeviceType.TYPE_EXTENDED_COLOR_LIGHT
-                  )
-                  .setSupportsColorTemperature(
-                      commissionedDeviceType == Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT ||
-                          commissionedDeviceType == Device.DeviceType.TYPE_EXTENDED_COLOR_LIGHT
-                  )
+                  .setEndpoint(fallbackEndpointInfo?.endpoint ?: 1)
+                  .setSupportsLevelControl(supportsLevel)
+                  .setSupportsColorTemperature(supportsColorTemperature)
                   .setDateCommissioned(getTimestampForNow())
                   .setVendorId(
                       gpsCommissioningResult?.commissionedDeviceDescriptor?.vendorId.toString()
@@ -376,7 +384,7 @@ constructor(
             val endpointDisplayName = deviceName
             val endpointType =
                 if (info.types.isNotEmpty()) convertToAppDeviceType(info.types.first())
-                else commissionedDeviceType
+                else Device.DeviceType.TYPE_UNKNOWN
             val supportsLevel = info.serverClusters.contains(LevelControlClusterId)
             // Check the Color Control cluster's AttributeList to confirm that the optional
             // color temperature attribute (id 7) is actually present, not just the cluster.
