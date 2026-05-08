@@ -90,6 +90,12 @@ SPDX-License-Identifier: Apache-2.0
   **separate commit** so that each change can be reviewed and reverted
   independently.
 
+### 2. Format Files Before Committing
+
+- Before every commit, run the project standard `ktfmt` formatter on all Kotlin
+  files changed in that commit, then verify no formatting diff remains. Use the
+  module task used by CI, for example :app:ktfmtFormat.
+
 ## Review Rules
 
 ### 1. Do Not Review Generated Files
