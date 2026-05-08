@@ -1,0 +1,59 @@
+# SPDX-FileCopyrightText: 2026 The Authors
+# SPDX-License-Identifier: Apache-2.0
+
+name: Kotlin Format
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          # For PRs from the same repo, check out the actual branch so we can push fixes.
+          ref: ${{ github.head_ref || github.ref }}
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Check formatting
+        id: check
+        uses: burrunan/gradle-cache-action@v3
+        continue-on-error: true
+        with:
+          arguments: :app:ktfmtCheck
+
+      - name: Auto-fix formatting (PR only)
+        if: steps.check.outcome == 'failure' && github.event_name == 'pull_request'
+        uses: burrunan/gradle-cache-action@v3
+        with:
+          arguments: :app:ktfmtFormat
+
+      - name: Commit and push formatting fixes (PR only)
+        if: steps.check.outcome == 'failure' && github.event_name == 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff-index --quiet HEAD || git commit -m "style: apply ktfmt formatting"
+          git push
+
+      - name: Fail on formatting violation
+        if: steps.check.outcome == 'failure'
+        run: |
+          echo "::error::Kotlin formatting violations found. Run './gradlew :app:ktfmtFormat' locally to fix."
+          exit 1

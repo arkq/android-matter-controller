@@ -28,6 +28,10 @@ kotlin {
     jvmToolchain(21)
 }
 
+ktfmt {
+    kotlinLangStyle()
+}
+
 /**
  * The android block is where you configure all your Android-specific
  * build options.
