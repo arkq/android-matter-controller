@@ -37,14 +37,20 @@ jobs:
         with:
           arguments: :app:ktfmtCheck
 
-      - name: Auto-fix formatting (PR only)
-        if: steps.check.outcome == 'failure' && github.event_name == 'pull_request'
+      - name: Auto-fix formatting (same-repo PR only)
+        if: >-
+          steps.check.outcome == 'failure' &&
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
         uses: burrunan/gradle-cache-action@v3
         with:
           arguments: :app:ktfmtFormat
 
-      - name: Commit and push formatting fixes (PR only)
-        if: steps.check.outcome == 'failure' && github.event_name == 'pull_request'
+      - name: Commit and push formatting fixes (same-repo PR only)
+        if: >-
+          steps.check.outcome == 'failure' &&
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -52,8 +58,20 @@ jobs:
           git diff-index --quiet HEAD || git commit -m "style: apply ktfmt formatting"
           git push
 
+      - name: Fail on formatting violation (PR — fixes were pushed)
+        if: >-
+          steps.check.outcome == 'failure' &&
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          echo "::error::Kotlin formatting violations found. Fixes have been pushed to your PR branch automatically. Please pull the latest changes."
+          exit 1
+
       - name: Fail on formatting violation
-        if: steps.check.outcome == 'failure'
+        if: >-
+          steps.check.outcome == 'failure' &&
+          !(github.event_name == 'pull_request' &&
+            github.event.pull_request.head.repo.full_name == github.repository)
         run: |
           echo "::error::Kotlin formatting violations found. Run './gradlew :app:ktfmtFormat' locally to fix."
           exit 1
