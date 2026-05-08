@@ -4,17 +4,17 @@
 package io.aether.android.screens.inspect
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,10 +28,10 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.google.protobuf.Timestamp
@@ -112,7 +112,8 @@ private fun InspectScreen(
           )
         } else {
           val expandedEndpoints = remember { mutableStateMapOf<Int, Boolean>() }
-          val infosByEndpoint = remember(deviceMatterInfoList) { deviceMatterInfoList.associateBy { it.endpoint } }
+          val infosByEndpoint =
+              remember(deviceMatterInfoList) { deviceMatterInfoList.associateBy { it.endpoint } }
           val childEndpoints =
               remember(deviceMatterInfoList) {
                 deviceMatterInfoList.flatMap { info -> info.parts }.toSet()
@@ -178,7 +179,13 @@ private fun InspectScreenOnlineWithClustersPreview() {
         PaddingValues(),
         listOf(
             DeviceMatterInfo(0, listOf(22L), listOf(3L), listOf(43L, 48L), listOf(1, 2)),
-            DeviceMatterInfo(1, listOf(256L), listOf(3L, 4L, 5L), listOf(43L, 44L, 45L, 48L), emptyList()),
+            DeviceMatterInfo(
+                1,
+                listOf(256L),
+                listOf(3L, 4L, 5L),
+                listOf(43L, 44L, 45L, 48L),
+                emptyList(),
+            ),
             DeviceMatterInfo(2, listOf(266L), listOf(4L, 6L, 29L), listOf(43L, 44L), emptyList()),
         ),
         null,
@@ -223,7 +230,8 @@ private fun EndpointTree(
           modifier = Modifier.size(24.dp),
       ) {
         val icon =
-            if (isExpanded) Icons.Filled.ExpandMore else Icons.Filled.KeyboardArrowRight
+            if (isExpanded) Icons.Filled.KeyboardArrowDown
+            else Icons.AutoMirrored.Filled.KeyboardArrowRight
         Icon(
             imageVector = icon,
             contentDescription =
@@ -261,7 +269,10 @@ private fun EndpointTree(
 @Composable
 private fun EndpointDetails(endpointInfo: DeviceMatterInfo, modifier: Modifier = Modifier) {
   Column(modifier = modifier) {
-    Text(text = stringResource(R.string.inspect_device_types), style = MaterialTheme.typography.titleSmall)
+    Text(
+        text = stringResource(R.string.inspect_device_types),
+        style = MaterialTheme.typography.titleSmall,
+    )
     endpointInfo.types.forEach { deviceType ->
       val hex = String.format("0x%04X", deviceType)
       val typeString =
@@ -299,7 +310,10 @@ private fun ClusterList(clusters: List<Any>) {
     val clusterId = cluster as? Long ?: return@forEach
     val hex = String.format("0x%04X", clusterId)
     val clusterName =
-        MatterConstants.ClustersMap.getOrDefault(clusterId, stringResource(R.string.inspect_unknown))
+        MatterConstants.ClustersMap.getOrDefault(
+            clusterId,
+            stringResource(R.string.inspect_unknown),
+        )
     Text(text = "[${hex}] $clusterName", style = MaterialTheme.typography.bodySmall)
   }
 }

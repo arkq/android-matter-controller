@@ -82,7 +82,8 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     clientListAttribute.forEach { clientClusters.add(it) }
 
     // Build the DeviceMatterInfo
-    val deviceMatterInfo = DeviceMatterInfo(endpointInt, types, serverClusters, clientClusters, parts)
+    val deviceMatterInfo =
+        DeviceMatterInfo(endpointInt, types, serverClusters, clientClusters, parts)
     matterDeviceInfoList.add(deviceMatterInfo)
 
     // Recursive call for the parts supported by the endpoint.
