@@ -7,6 +7,9 @@
 // such as additional build types and product flavors, and override settings in the
 // main/ app manifest or top-level build script.
 
+import com.ncorti.ktfmt.gradle.tasks.KtfmtCheckTask
+import com.ncorti.ktfmt.gradle.tasks.KtfmtFormatTask
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.ksp)
@@ -26,10 +29,6 @@ plugins {
  */
 kotlin {
     jvmToolchain(21)
-}
-
-ktfmt {
-    kotlinLangStyle()
 }
 
 /**
@@ -216,6 +215,26 @@ dependencies {
 // https://github.com/android/android-test/issues/999
 configurations.configureEach {
     exclude(group = "com.google.protobuf", module = "protobuf-lite")
+}
+
+tasks.register<KtfmtCheckTask>("ktfmtCheckSources") {
+    source = project.fileTree(projectDir) {
+        include("src/**/*.kt")
+    }
+}
+
+tasks.register<KtfmtFormatTask>("ktfmtFormatSources") {
+    source = project.fileTree(projectDir) {
+        include("src/**/*.kt")
+    }
+}
+
+tasks.named("ktfmtCheck") {
+    dependsOn("ktfmtCheckSources")
+}
+
+tasks.named("ktfmtFormat") {
+    dependsOn("ktfmtFormatSources")
 }
 
 protobuf {
