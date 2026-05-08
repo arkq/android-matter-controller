@@ -95,12 +95,12 @@ private fun InspectScreen(
         modifier =
             Modifier.fillMaxSize()
                 .verticalScroll(rememberScrollState())
-          .padding(
-                start = dimensionResource(R.dimen.margin_normal),
-                top = 0.dp,
-                end = dimensionResource(R.dimen.margin_normal),
-            bottom = dimensionResource(R.dimen.margin_normal),
-          )
+                .padding(
+                    start = dimensionResource(R.dimen.margin_normal),
+                    top = 0.dp,
+                    end = dimensionResource(R.dimen.margin_normal),
+                    bottom = dimensionResource(R.dimen.margin_normal),
+                )
     ) {
       if (deviceMatterInfoList == null) {
         Text(
@@ -232,25 +232,24 @@ private fun EndpointTree(
       modifier = Modifier.padding(start = startPadding),
   ) {
     IconButton(
-      onClick = { expandedEndpoints[endpoint] = !isExpanded },
-      modifier = Modifier.size(24.dp),
+        onClick = { expandedEndpoints[endpoint] = !isExpanded },
+        modifier = Modifier.size(24.dp),
     ) {
       val icon =
-        if (isExpanded) Icons.Filled.KeyboardArrowDown
-        else Icons.AutoMirrored.Filled.KeyboardArrowRight
+          if (isExpanded) Icons.Filled.KeyboardArrowDown
+          else Icons.AutoMirrored.Filled.KeyboardArrowRight
       Icon(
-        imageVector = icon,
-        contentDescription =
-          if (isExpanded) stringResource(R.string.inspect_collapse_endpoint)
-          else stringResource(R.string.inspect_expand_endpoint),
+          imageVector = icon,
+          contentDescription =
+              if (isExpanded) stringResource(R.string.inspect_collapse_endpoint)
+              else stringResource(R.string.inspect_expand_endpoint),
       )
     }
     Text(
         text = stringResource(R.string.inspect_endpoint_title, endpoint),
         style = MaterialTheme.typography.titleMedium,
-      modifier =
-        Modifier.clickable { expandedEndpoints[endpoint] = !isExpanded }
-          .padding(start = 4.dp),
+        modifier =
+            Modifier.clickable { expandedEndpoints[endpoint] = !isExpanded }.padding(start = 4.dp),
     )
   }
 
