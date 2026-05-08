@@ -298,7 +298,7 @@ private fun EndpointDetails(endpointInfo: DeviceMatterInfo, modifier: Modifier =
 }
 
 @Composable
-private fun ClusterList(clusters: List<Any>) {
+private fun ClusterList(clusters: List<Long>) {
   if (clusters.isEmpty()) {
     Text(
         text = stringResource(R.string.inspect_none),
@@ -307,11 +307,10 @@ private fun ClusterList(clusters: List<Any>) {
     return
   }
   clusters.forEach { cluster ->
-    val clusterId = cluster as? Long ?: return@forEach
-    val hex = String.format("0x%04X", clusterId)
+    val hex = String.format("0x%04X", cluster)
     val clusterName =
         MatterConstants.ClustersMap.getOrDefault(
-            clusterId,
+            cluster,
             stringResource(R.string.inspect_unknown),
         )
     Text(text = "[${hex}] $clusterName", style = MaterialTheme.typography.bodySmall)
