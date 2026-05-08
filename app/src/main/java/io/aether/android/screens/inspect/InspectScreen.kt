@@ -1,12 +1,13 @@
 // SPDX-FileCopyrightText: 2024 Google LLC
+// SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
 package io.aether.android.screens.inspect
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -94,7 +95,12 @@ private fun InspectScreen(
         modifier =
             Modifier.fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(dimensionResource(R.dimen.margin_normal))
+          .padding(
+                start = dimensionResource(R.dimen.margin_normal),
+                top = 0.dp,
+                end = dimensionResource(R.dimen.margin_normal),
+            bottom = dimensionResource(R.dimen.margin_normal),
+          )
     ) {
       if (deviceMatterInfoList == null) {
         Text(
@@ -218,36 +224,33 @@ private fun EndpointTree(
   if (endpoint in visited) return
   val endpointInfo = infosByEndpoint[endpoint] ?: return
   val nextVisited = visited + endpoint
-  val hasChildren = endpointInfo.parts.any { child -> child in infosByEndpoint }
-  val isExpanded = expandedEndpoints.getOrPut(endpoint) { depth == 0 }
+  val isExpanded = expandedEndpoints.getOrPut(endpoint) { true }
   val startPadding = dimensionResource(R.dimen.margin_normal) * depth
 
   Row(
       verticalAlignment = Alignment.CenterVertically,
       modifier = Modifier.padding(start = startPadding),
   ) {
-    if (hasChildren) {
-      IconButton(
-          onClick = { expandedEndpoints[endpoint] = !isExpanded },
-          modifier = Modifier.size(24.dp),
-      ) {
-        val icon =
-            if (isExpanded) Icons.Filled.KeyboardArrowDown
-            else Icons.AutoMirrored.Filled.KeyboardArrowRight
-        Icon(
-            imageVector = icon,
-            contentDescription =
-                if (isExpanded) stringResource(R.string.inspect_collapse_endpoint)
-                else stringResource(R.string.inspect_expand_endpoint),
-        )
-      }
-    } else {
-      Spacer(modifier = Modifier.size(24.dp))
+    IconButton(
+      onClick = { expandedEndpoints[endpoint] = !isExpanded },
+      modifier = Modifier.size(24.dp),
+    ) {
+      val icon =
+        if (isExpanded) Icons.Filled.KeyboardArrowDown
+        else Icons.AutoMirrored.Filled.KeyboardArrowRight
+      Icon(
+        imageVector = icon,
+        contentDescription =
+          if (isExpanded) stringResource(R.string.inspect_collapse_endpoint)
+          else stringResource(R.string.inspect_expand_endpoint),
+      )
     }
     Text(
         text = stringResource(R.string.inspect_endpoint_title, endpoint),
         style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.padding(start = 4.dp),
+      modifier =
+        Modifier.clickable { expandedEndpoints[endpoint] = !isExpanded }
+          .padding(start = 4.dp),
     )
   }
 
@@ -275,7 +278,7 @@ private fun EndpointDetails(endpointInfo: DeviceMatterInfo, modifier: Modifier =
         text = stringResource(R.string.inspect_device_types),
         style = MaterialTheme.typography.titleSmall,
     )
-    endpointInfo.types.forEach { deviceType ->
+    endpointInfo.types.sorted().forEach { deviceType ->
       val hex = String.format("0x%04X", deviceType)
       val typeString =
           MatterConstants.DeviceTypesMap.getOrDefault(
@@ -308,7 +311,7 @@ private fun ClusterList(clusters: List<Long>) {
     )
     return
   }
-  clusters.forEach { cluster ->
+  clusters.sorted().forEach { cluster ->
     val hex = String.format("0x%04X", cluster)
     val clusterName =
         MatterConstants.ClustersMap.getOrDefault(
