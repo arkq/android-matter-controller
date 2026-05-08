@@ -19,7 +19,10 @@ import timber.log.Timber
 
 /** Result of [SetDeviceNameUseCase.execute]. */
 sealed class SetDeviceNameResult {
-  /** Both the local DataStore update and the on-device NodeLabel write succeeded (or is in progress). */
+  /**
+   * Both the local DataStore update and the on-device NodeLabel write succeeded (or is in
+   * progress).
+   */
   data object Success : SetDeviceNameResult()
 
   /** The local DataStore update failed; the on-device write was not attempted. */
@@ -32,16 +35,16 @@ sealed class SetDeviceNameResult {
  * already-commissioned device (DeviceViewModel) so both code paths share the same logic.
  *
  * The on-device NodeLabel write is launched in a singleton-scoped coroutine so that it survives
- * screen navigation. Any write failure is surfaced via [AppErrorNotifier] and shown as a
- * global error dialog regardless of which screen the user is on when the error occurs.
+ * screen navigation. Any write failure is surfaced via [AppErrorNotifier] and shown as a global
+ * error dialog regardless of which screen the user is on when the error occurs.
  */
 @Singleton
 class SetDeviceNameUseCase
 @Inject
 constructor(
-  private val devicesRepository: DevicesRepository,
-  private val clustersHelper: ClustersHelper,
-  private val appErrorNotifier: AppErrorNotifier,
+    private val devicesRepository: DevicesRepository,
+    private val clustersHelper: ClustersHelper,
+    private val appErrorNotifier: AppErrorNotifier,
 ) {
   // Coroutine scope that lives for the lifetime of the singleton so that NodeLabel writes survive
   // screen navigation (i.e. are not cancelled when the caller's viewModelScope is cancelled).
@@ -63,9 +66,9 @@ constructor(
    *   update fails. NodeLabel write failures are delivered asynchronously via [AppErrorNotifier].
    */
   suspend fun execute(
-    deviceId: Long,
-    name: String,
-    onLocalPersisted: suspend () -> Unit = {},
+      deviceId: Long,
+      name: String,
+      onLocalPersisted: suspend () -> Unit = {},
   ): SetDeviceNameResult {
     Timber.d("SetDeviceNameUseCase: deviceId [$deviceId] nameLength [${name.length}]")
     try {
@@ -86,7 +89,10 @@ constructor(
       } catch (e: Exception) {
         Timber.e(e, "SetDeviceNameUseCase: failed to write NodeLabel")
         appErrorNotifier.notify(
-          DialogInfo(titleRes = R.string.set_device_name_failed, message = e.message ?: e.toString())
+            DialogInfo(
+                titleRes = R.string.set_device_name_failed,
+                message = e.message ?: e.toString(),
+            )
         )
       }
     }

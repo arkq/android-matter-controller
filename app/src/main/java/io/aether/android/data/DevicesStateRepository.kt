@@ -6,10 +6,10 @@ package io.aether.android.data
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.aether.android.DeviceState
 import io.aether.android.DevicesState
 import io.aether.android.getTimestampForNow
-import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -44,7 +44,13 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
   val lastUpdatedDeviceState: LiveData<DeviceState>
     get() = _lastUpdatedDeviceState
 
-  suspend fun addDeviceState(deviceId: Long, isOnline: Boolean, isOn: Boolean, level: Int, colorTemperature: Int) {
+  suspend fun addDeviceState(
+      deviceId: Long,
+      isOnline: Boolean,
+      isOn: Boolean,
+      level: Int,
+      colorTemperature: Int,
+  ) {
     val newDeviceState =
         DeviceState.newBuilder()
             .setDeviceId(deviceId)
@@ -61,7 +67,13 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
     _lastUpdatedDeviceState.value = newDeviceState
   }
 
-  suspend fun updateDeviceState(deviceId: Long, isOnline: Boolean, isOn: Boolean, level: Int, colorTemperature: Int) {
+  suspend fun updateDeviceState(
+      deviceId: Long,
+      isOnline: Boolean,
+      isOn: Boolean,
+      level: Int,
+      colorTemperature: Int,
+  ) {
     val newDeviceState =
         DeviceState.newBuilder()
             .setDeviceId(deviceId)
@@ -88,12 +100,19 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
     }
     if (!updateDone) {
       Timber.w(
-          "We did not find device [${deviceId}] in devicesStateRepository; it should have been there???")
-      addDeviceState(deviceId, isOnline = isOnline, isOn = isOn, level = level, colorTemperature = colorTemperature)
+          "We did not find device [${deviceId}] in devicesStateRepository; it should have been there???"
+      )
+      addDeviceState(
+          deviceId,
+          isOnline = isOnline,
+          isOn = isOn,
+          level = level,
+          colorTemperature = colorTemperature,
+      )
     }
   }
 
-  suspend fun loadDeviceState(deviceId: Long) : DeviceState? {
+  suspend fun loadDeviceState(deviceId: Long): DeviceState? {
     val devicesState = devicesStateFlow.first()
     val devicesStateCount = devicesState.devicesStateCount
     var updateDone = false
@@ -112,9 +131,10 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
 
   suspend fun removeDeviceState(deviceId: Long) {
     devicesStateDataStore.updateData { state ->
-      val index = (0 until state.devicesStateCount)
-          .firstOrNull { state.getDevicesState(it).deviceId == deviceId }
-          ?: return@updateData state
+      val index =
+          (0 until state.devicesStateCount).firstOrNull {
+            state.getDevicesState(it).deviceId == deviceId
+          } ?: return@updateData state
       state.toBuilder().removeDevicesState(index).build()
     }
   }

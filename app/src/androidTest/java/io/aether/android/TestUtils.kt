@@ -91,7 +91,8 @@ object GpsCommissioningSetupCodeScreen {
 object GpsCommissioningDeviceConnectedScreen {
   fun waitUntilShown(device: UiDevice, timeoutSecs: Int) {
     Assert.assertNotNull(
-        device.wait(Until.hasObject(By.text("Device connected")), timeoutSecs * 1000L))
+        device.wait(Until.hasObject(By.text("Device connected")), timeoutSecs * 1000L)
+    )
   }
 
   fun selectDone(device: UiDevice) {

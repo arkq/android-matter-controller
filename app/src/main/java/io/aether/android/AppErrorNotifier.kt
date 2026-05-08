@@ -13,18 +13,17 @@ import kotlinx.coroutines.flow.asSharedFlow
 
 /**
  * Application-level error notifier. Singletons that need to surface error dialogs regardless of
- * which screen the user is on can call [notify]; [io.aether.android.screens.settings.DeveloperUtilitiesViewModel]
- * collects from [errors] and routes them to the global dialog in [AppLayout].
+ * which screen the user is on can call [notify];
+ * [io.aether.android.screens.settings.DeveloperUtilitiesViewModel] collects from [errors] and
+ * routes them to the global dialog in [AppLayout].
  */
 @Singleton
-class AppErrorNotifier
-@Inject
-constructor() {
+class AppErrorNotifier @Inject constructor() {
   private val _errors =
-    MutableSharedFlow<DialogInfo>(
-      extraBufferCapacity = 16,
-      onBufferOverflow = BufferOverflow.DROP_OLDEST,
-    )
+      MutableSharedFlow<DialogInfo>(
+          extraBufferCapacity = 16,
+          onBufferOverflow = BufferOverflow.DROP_OLDEST,
+      )
   val errors: SharedFlow<DialogInfo> = _errors.asSharedFlow()
 
   fun notify(error: DialogInfo) {

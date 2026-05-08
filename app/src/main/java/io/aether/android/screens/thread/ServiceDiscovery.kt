@@ -45,12 +45,20 @@ class ServiceDiscovery(context: Context, val coroutineScope: CoroutineScope) {
   private val lock = Semaphore(1)
   private val discoveryListener: NsdManager.DiscoveryListener =
       DiscoveryListener(
-          threadBorderRouterServiceType, nsdManager, resolvedDevices, coroutineScope, lock)
+          threadBorderRouterServiceType,
+          nsdManager,
+          resolvedDevices,
+          coroutineScope,
+          lock,
+      )
 
   fun start() {
     coroutineScope.launch(Dispatchers.IO) {
       nsdManager.discoverServices(
-          threadBorderRouterServiceType, NsdManager.PROTOCOL_DNS_SD, discoveryListener)
+          threadBorderRouterServiceType,
+          NsdManager.PROTOCOL_DNS_SD,
+          discoveryListener,
+      )
     }
   }
 
@@ -59,7 +67,8 @@ class ServiceDiscovery(context: Context, val coroutineScope: CoroutineScope) {
     // Caused by: java.lang.IllegalArgumentException: listener not registered
     //   at android.net.nsd.NsdManager.getListenerKey(NsdManager.java:1102)
     //   at android.net.nsd.NsdManager.stopServiceDiscovery(NsdManager.java:1346)
-    //   at io.aether.android.screens.thread.servicediscovery.ServiceDiscovery.stop(ServiceDiscovery.kt:56)
+    //   at
+    // io.aether.android.screens.thread.servicediscovery.ServiceDiscovery.stop(ServiceDiscovery.kt:56)
     nsdManager.stopServiceDiscovery(discoveryListener)
   }
 }
@@ -73,11 +82,11 @@ class ServiceDiscovery(context: Context, val coroutineScope: CoroutineScope) {
  * simultaneous resolving of services.
  */
 class DiscoveryListener(
-  private val serviceType: String,
-  private val nsdManager: NsdManager,
-  private val resolvedServices: MutableList<NsdServiceInfo>,
-  private val coroutineScope: CoroutineScope,
-  private val lock: Semaphore
+    private val serviceType: String,
+    private val nsdManager: NsdManager,
+    private val resolvedServices: MutableList<NsdServiceInfo>,
+    private val coroutineScope: CoroutineScope,
+    private val lock: Semaphore,
 ) : NsdManager.DiscoveryListener {
   // Called as soon as service discovery begins.
   override fun onDiscoveryStarted(regType: String) {
@@ -85,8 +94,9 @@ class DiscoveryListener(
   }
 
   override fun onServiceFound(service: NsdServiceInfo) {
-    if (service.serviceType !=
-        serviceType) { // Service type is the string containing the protocol and transport layer for
+    if (
+        service.serviceType != serviceType
+    ) { // Service type is the string containing the protocol and transport layer for
       // this service.
       Timber.d("Unknown Service discovered: ${service.serviceType}")
     } else {
@@ -151,7 +161,8 @@ class ResolveListener(
           BaseEncoding.base16().encode(serviceInfo.attributes["id"]?.let { it })
         }\n" +
               "                   NN: ${serviceInfo.attributes["nn"]?.let { String(it) }}\n" +
-              "                   IP: ${serviceInfo.host.hostAddress}\n")
+              "                   IP: ${serviceInfo.host.hostAddress}\n"
+      )
       resolvedDevices.add(serviceInfo)
     } else {
       Timber.e("Resolve failed")

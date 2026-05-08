@@ -29,31 +29,31 @@ import timber.log.Timber
  */
 @Composable
 internal fun LevelClusterControl(
-  title: String,
-  isOnline: Boolean,
-  isOn: Boolean,
-  level: Float,
-  onLevelChange: (Float) -> Unit,
-  onLevelChangeFinished: () -> Unit,
+    title: String,
+    isOnline: Boolean,
+    isOn: Boolean,
+    level: Float,
+    onLevelChange: (Float) -> Unit,
+    onLevelChangeFinished: () -> Unit,
 ) {
   Surface(
-    modifier = Modifier.fillMaxWidth(),
-    border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
-    shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
+      modifier = Modifier.fillMaxWidth(),
+      border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+      shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
   ) {
     Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content))) {
       Text(text = title)
       Slider(
-        enabled = isOnline && isOn,
-        value = level,
-        onValueChange = onLevelChange,
-        onValueChangeFinished = onLevelChangeFinished,
-        valueRange = 0f..1f,
+          enabled = isOnline && isOn,
+          value = level,
+          onValueChange = onLevelChange,
+          onValueChangeFinished = onLevelChangeFinished,
+          valueRange = 0f..1f,
       )
       Text(
-        text = (level * 100).toInt().toString(),
-        textAlign = TextAlign.Center,
-        modifier = Modifier.fillMaxWidth(),
+          text = (level * 100).toInt().toString(),
+          textAlign = TextAlign.Center,
+          modifier = Modifier.fillMaxWidth(),
       )
     }
   }
@@ -67,12 +67,12 @@ internal fun LevelClusterControl(
 private fun LevelClusterControl_Brightness() {
   MaterialTheme {
     LevelClusterControl(
-      title = stringResource(R.string.brightness),
-      isOnline = true,
-      isOn = true,
-      level = 0.45f,
-      onLevelChange = { Timber.d("level: $it") },
-      onLevelChangeFinished = {},
+        title = stringResource(R.string.brightness),
+        isOnline = true,
+        isOn = true,
+        level = 0.45f,
+        onLevelChange = { Timber.d("level: $it") },
+        onLevelChangeFinished = {},
     )
   }
 }
@@ -82,12 +82,12 @@ private fun LevelClusterControl_Brightness() {
 private fun LevelClusterControl_ColorTemperature() {
   MaterialTheme {
     LevelClusterControl(
-      title = stringResource(R.string.color_temperature),
-      isOnline = true,
-      isOn = true,
-      level = 0.7f,
-      onLevelChange = { Timber.d("colorTemp: $it") },
-      onLevelChangeFinished = {},
+        title = stringResource(R.string.color_temperature),
+        isOnline = true,
+        isOn = true,
+        level = 0.7f,
+        onLevelChange = { Timber.d("colorTemp: $it") },
+        onLevelChangeFinished = {},
     )
   }
 }

@@ -5,11 +5,11 @@ package io.aether.android.screens.inspect
 
 import androidx.annotation.StringRes
 import androidx.lifecycle.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.aether.android.R
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.screens.common.DialogInfo
-import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +20,7 @@ import timber.log.Timber
 /** The ViewModel for the [InspectScreen]. */
 @HiltViewModel
 class InspectViewModel @Inject constructor(private val clustersHelper: ClustersHelper) :
-  ViewModel() {
+    ViewModel() {
 
   // The introspection info fetched from the device.
   private var _deviceMatterInfoList = MutableStateFlow<List<DeviceMatterInfo>?>(null)
@@ -73,9 +73,14 @@ class InspectViewModel @Inject constructor(private val clustersHelper: ClustersH
   // -----------------------------------------------------------------------------------------------
   // UI State update
 
-  private fun showMsgDialog(@StringRes titleRes: Int, msg: String?, showConfirmButton: Boolean = true) {
+  private fun showMsgDialog(
+      @StringRes titleRes: Int,
+      msg: String?,
+      showConfirmButton: Boolean = true,
+  ) {
     Timber.d("showMsgDialog [titleRes=$titleRes]")
-    _msgDialogInfo.value = DialogInfo(titleRes = titleRes, message = msg, showConfirmButton = showConfirmButton)
+    _msgDialogInfo.value =
+        DialogInfo(titleRes = titleRes, message = msg, showConfirmButton = showConfirmButton)
   }
 
   // Called after user dismiss the Info dialog. If we don't consume, a config change redisplays the

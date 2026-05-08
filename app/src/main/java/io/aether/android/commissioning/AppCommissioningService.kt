@@ -10,6 +10,7 @@ import com.google.android.gms.home.matter.commissioning.CommissioningCompleteMet
 import com.google.android.gms.home.matter.commissioning.CommissioningRequestMetadata
 import com.google.android.gms.home.matter.commissioning.CommissioningService
 import com.google.android.gms.home.matter.commissioning.CommissioningService.CommissioningError
+import dagger.hilt.android.AndroidEntryPoint
 import io.aether.android.APP_NAME
 import io.aether.android.DeviceIdGenerator
 import io.aether.android.R
@@ -17,7 +18,6 @@ import io.aether.android.chip.ChipClient
 import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.generateNextDeviceId
-import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -79,22 +79,26 @@ class AppCommissioningService : Service(), CommissioningService.Callback {
             "IP address toString() [${metadata.networkLocation.ipAddress}] " +
             "IP address hostAddress [${metadata.networkLocation.ipAddress.hostAddress}] " +
             "port [${metadata.networkLocation.port}]\n" +
-            "\tpassCode [${metadata.passcode}]")
+            "\tpassCode [${metadata.passcode}]"
+    )
 
     // Perform commissioning on custom fabric for the sample app.
     serviceScope.launch {
       val deviceId = getNextDeviceId(DeviceIdGenerator.Random)
       try {
         Timber.d(
-            "Commissioning: App fabric -> ChipClient.establishPaseConnection(): deviceId [${deviceId}]")
+            "Commissioning: App fabric -> ChipClient.establishPaseConnection(): deviceId [${deviceId}]"
+        )
         chipClient.awaitEstablishPaseConnection(
             deviceId,
             metadata.networkLocation.ipAddress.hostAddress!!,
             metadata.networkLocation.port,
-            metadata.passcode)
+            metadata.passcode,
+        )
 
         Timber.d(
-            "Commissioning: App fabric -> ChipClient.commissionDevice(): deviceId [${deviceId}]")
+            "Commissioning: App fabric -> ChipClient.commissionDevice(): deviceId [${deviceId}]"
+        )
         chipClient.awaitCommissionDevice(deviceId, null)
       } catch (e: Exception) {
         Timber.e(e, "onCommissioningRequested() failed")
@@ -103,11 +107,14 @@ class AppCommissioningService : Service(), CommissioningService.Callback {
             .sendCommissioningError(CommissioningError.OTHER)
             .addOnSuccessListener {
               Timber.d(
-                  "Commissioning: commissioningServiceDelegate.sendCommissioningError() succeeded")
+                  "Commissioning: commissioningServiceDelegate.sendCommissioningError() succeeded"
+              )
             }
             .addOnFailureListener { e2 ->
               Timber.e(
-                  e2, "Commissioning: commissioningServiceDelegate.sendCommissioningError() failed")
+                  e2,
+                  "Commissioning: commissioningServiceDelegate.sendCommissioningError() failed",
+              )
             }
         return@launch
       }
@@ -115,14 +122,18 @@ class AppCommissioningService : Service(), CommissioningService.Callback {
       Timber.d("Commissioning: Calling commissioningServiceDelegate.sendCommissioningComplete()")
       commissioningServiceDelegate
           .sendCommissioningComplete(
-              CommissioningCompleteMetadata.builder().setToken(deviceId.toString()).build())
+              CommissioningCompleteMetadata.builder().setToken(deviceId.toString()).build()
+          )
           .addOnSuccessListener {
             Timber.d(
-                "Commissioning: commissioningServiceDelegate.sendCommissioningComplete() succeeded")
+                "Commissioning: commissioningServiceDelegate.sendCommissioningComplete() succeeded"
+            )
           }
           .addOnFailureListener { e ->
             Timber.e(
-                e, "Commissioning: commissioningServiceDelegate.sendCommissioningComplete() failed")
+                e,
+                "Commissioning: commissioningServiceDelegate.sendCommissioningComplete() failed",
+            )
           }
     }
   }

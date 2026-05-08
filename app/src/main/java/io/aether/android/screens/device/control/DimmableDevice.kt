@@ -27,9 +27,9 @@ import io.aether.android.screens.home.DeviceUiModel
 import timber.log.Timber
 
 /**
- * Device-type control for endpoints that expose the **OnOff** and **Level Control** clusters
- * (e.g. dimmable lights). Manages local state and delegates rendering to [OnOffClusterControl]
- * and [LevelClusterControl].
+ * Device-type control for endpoints that expose the **OnOff** and **Level Control** clusters (e.g.
+ * dimmable lights). Manages local state and delegates rendering to [OnOffClusterControl] and
+ * [LevelClusterControl].
  *
  * @param endpointModel the endpoint whose state is shown
  * @param lastUpdatedDeviceState the most recent state broadcast from the repository
@@ -39,10 +39,10 @@ import timber.log.Timber
  */
 @Composable
 internal fun DimmableDeviceControl(
-  endpointModel: DeviceUiModel,
-  lastUpdatedDeviceState: DeviceState?,
-  onOnOffClick: (Boolean) -> Unit,
-  onBrightnessChange: (Int) -> Unit,
+    endpointModel: DeviceUiModel,
+    lastUpdatedDeviceState: DeviceState?,
+    onOnOffClick: (Boolean) -> Unit,
+    onBrightnessChange: (Int) -> Unit,
 ) {
   var isOnline by remember(endpointModel) { mutableStateOf(endpointModel.isOnline) }
   var isOn by remember(endpointModel) { mutableStateOf(endpointModel.isOn) }
@@ -65,20 +65,20 @@ internal fun DimmableDeviceControl(
 
   Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal))) {
     OnOffClusterControl(
-      isOnline = isOnline,
-      isOn = isOn,
-      onToggle = { value ->
-        isOn = value
-        onOnOffClick(value)
-      },
+        isOnline = isOnline,
+        isOn = isOn,
+        onToggle = { value ->
+          isOn = value
+          onOnOffClick(value)
+        },
     )
     LevelClusterControl(
-      title = stringResource(R.string.brightness),
-      isOnline = isOnline,
-      isOn = isOn,
-      level = brightness,
-      onLevelChange = { brightness = it },
-      onLevelChangeFinished = { onBrightnessChange((brightness * LEVEL_MAX).toInt()) },
+        title = stringResource(R.string.brightness),
+        isOnline = isOnline,
+        isOn = isOn,
+        level = brightness,
+        onLevelChange = { brightness = it },
+        onLevelChangeFinished = { onBrightnessChange((brightness * LEVEL_MAX).toInt()) },
     )
   }
 }
@@ -89,23 +89,25 @@ internal fun DimmableDeviceControl(
 @Preview(widthDp = 300)
 @Composable
 private fun DimmableDeviceControl_Online() {
-  val model = DeviceUiModel(
-    device = Device.newBuilder()
-      .setDeviceId(1L)
-      .setDeviceType(Device.DeviceType.TYPE_DIMMABLE_LIGHT)
-      .setDateCommissioned(Timestamp.getDefaultInstance())
-      .setName("DimmableLight")
-      .build(),
-    isOnline = true,
-    isOn = true,
-    level = 127,
-  )
+  val model =
+      DeviceUiModel(
+          device =
+              Device.newBuilder()
+                  .setDeviceId(1L)
+                  .setDeviceType(Device.DeviceType.TYPE_DIMMABLE_LIGHT)
+                  .setDateCommissioned(Timestamp.getDefaultInstance())
+                  .setName("DimmableLight")
+                  .build(),
+          isOnline = true,
+          isOn = true,
+          level = 127,
+      )
   MaterialTheme {
     DimmableDeviceControl(
-      endpointModel = model,
-      lastUpdatedDeviceState = null,
-      onOnOffClick = { Timber.d("onOff: $it") },
-      onBrightnessChange = { Timber.d("brightness: $it") },
+        endpointModel = model,
+        lastUpdatedDeviceState = null,
+        onOnOffClick = { Timber.d("onOff: $it") },
+        onBrightnessChange = { Timber.d("brightness: $it") },
     )
   }
 }

@@ -8,8 +8,8 @@ import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.Serializer
 import androidx.datastore.dataStore
-import io.aether.android.UserPreferences
 import com.google.protobuf.InvalidProtocolBufferException
+import io.aether.android.UserPreferences
 import java.io.InputStream
 import java.io.OutputStream
 

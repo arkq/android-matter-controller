@@ -11,11 +11,11 @@ import com.google.android.gms.home.matter.Matter
 import com.google.android.gms.home.matter.discovery.DnsSdServiceInfo
 import com.google.android.gms.home.matter.discovery.ResolveServiceRequest
 import com.google.android.gms.home.matter.discovery.ResolveServiceRequest.SERVICE_TYPE_COMMISSIONABLE
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.aether.android.chip.ChipClient
 import io.aether.android.screens.commissionable.MatterBeacon
 import io.aether.android.screens.commissionable.MatterBeaconProducer
 import io.aether.android.screens.commissionable.Transport
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.awaitClose
@@ -57,7 +57,8 @@ constructor(private val chipClient: ChipClient, @ApplicationContext private val 
           Timber.d("onServiceFound: service [${service}]")
           if (service.serviceType != SERVICE_TYPE_ANDROID) {
             Timber.d(
-                "Discarded Service: Type [${service.serviceType}] Name [${service.serviceName}]")
+                "Discarded Service: Type [${service.serviceType}] Name [${service.serviceName}]"
+            )
           } else {
             // Resolve the service.
             val resolveServiceRequest =
@@ -108,8 +109,7 @@ constructor(private val chipClient: ChipClient, @ApplicationContext private val 
             .getTxtAttributeValue("D")
             ?.takeIf { it.length <= 4 }
             ?.takeIf { it.all { char -> char.isDigit() } }
-            ?.toIntOrNull()
-            ?: null
+            ?.toIntOrNull() ?: null
 
     val vidPid =
         dnsSdServiceInfo
@@ -117,8 +117,7 @@ constructor(private val chipClient: ChipClient, @ApplicationContext private val 
             .orEmpty()
             .split("+")
             .takeUnless { it.size > 2 }
-            ?.takeIf { it.all { value -> value.all { char -> char.isDigit() } } }
-            ?: null
+            ?.takeIf { it.all { value -> value.all { char -> char.isDigit() } } } ?: null
 
     val address = dnsSdServiceInfo.networkLocations.get(0).formattedIpAddress
     val port = dnsSdServiceInfo.networkLocations.get(0).port
@@ -129,7 +128,8 @@ constructor(private val chipClient: ChipClient, @ApplicationContext private val 
             vendorId = vidPid?.getOrNull(0)?.toIntOrNull() ?: 0,
             productId = vidPid?.getOrNull(1)?.toIntOrNull() ?: 0,
             discriminator = discriminator!!,
-            transport = Transport.Mdns(address, port, true))
+            transport = Transport.Mdns(address, port, true),
+        )
     Timber.d("resolvedDnsSdServiceInfo: [${beacon}]")
     producer.trySend(beacon)
   }
@@ -143,7 +143,8 @@ constructor(private val chipClient: ChipClient, @ApplicationContext private val 
             vendorId = 0,
             productId = 0,
             discriminator = 0,
-            Transport.Mdns("0.0.0.0", 0 /* fixme */, false))
+            Transport.Mdns("0.0.0.0", 0 /* fixme */, false),
+        )
     producer.trySend(beacon)
   }
 

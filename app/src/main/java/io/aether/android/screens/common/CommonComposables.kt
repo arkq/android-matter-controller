@@ -19,11 +19,11 @@ import timber.log.Timber
 
 // Information used for [MsgAlertDialog].
 data class DialogInfo(
-  @StringRes val titleRes: Int? = null,
-  val title: String? = null,
-  @StringRes val messageRes: Int? = null,
-  val message: String? = null,
-  val showConfirmButton: Boolean = true,
+    @StringRes val titleRes: Int? = null,
+    val title: String? = null,
+    @StringRes val messageRes: Int? = null,
+    val message: String? = null,
+    val showConfirmButton: Boolean = true,
 )
 
 // Useful dialog that can display title, message, and confirm button.
@@ -32,29 +32,27 @@ fun MsgAlertDialog(dialogInfo: DialogInfo?, onDismissMsgAlertDialog: () -> Unit)
   Timber.d("MsgAlertDialog [$dialogInfo]")
   if (dialogInfo == null) return
 
-  val resolvedTitle =
-    dialogInfo.titleRes?.let { stringResource(it) } ?: dialogInfo.title
-  val resolvedMessage =
-    dialogInfo.messageRes?.let { stringResource(it) } ?: dialogInfo.message
+  val resolvedTitle = dialogInfo.titleRes?.let { stringResource(it) } ?: dialogInfo.title
+  val resolvedMessage = dialogInfo.messageRes?.let { stringResource(it) } ?: dialogInfo.message
 
   AlertDialog(
-    title = {
-      if (!resolvedTitle.isNullOrEmpty()) {
-        Text(resolvedTitle)
-      }
-    },
-    text = {
-      if (!resolvedMessage.isNullOrEmpty()) {
-        Text(resolvedMessage)
-      }
-    },
-    confirmButton = {
-      if (dialogInfo.showConfirmButton) {
-        TextButton(onClick = onDismissMsgAlertDialog) { Text(stringResource(R.string.ok)) }
-      }
-    },
-    onDismissRequest = {},
-    dismissButton = {},
+      title = {
+        if (!resolvedTitle.isNullOrEmpty()) {
+          Text(resolvedTitle)
+        }
+      },
+      text = {
+        if (!resolvedMessage.isNullOrEmpty()) {
+          Text(resolvedMessage)
+        }
+      },
+      confirmButton = {
+        if (dialogInfo.showConfirmButton) {
+          TextButton(onClick = onDismissMsgAlertDialog) { Text(stringResource(R.string.ok)) }
+        }
+      },
+      onDismissRequest = {},
+      dismissButton = {},
   )
 }
 
@@ -62,18 +60,18 @@ fun MsgAlertDialog(dialogInfo: DialogInfo?, onDismissMsgAlertDialog: () -> Unit)
 fun HtmlInfoDialog(title: String, htmlInfo: String, onClick: () -> Unit) {
   val htmlText = HtmlCompat.fromHtml(htmlInfo, HtmlCompat.FROM_HTML_MODE_LEGACY)
   AlertDialog(
-    title = { Text(text = title) },
-    text = {
-      // See https://developer.android.com/codelabs/jetpack-compose-migration
-      AndroidView(
-        update = { it.text = htmlText },
-        factory = {
-          MaterialTextView(it).apply { movementMethod = LinkMovementMethod.getInstance() }
-        },
-      )
-    },
-    confirmButton = { TextButton(onClick = onClick) { Text("OK") } },
-    onDismissRequest = {},
-    dismissButton = {},
+      title = { Text(text = title) },
+      text = {
+        // See https://developer.android.com/codelabs/jetpack-compose-migration
+        AndroidView(
+            update = { it.text = htmlText },
+            factory = {
+              MaterialTextView(it).apply { movementMethod = LinkMovementMethod.getInstance() }
+            },
+        )
+      },
+      confirmButton = { TextButton(onClick = onClick) { Text("OK") } },
+      onDismissRequest = {},
+      dismissButton = {},
   )
 }

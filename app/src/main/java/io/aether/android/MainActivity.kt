@@ -8,8 +8,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
-import io.aether.android.lifecycle.AppLifecycleObserver
 import dagger.hilt.android.AndroidEntryPoint
+import io.aether.android.lifecycle.AppLifecycleObserver
 import javax.inject.Inject
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import timber.log.Timber
@@ -60,10 +60,10 @@ class MainActivity : ComponentActivity() {
     APP_NAME = getString(R.string.app_name)
     packageInfo.packageName
     Timber.i(
-      "====================================\n" +
-        "Version ${VERSION_NAME}\n" +
-        "App     ${APP_NAME}\n" +
-        "===================================="
+        "====================================\n" +
+            "Version ${VERSION_NAME}\n" +
+            "App     ${APP_NAME}\n" +
+            "===================================="
     )
   }
 }

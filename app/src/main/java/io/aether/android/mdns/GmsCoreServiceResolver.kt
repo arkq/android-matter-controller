@@ -18,7 +18,7 @@ class GmsCoreServiceResolver @Inject constructor(private val client: DiscoveryCl
       serviceType: String,
       callbackHandle: Long,
       contextHandle: Long,
-      callback: ChipMdnsCallback
+      callback: ChipMdnsCallback,
   ) {
     client
         .resolveService(ResolveServiceRequest.create(serviceType, instanceName))
@@ -61,7 +61,7 @@ class GmsCoreServiceResolver @Inject constructor(private val client: DiscoveryCl
       p3: Int,
       p4: Array<out String>?,
       p5: Array<out ByteArray>?,
-      p6: Array<out String>?
+      p6: Array<out String>?,
   ) {
     throw NotImplementedError("Our usage does not involve publishing services.")
   }

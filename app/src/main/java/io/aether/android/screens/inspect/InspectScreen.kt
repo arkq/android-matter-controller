@@ -3,12 +3,12 @@
 
 package io.aether.android.screens.inspect
 
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -22,14 +22,13 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
-import androidx.navigation.NavController
+import com.google.protobuf.Timestamp
 import io.aether.android.Device
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.chip.MatterConstants
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
-import com.google.protobuf.Timestamp
 import timber.log.Timber
 
 /**
@@ -38,19 +37,17 @@ import timber.log.Timber
  */
 @Composable
 fun InspectRoute(
-  innerPadding: PaddingValues,
-  updateTitle: (title: String) -> Unit,
-  deviceId: Long,
-  inspectViewModel: InspectViewModel = hiltViewModel(),
+    innerPadding: PaddingValues,
+    updateTitle: (title: String) -> Unit,
+    deviceId: Long,
+    inspectViewModel: InspectViewModel = hiltViewModel(),
 ) {
   Timber.d("InspectRoute deviceId [$deviceId]")
 
   // Controls the Msg AlertDialog.
   // When the user dismisses the Msg AlertDialog, we "consume" the dialog.
   val msgDialogInfo by inspectViewModel.msgDialogInfo.collectAsState()
-  val onDismissMsgDialog: () -> Unit = remember {
-    { inspectViewModel.dismissMsgDialog() }
-  }
+  val onDismissMsgDialog: () -> Unit = remember { { inspectViewModel.dismissMsgDialog() } }
 
   // Observes values needed by the InspectScreen.
   val deviceMatterInfoList by inspectViewModel.deviceMatterInfoList.collectAsState()
@@ -64,45 +61,42 @@ fun InspectRoute(
     }
   }
 
-  LaunchedEffect(Unit) {
-    updateTitle("Inspect")
-  }
+  LaunchedEffect(Unit) { updateTitle("Inspect") }
 
   InspectScreen(innerPadding, deviceMatterInfoList, msgDialogInfo, onDismissMsgDialog)
 }
 
 @Composable
 private fun InspectScreen(
-  innerPadding: PaddingValues,
-  deviceMatterInfoList: List<DeviceMatterInfo>?,
-  msgDialogInfo: DialogInfo?,
-  onDismissMsgDialog: () -> Unit,
+    innerPadding: PaddingValues,
+    deviceMatterInfoList: List<DeviceMatterInfo>?,
+    msgDialogInfo: DialogInfo?,
+    onDismissMsgDialog: () -> Unit,
 ) {
   // The various AlertDialog's that may pop up to inform the user of important information.
   MsgAlertDialog(msgDialogInfo, onDismissMsgDialog)
 
   Surface(modifier = Modifier.padding(innerPadding)) {
     Column(
-      modifier =
-        Modifier
-          .fillMaxSize()
-          .verticalScroll(rememberScrollState())
-          .padding(dimensionResource(R.dimen.margin_normal))
+        modifier =
+            Modifier.fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(dimensionResource(R.dimen.margin_normal))
     ) {
       if (deviceMatterInfoList == null) {
         Text(
-          text =
-            "Fetching device information...\n" +
-              "Note that this may take a while if the device is offline.",
-          style = MaterialTheme.typography.bodyMedium,
+            text =
+                "Fetching device information...\n" +
+                    "Note that this may take a while if the device is offline.",
+            style = MaterialTheme.typography.bodyMedium,
         )
       } else {
         if (deviceMatterInfoList.isEmpty()) {
           Text(
-            text =
-              "Oops... We could not retrieve any information from the Descriptor Cluster. " +
-                "This is probably because the device just recently turned \"offline\".",
-            style = MaterialTheme.typography.bodyMedium,
+              text =
+                  "Oops... We could not retrieve any information from the Descriptor Cluster. " +
+                      "This is probably because the device just recently turned \"offline\".",
+              style = MaterialTheme.typography.bodyMedium,
           )
         } else {
           // Add the Descriptor Cluster Title
@@ -111,8 +105,8 @@ private fun InspectScreen(
           for (deviceMatterInfo in deviceMatterInfoList) {
             // Endpoint ID
             Text(
-              text = "<<< Endpoint ${deviceMatterInfo.endpoint} >>>",
-              style = MaterialTheme.typography.titleMedium,
+                text = "<<< Endpoint ${deviceMatterInfo.endpoint} >>>",
+                style = MaterialTheme.typography.titleMedium,
             )
             // Device Types
             Text(text = "Device Types", style = MaterialTheme.typography.titleSmall)
@@ -129,10 +123,10 @@ private fun InspectScreen(
               for (serverCluster in deviceMatterInfo.serverClusters) {
                 val hex = String.format("0x%04X", serverCluster)
                 val serverClusterString =
-                  MatterConstants.ClustersMap.getOrDefault(serverCluster, "Unknown")
+                    MatterConstants.ClustersMap.getOrDefault(serverCluster, "Unknown")
                 Text(
-                  text = "[${hex}] $serverClusterString",
-                  style = MaterialTheme.typography.bodySmall,
+                    text = "[${hex}] $serverClusterString",
+                    style = MaterialTheme.typography.bodySmall,
                 )
               }
             }
@@ -144,10 +138,10 @@ private fun InspectScreen(
               for (clientCluster in deviceMatterInfo.clientClusters) {
                 val hex = String.format("0x%04X", clientCluster)
                 val clientClusterString =
-                  MatterConstants.ClustersMap.getOrDefault(clientCluster, "Unknown")
+                    MatterConstants.ClustersMap.getOrDefault(clientCluster, "Unknown")
                 Text(
-                  text = "[${hex}] $clientClusterString",
-                  style = MaterialTheme.typography.bodySmall,
+                    text = "[${hex}] $clientClusterString",
+                    style = MaterialTheme.typography.bodySmall,
                 )
               }
             }
@@ -178,10 +172,10 @@ private fun InspectScreenOfflinePreview() {
 private fun InspectScreenOnlineNoClustersPreview() {
   MaterialTheme {
     InspectScreen(
-      PaddingValues(),
-      listOf(DeviceMatterInfo(1, listOf(15L, 22L), emptyList(), emptyList())),
-      null,
-      {},
+        PaddingValues(),
+        listOf(DeviceMatterInfo(1, listOf(15L, 22L), emptyList(), emptyList())),
+        null,
+        {},
     )
   }
 }
@@ -191,24 +185,24 @@ private fun InspectScreenOnlineNoClustersPreview() {
 private fun InspectScreenOnlineWithClustersPreview() {
   MaterialTheme {
     InspectScreen(
-      PaddingValues(),
-      listOf(
-        DeviceMatterInfo(0, listOf(15L, 22L), listOf(3L), listOf(43L, 48L)),
-        DeviceMatterInfo(1, listOf(15L, 22L), listOf(3L, 4L, 5L), listOf(43L, 44L, 45L, 48L)),
-      ),
-      null,
-      {},
+        PaddingValues(),
+        listOf(
+            DeviceMatterInfo(0, listOf(15L, 22L), listOf(3L), listOf(43L, 48L)),
+            DeviceMatterInfo(1, listOf(15L, 22L), listOf(3L, 4L, 5L), listOf(43L, 44L, 45L, 48L)),
+        ),
+        null,
+        {},
     )
   }
 }
 
 private val DeviceTest =
-  Device.newBuilder()
-    .setDeviceId(1L)
-    .setDeviceType(Device.DeviceType.TYPE_OUTLET)
-    .setDateCommissioned(Timestamp.getDefaultInstance())
-    .setName("MyOutlet")
-    .setProductId("8785")
-    .setVendorId("6006")
-    .setRoom("Office")
-    .build()
+    Device.newBuilder()
+        .setDeviceId(1L)
+        .setDeviceType(Device.DeviceType.TYPE_OUTLET)
+        .setDateCommissioned(Timestamp.getDefaultInstance())
+        .setName("MyOutlet")
+        .setProductId("8785")
+        .setVendorId("6006")
+        .setRoom("Office")
+        .build()

@@ -33,9 +33,9 @@ import timber.log.Timber
  */
 @Composable
 internal fun OnOffDeviceControl(
-  endpointModel: DeviceUiModel,
-  lastUpdatedDeviceState: DeviceState?,
-  onOnOffClick: (Boolean) -> Unit,
+    endpointModel: DeviceUiModel,
+    lastUpdatedDeviceState: DeviceState?,
+    onOnOffClick: (Boolean) -> Unit,
 ) {
   var isOnline by remember(endpointModel) { mutableStateOf(endpointModel.isOnline) }
   var isOn by remember(endpointModel) { mutableStateOf(endpointModel.isOn) }
@@ -55,12 +55,12 @@ internal fun OnOffDeviceControl(
 
   Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal))) {
     OnOffClusterControl(
-      isOnline = isOnline,
-      isOn = isOn,
-      onToggle = { value ->
-        isOn = value
-        onOnOffClick(value)
-      },
+        isOnline = isOnline,
+        isOn = isOn,
+        onToggle = { value ->
+          isOn = value
+          onOnOffClick(value)
+        },
     )
   }
 }
@@ -71,21 +71,23 @@ internal fun OnOffDeviceControl(
 @Preview(widthDp = 300)
 @Composable
 private fun OnOffDeviceControl_Online() {
-  val model = DeviceUiModel(
-    device = Device.newBuilder()
-      .setDeviceId(1L)
-      .setDeviceType(Device.DeviceType.TYPE_OUTLET)
-      .setDateCommissioned(Timestamp.getDefaultInstance())
-      .setName("MyOutlet")
-      .build(),
-    isOnline = true,
-    isOn = true,
-  )
+  val model =
+      DeviceUiModel(
+          device =
+              Device.newBuilder()
+                  .setDeviceId(1L)
+                  .setDeviceType(Device.DeviceType.TYPE_OUTLET)
+                  .setDateCommissioned(Timestamp.getDefaultInstance())
+                  .setName("MyOutlet")
+                  .build(),
+          isOnline = true,
+          isOn = true,
+      )
   MaterialTheme {
     OnOffDeviceControl(
-      endpointModel = model,
-      lastUpdatedDeviceState = null,
-      onOnOffClick = { Timber.d("onOff: $it") },
+        endpointModel = model,
+        lastUpdatedDeviceState = null,
+        onOnOffClick = { Timber.d("onOff: $it") },
     )
   }
 }
