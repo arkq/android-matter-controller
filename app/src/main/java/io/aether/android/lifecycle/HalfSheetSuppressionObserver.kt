@@ -19,7 +19,7 @@ import timber.log.Timber
 class HalfSheetSuppressionObserver
 @Inject
 internal constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val preferencesRepository: UserPreferencesRepository,
 ) : AppLifecycleObserver {
 

@@ -457,7 +457,7 @@ constructor(
         Timber.d("part [$part] is [${part.javaClass}]")
         val endpoint =
             when (part) {
-              is Int -> part.toInt()
+              is Int -> part
               else -> return@forEach
             }
         Timber.d("Processing part [$part]")

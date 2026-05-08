@@ -31,8 +31,8 @@ import timber.log.Timber
 class MatterBeaconProducerBle
 @Inject
 constructor(
-    @MatterBeaconInject private val bluetoothLeScanner: BluetoothLeScanner?,
-    @ApplicationContext private val context: Context,
+    @param:MatterBeaconInject private val bluetoothLeScanner: BluetoothLeScanner?,
+    @param:ApplicationContext private val context: Context,
 ) : MatterBeaconProducer {
 
   // ---------------------------------------------------------------------------

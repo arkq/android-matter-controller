@@ -186,7 +186,7 @@ fun displayPreferences(context: Context) {
   val prefsDir = File(context.applicationInfo.dataDir, "shared_prefs")
   if (prefsDir.exists() && prefsDir.isDirectory) {
     Timber.d("*** Preference Files ***")
-    val list: Array<String> = prefsDir.list()
+    val list = prefsDir.list().orEmpty()
     for (element in list) {
       Timber.d("*** [${element}] ***")
       val sharedPreferencesFileKey = element.substringBefore(".xml")

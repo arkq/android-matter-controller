@@ -96,7 +96,7 @@ class ThreadNetworkUiState(
   private fun doGPSPreferredCredsExist(actionRequest: ActionRequest) {
     viewModel.setActionDialogInfo(actionRequest.type, ActionState.Processing)
     try {
-      ThreadNetwork.getClient(activity)
+      ThreadNetwork.getNetworkClient(activity)
           .preferredCredentials
           .addOnSuccessListener { intentSenderResult ->
             // Don't post the intent on `threadClientIntentSender` as we do when
@@ -127,7 +127,7 @@ class ThreadNetworkUiState(
   private fun getGPSPreferredCreds(actionRequest: ActionRequest) {
     viewModel.setActionDialogInfo(actionRequest.type, ActionState.Processing)
     try {
-      ThreadNetwork.getClient(activity)
+      ThreadNetwork.getNetworkClient(activity)
           .preferredCredentials
           .addOnSuccessListener { intentSenderResult ->
             if (intentSenderResult.intentSender == null) {
@@ -195,7 +195,7 @@ class ThreadNetworkUiState(
         ThreadBorderAgent.newBuilder(viewModel.getSelectedBorderRouterId()!!).build()
     val credentials = viewModel.getThreadNetworkCredentials()
     credentials?.let {
-      ThreadNetwork.getClient(activity)
+      ThreadNetwork.getNetworkClient(activity)
           .addCredentials(threadBorderAgent, credentials)
           .addOnSuccessListener {
             viewModel.setActionDialogInfoWithMessage(
@@ -228,9 +228,11 @@ class ThreadNetworkUiState(
         .addOnSuccessListener { barcode ->
           try {
             val qrCodeDataset =
-                ThreadNetworkCredentials.fromActiveOperationalDataset(
-                    BaseEncoding.base16().decode(barcode.displayValue?.substringAfter(":"))
-                )
+                barcode.displayValue?.substringAfter(":")?.let { encodedDataset ->
+                  ThreadNetworkCredentials.fromActiveOperationalDataset(
+                      BaseEncoding.base16().decode(encodedDataset)
+                  )
+                } ?: throw IllegalArgumentException("QR code does not contain dataset payload.")
             viewModel.setThreadCredentialsInfo(null, qrCodeDataset)
           } catch (e: Exception) {
             viewModel.setActionDialogInfoWithError(actionRequest.type, e.toString())

@@ -89,7 +89,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
       Timber.d("part [$part] is [${part.javaClass}]")
       val endpointInt =
           when (part) {
-            is Int -> part.toInt()
+            is Int -> part
             else -> return@forEach
           }
       Timber.d("Processing part [$part]")

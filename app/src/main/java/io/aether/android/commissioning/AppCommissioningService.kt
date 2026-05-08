@@ -72,7 +72,6 @@ class AppCommissioningService : Service(), CommissioningService.Callback {
     Timber.d(
         "*** onCommissioningRequested ***:\n" +
             "\tdeviceDescriptor: " +
-            "deviceType [${metadata.deviceDescriptor.deviceType}] " +
             "vendorId [${metadata.deviceDescriptor.vendorId}] " +
             "productId [${metadata.deviceDescriptor.productId}]\n" +
             "\tnetworkLocation: " +
