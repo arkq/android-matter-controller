@@ -24,6 +24,7 @@ data class DeviceMatterInfo(
     val types: List<Long>,
     val serverClusters: List<Any>,
     val clientClusters: List<Any>,
+    val parts: List<Int>,
 )
 
 /** Singleton to facilitate access to Clusters functionality. */
@@ -60,6 +61,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     val partsListAttribute =
         readDescriptorClusterPartsListAttribute(connectedDevicePtr, endpointInt)
     Timber.d("partsListAttribute [${partsListAttribute}]")
+    val parts = partsListAttribute?.filterIsInstance<Int>().orEmpty()
 
     // DeviceListAttribute
     val deviceListAttribute =
@@ -80,19 +82,14 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     clientListAttribute.forEach { clientClusters.add(it) }
 
     // Build the DeviceMatterInfo
-    val deviceMatterInfo = DeviceMatterInfo(endpointInt, types, serverClusters, clientClusters)
+    val deviceMatterInfo = DeviceMatterInfo(endpointInt, types, serverClusters, clientClusters, parts)
     matterDeviceInfoList.add(deviceMatterInfo)
 
     // Recursive call for the parts supported by the endpoint.
     // For each part (endpoint)
-    partsListAttribute?.forEach { part ->
-      Timber.d("part [$part] is [${part.javaClass}]")
-      val endpointInt =
-          when (part) {
-            is Int -> part
-            else -> return@forEach
-          }
+    parts.forEach { part ->
       Timber.d("Processing part [$part]")
+      val endpointInt = part
       fetchDeviceMatterInfo(nodeId, connectedDevicePtr, endpointInt, matterDeviceInfoList)
     }
   }

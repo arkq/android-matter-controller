@@ -4,11 +4,19 @@
 package io.aether.android.screens.inspect
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -16,9 +24,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -61,7 +73,8 @@ fun InspectRoute(
     }
   }
 
-  LaunchedEffect(Unit) { updateTitle("Inspect") }
+  val title = stringResource(R.string.inspect)
+  LaunchedEffect(title) { updateTitle(title) }
 
   InspectScreen(innerPadding, deviceMatterInfoList, msgDialogInfo, onDismissMsgDialog)
 }
@@ -86,65 +99,42 @@ private fun InspectScreen(
       if (deviceMatterInfoList == null) {
         Text(
             text =
-                "Fetching device information...\n" +
-                    "Note that this may take a while if the device is offline.",
+                stringResource(R.string.inspect_fetching_device_information) +
+                    "\n" +
+                    stringResource(R.string.inspect_fetching_device_information_note),
             style = MaterialTheme.typography.bodyMedium,
         )
       } else {
         if (deviceMatterInfoList.isEmpty()) {
           Text(
-              text =
-                  "Oops... We could not retrieve any information from the Descriptor Cluster. " +
-                      "This is probably because the device just recently turned \"offline\".",
+              text = stringResource(R.string.inspect_no_information_offline),
               style = MaterialTheme.typography.bodyMedium,
           )
         } else {
-          // Add the Descriptor Cluster Title
-          Text(text = "Descriptor Cluster", style = MaterialTheme.typography.titleLarge)
-          // For each endpoint
-          for (deviceMatterInfo in deviceMatterInfoList) {
-            // Endpoint ID
-            Text(
-                text = "<<< Endpoint ${deviceMatterInfo.endpoint} >>>",
-                style = MaterialTheme.typography.titleMedium,
+          val expandedEndpoints = remember { mutableStateMapOf<Int, Boolean>() }
+          val infosByEndpoint = remember(deviceMatterInfoList) { deviceMatterInfoList.associateBy { it.endpoint } }
+          val childEndpoints =
+              remember(deviceMatterInfoList) {
+                deviceMatterInfoList.flatMap { info -> info.parts }.toSet()
+              }
+          val rootEndpoints =
+              remember(deviceMatterInfoList) {
+                deviceMatterInfoList
+                    .asSequence()
+                    .map { it.endpoint }
+                    .filterNot { endpoint -> endpoint in childEndpoints }
+                    .toList()
+                    .ifEmpty { listOf(deviceMatterInfoList.first().endpoint) }
+              }
+
+          rootEndpoints.forEach { endpoint ->
+            EndpointTree(
+                endpoint = endpoint,
+                infosByEndpoint = infosByEndpoint,
+                expandedEndpoints = expandedEndpoints,
+                depth = 0,
+                visited = emptySet(),
             )
-            // Device Types
-            Text(text = "Device Types", style = MaterialTheme.typography.titleSmall)
-            for (deviceType in deviceMatterInfo.types) {
-              val hex = String.format("0x%04X", deviceType)
-              val typeString = MatterConstants.DeviceTypesMap.getOrDefault(deviceType, "Unknown")
-              Text(text = "[${hex}] $typeString", style = MaterialTheme.typography.bodySmall)
-            }
-            // Server Clusters
-            Text(text = "Server Clusters", style = MaterialTheme.typography.titleSmall)
-            if (deviceMatterInfo.serverClusters.isEmpty()) {
-              Text(text = "None", style = MaterialTheme.typography.bodySmall)
-            } else {
-              for (serverCluster in deviceMatterInfo.serverClusters) {
-                val hex = String.format("0x%04X", serverCluster)
-                val serverClusterString =
-                    MatterConstants.ClustersMap.getOrDefault(serverCluster, "Unknown")
-                Text(
-                    text = "[${hex}] $serverClusterString",
-                    style = MaterialTheme.typography.bodySmall,
-                )
-              }
-            }
-            // Client Clusters
-            Text(text = "Client Clusters", style = MaterialTheme.typography.titleSmall)
-            if (deviceMatterInfo.clientClusters.isEmpty()) {
-              Text(text = "None", style = MaterialTheme.typography.bodySmall)
-            } else {
-              for (clientCluster in deviceMatterInfo.clientClusters) {
-                val hex = String.format("0x%04X", clientCluster)
-                val clientClusterString =
-                    MatterConstants.ClustersMap.getOrDefault(clientCluster, "Unknown")
-                Text(
-                    text = "[${hex}] $clientClusterString",
-                    style = MaterialTheme.typography.bodySmall,
-                )
-              }
-            }
           }
         }
       }
@@ -173,7 +163,7 @@ private fun InspectScreenOnlineNoClustersPreview() {
   MaterialTheme {
     InspectScreen(
         PaddingValues(),
-        listOf(DeviceMatterInfo(1, listOf(15L, 22L), emptyList(), emptyList())),
+        listOf(DeviceMatterInfo(1, listOf(15L, 22L), emptyList(), emptyList(), emptyList())),
         null,
         {},
     )
@@ -187,8 +177,9 @@ private fun InspectScreenOnlineWithClustersPreview() {
     InspectScreen(
         PaddingValues(),
         listOf(
-            DeviceMatterInfo(0, listOf(15L, 22L), listOf(3L), listOf(43L, 48L)),
-            DeviceMatterInfo(1, listOf(15L, 22L), listOf(3L, 4L, 5L), listOf(43L, 44L, 45L, 48L)),
+            DeviceMatterInfo(0, listOf(22L), listOf(3L), listOf(43L, 48L), listOf(1, 2)),
+            DeviceMatterInfo(1, listOf(256L), listOf(3L, 4L, 5L), listOf(43L, 44L, 45L, 48L), emptyList()),
+            DeviceMatterInfo(2, listOf(266L), listOf(4L, 6L, 29L), listOf(43L, 44L), emptyList()),
         ),
         null,
         {},
@@ -206,3 +197,109 @@ private val DeviceTest =
         .setVendorId("6006")
         .setRoom("Office")
         .build()
+
+@Composable
+private fun EndpointTree(
+    endpoint: Int,
+    infosByEndpoint: Map<Int, DeviceMatterInfo>,
+    expandedEndpoints: MutableMap<Int, Boolean>,
+    depth: Int,
+    visited: Set<Int>,
+) {
+  if (endpoint in visited) return
+  val endpointInfo = infosByEndpoint[endpoint] ?: return
+  val nextVisited = visited + endpoint
+  val hasChildren = endpointInfo.parts.any { child -> child in infosByEndpoint }
+  val isExpanded = expandedEndpoints[endpoint] ?: true
+  val startPadding = (depth * 16).dp
+
+  Row(
+      verticalAlignment = Alignment.CenterVertically,
+      modifier = Modifier.padding(start = startPadding),
+  ) {
+    if (hasChildren) {
+      IconButton(
+          onClick = { expandedEndpoints[endpoint] = !isExpanded },
+          modifier = Modifier.size(24.dp),
+      ) {
+        val icon =
+            if (isExpanded) Icons.Filled.ExpandMore else Icons.Filled.KeyboardArrowRight
+        Icon(
+            imageVector = icon,
+            contentDescription =
+                if (isExpanded) stringResource(R.string.inspect_collapse_endpoint)
+                else stringResource(R.string.inspect_expand_endpoint),
+        )
+      }
+    } else {
+      Spacer(modifier = Modifier.size(24.dp))
+    }
+    Text(
+        text = stringResource(R.string.inspect_endpoint_title, endpoint),
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.padding(start = 4.dp),
+    )
+  }
+
+  if (!isExpanded) return
+
+  EndpointDetails(
+      endpointInfo = endpointInfo,
+      modifier = Modifier.padding(start = startPadding + 28.dp, bottom = 8.dp),
+  )
+  endpointInfo.parts.forEach { child ->
+    EndpointTree(
+        endpoint = child,
+        infosByEndpoint = infosByEndpoint,
+        expandedEndpoints = expandedEndpoints,
+        depth = depth + 1,
+        visited = nextVisited,
+    )
+  }
+}
+
+@Composable
+private fun EndpointDetails(endpointInfo: DeviceMatterInfo, modifier: Modifier = Modifier) {
+  Column(modifier = modifier) {
+    Text(text = stringResource(R.string.inspect_device_types), style = MaterialTheme.typography.titleSmall)
+    endpointInfo.types.forEach { deviceType ->
+      val hex = String.format("0x%04X", deviceType)
+      val typeString =
+          MatterConstants.DeviceTypesMap.getOrDefault(
+              deviceType,
+              stringResource(R.string.inspect_unknown),
+          )
+      Text(text = "[${hex}] $typeString", style = MaterialTheme.typography.bodySmall)
+    }
+
+    Text(
+        text = stringResource(R.string.inspect_server_clusters),
+        style = MaterialTheme.typography.titleSmall,
+    )
+    ClusterList(endpointInfo.serverClusters)
+
+    Text(
+        text = stringResource(R.string.inspect_client_clusters),
+        style = MaterialTheme.typography.titleSmall,
+    )
+    ClusterList(endpointInfo.clientClusters)
+  }
+}
+
+@Composable
+private fun ClusterList(clusters: List<Any>) {
+  if (clusters.isEmpty()) {
+    Text(
+        text = stringResource(R.string.inspect_none),
+        style = MaterialTheme.typography.bodySmall,
+    )
+    return
+  }
+  clusters.forEach { cluster ->
+    val clusterId = cluster as? Long ?: return@forEach
+    val hex = String.format("0x%04X", clusterId)
+    val clusterName =
+        MatterConstants.ClustersMap.getOrDefault(clusterId, stringResource(R.string.inspect_unknown))
+    Text(text = "[${hex}] $clusterName", style = MaterialTheme.typography.bodySmall)
+  }
+}

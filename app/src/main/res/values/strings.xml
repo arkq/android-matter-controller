@@ -70,6 +70,17 @@ SPDX-License-Identifier: Apache-2.0
     <string name="opening_pairing_window_title">Opening pairing window</string>
     <string name="opening_pairing_window_message">This may take a few seconds...</string>
     <string name="error_introspecting_device">Error introspecting the device</string>
+    <string name="inspect_fetching_device_information">Fetching device information…</string>
+    <string name="inspect_fetching_device_information_note">Note that this may take a while if the device is offline.</string>
+    <string name="inspect_no_information_offline">Oops… We could not retrieve device inspection information. This is probably because the device recently turned offline.</string>
+    <string name="inspect_endpoint_title">Endpoint %1$d</string>
+    <string name="inspect_device_types">Device Types</string>
+    <string name="inspect_server_clusters">Server Clusters</string>
+    <string name="inspect_client_clusters">Client Clusters</string>
+    <string name="inspect_none">None</string>
+    <string name="inspect_unknown">Unknown</string>
+    <string name="inspect_expand_endpoint">Expand endpoint</string>
+    <string name="inspect_collapse_endpoint">Collapse endpoint</string>
 
     <!-- Matter Beacon -->
     <string name="beacon_detail_text" translatable="false">VID: 0x%04X PID: 0x%04X Disc: 0x%03X</string>
