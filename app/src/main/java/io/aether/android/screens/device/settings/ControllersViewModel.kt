@@ -17,6 +17,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+data class ManagedFabric(
+  val fabricIndex: Int,
+  val rootPublicKey: ByteArray?,
+  val vendorID: Int?,
+  val fabricID: Long?,
+  val nodeID: Long?,
+  val label: String?,
+)
+
 /** ViewModel for the Controllers screen. */
 @HiltViewModel
 class ControllersViewModel
@@ -29,9 +38,7 @@ constructor(
   sealed class UiState {
     data object Loading : UiState()
 
-    data class Loaded(
-        val fabrics: List<ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct>
-    ) : UiState()
+    data class Loaded(val fabrics: List<ManagedFabric>) : UiState()
 
     data class Error(val message: String) : UiState()
   }
@@ -46,9 +53,27 @@ constructor(
       try {
         val device = devicesRepository.getDevice(deviceId)
         val nodeId = nodeIdFor(device)
-        val fabrics = clustersHelper.readFabricsAttribute(nodeId)
-        if (fabrics != null) {
-          _uiState.value = UiState.Loaded(fabrics)
+        val fabrics = clustersHelper.readFabricsAttribute(nodeId).orEmpty()
+        val nocs = clustersHelper.readNOCsAttribute(nodeId).orEmpty()
+        val fabricsByIndex = fabrics.associateBy { it.fabricIndex }
+        val fabricIndexes =
+            (fabrics.mapNotNull { it.fabricIndex } + nocs.mapNotNull { it.fabricIndex }).distinct()
+        val mergedFabrics =
+            fabricIndexes
+                .map { fabricIndex ->
+                  val fabric = fabricsByIndex[fabricIndex]
+                  ManagedFabric(
+                      fabricIndex = fabricIndex,
+                      rootPublicKey = fabric?.rootPublicKey,
+                      vendorID = fabric?.vendorID,
+                      fabricID = fabric?.fabricID,
+                      nodeID = fabric?.nodeID,
+                      label = fabric?.label,
+                  )
+                }
+                .sortedBy { it.fabricIndex }
+        if (mergedFabrics.isNotEmpty()) {
+          _uiState.value = UiState.Loaded(mergedFabrics)
         } else {
           _uiState.value = UiState.Error("Failed to read fabrics from device.")
         }

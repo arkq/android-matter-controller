@@ -18,6 +18,7 @@ import java.security.SecureRandom
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.math.abs
 import timber.log.Timber
 
@@ -179,6 +180,21 @@ fun isMultiAdminCommissioning(intent: Intent): Boolean {
   return intent.action == "com.google.android.gms.home.matter.ACTION_COMMISSION_DEVICE"
 }
 
+/** Formats a signed Kotlin Long as a full-width unsigned 64-bit hex value. */
+fun formatUint64Hex(value: Long): String {
+  return String.format(Locale.ROOT, "0x%016X", value)
+}
+
+/** Formats a Matter Node ID as unsigned 64-bit hex with leading zeroes. */
+fun formatNodeId(nodeId: Long): String {
+  return formatUint64Hex(nodeId)
+}
+
+/** Formats a Matter Fabric ID as unsigned 64-bit hex with leading zeroes. */
+fun formatFabricId(fabricId: Long): String {
+  return formatUint64Hex(fabricId)
+}
+
 /**
  * The Matter APIs make use of SharedPreferences. Useful to print what they are when the app starts.
  */
@@ -210,15 +226,18 @@ fun getTimestampForNow(): Timestamp {
 }
 
 /**
- * Formats a com.google.protobuf.Timestamp according to the specified pattern. If _pattern is null,
- * then the default is "MM.dd.yy HH:mm:ss".
+ * Formats a com.google.protobuf.Timestamp using the device's locale and system date/time
+ * preferences.
  */
-private const val TIMESTAMP_DEFAULT_FORMAT_PATTERN = "MM.dd.yy HH:mm:ss"
-
-fun formatTimestamp(timestamp: Timestamp, _pattern: String?): String {
-  val pattern = _pattern ?: TIMESTAMP_DEFAULT_FORMAT_PATTERN
-  val timestampFormatter = DateTimeFormatter.ofPattern(pattern).withZone(ZoneId.of("UTC"))
-  return timestampFormatter.format(Instant.ofEpochSecond(timestamp.seconds))
+fun formatTimestamp(timestamp: Timestamp): String {
+  val instant = Instant.ofEpochSecond(timestamp.seconds)
+  val zonedDateTime = instant.atZone(ZoneId.systemDefault())
+  val formatter = java.text.DateFormat.getDateTimeInstance(
+    java.text.DateFormat.MEDIUM,
+    java.text.DateFormat.SHORT,
+    java.util.Locale.getDefault()
+  )
+  return formatter.format(java.util.Date.from(instant))
 }
 
 /**

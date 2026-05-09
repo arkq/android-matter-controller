@@ -9,8 +9,8 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.google.android.gms.home.matter.Matter
@@ -36,12 +36,12 @@ internal fun ShareDeviceAlertDialog(
 
   AlertDialog(
       title = { Text(text = stringResource(R.string.share_device_dialog_title)) },
-      text = { Text(stringResource(R.string.share_device_body)) },
+      text = { Text(stringResource(R.string.share_device_dialog_body)) },
       confirmButton = {
-        Button(onClick = onConfirm) { Text(stringResource(R.string.yes_share_it)) }
+        TextButton(onClick = onConfirm) { Text(stringResource(R.string.yes_share_it)) }
       },
       onDismissRequest = onDismiss,
-      dismissButton = { Button(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+      dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
   )
 }
 

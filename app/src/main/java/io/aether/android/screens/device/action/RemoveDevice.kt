@@ -4,8 +4,8 @@
 package io.aether.android.screens.device.action
 
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import io.aether.android.R
@@ -25,13 +25,15 @@ internal fun RemoveDeviceAlertDialog(
       title = { Text(text = stringResource(R.string.remove_device_dialog_title)) },
       text = { Text(stringResource(R.string.remove_device_dialog_body)) },
       confirmButton = {
-        Button(onClick = { onRemoveDeviceOutcome(true) }) {
+        TextButton(onClick = { onRemoveDeviceOutcome(true) }) {
           Text(stringResource(R.string.yes_remove_it))
         }
       },
       onDismissRequest = {},
       dismissButton = {
-        Button(onClick = { onRemoveDeviceOutcome(false) }) { Text(stringResource(R.string.cancel)) }
+        TextButton(onClick = { onRemoveDeviceOutcome(false) }) {
+          Text(stringResource(R.string.cancel))
+        }
       },
   )
 }
@@ -49,13 +51,13 @@ internal fun ConfirmDeviceRemovalAlertDialog(
       title = { Text(text = stringResource(R.string.confirm_remove_device_dialog_title)) },
       text = { Text(stringResource(R.string.confirm_remove_device_dialog_body)) },
       confirmButton = {
-        Button(onClick = { onConfirmDeviceRemovalOutcome(true) }) {
+        TextButton(onClick = { onConfirmDeviceRemovalOutcome(true) }) {
           Text(stringResource(R.string.yes_remove_it))
         }
       },
       onDismissRequest = {},
       dismissButton = {
-        Button(onClick = { onConfirmDeviceRemovalOutcome(false) }) {
+        TextButton(onClick = { onConfirmDeviceRemovalOutcome(false) }) {
           Text(stringResource(R.string.cancel))
         }
       },

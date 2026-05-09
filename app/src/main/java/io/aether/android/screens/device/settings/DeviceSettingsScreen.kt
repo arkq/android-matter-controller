@@ -12,20 +12,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -255,11 +253,11 @@ private fun DeviceSettingsScreen(
     SettingsSection(title = stringResource(R.string.section_basic)) {
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_vendor),
-          value = "${device.vendorId} ${device.vendorName}".trim(),
+          value = "${device.vendorName} (0x${device.vendorId.toInt().toString(16).padStart(4, '0').uppercase()})",
       )
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_product),
-          value = "${device.productId} ${device.productName}".trim(),
+          value = "${device.productName} (0x${device.productId.toInt().toString(16).padStart(4, '0').uppercase()})",
       )
       if (!hardwareVersion.isNullOrBlank()) {
         SettingsInfoRow(
@@ -275,7 +273,7 @@ private fun DeviceSettingsScreen(
       }
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_added_on),
-          value = formatTimestamp(device.dateCommissioned, null),
+          value = formatTimestamp(device.dateCommissioned),
       )
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_node_id),
@@ -299,41 +297,33 @@ private fun DeviceSettingsScreen(
 
     // Admin section
     SettingsSection(title = stringResource(R.string.section_admin)) {
-      SettingsNavigationRow(
+      SettingsActionRow(
+          icon = Icons.Outlined.Settings,
           label = stringResource(R.string.device_settings_manage_controllers),
           subtitle = stringResource(R.string.device_settings_manage_controllers_subtitle),
           onClick = onManageControllers,
       )
-      SettingsNavigationRow(
+      SettingsActionRow(
+          icon = Icons.Outlined.Info,
           label = stringResource(R.string.device_settings_inspect),
           subtitle = stringResource(R.string.device_settings_inspect_subtitle),
           onClick = onInspect,
       )
-    }
-
-    // Share button
-    Button(
-        onClick = { showShareDeviceAlertDialog = true },
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-      Icon(Icons.Outlined.Share, contentDescription = null)
-      Spacer(modifier = Modifier.width(8.dp))
-      Text(stringResource(R.string.share_device).uppercase())
-    }
-
-    // Remove button
-    Button(
-        onClick = onRemoveDeviceClick,
-        modifier = Modifier.fillMaxWidth(),
-        colors =
-            ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.error,
-                contentColor = MaterialTheme.colorScheme.onError,
-            ),
-    ) {
-      Icon(Icons.Outlined.Delete, contentDescription = null)
-      Spacer(modifier = Modifier.width(8.dp))
-      Text(stringResource(R.string.remove_device).uppercase())
+      SettingsActionRow(
+          icon = Icons.Outlined.Share,
+          label = stringResource(R.string.share_device),
+            subtitle = stringResource(R.string.share_device_action_subtitle),
+          onClick = { showShareDeviceAlertDialog = true },
+      )
+      SettingsActionRow(
+          icon = Icons.Outlined.Delete,
+          label = stringResource(R.string.remove_device),
+          subtitle = stringResource(R.string.remove_device_dialog_title),
+          onClick = onRemoveDeviceClick,
+          iconTint = MaterialTheme.colorScheme.error,
+          labelColor = MaterialTheme.colorScheme.error,
+          subtitleColor = MaterialTheme.colorScheme.error,
+      )
     }
   }
 }
@@ -386,33 +376,37 @@ private fun SettingsClickableRow(label: String, value: String, onClick: () -> Un
       )
       Text(text = value, style = MaterialTheme.typography.bodyMedium)
     }
-    Icon(
-        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-        contentDescription = null,
-        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
   }
 }
 
 @Composable
-private fun SettingsNavigationRow(label: String, subtitle: String, onClick: () -> Unit) {
+private fun SettingsActionRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    subtitle: String,
+    onClick: () -> Unit,
+  iconTint: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurfaceVariant,
+  labelColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface,
+  subtitleColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurfaceVariant,
+) {
   Row(
-      modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 4.dp),
+      modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 8.dp),
       verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.spacedBy(12.dp),
   ) {
+    Icon(
+        imageVector = icon,
+        contentDescription = null,
+        tint = iconTint,
+    )
     Column(modifier = Modifier.weight(1f)) {
-      Text(text = label, style = MaterialTheme.typography.bodyMedium)
+      Text(text = label, style = MaterialTheme.typography.bodyMedium, color = labelColor)
       Text(
           text = subtitle,
           style = MaterialTheme.typography.bodySmall,
-          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          color = subtitleColor,
       )
     }
-    Icon(
-        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-        contentDescription = null,
-        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
   }
 }
 

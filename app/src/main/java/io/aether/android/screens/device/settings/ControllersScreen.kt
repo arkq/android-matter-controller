@@ -40,8 +40,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import chip.devicecontroller.ChipStructs
 import io.aether.android.R
+import io.aether.android.formatFabricId
+import io.aether.android.formatNodeId
+import io.aether.android.chip.vendorLabel
 
 /** Route composable for the Controllers screen. */
 @Composable
@@ -51,7 +53,7 @@ fun ControllersRoute(
     deviceId: Long,
     viewModel: ControllersViewModel = hiltViewModel(),
 ) {
-  val title = stringResource(R.string.controllers_screen_title)
+  val title = stringResource(R.string.device_settings_manage_controllers)
   LaunchedEffect(title) { updateTitle(title) }
   LaunchedEffect(deviceId) { viewModel.loadControllers(deviceId) }
 
@@ -124,7 +126,7 @@ private fun ControllersScreen(
 
 @Composable
 private fun ControllerItem(
-    fabric: ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct,
+  fabric: ManagedFabric,
     onRemove: () -> Unit,
 ) {
   var showConfirmDialog by remember { mutableStateOf(false) }
@@ -167,23 +169,31 @@ private fun ControllerItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
       Column(modifier = Modifier.weight(1f)) {
-        val label = fabric.label.ifBlank { "Controller ${fabric.fabricIndex}" }
+        val label =
+            fabric.label?.takeIf { it.isNotBlank() }
+                ?: stringResource(R.string.controller_default_label, fabric.fabricIndex)
         Text(text = label, style = MaterialTheme.typography.bodyLarge)
-        Text(
-            text = stringResource(R.string.controller_vendor_id, fabric.vendorID),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
-            text = stringResource(R.string.controller_fabric_id, fabric.fabricID),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
-            text = stringResource(R.string.controller_node_id, fabric.nodeID),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        fabric.vendorID?.let { vendorId ->
+          Text(
+              text = stringResource(R.string.controller_vendor_id, vendorLabel(vendorId)),
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+        }
+        fabric.fabricID?.let { fabricId ->
+          Text(
+              text = stringResource(R.string.controller_fabric_id, formatFabricId(fabricId)),
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+        }
+        fabric.nodeID?.let { nodeId ->
+          Text(
+              text = stringResource(R.string.controller_node_id, formatNodeId(nodeId)),
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+        }
       }
       IconButton(onClick = { showConfirmDialog = true }) {
         Icon(

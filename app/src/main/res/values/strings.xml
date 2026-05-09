@@ -60,7 +60,7 @@ SPDX-License-Identifier: Apache-2.0
     <string name="loading_device_info">Loading device information…</string>
     <string name="inspect_device_offline_title">Device Offline</string>
     <string name="inspect_device_offline">The device is offline and cannot be inspected.</string>
-    <string name="remove_device_dialog_title">Remove this device?</string>
+    <string name="remove_device_dialog_title">Remove this device from this controller</string>
     <string name="remove_device_dialog_body">This device will be removed and unlinked from this controller. Other services and connection types may still have access.</string>
     <string name="confirm_remove_device_dialog_title">Error removing the device</string>
     <string name="confirm_remove_device_dialog_body">Removing the fabric from the device failed. Do you still want to remove it from this controller?</string>
@@ -88,7 +88,8 @@ SPDX-License-Identifier: Apache-2.0
     <!--Accessibility component name  -->
     <string name="menu_button">Menu</string>
     <string name="back_button">Back</string>
-    <string name="share_device_body">You can share this device to control it from other apps or services.</string>
+    <string name="share_device_action_subtitle">You can share this device to control it from other apps or services</string>
+    <string name="share_device_dialog_body">You can share this device to control it from other apps or services.</string>
     <string name="technical_information">Technical Information</string>
     <string name="remove_device">Remove</string>
     <string name="transport_icon">Transport icon</string>
@@ -114,12 +115,12 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_type_dialog_title">Change device type</string>
 
     <!-- Controllers Screen -->
-    <string name="controllers_screen_title">Controllers</string>
     <string name="controllers_loading">Fetching controllers…</string>
     <string name="controllers_empty">No controllers found.</string>
-    <string name="controller_vendor_id">Vendor ID: %1$d</string>
-    <string name="controller_fabric_id">Fabric ID: %1$d</string>
-    <string name="controller_node_id">Node ID: %1$d</string>
+    <string name="controller_default_label">Fabric %1$d</string>
+    <string name="controller_vendor_id">Vendor: %1$s</string>
+    <string name="controller_fabric_id">Fabric ID: %1$s</string>
+    <string name="controller_node_id">Node ID: %1$s</string>
     <string name="controller_remove_confirm_title">Remove controller?</string>
     <string name="controller_remove_confirm_body">This will remove the selected controller\'s fabric from the device. The controller will no longer be able to manage this device.</string>
     <string name="remove_controller">Remove controller</string>
