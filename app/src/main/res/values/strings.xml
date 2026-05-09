@@ -93,4 +93,37 @@ SPDX-License-Identifier: Apache-2.0
     <string name="remove_device">Remove</string>
     <string name="transport_icon">Transport icon</string>
 
+    <!-- Device Settings Screen -->
+    <string name="device_settings">Device Settings</string>
+    <string name="device_settings_icon">Device settings</string>
+    <string name="section_basic">Basic</string>
+    <string name="section_general">General</string>
+    <string name="section_admin">Admin</string>
+    <string name="device_settings_vendor">Vendor</string>
+    <string name="device_settings_product">Product</string>
+    <string name="device_settings_hardware_version">Hardware version</string>
+    <string name="device_settings_software_version">Software version</string>
+    <string name="device_settings_added_on">Added on</string>
+    <string name="device_settings_node_id">Node ID</string>
+    <string name="device_settings_name">Name</string>
+    <string name="device_settings_type">Type</string>
+    <string name="device_settings_manage_controllers">Manage controllers</string>
+    <string name="device_settings_manage_controllers_subtitle">Control who can manage this device</string>
+    <string name="device_settings_inspect">Inspect</string>
+    <string name="device_settings_inspect_subtitle">Endpoints topology and supported clusters</string>
+    <string name="device_type_dialog_title">Change device type</string>
+
+    <!-- Controllers Screen -->
+    <string name="controllers_screen_title">Controllers</string>
+    <string name="controllers_loading">Fetching controllers…</string>
+    <string name="controllers_empty">No controllers found.</string>
+    <string name="controller_vendor_id">Vendor ID: %1$d</string>
+    <string name="controller_fabric_id">Fabric ID: %1$d</string>
+    <string name="controller_node_id">Node ID: %1$d</string>
+    <string name="controller_remove_confirm_title">Remove controller?</string>
+    <string name="controller_remove_confirm_body">This will remove the selected controller\'s fabric from the device. The controller will no longer be able to manage this device.</string>
+    <string name="remove_controller">Remove controller</string>
+    <string name="controllers_offline_title">Device Offline</string>
+    <string name="controllers_offline">The device is offline and its controllers cannot be retrieved.</string>
+
 </resources>

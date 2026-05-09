@@ -837,6 +837,151 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     }
   }
 
+  /**
+   * Reads the hardware version string attribute from the Basic Information Cluster.
+   *
+   * @param nodeId the Matter node ID
+   * @return the hardware version string, or null on error
+   */
+  suspend fun readBasicClusterHardwareVersionStringAttribute(nodeId: Long): String? {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e("Can't get connectedDevicePointer.")
+          return null
+        }
+    return try {
+      suspendCoroutine { continuation ->
+        val callback =
+            object : ChipClusters.CharStringAttributeCallback {
+              override fun onSuccess(value: String) {
+                continuation.resume(value)
+              }
+
+              override fun onError(ex: Exception) {
+                continuation.resumeWithException(ex)
+              }
+            }
+        BasicInformationCluster(connectedDevicePtr, 0).readHardwareVersionStringAttribute(callback)
+      }
+    } catch (e: Exception) {
+      Timber.e(e, "readBasicClusterHardwareVersionStringAttribute failed")
+      null
+    }
+  }
+
+  /**
+   * Reads the software version string attribute from the Basic Information Cluster.
+   *
+   * @param nodeId the Matter node ID
+   * @return the software version string, or null on error
+   */
+  suspend fun readBasicClusterSoftwareVersionStringAttribute(nodeId: Long): String? {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e("Can't get connectedDevicePointer.")
+          return null
+        }
+    return try {
+      suspendCoroutine { continuation ->
+        val callback =
+            object : ChipClusters.CharStringAttributeCallback {
+              override fun onSuccess(value: String) {
+                continuation.resume(value)
+              }
+
+              override fun onError(ex: Exception) {
+                continuation.resumeWithException(ex)
+              }
+            }
+        BasicInformationCluster(connectedDevicePtr, 0).readSoftwareVersionStringAttribute(callback)
+      }
+    } catch (e: Exception) {
+      Timber.e(e, "readBasicClusterSoftwareVersionStringAttribute failed")
+      null
+    }
+  }
+
+  /**
+   * Reads the list of fabrics (controllers) from the Operational Credentials Cluster.
+   *
+   * @param nodeId the Matter node ID
+   * @return list of fabric descriptor structs, or null on error
+   */
+  suspend fun readFabricsAttribute(
+      nodeId: Long
+  ): List<ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct>? {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e("Can't get connectedDevicePointer.")
+          return null
+        }
+    return try {
+      suspendCoroutine { continuation ->
+        ChipClusters.OperationalCredentialsCluster(connectedDevicePtr, 0)
+            .readFabricsAttribute(
+                object : ChipClusters.OperationalCredentialsCluster.FabricsAttributeCallback {
+                  override fun onSuccess(
+                      values: List<ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct>
+                  ) {
+                    continuation.resume(values)
+                  }
+
+                  override fun onError(ex: Exception) {
+                    continuation.resumeWithException(ex)
+                  }
+                }
+            )
+      }
+    } catch (e: Exception) {
+      Timber.e(e, "readFabricsAttribute failed")
+      null
+    }
+  }
+
+  /**
+   * Removes a fabric (controller) from the device.
+   *
+   * @param nodeId the Matter node ID
+   * @param fabricIndex the index of the fabric to remove
+   */
+  suspend fun removeFabric(nodeId: Long, fabricIndex: Int) {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e("Can't get connectedDevicePointer.")
+          throw IllegalStateException("Failed to get connected device pointer")
+        }
+    return suspendCoroutine { continuation ->
+      ChipClusters.OperationalCredentialsCluster(connectedDevicePtr, 0)
+          .removeFabric(
+              object : ChipClusters.OperationalCredentialsCluster.NOCResponseCallback {
+                override fun onSuccess(
+                    statusCode: Int,
+                    fabricIndex: java.util.Optional<Int>,
+                    debugText: java.util.Optional<String>,
+                ) {
+                  Timber.d("removeFabric succeeded: statusCode=$statusCode")
+                  continuation.resume(Unit)
+                }
+
+                override fun onError(ex: Exception) {
+                  Timber.e(ex, "removeFabric failed")
+                  continuation.resumeWithException(ex)
+                }
+              },
+              fabricIndex,
+              500,
+          )
+    }
+  }
+
   private fun getAdministratorCommissioningClusterForDevice(
       devicePtr: Long,
       endpoint: Int,

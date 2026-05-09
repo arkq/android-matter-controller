@@ -40,7 +40,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,10 +62,16 @@ import timber.log.Timber
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppLayout(navController: NavHostController) {
-  var topAppBarTitle by rememberSaveable { mutableStateOf("") }
+  var topAppBarTitleContent: @Composable () -> Unit by remember {
+    mutableStateOf<@Composable () -> Unit>({})
+  }
 
   val updateTopAppBarTitle: (title: String) -> Unit = remember {
-    { title -> topAppBarTitle = title }
+    { title -> topAppBarTitleContent = { Text(text = title) } }
+  }
+
+  val updateTopAppBarTitleContent: (@Composable () -> Unit) -> Unit = remember {
+    { content -> topAppBarTitleContent = content }
   }
 
   var topAppBarActions: @Composable RowScope.() -> Unit by remember {
@@ -84,10 +89,13 @@ fun AppLayout(navController: NavHostController) {
   val currentRoute = navBackStackEntry?.destination?.route
   val isHomeScreen = currentRoute == DEST_HOME || currentRoute == null
 
-  // Clear TopAppBar actions on every route change so screen-specific actions
+  // Clear TopAppBar actions and title content on every route change so screen-specific actions
   // (e.g. the edit icon on the device screen) disappear at the same time as the
   // title, not only when the old screen's composable leaves composition.
-  LaunchedEffect(currentRoute) { topAppBarActions = {} }
+  LaunchedEffect(currentRoute) {
+    topAppBarActions = {}
+    topAppBarTitleContent = {}
+  }
 
   val developerUtilitiesViewModel: DeveloperUtilitiesViewModel = hiltViewModel()
   val msgDialogInfo by developerUtilitiesViewModel.msgDialogInfo.collectAsState()
@@ -250,7 +258,7 @@ fun AppLayout(navController: NavHostController) {
     Scaffold(
         topBar = {
           TopAppBar(
-              title = { Text(text = topAppBarTitle) },
+              title = { topAppBarTitleContent() },
               navigationIcon = {
                 if (isHomeScreen) {
                   IconButton(onClick = { scope.launch { drawerState.open() } }) {
@@ -272,7 +280,13 @@ fun AppLayout(navController: NavHostController) {
           )
         },
     ) { innerPadding ->
-      AppNavigation(navController, innerPadding, updateTopAppBarTitle, updateTopAppBarActions)
+      AppNavigation(
+          navController,
+          innerPadding,
+          updateTopAppBarTitle,
+          updateTopAppBarTitleContent,
+          updateTopAppBarActions,
+      )
     }
   }
 

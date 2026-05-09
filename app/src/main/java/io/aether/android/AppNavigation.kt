@@ -16,6 +16,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import io.aether.android.screens.commissionable.CommissionableRoute
 import io.aether.android.screens.device.DeviceRoute
+import io.aether.android.screens.device.settings.ControllersRoute
+import io.aether.android.screens.device.settings.DeviceSettingsRoute
 import io.aether.android.screens.home.HomeRoute
 import io.aether.android.screens.inspect.InspectRoute
 import io.aether.android.screens.thread.ThreadRoute
@@ -24,6 +26,8 @@ import io.aether.android.screens.thread.ThreadRoute
 const val DEST_HOME = "home"
 const val DEST_DEVICE = "device"
 const val DEST_INSPECT = "inspect"
+const val DEST_DEVICE_SETTINGS = "device_settings"
+const val DEST_CONTROLLERS = "controllers"
 const val DEST_COMMISSIONABLE_DEVICES = "commissionable_devices"
 const val DEST_THREAD = "thread"
 
@@ -32,6 +36,7 @@ fun AppNavigation(
     navController: NavHostController,
     innerPadding: PaddingValues,
     updateTitle: (title: String) -> Unit,
+    updateTitleContent: (@Composable () -> Unit) -> Unit,
     updateActions: (@Composable RowScope.() -> Unit) -> Unit,
 ) {
   // Lambdas to all destinations needed in our various routes.
@@ -47,12 +52,16 @@ fun AppNavigation(
   val navigateToInspect: (deviceId: Long) -> Unit = remember {
     { navController.navigate("$DEST_INSPECT/$it") }
   }
+  val navigateToDeviceSettings: (deviceId: Long) -> Unit = remember {
+    { navController.navigate("$DEST_DEVICE_SETTINGS/$it") }
+  }
+  val navigateToControllers: (deviceId: Long) -> Unit = remember {
+    { navController.navigate("$DEST_CONTROLLERS/$it") }
+  }
 
   NavHost(navController = navController, startDestination = DEST_HOME) {
     // Home
-    composable(DEST_HOME) { backStackEntry ->
-      HomeRoute(innerPadding, updateTitle, navigateToDevice)
-    }
+    composable(DEST_HOME) { HomeRoute(innerPadding, updateTitle, navigateToDevice) }
     // Device
     composable(
         "$DEST_DEVICE/{deviceId}?deviceName={deviceName}",
@@ -67,10 +76,9 @@ fun AppNavigation(
     ) {
       DeviceRoute(
           innerPadding,
-          updateTitle,
+          updateTitleContent,
           updateActions,
-          navigateToHome,
-          navigateToInspect,
+          navigateToDeviceSettings,
           it.arguments?.getLong("deviceId")!!,
           it.arguments?.getString("deviceName") ?: "",
       )
@@ -81,6 +89,27 @@ fun AppNavigation(
         arguments = listOf(navArgument("deviceId") { type = NavType.LongType }),
     ) {
       InspectRoute(innerPadding, updateTitle, it.arguments?.getLong("deviceId")!!)
+    }
+    // Device settings
+    composable(
+        "$DEST_DEVICE_SETTINGS/{deviceId}",
+        arguments = listOf(navArgument("deviceId") { type = NavType.LongType }),
+    ) {
+      DeviceSettingsRoute(
+          innerPadding,
+          updateTitle,
+          navigateToHome,
+          navigateToInspect,
+          navigateToControllers,
+          it.arguments?.getLong("deviceId")!!,
+      )
+    }
+    // Controllers
+    composable(
+        "$DEST_CONTROLLERS/{deviceId}",
+        arguments = listOf(navArgument("deviceId") { type = NavType.LongType }),
+    ) {
+      ControllersRoute(innerPadding, updateTitle, it.arguments?.getLong("deviceId")!!)
     }
     // Commissionable devices
     composable(DEST_COMMISSIONABLE_DEVICES) { CommissionableRoute(innerPadding, updateTitle) }
