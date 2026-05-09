@@ -147,17 +147,15 @@ fun DeviceSettingsRoute(
       onShareDevice = { viewModel.openPairingWindow(deviceId) },
       onRemoveDeviceClick = { viewModel.showRemoveDeviceAlertDialog() },
       onRemoveDeviceOutcome = { doIt ->
+        viewModel.dismissRemoveDeviceDialog()
         if (doIt) {
           viewModel.removeDevice(deviceId)
-        } else {
-          viewModel.dismissRemoveDeviceDialog()
         }
       },
       onConfirmDeviceRemovalOutcome = { doIt ->
+        viewModel.dismissConfirmDeviceRemovalDialog()
         if (doIt) {
           viewModel.removeDeviceWithoutUnlink(deviceId)
-        } else {
-          viewModel.dismissConfirmDeviceRemovalDialog()
         }
       },
       onInspect = { navigateToInspect(deviceId) },

@@ -21,9 +21,9 @@ import timber.log.Timber
 data class ManagedFabric(
     val fabricIndex: Int,
     val rootPublicKey: ByteArray?,
-    val vendorID: Int?,
-    val fabricID: Long?,
-    val nodeID: Long?,
+  val vendorId: Int?,
+  val fabricId: Long?,
+  val nodeId: Long?,
     val label: String?,
     val isCurrentFabric: Boolean,
 )
@@ -72,9 +72,9 @@ constructor(
                   ManagedFabric(
                       fabricIndex = fabricIndex,
                       rootPublicKey = fabric?.rootPublicKey,
-                      vendorID = fabric?.vendorID,
-                      fabricID = fabric?.fabricID,
-                      nodeID = fabric?.nodeID,
+                      vendorId = fabric?.vendorID,
+                      fabricId = fabric?.fabricID,
+                      nodeId = fabric?.nodeID,
                       label = fabric?.label,
                       isCurrentFabric = isCurrentFabric,
                   )

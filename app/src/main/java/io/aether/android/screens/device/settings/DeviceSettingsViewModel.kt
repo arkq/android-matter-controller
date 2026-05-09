@@ -222,7 +222,7 @@ constructor(
     Timber.d(
         "ShareDevice: chipClient.awaitOpenPairingWindowWithPIN " +
             "duration [${OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS}] iteration [${ITERATION}] " +
-            "discriminator [${DISCRIMINATOR}] setupPinCode [${SETUP_PIN_CODE}]"
+            "discriminator [${DISCRIMINATOR}]"
     )
     val connectedDevicePointer = chipClient.awaitGetConnectedDevicePointer(nodeId)
     chipClient.awaitOpenPairingWindowWithPIN(

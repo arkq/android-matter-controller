@@ -178,21 +178,21 @@ private fun ControllerItem(
             fabric.label?.takeIf { it.isNotBlank() }
                 ?: stringResource(R.string.controller_default_label, fabric.fabricIndex)
         Text(text = label, style = MaterialTheme.typography.bodyLarge)
-        fabric.vendorID?.let { vendorId ->
+        fabric.vendorId?.let { vendorId ->
           Text(
               text = stringResource(R.string.controller_vendor_id, vendorLabel(vendorId)),
               style = MaterialTheme.typography.bodySmall,
               color = MaterialTheme.colorScheme.onSurfaceVariant,
           )
         }
-        fabric.fabricID?.let { fabricId ->
+        fabric.fabricId?.let { fabricId ->
           Text(
               text = stringResource(R.string.controller_fabric_id, formatFabricId(fabricId)),
               style = MaterialTheme.typography.bodySmall,
               color = MaterialTheme.colorScheme.onSurfaceVariant,
           )
         }
-        fabric.nodeID?.let { nodeId ->
+        fabric.nodeId?.let { nodeId ->
           Text(
               text = stringResource(R.string.controller_node_id, formatNodeId(nodeId)),
               style = MaterialTheme.typography.bodySmall,
