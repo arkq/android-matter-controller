@@ -21,9 +21,9 @@ import timber.log.Timber
 data class ManagedFabric(
     val fabricIndex: Int,
     val rootPublicKey: ByteArray?,
-  val vendorId: Int?,
-  val fabricId: Long?,
-  val nodeId: Long?,
+    val vendorId: Int?,
+    val fabricId: Long?,
+    val nodeId: Long?,
     val label: String?,
     val isCurrentFabric: Boolean,
 )

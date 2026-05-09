@@ -18,8 +18,8 @@ import io.aether.android.screens.commissionable.CommissionableRoute
 import io.aether.android.screens.device.DeviceRoute
 import io.aether.android.screens.device.settings.ControllersRoute
 import io.aether.android.screens.device.settings.DeviceSettingsRoute
-import io.aether.android.screens.home.HomeRoute
 import io.aether.android.screens.device.settings.InspectRoute
+import io.aether.android.screens.home.HomeRoute
 import io.aether.android.screens.thread.ThreadRoute
 
 // Constants for Navigation destinations
