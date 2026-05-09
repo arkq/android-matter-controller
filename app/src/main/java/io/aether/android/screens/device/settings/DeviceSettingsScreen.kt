@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
@@ -29,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -125,14 +125,6 @@ fun DeviceSettingsRoute(
     onPauseOrDispose {}
   }
 
-  // Fetch version info (may fail gracefully if device is offline).
-  LaunchedEffect(device) {
-    device?.let { d ->
-      val nodeId = nodeIdFor(d)
-      viewModel.fetchVersionInfo(nodeId)
-    }
-  }
-
   val title = stringResource(R.string.device_settings)
   LaunchedEffect(title) { updateTitle(title) }
 
@@ -192,6 +184,10 @@ private fun DeviceSettingsScreen(
   var showShareDeviceAlertDialog by remember { mutableStateOf(false) }
   var showRenameDialog by remember { mutableStateOf(false) }
   var showTypeDialog by remember { mutableStateOf(false) }
+  val scrollState =
+      rememberSaveable(saver = androidx.compose.foundation.ScrollState.Saver) {
+        androidx.compose.foundation.ScrollState(0)
+      }
 
   MsgAlertDialog(msgDialogInfo, onDismissMsgDialog)
   RemoveDeviceAlertDialog(showRemoveDeviceAlertDialog, onRemoveDeviceOutcome)
@@ -253,7 +249,7 @@ private fun DeviceSettingsScreen(
       modifier =
           Modifier.fillMaxWidth()
               .padding(innerPadding)
-              .verticalScroll(rememberScrollState())
+              .verticalScroll(scrollState)
               .padding(dimensionResource(R.dimen.margin_normal)),
       verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {

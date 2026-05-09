@@ -89,33 +89,30 @@ constructor(
   fun loadDevice(deviceId: Long) {
     Timber.d("loadDevice: deviceId [$deviceId]")
     viewModelScope.launch {
+      val shouldBlockUiUntilLoaded = _device.value == null
       try {
-        _device.value = devicesRepository.getDevice(deviceId)
+        val loadedDevice = devicesRepository.getDevice(deviceId)
+        val nodeId = nodeIdFor(loadedDevice)
+        val basicInfo =
+            try {
+              clustersHelper.readBasicInformationAttributes(nodeId)
+            } catch (e: Exception) {
+              Timber.w(e, "loadDevice: could not read basic information attributes")
+              null
+            }
+
+        _device.value = loadedDevice
+        _vendorName.value = basicInfo?.vendorName
+        _vendorId.value = basicInfo?.vendorId
+        _hardwareVersion.value = basicInfo?.hardwareVersion
+        _softwareVersion.value = basicInfo?.softwareVersion
       } catch (e: Exception) {
         Timber.e(e, "loadDevice failed")
+        if (shouldBlockUiUntilLoaded) {
+          _device.value = null
+        }
         showMsgDialog(R.string.device_settings, R.string.device_settings_load_failed)
       }
-    }
-  }
-
-  // -----------------------------------------------------------------------------------------------
-  // Fetch hardware/software version from the device
-
-  fun fetchVersionInfo(nodeId: Long) {
-    Timber.d("fetchVersionInfo: nodeId [$nodeId]")
-    viewModelScope.launch {
-      val basicInfo =
-          try {
-            clustersHelper.readBasicInformationAttributes(nodeId)
-          } catch (e: Exception) {
-            Timber.w(e, "fetchVersionInfo: could not read basic information attributes")
-            null
-          }
-
-      _vendorName.value = basicInfo?.vendorName
-      _vendorId.value = basicInfo?.vendorId
-      _hardwareVersion.value = basicInfo?.hardwareVersion
-      _softwareVersion.value = basicInfo?.softwareVersion
     }
   }
 
