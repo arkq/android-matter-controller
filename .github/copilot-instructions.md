@@ -79,6 +79,17 @@ SPDX-License-Identifier: Apache-2.0
 
 - Do **not** modify copyright headers in files you are not otherwise changing.
 
+### 7. Loading States Must Be Consistent
+
+- When a screen is loading primary content, use a centered loading layout with:
+
+  - `CircularProgressIndicator()`
+  - A short status message from `res/values/strings.xml` (for example,
+    `R.string.loading_device_info`)
+  - `MaterialTheme.typography.bodyMedium` for the message text
+  - The same `innerPadding`/screen padding used by the loaded state so content
+    is not rendered under app bars
+
 ## Version Control System Rules
 
 ### 1. Atomic Commits
