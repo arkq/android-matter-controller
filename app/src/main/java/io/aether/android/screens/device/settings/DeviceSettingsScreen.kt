@@ -20,8 +20,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
@@ -53,11 +53,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.Device
 import io.aether.android.R
+import io.aether.android.chip.vendorLabel
 import io.aether.android.formatNodeId
 import io.aether.android.formatTimestamp
 import io.aether.android.getDeviceTypeDisplayStringId
 import io.aether.android.nodeIdFor
-import io.aether.android.chip.vendorLabel
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.device.action.ConfirmDeviceRemovalAlertDialog
@@ -186,8 +186,8 @@ fun DeviceSettingsRoute(
 private fun DeviceSettingsScreen(
     innerPadding: PaddingValues,
     device: Device?,
-  vendorName: String?,
-  vendorId: Int?,
+    vendorName: String?,
+    vendorId: Int?,
     hardwareVersion: String?,
     softwareVersion: String?,
     msgDialogInfo: DialogInfo?,
@@ -259,7 +259,8 @@ private fun DeviceSettingsScreen(
   ) {
     // Basic section
     SettingsSection(title = stringResource(R.string.section_basic)) {
-      val displayedVendorName = vendorName?.takeIf { it.isNotBlank() } ?: device.vendorName.takeIf { it.isNotBlank() }
+      val displayedVendorName =
+          vendorName?.takeIf { it.isNotBlank() } ?: device.vendorName.takeIf { it.isNotBlank() }
       val displayedVendorId = vendorId ?: device.vendorId.toInt()
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_vendor),
@@ -267,7 +268,8 @@ private fun DeviceSettingsScreen(
       )
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_product),
-          value = "${device.productName} (0x${device.productId.toInt().toString(16).padStart(4, '0').uppercase()})",
+          value =
+              "${device.productName} (0x${device.productId.toInt().toString(16).padStart(4, '0').uppercase()})",
       )
       if (!hardwareVersion.isNullOrBlank()) {
         SettingsInfoRow(
@@ -322,7 +324,7 @@ private fun DeviceSettingsScreen(
       SettingsActionRow(
           icon = Icons.Outlined.Share,
           label = stringResource(R.string.share_device),
-            subtitle = stringResource(R.string.share_device_action_subtitle),
+          subtitle = stringResource(R.string.share_device_action_subtitle),
           onClick = { showShareDeviceAlertDialog = true },
       )
       SettingsActionRow(
@@ -395,9 +397,9 @@ private fun SettingsActionRow(
     label: String,
     subtitle: String,
     onClick: () -> Unit,
-  iconTint: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurfaceVariant,
-  labelColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface,
-  subtitleColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    iconTint: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    labelColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface,
+    subtitleColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
   Row(
       modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 8.dp),

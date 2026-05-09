@@ -5,7 +5,6 @@ package io.aether.android.screens.device.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import chip.devicecontroller.ChipStructs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
@@ -19,13 +18,13 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 data class ManagedFabric(
-  val fabricIndex: Int,
-  val rootPublicKey: ByteArray?,
-  val vendorID: Int?,
-  val fabricID: Long?,
-  val nodeID: Long?,
-  val label: String?,
-  val isCurrentFabric: Boolean,
+    val fabricIndex: Int,
+    val rootPublicKey: ByteArray?,
+    val vendorID: Int?,
+    val fabricID: Long?,
+    val nodeID: Long?,
+    val label: String?,
+    val isCurrentFabric: Boolean,
 )
 
 /** ViewModel for the Controllers screen. */

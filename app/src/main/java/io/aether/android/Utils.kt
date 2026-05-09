@@ -17,7 +17,6 @@ import java.lang.Long.max
 import java.security.SecureRandom
 import java.time.Instant
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.abs
 import timber.log.Timber
@@ -237,11 +236,12 @@ fun getTimestampForNow(): Timestamp {
 fun formatTimestamp(timestamp: Timestamp): String {
   val instant = Instant.ofEpochSecond(timestamp.seconds)
   val zonedDateTime = instant.atZone(ZoneId.systemDefault())
-  val formatter = java.text.DateFormat.getDateTimeInstance(
-    java.text.DateFormat.MEDIUM,
-    java.text.DateFormat.SHORT,
-    java.util.Locale.getDefault()
-  )
+  val formatter =
+      java.text.DateFormat.getDateTimeInstance(
+          java.text.DateFormat.MEDIUM,
+          java.text.DateFormat.SHORT,
+          java.util.Locale.getDefault(),
+      )
   return formatter.format(java.util.Date.from(instant))
 }
 

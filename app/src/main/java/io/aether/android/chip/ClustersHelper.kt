@@ -6,8 +6,8 @@ package io.aether.android.chip
 
 import chip.devicecontroller.ChipClusters
 import chip.devicecontroller.ChipClusters.BasicInformationCluster
-import chip.devicecontroller.ReportCallback
 import chip.devicecontroller.ChipStructs
+import chip.devicecontroller.ReportCallback
 import chip.devicecontroller.model.ChipAttributePath
 import chip.devicecontroller.model.ChipEventPath
 import chip.devicecontroller.model.NodeState
@@ -47,10 +47,10 @@ private const val BASIC_INFORMATION_HARDWARE_VERSION_STRING_ATTRIBUTE_ID = 0x000
 private const val BASIC_INFORMATION_SOFTWARE_VERSION_STRING_ATTRIBUTE_ID = 0x000AL
 
 data class BasicInformationAttributes(
-  val vendorName: String? = null,
-  val vendorId: Int? = null,
-  val hardwareVersion: String? = null,
-  val softwareVersion: String? = null,
+    val vendorName: String? = null,
+    val vendorId: Int? = null,
+    val hardwareVersion: String? = null,
+    val softwareVersion: String? = null,
 )
 
 @Singleton
@@ -878,29 +878,29 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     return try {
       suspendCoroutine { continuation ->
         var completed = false
-      val basicInfoPaths =
-        listOf(
-          ChipAttributePath.newInstance(
-            ROOT_ENDPOINT,
-            BASIC_INFORMATION_CLUSTER_ID,
-            BASIC_INFORMATION_VENDOR_NAME_ATTRIBUTE_ID,
-          ),
-          ChipAttributePath.newInstance(
-            ROOT_ENDPOINT,
-            BASIC_INFORMATION_CLUSTER_ID,
-            BASIC_INFORMATION_VENDOR_ID_ATTRIBUTE_ID,
-          ),
-          ChipAttributePath.newInstance(
-            ROOT_ENDPOINT,
-            BASIC_INFORMATION_CLUSTER_ID,
-            BASIC_INFORMATION_HARDWARE_VERSION_STRING_ATTRIBUTE_ID,
-          ),
-          ChipAttributePath.newInstance(
-            ROOT_ENDPOINT,
-            BASIC_INFORMATION_CLUSTER_ID,
-            BASIC_INFORMATION_SOFTWARE_VERSION_STRING_ATTRIBUTE_ID,
-          ),
-        )
+        val basicInfoPaths =
+            listOf(
+                ChipAttributePath.newInstance(
+                    ROOT_ENDPOINT,
+                    BASIC_INFORMATION_CLUSTER_ID,
+                    BASIC_INFORMATION_VENDOR_NAME_ATTRIBUTE_ID,
+                ),
+                ChipAttributePath.newInstance(
+                    ROOT_ENDPOINT,
+                    BASIC_INFORMATION_CLUSTER_ID,
+                    BASIC_INFORMATION_VENDOR_ID_ATTRIBUTE_ID,
+                ),
+                ChipAttributePath.newInstance(
+                    ROOT_ENDPOINT,
+                    BASIC_INFORMATION_CLUSTER_ID,
+                    BASIC_INFORMATION_HARDWARE_VERSION_STRING_ATTRIBUTE_ID,
+                ),
+                ChipAttributePath.newInstance(
+                    ROOT_ENDPOINT,
+                    BASIC_INFORMATION_CLUSTER_ID,
+                    BASIC_INFORMATION_SOFTWARE_VERSION_STRING_ATTRIBUTE_ID,
+                ),
+            )
 
         chipClient.chipDeviceController.readPath(
             object : ReportCallback {
@@ -938,19 +938,12 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     val clusterState =
         nodeState
             .getEndpointState(ROOT_ENDPOINT.toInt())
-            ?.getClusterState(BASIC_INFORMATION_CLUSTER_ID)
-            ?: return BasicInformationAttributes()
+            ?.getClusterState(BASIC_INFORMATION_CLUSTER_ID) ?: return BasicInformationAttributes()
 
     val vendorName =
-        clusterState
-            .getAttributeState(BASIC_INFORMATION_VENDOR_NAME_ATTRIBUTE_ID)
-            ?.value
-            .asString()
+        clusterState.getAttributeState(BASIC_INFORMATION_VENDOR_NAME_ATTRIBUTE_ID)?.value.asString()
     val vendorId =
-        clusterState
-            .getAttributeState(BASIC_INFORMATION_VENDOR_ID_ATTRIBUTE_ID)
-            ?.value
-            .asInt()
+        clusterState.getAttributeState(BASIC_INFORMATION_VENDOR_ID_ATTRIBUTE_ID)?.value.asInt()
     val hardwareVersion =
         clusterState
             .getAttributeState(BASIC_INFORMATION_HARDWARE_VERSION_STRING_ATTRIBUTE_ID)
@@ -1096,12 +1089,12 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         nodeState
             .getEndpointState(ROOT_ENDPOINT.toInt())
             ?.getClusterState(OPERATIONAL_CREDENTIALS_CLUSTER_ID)
-            ?.getAttributeState(FABRICS_ATTRIBUTE_ID)
-            ?: return emptyList()
+            ?.getAttributeState(FABRICS_ATTRIBUTE_ID) ?: return emptyList()
 
     val value = attributeState.value
     if (value is List<*>) {
-      val directValues = value.filterIsInstance<ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct>()
+      val directValues =
+          value.filterIsInstance<ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct>()
       if (directValues.isNotEmpty()) {
         return directValues
       }
@@ -1120,15 +1113,20 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     }
   }
 
-  private fun decodeFabricDescriptorsFromJsonValue(value: Any?): List<ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct> =
+  private fun decodeFabricDescriptorsFromJsonValue(
+      value: Any?
+  ): List<ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct> =
       when (value) {
-        is JSONArray -> List(value.length()) { index -> decodeFabricDescriptor(value.opt(index)) }
-            .filterNotNull()
+        is JSONArray ->
+            List(value.length()) { index -> decodeFabricDescriptor(value.opt(index)) }
+                .filterNotNull()
         is List<*> -> value.mapNotNull { decodeFabricDescriptor(it) }
         else -> emptyList()
       }
 
-  private fun decodeFabricDescriptor(value: Any?): ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct? =
+  private fun decodeFabricDescriptor(
+      value: Any?
+  ): ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct? =
       when (value) {
         is ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct -> value
         is JSONObject -> decodeFabricDescriptorFromJson(value)
@@ -1146,12 +1144,12 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         json.optIntOrNull("fabricIndex") ?: json.optIntOrNull("FabricIndex") ?: return null
     val label = json.optString("label", json.optString("Label", ""))
     return ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct(
-      byteArrayOf(),
-      vendorId,
-      fabricId,
-      nodeId,
-      label,
-      fabricIndex,
+        byteArrayOf(),
+        vendorId,
+        fabricId,
+        nodeId,
+        label,
+        fabricIndex,
     )
   }
 
@@ -1164,12 +1162,12 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     val fabricIndex = value.intValue("fabricIndex") ?: return null
     val label = value["label"]?.toString() ?: ""
     return ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct(
-      byteArrayOf(),
-      vendorId,
-      fabricId,
-      nodeId,
-      label,
-      fabricIndex,
+        byteArrayOf(),
+        vendorId,
+        fabricId,
+        nodeId,
+        label,
+        fabricIndex,
     )
   }
 
@@ -1209,7 +1207,9 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
    * @param nodeId the Matter node ID
    * @return list of NOC structs, or null on error
    */
-  suspend fun readNOCsAttribute(nodeId: Long): List<ChipStructs.OperationalCredentialsClusterNOCStruct>? {
+  suspend fun readNOCsAttribute(
+      nodeId: Long
+  ): List<ChipStructs.OperationalCredentialsClusterNOCStruct>? {
     val connectedDevicePtr =
         try {
           chipClient.getConnectedDevicePointer(nodeId)
@@ -1222,7 +1222,9 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         ChipClusters.OperationalCredentialsCluster(connectedDevicePtr, 0)
             .readNOCsAttribute(
                 object : ChipClusters.OperationalCredentialsCluster.NOCsAttributeCallback {
-                  override fun onSuccess(values: List<ChipStructs.OperationalCredentialsClusterNOCStruct>) {
+                  override fun onSuccess(
+                      values: List<ChipStructs.OperationalCredentialsClusterNOCStruct>
+                  ) {
                     continuation.resume(values)
                   }
 

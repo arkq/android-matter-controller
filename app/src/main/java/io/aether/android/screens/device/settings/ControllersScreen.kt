@@ -41,9 +41,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.aether.android.R
+import io.aether.android.chip.vendorLabel
 import io.aether.android.formatFabricId
 import io.aether.android.formatNodeId
-import io.aether.android.chip.vendorLabel
 
 /** Route composable for the Controllers screen. */
 @Composable
@@ -130,9 +130,9 @@ private fun ControllersScreen(
 
 @Composable
 private fun ControllerItem(
-  fabric: ManagedFabric,
-  onRemove: () -> Unit,
-  canRemove: Boolean,
+    fabric: ManagedFabric,
+    onRemove: () -> Unit,
+    canRemove: Boolean,
 ) {
   var showConfirmDialog by remember(fabric.fabricIndex) { mutableStateOf(false) }
 
