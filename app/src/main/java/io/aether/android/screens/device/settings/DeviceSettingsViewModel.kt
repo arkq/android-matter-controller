@@ -23,6 +23,7 @@ import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.shared.SetDeviceNameResult
 import io.aether.android.screens.shared.SetDeviceNameUseCase
 import javax.inject.Inject
+import kotlin.random.Random
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -92,6 +93,7 @@ constructor(
         _device.value = devicesRepository.getDevice(deviceId)
       } catch (e: Exception) {
         Timber.e(e, "loadDevice failed")
+        showMsgDialog(R.string.device_settings, R.string.device_settings_load_failed)
       }
     }
   }
@@ -204,7 +206,7 @@ constructor(
           OpenCommissioningWindowApi.ChipDeviceController ->
               openCommissioningWindowUsingOpenPairingWindowWithPin(nodeId)
           OpenCommissioningWindowApi.AdministratorCommissioningCluster ->
-              openCommissioningWindowUsingOpenPairingWindowWithPin(nodeId)
+              openCommissioningWindowWithAdministratorCommissioningCluster(nodeId)
         }
         dismissMsgDialog()
         _pairingWindowOpenForDeviceSharing.value = true
@@ -229,6 +231,24 @@ constructor(
         ITERATION,
         DISCRIMINATOR,
         SETUP_PIN_CODE,
+    )
+  }
+
+  private suspend fun openCommissioningWindowWithAdministratorCommissioningCluster(nodeId: Long) {
+    val salt = Random.nextBytes(32)
+    val timedInvokeTimeoutMs = 10000
+    val connectedDevicePointer = chipClient.awaitGetConnectedDevicePointer(nodeId)
+    val verifier =
+        chipClient.computePaseVerifier(connectedDevicePointer, SETUP_PIN_CODE, ITERATION, salt)
+    clustersHelper.openCommissioningWindowAdministratorCommissioningCluster(
+        nodeId,
+        0,
+        OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS,
+        verifier.pakeVerifier,
+        DISCRIMINATOR,
+        ITERATION,
+        salt,
+        timedInvokeTimeoutMs,
     )
   }
 

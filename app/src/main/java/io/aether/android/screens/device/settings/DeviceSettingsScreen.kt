@@ -6,36 +6,20 @@ package io.aether.android.screens.device.settings
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,18 +27,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.Device
 import io.aether.android.R
 import io.aether.android.chip.vendorLabel
 import io.aether.android.formatNodeId
+import io.aether.android.formatProductId
 import io.aether.android.formatTimestamp
 import io.aether.android.getDeviceTypeDisplayStringId
 import io.aether.android.nodeIdFor
@@ -245,7 +228,14 @@ private fun DeviceSettingsScreen(
   }
 
   if (device == null) {
-    Text(stringResource(R.string.loading_device_info))
+    Column(
+        modifier =
+            Modifier.fillMaxWidth()
+                .padding(innerPadding)
+                .padding(dimensionResource(R.dimen.margin_normal))
+    ) {
+      Text(stringResource(R.string.loading_device_info))
+    }
     return
   }
 
@@ -269,7 +259,11 @@ private fun DeviceSettingsScreen(
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_product),
           value =
-              "${device.productName} (0x${device.productId.toInt().toString(16).padStart(4, '0').uppercase()})",
+              stringResource(
+                  R.string.device_settings_product_value,
+                  device.productName,
+                  formatProductId(device.productId.toInt()),
+              ),
       )
       if (!hardwareVersion.isNullOrBlank()) {
         SettingsInfoRow(
@@ -338,178 +332,4 @@ private fun DeviceSettingsScreen(
       )
     }
   }
-}
-
-// -----------------------------------------------------------------------------------------------
-// Settings section composables
-
-@Composable
-private fun SettingsSection(title: String, content: @Composable () -> Unit) {
-  Surface(
-      modifier = Modifier.fillMaxWidth(),
-      border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
-      shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
-  ) {
-    Column(modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal))) {
-      Text(
-          text = title,
-          style = MaterialTheme.typography.titleSmall,
-          color = MaterialTheme.colorScheme.primary,
-          modifier = Modifier.padding(bottom = 8.dp),
-      )
-      content()
-    }
-  }
-}
-
-@Composable
-private fun SettingsInfoRow(label: String, value: String) {
-  Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-    Text(
-        text = label,
-        style = MaterialTheme.typography.labelSmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
-    Text(text = value, style = MaterialTheme.typography.bodyMedium)
-  }
-}
-
-@Composable
-private fun SettingsClickableRow(label: String, value: String, onClick: () -> Unit) {
-  Row(
-      modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 4.dp),
-      verticalAlignment = Alignment.CenterVertically,
-  ) {
-    Column(modifier = Modifier.weight(1f)) {
-      Text(
-          text = label,
-          style = MaterialTheme.typography.labelSmall,
-          color = MaterialTheme.colorScheme.onSurfaceVariant,
-      )
-      Text(text = value, style = MaterialTheme.typography.bodyMedium)
-    }
-  }
-}
-
-@Composable
-private fun SettingsActionRow(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    label: String,
-    subtitle: String,
-    onClick: () -> Unit,
-    iconTint: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurfaceVariant,
-    labelColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface,
-    subtitleColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurfaceVariant,
-) {
-  Row(
-      modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 8.dp),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.spacedBy(12.dp),
-  ) {
-    Icon(
-        imageVector = icon,
-        contentDescription = null,
-        tint = iconTint,
-    )
-    Column(modifier = Modifier.weight(1f)) {
-      Text(text = label, style = MaterialTheme.typography.bodyMedium, color = labelColor)
-      Text(
-          text = subtitle,
-          style = MaterialTheme.typography.bodySmall,
-          color = subtitleColor,
-      )
-    }
-  }
-}
-
-// -----------------------------------------------------------------------------------------------
-// Dialogs
-
-@Composable
-private fun RenameDialog(
-    currentName: String,
-    onConfirm: (String) -> Unit,
-    onDismiss: () -> Unit,
-) {
-  var inputText by remember(currentName) { mutableStateOf(currentName) }
-  AlertDialog(
-      title = { Text(stringResource(R.string.rename_device)) },
-      text = {
-        TextField(
-            value = inputText,
-            onValueChange = { inputText = it },
-            label = { Text(stringResource(R.string.rename_device_label)) },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-        )
-      },
-      confirmButton = {
-        Button(
-            onClick = { onConfirm(inputText.trim()) },
-            enabled = inputText.trim().isNotBlank(),
-        ) {
-          Text(stringResource(R.string.ok))
-        }
-      },
-      dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
-      onDismissRequest = onDismiss,
-  )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DeviceTypeDialog(
-    currentType: Device.DeviceType,
-    onConfirm: (Device.DeviceType) -> Unit,
-    onDismiss: () -> Unit,
-) {
-  val types =
-      listOf(
-          Device.DeviceType.TYPE_LIGHT,
-          Device.DeviceType.TYPE_DIMMABLE_LIGHT,
-          Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT,
-          Device.DeviceType.TYPE_EXTENDED_COLOR_LIGHT,
-          Device.DeviceType.TYPE_LIGHT_SWITCH,
-          Device.DeviceType.TYPE_OUTLET,
-          Device.DeviceType.TYPE_UNKNOWN,
-      )
-  var expanded by remember { mutableStateOf(false) }
-  var selectedType by remember(currentType) { mutableStateOf(currentType) }
-
-  AlertDialog(
-      title = { Text(stringResource(R.string.device_type_dialog_title)) },
-      text = {
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
-        ) {
-          OutlinedTextField(
-              value = stringResource(getDeviceTypeDisplayStringId(selectedType)),
-              onValueChange = {},
-              readOnly = true,
-              trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-              modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable).fillMaxWidth(),
-          )
-          ExposedDropdownMenu(
-              expanded = expanded,
-              onDismissRequest = { expanded = false },
-          ) {
-            types.forEach { type ->
-              DropdownMenuItem(
-                  text = { Text(stringResource(getDeviceTypeDisplayStringId(type))) },
-                  onClick = {
-                    selectedType = type
-                    expanded = false
-                  },
-              )
-            }
-          }
-        }
-      },
-      confirmButton = {
-        Button(onClick = { onConfirm(selectedType) }) { Text(stringResource(R.string.ok)) }
-      },
-      dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
-      onDismissRequest = onDismiss,
-  )
 }

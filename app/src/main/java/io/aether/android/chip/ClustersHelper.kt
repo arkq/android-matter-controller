@@ -1263,8 +1263,18 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
                     fabricIndex: java.util.Optional<Int>,
                     debugText: java.util.Optional<String>,
                 ) {
-                  Timber.d("removeFabric succeeded: statusCode=$statusCode")
-                  continuation.resume(Unit)
+                  if (statusCode == 0) {
+                    Timber.d("removeFabric succeeded: statusCode=$statusCode")
+                    continuation.resume(Unit)
+                  } else {
+                    val debugMessage = debugText.orElse("")
+                    val error =
+                        IllegalStateException(
+                            "removeFabric returned non-success statusCode=$statusCode debugText=$debugMessage"
+                        )
+                    Timber.e(error.message)
+                    continuation.resumeWithException(error)
+                  }
                 }
 
                 override fun onError(ex: Exception) {

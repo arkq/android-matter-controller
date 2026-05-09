@@ -102,6 +102,7 @@ SPDX-License-Identifier: Apache-2.0
     <string name="section_admin">Admin</string>
     <string name="device_settings_vendor">Vendor</string>
     <string name="device_settings_product">Product</string>
+    <string name="device_settings_product_value">%1$s (%2$s)</string>
     <string name="device_settings_hardware_version">Hardware version</string>
     <string name="device_settings_software_version">Software version</string>
     <string name="device_settings_added_on">Added on</string>
@@ -112,6 +113,7 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_settings_manage_controllers_subtitle">Control who can manage this device</string>
     <string name="device_settings_inspect">Inspect</string>
     <string name="device_settings_inspect_subtitle">Endpoints topology and supported clusters</string>
+    <string name="device_settings_load_failed">Failed to load device settings.</string>
     <string name="device_type_dialog_title">Change device type</string>
 
     <!-- Controllers Screen -->
@@ -128,6 +130,5 @@ SPDX-License-Identifier: Apache-2.0
     <string name="controllers_offline">The device is offline and its controllers cannot be retrieved.</string>
     <string name="unlinking_device_title">Unlinking the device</string>
     <string name="unlinking_device_body">Calling the device to remove this controller\'s fabric. If the device is offline, this will fail when the call times out, and this may take a while.\n\nUnlinking the device\u2026</string>
-    <string name="remove_fabric_timeout_ms" translatable="false">500</string>
 
 </resources>

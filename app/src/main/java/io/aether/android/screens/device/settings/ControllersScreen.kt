@@ -92,7 +92,7 @@ private fun ControllersScreen(
       is ControllersViewModel.UiState.Error -> {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
           Text(
-              text = uiState.message,
+              text = stringResource(uiState.messageRes),
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.error,
               modifier = Modifier.padding(16.dp),

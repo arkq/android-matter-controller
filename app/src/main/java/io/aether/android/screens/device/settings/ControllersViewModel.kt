@@ -6,6 +6,7 @@ package io.aether.android.screens.device.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.aether.android.R
 import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.data.DevicesRepository
@@ -42,7 +43,7 @@ constructor(
 
     data class Loaded(val fabrics: List<ManagedFabric>) : UiState()
 
-    data class Error(val message: String) : UiState()
+    data class Error(val messageRes: Int) : UiState()
   }
 
   private var _uiState = MutableStateFlow<UiState>(UiState.Loading)
@@ -79,14 +80,10 @@ constructor(
                   )
                 }
                 .sortedBy { it.fabricIndex }
-        if (mergedFabrics.isNotEmpty()) {
-          _uiState.value = UiState.Loaded(mergedFabrics)
-        } else {
-          _uiState.value = UiState.Error("Failed to read fabrics from device.")
-        }
+        _uiState.value = UiState.Loaded(mergedFabrics)
       } catch (e: Exception) {
         Timber.e(e, "loadControllers failed")
-        _uiState.value = UiState.Error(e.message ?: e.toString())
+        _uiState.value = UiState.Error(R.string.controllers_offline)
       }
     }
   }
@@ -117,7 +114,7 @@ constructor(
         // Restore previous state and show error.
         _uiState.value =
             if (currentState is UiState.Loaded) currentState
-            else UiState.Error(e.message ?: e.toString())
+            else UiState.Error(R.string.controllers_offline)
       }
     }
   }

@@ -16,7 +16,6 @@ import java.io.File
 import java.lang.Long.max
 import java.security.SecureRandom
 import java.time.Instant
-import java.time.ZoneId
 import java.util.Locale
 import kotlin.math.abs
 import timber.log.Timber
@@ -189,6 +188,11 @@ fun formatVendorId(vendorId: Int): String {
   return String.format(Locale.ROOT, "0x%04X", vendorId)
 }
 
+/** Formats a Matter Product ID as unsigned 16-bit hex with leading zeroes. */
+fun formatProductId(productId: Int): String {
+  return String.format(Locale.ROOT, "0x%04X", productId)
+}
+
 /** Formats a Matter Node ID as unsigned 64-bit hex with leading zeroes. */
 fun formatNodeId(nodeId: Long): String {
   return formatUint64Hex(nodeId)
@@ -235,7 +239,6 @@ fun getTimestampForNow(): Timestamp {
  */
 fun formatTimestamp(timestamp: Timestamp): String {
   val instant = Instant.ofEpochSecond(timestamp.seconds)
-  val zonedDateTime = instant.atZone(ZoneId.systemDefault())
   val formatter =
       java.text.DateFormat.getDateTimeInstance(
           java.text.DateFormat.MEDIUM,
