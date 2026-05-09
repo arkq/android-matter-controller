@@ -125,5 +125,8 @@ SPDX-License-Identifier: Apache-2.0
     <string name="remove_controller">Remove controller</string>
     <string name="controllers_offline_title">Device Offline</string>
     <string name="controllers_offline">The device is offline and its controllers cannot be retrieved.</string>
+    <string name="unlinking_device_title">Unlinking the device</string>
+    <string name="unlinking_device_body">Calling the device to remove this controller\'s fabric. If the device is offline, this will fail when the call times out, and this may take a while.\n\nUnlinking the device\u2026</string>
+    <string name="remove_fabric_timeout_ms" translatable="false">500</string>
 
 </resources>

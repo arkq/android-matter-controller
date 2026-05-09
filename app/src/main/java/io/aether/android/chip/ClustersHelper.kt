@@ -28,6 +28,9 @@ data class DeviceMatterInfo(
 )
 
 /** Singleton to facilitate access to Clusters functionality. */
+// Timed invoke timeout for commands like removeFabric that require a short grace period.
+private const val TIMED_INVOKE_TIMEOUT_MS = 500
+
 @Singleton
 class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
@@ -977,7 +980,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
                 }
               },
               fabricIndex,
-              500,
+              TIMED_INVOKE_TIMEOUT_MS,
           )
     }
   }

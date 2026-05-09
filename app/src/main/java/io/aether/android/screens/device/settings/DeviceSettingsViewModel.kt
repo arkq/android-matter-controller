@@ -231,14 +231,7 @@ constructor(
 
   fun removeDevice(deviceId: Long) {
     Timber.d("Removing device [$deviceId]")
-    showMsgDialog(
-        "Unlinking the device",
-        "Calling the device to remove this controller's fabric. " +
-            "If the device is offline, this will fail when the call times out, " +
-            "and this may take a while.\n\n" +
-            "Unlinking the device...",
-        false,
-    )
+    showMsgDialog(R.string.unlinking_device_title, R.string.unlinking_device_body, false)
     viewModelScope.launch {
       val device = devicesRepository.getDevice(deviceId)
       val nodeId = nodeIdFor(device)
