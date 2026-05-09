@@ -56,8 +56,12 @@ constructor(
       try {
         val device = devicesRepository.getDevice(deviceId)
         val nodeId = nodeIdFor(device)
-        val fabrics = clustersHelper.readFabricsAttribute(nodeId).orEmpty()
-        val nocs = clustersHelper.readNOCsAttribute(nodeId).orEmpty()
+        val fabrics = clustersHelper.readFabricsAttribute(nodeId)
+        val nocs = clustersHelper.readNOCsAttribute(nodeId)
+        if (fabrics == null || nocs == null) {
+          _uiState.value = UiState.Error(R.string.controllers_offline)
+          return@launch
+        }
         val deviceCurrentFabricIndex = clustersHelper.readCurrentFabricIndexAttribute(nodeId)
         val controllerFabricIndex = chipClient.chipDeviceController.getFabricIndex()
         val currentFabricIndex = deviceCurrentFabricIndex ?: controllerFabricIndex

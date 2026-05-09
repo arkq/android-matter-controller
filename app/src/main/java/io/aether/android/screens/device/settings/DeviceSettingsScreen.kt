@@ -56,7 +56,7 @@ fun DeviceSettingsRoute(
     innerPadding: PaddingValues,
     updateTitle: (title: String) -> Unit,
     navigateToHome: () -> Unit,
-    navigateToInspect: (deviceId: Long) -> Unit,
+    navigateToInspect: (nodeId: Long) -> Unit,
     navigateToControllers: (deviceId: Long) -> Unit,
     deviceId: Long,
     viewModel: DeviceSettingsViewModel = hiltViewModel(),
@@ -158,7 +158,7 @@ fun DeviceSettingsRoute(
           viewModel.removeDeviceWithoutUnlink(deviceId)
         }
       },
-      onInspect = { navigateToInspect(deviceId) },
+      onInspect = { device?.let { navigateToInspect(nodeIdFor(it)) } },
       onManageControllers = { navigateToControllers(deviceId) },
   )
 }

@@ -49,8 +49,8 @@ fun AppNavigation(
       navController.navigate("$DEST_DEVICE/$deviceId?deviceName=${Uri.encode(deviceName)}")
     }
   }
-  val navigateToInspect: (deviceId: Long) -> Unit = remember {
-    { navController.navigate("$DEST_DEVICE_SETTINGS/$it/$DEST_INSPECT") }
+  val navigateToInspect: (nodeId: Long) -> Unit = remember {
+    { navController.navigate("$DEST_DEVICE_SETTINGS/$DEST_INSPECT/$it") }
   }
   val navigateToDeviceSettings: (deviceId: Long) -> Unit = remember {
     { navController.navigate("$DEST_DEVICE_SETTINGS/$it") }
@@ -99,10 +99,10 @@ fun AppNavigation(
     }
     // Inspect device from Device Settings
     composable(
-        "$DEST_DEVICE_SETTINGS/{deviceId}/$DEST_INSPECT",
-        arguments = listOf(navArgument("deviceId") { type = NavType.LongType }),
+        "$DEST_DEVICE_SETTINGS/$DEST_INSPECT/{nodeId}",
+        arguments = listOf(navArgument("nodeId") { type = NavType.LongType }),
     ) {
-      InspectRoute(innerPadding, updateTitle, it.arguments?.getLong("deviceId")!!)
+      InspectRoute(innerPadding, updateTitle, it.arguments?.getLong("nodeId")!!)
     }
     // Controllers
     composable(

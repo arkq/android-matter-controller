@@ -44,10 +44,10 @@ import timber.log.Timber
 fun InspectRoute(
     innerPadding: PaddingValues,
     updateTitle: (title: String) -> Unit,
-    deviceId: Long,
+    nodeId: Long,
     inspectViewModel: InspectViewModel = hiltViewModel(),
 ) {
-  Timber.d("InspectRoute deviceId [$deviceId]")
+  Timber.d("InspectRoute nodeId [$nodeId]")
 
   // Controls the Msg AlertDialog.
   // When the user dismisses the Msg AlertDialog, we "consume" the dialog.
@@ -58,8 +58,8 @@ fun InspectRoute(
   val deviceMatterInfoList by inspectViewModel.deviceMatterInfoList.collectAsState()
 
   LifecycleResumeEffect(Unit) {
-    Timber.d("LifecycleResumeEffect: selectedDeviceId [$deviceId]")
-    inspectViewModel.inspectDevice(deviceId)
+    Timber.d("LifecycleResumeEffect: selectedNodeId [$nodeId]")
+    inspectViewModel.inspectDevice(nodeId)
     onPauseOrDispose {
       // do any needed clean up here
       Timber.d("LifecycleResumeEffect:onPauseOrDispose")

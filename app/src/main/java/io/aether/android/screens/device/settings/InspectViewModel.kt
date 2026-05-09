@@ -34,12 +34,12 @@ class InspectViewModel @Inject constructor(private val clustersHelper: ClustersH
   // Inspect device
 
   /** Inspect the device information. */
-  fun inspectDevice(deviceId: Long) {
-    Timber.d("inspectDevice [${deviceId}]")
+  fun inspectDevice(nodeId: Long) {
+    Timber.d("inspectDevice: nodeId [${nodeId}]")
     viewModelScope.launch {
       try {
         // Introspect the device.
-        _deviceMatterInfoList.value = clustersHelper.fetchDeviceMatterInfo(deviceId)
+        _deviceMatterInfoList.value = clustersHelper.fetchDeviceMatterInfo(nodeId)
         Timber.d("after fetch...")
       } catch (e: Exception) {
         Timber.e("*** EXCEPTION GETTING DEVICE MATTER INFO *****", e)
