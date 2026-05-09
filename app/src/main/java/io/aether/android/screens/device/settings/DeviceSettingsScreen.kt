@@ -173,7 +173,7 @@ fun DeviceSettingsRoute(
           viewModel.dismissConfirmDeviceRemovalDialog()
         }
       },
-      onInspect = { navigateToInspect(deviceId) },
+      onInspect = { device?.let { navigateToInspect(nodeIdFor(it)) } },
       onManageControllers = { navigateToControllers(deviceId) },
   )
 }
