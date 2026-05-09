@@ -19,7 +19,7 @@ import io.aether.android.screens.device.DeviceRoute
 import io.aether.android.screens.device.settings.ControllersRoute
 import io.aether.android.screens.device.settings.DeviceSettingsRoute
 import io.aether.android.screens.home.HomeRoute
-import io.aether.android.screens.inspect.InspectRoute
+import io.aether.android.screens.device.settings.InspectRoute
 import io.aether.android.screens.thread.ThreadRoute
 
 // Constants for Navigation destinations
@@ -50,7 +50,7 @@ fun AppNavigation(
     }
   }
   val navigateToInspect: (deviceId: Long) -> Unit = remember {
-    { navController.navigate("$DEST_INSPECT/$it") }
+    { navController.navigate("$DEST_DEVICE_SETTINGS/$it/$DEST_INSPECT") }
   }
   val navigateToDeviceSettings: (deviceId: Long) -> Unit = remember {
     { navController.navigate("$DEST_DEVICE_SETTINGS/$it") }
@@ -83,13 +83,6 @@ fun AppNavigation(
           it.arguments?.getString("deviceName") ?: "",
       )
     }
-    // Inspect device
-    composable(
-        "$DEST_INSPECT/{deviceId}",
-        arguments = listOf(navArgument("deviceId") { type = NavType.LongType }),
-    ) {
-      InspectRoute(innerPadding, updateTitle, it.arguments?.getLong("deviceId")!!)
-    }
     // Device settings
     composable(
         "$DEST_DEVICE_SETTINGS/{deviceId}",
@@ -103,6 +96,13 @@ fun AppNavigation(
           navigateToControllers,
           it.arguments?.getLong("deviceId")!!,
       )
+    }
+    // Inspect device from Device Settings
+    composable(
+        "$DEST_DEVICE_SETTINGS/{deviceId}/$DEST_INSPECT",
+        arguments = listOf(navArgument("deviceId") { type = NavType.LongType }),
+    ) {
+      InspectRoute(innerPadding, updateTitle, it.arguments?.getLong("deviceId")!!)
     }
     // Controllers
     composable(

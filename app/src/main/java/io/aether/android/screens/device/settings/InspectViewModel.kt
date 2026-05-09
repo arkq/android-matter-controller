@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2024 Google LLC
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.inspect
+package io.aether.android.screens.device.settings
 
 import androidx.annotation.StringRes
 import androidx.lifecycle.*
