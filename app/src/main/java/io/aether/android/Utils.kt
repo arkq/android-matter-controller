@@ -185,6 +185,11 @@ fun formatUint64Hex(value: Long): String {
   return String.format(Locale.ROOT, "0x%016X", value)
 }
 
+/** Formats a Matter Vendor ID as unsigned 16-bit hex with leading zeroes. */
+fun formatVendorId(vendorId: Int): String {
+  return String.format(Locale.ROOT, "0x%04X", vendorId)
+}
+
 /** Formats a Matter Node ID as unsigned 64-bit hex with leading zeroes. */
 fun formatNodeId(nodeId: Long): String {
   return formatUint64Hex(nodeId)

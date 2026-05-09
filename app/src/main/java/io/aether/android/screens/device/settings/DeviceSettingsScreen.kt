@@ -53,9 +53,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.Device
 import io.aether.android.R
+import io.aether.android.formatNodeId
 import io.aether.android.formatTimestamp
 import io.aether.android.getDeviceTypeDisplayStringId
 import io.aether.android.nodeIdFor
+import io.aether.android.chip.vendorLabel
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.device.action.ConfirmDeviceRemovalAlertDialog
@@ -83,6 +85,8 @@ fun DeviceSettingsRoute(
   val device by viewModel.device.collectAsState()
   val hardwareVersion by viewModel.hardwareVersion.collectAsState()
   val softwareVersion by viewModel.softwareVersion.collectAsState()
+  val vendorName by viewModel.vendorName.collectAsState()
+  val vendorId by viewModel.vendorId.collectAsState()
   val msgDialogInfo by viewModel.msgDialogInfo.collectAsState()
   val showRemoveDeviceAlertDialog by viewModel.showRemoveDeviceAlertDialog.collectAsState()
   val showConfirmDeviceRemovalAlertDialog by
@@ -147,6 +151,8 @@ fun DeviceSettingsRoute(
   DeviceSettingsScreen(
       innerPadding = innerPadding,
       device = device,
+      vendorName = vendorName,
+      vendorId = vendorId,
       hardwareVersion = hardwareVersion,
       softwareVersion = softwareVersion,
       msgDialogInfo = msgDialogInfo,
@@ -180,6 +186,8 @@ fun DeviceSettingsRoute(
 private fun DeviceSettingsScreen(
     innerPadding: PaddingValues,
     device: Device?,
+  vendorName: String?,
+  vendorId: Int?,
     hardwareVersion: String?,
     softwareVersion: String?,
     msgDialogInfo: DialogInfo?,
@@ -251,9 +259,11 @@ private fun DeviceSettingsScreen(
   ) {
     // Basic section
     SettingsSection(title = stringResource(R.string.section_basic)) {
+      val displayedVendorName = vendorName?.takeIf { it.isNotBlank() } ?: device.vendorName.takeIf { it.isNotBlank() }
+      val displayedVendorId = vendorId ?: device.vendorId.toInt()
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_vendor),
-          value = "${device.vendorName} (0x${device.vendorId.toInt().toString(16).padStart(4, '0').uppercase()})",
+          value = vendorLabel(displayedVendorId, displayedVendorName),
       )
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_product),
@@ -277,7 +287,7 @@ private fun DeviceSettingsScreen(
       )
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_node_id),
-          value = nodeIdFor(device).toString(),
+          value = formatNodeId(nodeIdFor(device)),
       )
     }
 

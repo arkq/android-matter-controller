@@ -52,6 +52,14 @@ constructor(
   private var _softwareVersion = MutableStateFlow<String?>(null)
   val softwareVersion: StateFlow<String?> = _softwareVersion.asStateFlow()
 
+  // Vendor name fetched from the device (null when not yet loaded or unavailable).
+  private var _vendorName = MutableStateFlow<String?>(null)
+  val vendorName: StateFlow<String?> = _vendorName.asStateFlow()
+
+  // Vendor ID fetched from the device (null when not yet loaded or unavailable).
+  private var _vendorId = MutableStateFlow<Int?>(null)
+  val vendorId: StateFlow<Int?> = _vendorId.asStateFlow()
+
   // Controls whether the "Message" AlertDialog should be shown in the UI.
   private var _msgDialogInfo = MutableStateFlow<DialogInfo?>(null)
   val msgDialogInfo: StateFlow<DialogInfo?> = _msgDialogInfo.asStateFlow()
@@ -94,20 +102,18 @@ constructor(
   fun fetchVersionInfo(nodeId: Long) {
     Timber.d("fetchVersionInfo: nodeId [$nodeId]")
     viewModelScope.launch {
-      _hardwareVersion.value =
+      val basicInfo =
           try {
-            clustersHelper.readBasicClusterHardwareVersionStringAttribute(nodeId)
+            clustersHelper.readBasicInformationAttributes(nodeId)
           } catch (e: Exception) {
-            Timber.w(e, "fetchVersionInfo: could not read hardware version")
+            Timber.w(e, "fetchVersionInfo: could not read basic information attributes")
             null
           }
-      _softwareVersion.value =
-          try {
-            clustersHelper.readBasicClusterSoftwareVersionStringAttribute(nodeId)
-          } catch (e: Exception) {
-            Timber.w(e, "fetchVersionInfo: could not read software version")
-            null
-          }
+
+      _vendorName.value = basicInfo?.vendorName
+      _vendorId.value = basicInfo?.vendorId
+      _hardwareVersion.value = basicInfo?.hardwareVersion
+      _softwareVersion.value = basicInfo?.softwareVersion
     }
   }
 

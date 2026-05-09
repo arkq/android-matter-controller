@@ -3,6 +3,8 @@
 
 package io.aether.android.chip
 
+import io.aether.android.formatVendorId
+
 /**
  * Known Matter Vendor IDs from the CSA Distributed Compliance Ledger (DCL).
  *
@@ -34,8 +36,8 @@ val MATTER_VENDORS: Map<Int, String> =
     )
 
 /** Returns a human-readable vendor label for a Matter VID, including the hex code. */
-fun vendorLabel(vendorID: Int): String {
-    val name = MATTER_VENDORS[vendorID]
-    val hex = "0x%04X".format(vendorID)
+fun vendorLabel(vendorID: Int, providedLabel: String? = null): String {
+    val name = providedLabel?.takeIf { it.isNotBlank() } ?: MATTER_VENDORS[vendorID]
+    val hex = formatVendorId(vendorID)
     return if (name != null) "$name ($hex)" else hex
 }

@@ -114,8 +114,12 @@ private fun ControllersScreen(
               contentPadding = PaddingValues(dimensionResource(R.dimen.margin_normal)),
               verticalArrangement = Arrangement.spacedBy(8.dp),
           ) {
-            items(uiState.fabrics) { fabric ->
-              ControllerItem(fabric = fabric, onRemove = { onRemoveController(fabric.fabricIndex) })
+            items(items = uiState.fabrics, key = { it.fabricIndex }) { fabric ->
+              ControllerItem(
+                  fabric = fabric,
+                  onRemove = { onRemoveController(fabric.fabricIndex) },
+                  canRemove = !fabric.isCurrentFabric,
+              )
             }
           }
         }
@@ -127,11 +131,12 @@ private fun ControllersScreen(
 @Composable
 private fun ControllerItem(
   fabric: ManagedFabric,
-    onRemove: () -> Unit,
+  onRemove: () -> Unit,
+  canRemove: Boolean,
 ) {
-  var showConfirmDialog by remember { mutableStateOf(false) }
+  var showConfirmDialog by remember(fabric.fabricIndex) { mutableStateOf(false) }
 
-  if (showConfirmDialog) {
+  if (showConfirmDialog && canRemove) {
     AlertDialog(
         title = { Text(stringResource(R.string.controller_remove_confirm_title)) },
         text = { Text(stringResource(R.string.controller_remove_confirm_body)) },
@@ -195,12 +200,14 @@ private fun ControllerItem(
           )
         }
       }
-      IconButton(onClick = { showConfirmDialog = true }) {
-        Icon(
-            imageVector = Icons.Outlined.Delete,
-            contentDescription = stringResource(R.string.remove_controller),
-            tint = MaterialTheme.colorScheme.error,
-        )
+      if (canRemove) {
+        IconButton(onClick = { showConfirmDialog = true }) {
+          Icon(
+              imageVector = Icons.Outlined.Delete,
+              contentDescription = stringResource(R.string.remove_controller),
+              tint = MaterialTheme.colorScheme.error,
+          )
+        }
       }
     }
   }

@@ -4,12 +4,15 @@
 
 package io.aether.android.screens.inspect
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -79,23 +83,31 @@ private fun InspectScreen(
   MsgAlertDialog(msgDialogInfo, onDismissMsgDialog)
 
   Surface(modifier = Modifier.padding(innerPadding)) {
-    Column(
-        modifier =
-            Modifier.fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(
-                    start = dimensionResource(R.dimen.margin_normal),
-                    top = 0.dp,
-                    end = dimensionResource(R.dimen.margin_normal),
-                    bottom = dimensionResource(R.dimen.margin_normal),
-                )
-    ) {
-      if (deviceMatterInfoList == null) {
-        Text(
-            text = stringResource(R.string.inspect_fetching_device_information_message),
-            style = MaterialTheme.typography.bodyMedium,
-        )
-      } else {
+    if (deviceMatterInfoList == null) {
+      Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+          CircularProgressIndicator()
+          Text(
+              text = stringResource(R.string.inspect_loading),
+              style = MaterialTheme.typography.bodyMedium,
+          )
+        }
+      }
+    } else {
+      Column(
+          modifier =
+              Modifier.fillMaxSize()
+                  .verticalScroll(rememberScrollState())
+                  .padding(
+                      start = dimensionResource(R.dimen.margin_normal),
+                      top = 0.dp,
+                      end = dimensionResource(R.dimen.margin_normal),
+                      bottom = dimensionResource(R.dimen.margin_normal),
+                  )
+      ) {
         if (deviceMatterInfoList.isEmpty()) {
           Text(
               text = stringResource(R.string.inspect_no_information_offline),

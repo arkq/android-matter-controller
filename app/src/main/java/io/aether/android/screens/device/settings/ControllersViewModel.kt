@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import chip.devicecontroller.ChipStructs
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.data.DevicesRepository
 import io.aether.android.nodeIdFor
@@ -24,6 +25,7 @@ data class ManagedFabric(
   val fabricID: Long?,
   val nodeID: Long?,
   val label: String?,
+  val isCurrentFabric: Boolean,
 )
 
 /** ViewModel for the Controllers screen. */
@@ -33,6 +35,7 @@ class ControllersViewModel
 constructor(
     private val devicesRepository: DevicesRepository,
     private val clustersHelper: ClustersHelper,
+    private val chipClient: ChipClient,
 ) : ViewModel() {
 
   sealed class UiState {
@@ -55,6 +58,9 @@ constructor(
         val nodeId = nodeIdFor(device)
         val fabrics = clustersHelper.readFabricsAttribute(nodeId).orEmpty()
         val nocs = clustersHelper.readNOCsAttribute(nodeId).orEmpty()
+        val deviceCurrentFabricIndex = clustersHelper.readCurrentFabricIndexAttribute(nodeId)
+        val controllerFabricIndex = chipClient.chipDeviceController.getFabricIndex()
+        val currentFabricIndex = deviceCurrentFabricIndex ?: controllerFabricIndex
         val fabricsByIndex = fabrics.associateBy { it.fabricIndex }
         val fabricIndexes =
             (fabrics.mapNotNull { it.fabricIndex } + nocs.mapNotNull { it.fabricIndex }).distinct()
@@ -62,6 +68,7 @@ constructor(
             fabricIndexes
                 .map { fabricIndex ->
                   val fabric = fabricsByIndex[fabricIndex]
+                  val isCurrentFabric = fabricIndex == currentFabricIndex
                   ManagedFabric(
                       fabricIndex = fabricIndex,
                       rootPublicKey = fabric?.rootPublicKey,
@@ -69,6 +76,7 @@ constructor(
                       fabricID = fabric?.fabricID,
                       nodeID = fabric?.nodeID,
                       label = fabric?.label,
+                      isCurrentFabric = isCurrentFabric,
                   )
                 }
                 .sortedBy { it.fabricIndex }
@@ -94,6 +102,14 @@ constructor(
       try {
         val device = devicesRepository.getDevice(deviceId)
         val nodeId = nodeIdFor(device)
+        val deviceCurrentFabricIndex = clustersHelper.readCurrentFabricIndexAttribute(nodeId)
+        val controllerFabricIndex = chipClient.chipDeviceController.getFabricIndex()
+        val currentFabricIndex = deviceCurrentFabricIndex ?: controllerFabricIndex
+        if (fabricIndex == currentFabricIndex) {
+          Timber.w("Refusing to remove current fabric index [$fabricIndex].")
+          _uiState.value = currentState
+          return@launch
+        }
         clustersHelper.removeFabric(nodeId, fabricIndex)
         // Reload the list after removal.
         loadControllers(deviceId)

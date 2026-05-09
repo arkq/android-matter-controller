@@ -4,6 +4,9 @@
 package io.aether.android.screens.device.action
 
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -25,7 +28,14 @@ internal fun RemoveDeviceAlertDialog(
       title = { Text(text = stringResource(R.string.remove_device_dialog_title)) },
       text = { Text(stringResource(R.string.remove_device_dialog_body)) },
       confirmButton = {
-        TextButton(onClick = { onRemoveDeviceOutcome(true) }) {
+        Button(
+            onClick = { onRemoveDeviceOutcome(true) },
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError,
+                ),
+        ) {
           Text(stringResource(R.string.yes_remove_it))
         }
       },
@@ -51,7 +61,14 @@ internal fun ConfirmDeviceRemovalAlertDialog(
       title = { Text(text = stringResource(R.string.confirm_remove_device_dialog_title)) },
       text = { Text(stringResource(R.string.confirm_remove_device_dialog_body)) },
       confirmButton = {
-        TextButton(onClick = { onConfirmDeviceRemovalOutcome(true) }) {
+        Button(
+            onClick = { onConfirmDeviceRemovalOutcome(true) },
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError,
+                ),
+        ) {
           Text(stringResource(R.string.yes_remove_it))
         }
       },
