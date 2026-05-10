@@ -8,13 +8,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -32,10 +28,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,7 +40,6 @@ import io.aether.android.Device
 import io.aether.android.DeviceState
 import io.aether.android.DevicesState
 import io.aether.android.R
-import io.aether.android.getDeviceTypeIconId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.device.control.ColorTemperatureDeviceControl
@@ -71,11 +64,9 @@ import timber.log.Timber
 @Composable
 internal fun DeviceRoute(
     innerPadding: PaddingValues,
-    updateTitleContent: (@Composable () -> Unit) -> Unit,
     updateActions: (@Composable RowScope.() -> Unit) -> Unit,
     navigateToDeviceSettings: (deviceId: Long) -> Unit,
     deviceId: Long,
-    deviceName: String,
     deviceViewModel: DeviceViewModel = hiltViewModel(),
 ) {
   Timber.d("DeviceRoute deviceId [$deviceId]")
@@ -124,32 +115,6 @@ internal fun DeviceRoute(
   LaunchedEffect(deviceUiModel?.device?.deviceId) {
     if (deviceUiModel != null) {
       deviceViewModel.startMonitoringStateChanges()
-    }
-  }
-
-  // Set the title content to show device icon + name immediately, keep in sync on resume.
-  val defaultDeviceTitle = stringResource(R.string.device_screen_title)
-  LifecycleResumeEffect(deviceUiModel?.device, deviceName) {
-    val device = deviceUiModel?.device
-    val name =
-        device?.name?.ifBlank { deviceName }?.ifBlank { defaultDeviceTitle }
-            ?: deviceName.ifBlank { defaultDeviceTitle }
-    val iconId = device?.let { getDeviceTypeIconId(it.deviceType) }
-    updateTitleContent {
-      Row(verticalAlignment = Alignment.CenterVertically) {
-        if (iconId != null) {
-          Icon(
-              painter = painterResource(id = iconId),
-              contentDescription = null,
-              modifier = Modifier.size(24.dp),
-          )
-          Spacer(modifier = Modifier.width(8.dp))
-        }
-        Text(text = name)
-      }
-    }
-        onPauseOrDispose {
-        // Leave empty if no cleanup is needed
     }
   }
 

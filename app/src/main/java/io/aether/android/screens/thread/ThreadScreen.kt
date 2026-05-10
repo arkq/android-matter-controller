@@ -41,7 +41,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -102,7 +101,6 @@ import timber.log.Timber
 @Composable
 internal fun ThreadRoute(
     innerPadding: PaddingValues,
-    updateTitle: (title: String) -> Unit,
     threadViewModel: ThreadViewModel = hiltViewModel(),
 ) {
   // UI Logic implemented in ThreadNetworkUiState requires Activity.
@@ -181,7 +179,6 @@ internal fun ThreadRoute(
   LifecycleResumeEffect(Unit) {
     Timber.d("LifecycleResumeEffect")
     threadNetworkUiState.startServiceDiscovery()
-    updateTitle("Thread Network")
     onPauseOrDispose {
       // do any needed clean up here
       Timber.d("LifecycleResumeEffect:onPauseOrDispose")

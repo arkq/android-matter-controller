@@ -114,7 +114,6 @@ import timber.log.Timber
 @Composable
 internal fun HomeRoute(
     innerPadding: PaddingValues,
-    updateTitle: (title: String) -> Unit,
     navigateToDevice: (deviceId: Long, deviceName: String) -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -190,11 +189,6 @@ internal fun HomeRoute(
       homeViewModel.stopMonitoringStateChanges()
       commissionDevice(activity!!.applicationContext, commissionDeviceLauncher)
     }
-  }
-
-  LifecycleResumeEffect(Unit) {
-    updateTitle("")
-    onPauseOrDispose {}
   }
 
   LifecycleResumeEffect(Unit) {

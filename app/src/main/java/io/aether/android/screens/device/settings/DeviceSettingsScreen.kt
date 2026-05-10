@@ -24,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
- import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,7 +59,6 @@ import timber.log.Timber
 @Composable
 fun DeviceSettingsRoute(
     innerPadding: PaddingValues,
-    updateTitle: (title: String) -> Unit,
     navigateToHome: () -> Unit,
     navigateToInspect: (nodeId: Long) -> Unit,
     navigateToControllers: (deviceId: Long) -> Unit,
@@ -123,12 +121,6 @@ fun DeviceSettingsRoute(
 
   LifecycleResumeEffect(Unit) {
     viewModel.loadDevice(deviceId)
-    onPauseOrDispose {}
-  }
-
-  val title = stringResource(R.string.device_settings)
-  LifecycleResumeEffect(Unit) {
-    updateTitle(title)
     onPauseOrDispose {}
   }
 

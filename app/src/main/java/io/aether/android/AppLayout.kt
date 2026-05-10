@@ -62,18 +62,6 @@ import timber.log.Timber
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppLayout(navController: NavHostController) {
-  var topAppBarTitleContent: @Composable () -> Unit by remember {
-    mutableStateOf<@Composable () -> Unit>({})
-  }
-
-  val updateTopAppBarTitle: (title: String) -> Unit = remember {
-    { title -> topAppBarTitleContent = { Text(text = title) } }
-  }
-
-  val updateTopAppBarTitleContent: (@Composable () -> Unit) -> Unit = remember {
-    { content -> topAppBarTitleContent = content }
-  }
-
   var topAppBarActions: @Composable RowScope.() -> Unit by remember {
     mutableStateOf<@Composable RowScope.() -> Unit>({})
   }
@@ -88,14 +76,25 @@ fun AppLayout(navController: NavHostController) {
   val navBackStackEntry by navController.currentBackStackEntryAsState()
   val currentRoute = navBackStackEntry?.destination?.route
   val isHomeScreen = currentRoute == DEST_HOME || currentRoute == null
+  val defaultDeviceTitle = stringResource(R.string.device_screen_title)
+  val topAppBarTitle =
+      when (currentRoute) {
+        DEST_HOME,
+        null -> ""
+        ROUTE_DEVICE ->
+            navBackStackEntry?.arguments?.getString(ARG_DEVICE_NAME)?.takeIf { it.isNotBlank() }
+                ?: defaultDeviceTitle
+        ROUTE_DEVICE_SETTINGS -> stringResource(R.string.device_settings)
+        ROUTE_DEVICE_FABRICS -> stringResource(R.string.device_settings_admin_fabrics)
+        ROUTE_DEVICE_DATA_MODEL -> stringResource(R.string.device_settings_admin_inspect)
+        DEST_SCANNER -> stringResource(R.string.menu_item_scanner)
+        DEST_THREAD -> stringResource(R.string.menu_item_thread)
+        else -> stringResource(R.string.app_name)
+      }
 
-  // Clear TopAppBar actions and title content on every route change so screen-specific actions
-  // (e.g. the edit icon on the device screen) disappear at the same time as the
-  // title, not only when the old screen's composable leaves composition.
-  LaunchedEffect(currentRoute) {
-    topAppBarActions = {}
-    topAppBarTitleContent = {}
-  }
+  // Clear TopAppBar actions on every route change so screen-specific actions (e.g. the gear icon
+  // on the device screen) disappear immediately.
+  LaunchedEffect(currentRoute) { topAppBarActions = {} }
 
   val developerUtilitiesViewModel: DeveloperUtilitiesViewModel = hiltViewModel()
   val msgDialogInfo by developerUtilitiesViewModel.msgDialogInfo.collectAsState()
@@ -123,7 +122,7 @@ fun AppLayout(navController: NavHostController) {
                   "the \"Commissionable Devices\" feature is not available.",
           )
         } else {
-          navController.navigate(DEST_COMMISSIONABLE_DEVICES)
+          navController.navigate(DEST_SCANNER)
         }
       }
 
@@ -142,7 +141,7 @@ fun AppLayout(navController: NavHostController) {
       } else {
         @Suppress("DEPRECATION") val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         if (bluetoothAdapter.isEnabled) {
-          navController.navigate(DEST_COMMISSIONABLE_DEVICES)
+          navController.navigate(DEST_SCANNER)
         } else {
           developerUtilitiesViewModel.showMsgDialog(
               "Bluetooth is not enabled",
@@ -187,7 +186,7 @@ fun AppLayout(navController: NavHostController) {
                 )
               },
               label = { Text(stringResource(R.string.menu_item_scanner)) },
-              selected = currentRoute == DEST_COMMISSIONABLE_DEVICES,
+              selected = currentRoute == DEST_SCANNER,
               onClick = onCommissionableDevicesClick,
               modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
           )
@@ -258,7 +257,7 @@ fun AppLayout(navController: NavHostController) {
     Scaffold(
         topBar = {
           TopAppBar(
-              title = { topAppBarTitleContent() },
+              title = { Text(text = topAppBarTitle) },
               navigationIcon = {
                 if (isHomeScreen) {
                   IconButton(onClick = { scope.launch { drawerState.open() } }) {
@@ -280,13 +279,7 @@ fun AppLayout(navController: NavHostController) {
           )
         },
     ) { innerPadding ->
-      AppNavigation(
-          navController,
-          innerPadding,
-          updateTopAppBarTitle,
-          updateTopAppBarTitleContent,
-          updateTopAppBarActions,
-      )
+      AppNavigation(navController, innerPadding, updateTopAppBarActions)
     }
   }
 

@@ -36,8 +36,8 @@ import timber.log.Timber
  * https://developers.home.google.com/thread#border_agent_discovery
  *
  * You'll find similar mDNS/Service Discovery usage, but for Matter devices, on
- * screens/commissionable/mdns. Matter has its own specific libraries that encapsulate nsdManager
- * and Matter-specific mDNS/SD code
+ * screens/scanner/mdns. Matter has its own specific libraries that encapsulate nsdManager and
+ * Matter-specific mDNS/SD code
  */
 class ServiceDiscovery(context: Context, val coroutineScope: CoroutineScope) {
   val resolvedDevices = mutableListOf<NsdServiceInfo>()

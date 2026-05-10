@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Google LLC
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.commissionable.ble
+package io.aether.android.screens.scanner.ble
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
@@ -16,10 +16,10 @@ import android.content.Context.BLUETOOTH_SERVICE
 import android.os.ParcelUuid
 import android.os.SystemClock
 import dagger.hilt.android.qualifiers.ApplicationContext
-import io.aether.android.screens.commissionable.MatterBeacon
-import io.aether.android.screens.commissionable.MatterBeaconInject
-import io.aether.android.screens.commissionable.MatterBeaconProducer
-import io.aether.android.screens.commissionable.Transport
+import io.aether.android.screens.scanner.MatterBeacon
+import io.aether.android.screens.scanner.MatterBeaconInject
+import io.aether.android.screens.scanner.MatterBeaconProducer
+import io.aether.android.screens.scanner.Transport
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose

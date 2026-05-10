@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.commissionable
+package io.aether.android.screens.scanner
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -29,7 +28,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.R
 import timber.log.Timber
 
@@ -38,24 +36,18 @@ import timber.log.Timber
  * Wi-Fi, or mDNS).
  */
 @Composable
-internal fun CommissionableRoute(
+internal fun ScannerRoute(
     innerPadding: PaddingValues,
-    updateTitle: (title: String) -> Unit,
-    commissionableViewModel: CommissionableViewModel = hiltViewModel(),
+    scannerViewModel: ScannerViewModel = hiltViewModel(),
 ) {
-  val beacons by commissionableViewModel.beaconsLiveData.observeAsState()
+  val beacons by scannerViewModel.beaconsLiveData.observeAsState()
   val beaconsList = beacons?.toList() ?: emptyList()
 
-  LifecycleResumeEffect(Unit) {
-    updateTitle("Commissionable Devices")
-    onPauseOrDispose {}
-  }
-
-  CommissionableScreen(innerPadding, beaconsList)
+  ScannerScreen(innerPadding, beaconsList)
 }
 
 @Composable
-private fun CommissionableScreen(innerPadding: PaddingValues, beaconsList: List<MatterBeacon>) {
+private fun ScannerScreen(innerPadding: PaddingValues, beaconsList: List<MatterBeacon>) {
   Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
     LazyColumn(modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content))) {
       this.items(beaconsList) { MatterBeaconItem(it) }
@@ -121,12 +113,12 @@ fun MatterBeaconItem(beacon: MatterBeacon) {
 
 @Preview
 @Composable
-private fun CommissionableScreenPreview() {
+private fun ScannerScreenPreview() {
   val beaconsList =
       listOf(
           MatterBeacon("Acme LightBulb", 1, 2, 3, Transport.Ble("address")),
           MatterBeacon("Acme Plug", 1, 2, 3, Transport.Mdns("address", 5480, false)),
           MatterBeacon("0AFE867DE", 1, 2, 3, Transport.Hotspot("onhub")),
       )
-  MaterialTheme { CommissionableScreen(PaddingValues(), beaconsList) }
+  MaterialTheme { ScannerScreen(PaddingValues(), beaconsList) }
 }

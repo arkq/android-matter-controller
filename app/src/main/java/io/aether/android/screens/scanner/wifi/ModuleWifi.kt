@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Google LLC
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.commissionable.wifi
+package io.aether.android.screens.scanner.wifi
 
 import android.content.Context
 import android.net.wifi.WifiManager
@@ -12,8 +12,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
-import io.aether.android.screens.commissionable.MatterBeaconInject
-import io.aether.android.screens.commissionable.MatterBeaconProducer
+import io.aether.android.screens.scanner.MatterBeaconInject
+import io.aether.android.screens.scanner.MatterBeaconProducer
 
 @Module
 @InstallIn(SingletonComponent::class)

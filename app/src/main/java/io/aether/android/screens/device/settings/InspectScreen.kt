@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -43,7 +42,6 @@ import timber.log.Timber
 @Composable
 fun InspectRoute(
     innerPadding: PaddingValues,
-    updateTitle: (title: String) -> Unit,
     nodeId: Long,
     inspectViewModel: InspectViewModel = hiltViewModel(),
 ) {
@@ -64,12 +62,6 @@ fun InspectRoute(
       // do any needed clean up here
       Timber.d("LifecycleResumeEffect:onPauseOrDispose")
     }
-  }
-
-  val title = stringResource(R.string.device_settings_admin_inspect)
-  LifecycleResumeEffect(Unit) {
-    updateTitle(title)
-    onPauseOrDispose {}
   }
 
   InspectScreen(innerPadding, deviceMatterInfoList, msgDialogInfo, onDismissMsgDialog)
