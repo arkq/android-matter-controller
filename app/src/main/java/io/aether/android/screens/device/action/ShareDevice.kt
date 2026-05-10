@@ -36,10 +36,10 @@ internal fun ShareDeviceAlertDialog(
   }
 
   AlertDialog(
-      title = { Text(text = stringResource(R.string.share_device_dialog_title)) },
-      text = { Text(stringResource(R.string.share_device_dialog_body)) },
+      title = { Text(text = stringResource(R.string.device_share_dialog_title)) },
+      text = { Text(stringResource(R.string.device_share_dialog_body)) },
       confirmButton = {
-        Button(onClick = onConfirm) { Text(stringResource(R.string.yes_share_it)) }
+        Button(onClick = onConfirm) { Text(stringResource(R.string.device_share_dialog_yes)) }
       },
       onDismissRequest = onDismiss,
       dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
@@ -79,6 +79,6 @@ internal fun shareDevice(
       }
       .addOnFailureListener { error ->
         Timber.e(error)
-        onShareFailed(context.getString(R.string.share_device_failed), error.toString())
+        onShareFailed(context.getString(R.string.device_share_dialog_failed), error.toString())
       }
 }

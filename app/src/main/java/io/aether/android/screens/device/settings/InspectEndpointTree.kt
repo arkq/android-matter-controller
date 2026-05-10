@@ -47,12 +47,12 @@ fun EndpointTree(
       Icon(
           imageVector = icon,
           contentDescription =
-              if (isExpanded) stringResource(R.string.inspect_collapse_endpoint)
-              else stringResource(R.string.inspect_expand_endpoint),
+              if (isExpanded) stringResource(R.string.device_data_model_endpoint_collapse)
+              else stringResource(R.string.device_data_model_endpoint_expand),
       )
     }
     Text(
-        text = stringResource(R.string.inspect_endpoint_title, endpoint),
+        text = stringResource(R.string.device_data_model_endpoint_title, endpoint),
         style = MaterialTheme.typography.titleMedium,
         modifier =
             Modifier.clickable { expandedEndpoints[endpoint] = !isExpanded }.padding(start = 4.dp),

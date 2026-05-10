@@ -254,83 +254,83 @@ private fun DeviceSettingsScreen(
       verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {
     // Basic section
-    SettingsSection(title = stringResource(R.string.section_basic)) {
+    SettingsSection(title = stringResource(R.string.device_settings_section_basic)) {
       val displayedVendorName =
           vendorName?.takeIf { it.isNotBlank() } ?: device.vendorName.takeIf { it.isNotBlank() }
       val displayedVendorId = vendorId ?: device.vendorId.toInt()
       SettingsInfoRow(
-          label = stringResource(R.string.device_settings_vendor),
+          label = stringResource(R.string.device_settings_basic_vendor),
           value = vendorLabel(displayedVendorId, displayedVendorName),
       )
       SettingsInfoRow(
-          label = stringResource(R.string.device_settings_product),
+          label = stringResource(R.string.device_settings_basic_product),
           value =
               stringResource(
-                  R.string.device_settings_product_value,
+                  R.string.device_settings_basic_product_value,
                   device.productName,
                   formatProductId(device.productId.toInt()),
               ),
       )
       if (!hardwareVersion.isNullOrBlank()) {
         SettingsInfoRow(
-            label = stringResource(R.string.device_settings_hardware_version),
+            label = stringResource(R.string.device_settings_basic_hardware_version),
             value = hardwareVersion,
         )
       }
       if (!softwareVersion.isNullOrBlank()) {
         SettingsInfoRow(
-            label = stringResource(R.string.device_settings_software_version),
+            label = stringResource(R.string.device_settings_basic_software_version),
             value = softwareVersion,
         )
       }
       SettingsInfoRow(
-          label = stringResource(R.string.device_settings_added_on),
+          label = stringResource(R.string.device_settings_basic_added_on),
           value = formatTimestamp(device.dateCommissioned),
       )
       SettingsInfoRow(
-          label = stringResource(R.string.device_settings_node_id),
+          label = stringResource(R.string.device_settings_basic_node_id),
           value = formatNodeId(nodeIdFor(device)),
       )
     }
 
     // General section
-    SettingsSection(title = stringResource(R.string.section_general)) {
+    SettingsSection(title = stringResource(R.string.device_settings_section_general)) {
       SettingsClickableRow(
-          label = stringResource(R.string.device_settings_name),
+          label = stringResource(R.string.device_settings_general_name),
           value = device.name,
           onClick = { showRenameDialog = true },
       )
       SettingsClickableRow(
-          label = stringResource(R.string.device_settings_type),
+          label = stringResource(R.string.device_settings_general_type),
           value = stringResource(getDeviceTypeDisplayStringId(device.deviceType)),
           onClick = { showTypeDialog = true },
       )
     }
 
     // Admin section
-    SettingsSection(title = stringResource(R.string.section_admin)) {
+    SettingsSection(title = stringResource(R.string.device_settings_section_admin)) {
       SettingsActionRow(
           icon = Icons.Outlined.Settings,
-          label = stringResource(R.string.device_settings_manage_controllers),
-          subtitle = stringResource(R.string.device_settings_manage_controllers_subtitle),
+          label = stringResource(R.string.device_settings_admin_fabrics),
+          subtitle = stringResource(R.string.device_settings_admin_fabrics_subtitle),
           onClick = onManageControllers,
       )
       SettingsActionRow(
           icon = Icons.Outlined.Info,
-          label = stringResource(R.string.device_settings_inspect),
-          subtitle = stringResource(R.string.device_settings_inspect_subtitle),
+          label = stringResource(R.string.device_settings_admin_inspect),
+          subtitle = stringResource(R.string.device_settings_admin_inspect_subtitle),
           onClick = onInspect,
       )
       SettingsActionRow(
           icon = Icons.Outlined.Share,
-          label = stringResource(R.string.share_device),
-          subtitle = stringResource(R.string.share_device_action_subtitle),
+          label = stringResource(R.string.device_settings_admin_share),
+          subtitle = stringResource(R.string.device_settings_admin_share_subtitle),
           onClick = { showShareDeviceAlertDialog = true },
       )
       SettingsActionRow(
           icon = Icons.Outlined.Delete,
-          label = stringResource(R.string.remove_device),
-          subtitle = stringResource(R.string.remove_device_dialog_title),
+          label = stringResource(R.string.device_settings_admin_remove),
+          subtitle = stringResource(R.string.device_settings_admin_remove_subtitle),
           onClick = onRemoveDeviceClick,
           iconTint = MaterialTheme.colorScheme.error,
           labelColor = MaterialTheme.colorScheme.error,

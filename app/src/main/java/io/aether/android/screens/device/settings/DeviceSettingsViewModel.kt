@@ -210,7 +210,7 @@ constructor(
       } catch (e: Exception) {
         Timber.e(e, "ShareDevice: openPairingWindow failed")
         dismissMsgDialog()
-        showMsgDialog(R.string.share_device_failed, e.message)
+        showMsgDialog(R.string.device_share_dialog_failed, e.message)
       }
     }
   }

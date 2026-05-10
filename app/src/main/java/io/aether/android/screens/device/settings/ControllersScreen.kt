@@ -53,7 +53,7 @@ fun ControllersRoute(
     deviceId: Long,
     viewModel: ControllersViewModel = hiltViewModel(),
 ) {
-  val title = stringResource(R.string.device_settings_manage_controllers)
+  val title = stringResource(R.string.device_settings_admin_fabrics)
   LaunchedEffect(title) { updateTitle(title) }
   LaunchedEffect(deviceId) { viewModel.loadControllers(deviceId) }
 
@@ -82,7 +82,7 @@ private fun ControllersScreen(
           ) {
             CircularProgressIndicator()
             Text(
-                text = stringResource(R.string.controllers_loading),
+                text = stringResource(R.string.device_fabrics_loading),
                 style = MaterialTheme.typography.bodyMedium,
             )
           }
@@ -104,7 +104,7 @@ private fun ControllersScreen(
         if (uiState.fabrics.isEmpty()) {
           Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
-                text = stringResource(R.string.controllers_empty),
+                text = stringResource(R.string.device_fabrics_empty),
                 style = MaterialTheme.typography.bodyMedium,
             )
           }
@@ -138,8 +138,8 @@ private fun ControllerItem(
 
   if (showConfirmDialog && canRemove) {
     AlertDialog(
-        title = { Text(stringResource(R.string.controller_remove_confirm_title)) },
-        text = { Text(stringResource(R.string.controller_remove_confirm_body)) },
+        title = { Text(stringResource(R.string.device_fabric_remove_dialog_title)) },
+        text = { Text(stringResource(R.string.device_fabric_remove_dialog_body)) },
         confirmButton = {
           Button(
               onClick = {
@@ -152,7 +152,7 @@ private fun ControllerItem(
                       contentColor = MaterialTheme.colorScheme.onError,
                   ),
           ) {
-            Text(stringResource(R.string.remove_controller))
+            Text(stringResource(R.string.device_fabric_remove_dialog_yes))
           }
         },
         dismissButton = {
@@ -176,25 +176,29 @@ private fun ControllerItem(
       Column(modifier = Modifier.weight(1f)) {
         val label =
             fabric.label?.takeIf { it.isNotBlank() }
-                ?: stringResource(R.string.controller_default_label, fabric.fabricIndex)
+                ?: stringResource(R.string.device_fabrics_fabric_label, fabric.fabricIndex)
         Text(text = label, style = MaterialTheme.typography.bodyLarge)
         fabric.vendorId?.let { vendorId ->
           Text(
-              text = stringResource(R.string.controller_vendor_id, vendorLabel(vendorId)),
+              text = stringResource(R.string.device_fabrics_fabric_vendor, vendorLabel(vendorId)),
               style = MaterialTheme.typography.bodySmall,
               color = MaterialTheme.colorScheme.onSurfaceVariant,
           )
         }
         fabric.fabricId?.let { fabricId ->
           Text(
-              text = stringResource(R.string.controller_fabric_id, formatFabricId(fabricId)),
+              text =
+                  stringResource(
+                      R.string.device_fabrics_fabric_fabric_id,
+                      formatFabricId(fabricId),
+                  ),
               style = MaterialTheme.typography.bodySmall,
               color = MaterialTheme.colorScheme.onSurfaceVariant,
           )
         }
         fabric.nodeId?.let { nodeId ->
           Text(
-              text = stringResource(R.string.controller_node_id, formatNodeId(nodeId)),
+              text = stringResource(R.string.device_fabrics_fabric_node_id, formatNodeId(nodeId)),
               style = MaterialTheme.typography.bodySmall,
               color = MaterialTheme.colorScheme.onSurfaceVariant,
           )
@@ -204,7 +208,7 @@ private fun ControllerItem(
         IconButton(onClick = { showConfirmDialog = true }) {
           Icon(
               imageVector = Icons.Outlined.Delete,
-              contentDescription = stringResource(R.string.remove_controller),
+              contentDescription = stringResource(R.string.device_fabrics_fabric_remove),
               tint = MaterialTheme.colorScheme.error,
           )
         }

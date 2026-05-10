@@ -157,7 +157,7 @@ internal fun DeviceRoute(
         IconButton(onClick = { navigateToDeviceSettings(deviceId) }) {
           Icon(
               imageVector = Icons.Filled.Settings,
-              contentDescription = stringResource(R.string.device_settings_icon),
+              contentDescription = stringResource(R.string.device_settings),
           )
         }
       }

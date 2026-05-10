@@ -25,8 +25,8 @@ internal fun RemoveDeviceAlertDialog(
   }
 
   AlertDialog(
-      title = { Text(text = stringResource(R.string.remove_device_dialog_title)) },
-      text = { Text(stringResource(R.string.remove_device_dialog_body)) },
+      title = { Text(text = stringResource(R.string.device_remove_dialog_title)) },
+      text = { Text(stringResource(R.string.device_remove_dialog_body)) },
       confirmButton = {
         Button(
             onClick = { onRemoveDeviceOutcome(true) },
@@ -36,7 +36,7 @@ internal fun RemoveDeviceAlertDialog(
                     contentColor = MaterialTheme.colorScheme.onError,
                 ),
         ) {
-          Text(stringResource(R.string.yes_remove_it))
+          Text(stringResource(R.string.device_remove_dialog_yes))
         }
       },
       onDismissRequest = {},
@@ -58,8 +58,8 @@ internal fun ConfirmDeviceRemovalAlertDialog(
   }
 
   AlertDialog(
-      title = { Text(text = stringResource(R.string.confirm_remove_device_dialog_title)) },
-      text = { Text(stringResource(R.string.confirm_remove_device_dialog_body)) },
+      title = { Text(text = stringResource(R.string.device_remove_dialog_title)) },
+      text = { Text(stringResource(R.string.device_remove_dialog_body)) },
       confirmButton = {
         Button(
             onClick = { onConfirmDeviceRemovalOutcome(true) },
@@ -69,7 +69,7 @@ internal fun ConfirmDeviceRemovalAlertDialog(
                     contentColor = MaterialTheme.colorScheme.onError,
                 ),
         ) {
-          Text(stringResource(R.string.yes_remove_it))
+          Text(stringResource(R.string.device_remove_dialog_yes))
         }
       },
       onDismissRequest = {},

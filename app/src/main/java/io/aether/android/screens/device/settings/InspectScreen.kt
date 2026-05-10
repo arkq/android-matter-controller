@@ -66,7 +66,7 @@ fun InspectRoute(
     }
   }
 
-  val title = stringResource(R.string.inspect)
+  val title = stringResource(R.string.device_settings_admin_inspect)
   LaunchedEffect(title) { updateTitle(title) }
 
   InspectScreen(innerPadding, deviceMatterInfoList, msgDialogInfo, onDismissMsgDialog)
@@ -91,7 +91,7 @@ private fun InspectScreen(
         ) {
           CircularProgressIndicator()
           Text(
-              text = stringResource(R.string.inspect_loading),
+              text = stringResource(R.string.device_data_model_loading),
               style = MaterialTheme.typography.bodyMedium,
           )
         }
@@ -110,7 +110,7 @@ private fun InspectScreen(
       ) {
         if (deviceMatterInfoList.isEmpty()) {
           Text(
-              text = stringResource(R.string.inspect_no_information_offline),
+              text = stringResource(R.string.device_data_model_empty),
               style = MaterialTheme.typography.bodyMedium,
           )
         } else {
