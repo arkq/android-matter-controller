@@ -58,8 +58,8 @@ internal fun ConfirmDeviceRemovalAlertDialog(
   }
 
   AlertDialog(
-      title = { Text(text = stringResource(R.string.device_remove_dialog_title)) },
-      text = { Text(stringResource(R.string.device_remove_dialog_body)) },
+      title = { Text(text = stringResource(R.string.device_remove_failed_confirm_dialog_title)) },
+      text = { Text(stringResource(R.string.device_remove_failed_confirm_dialog_body)) },
       confirmButton = {
         Button(
             onClick = { onConfirmDeviceRemovalOutcome(true) },
@@ -69,7 +69,7 @@ internal fun ConfirmDeviceRemovalAlertDialog(
                     contentColor = MaterialTheme.colorScheme.onError,
                 ),
         ) {
-          Text(stringResource(R.string.device_remove_dialog_yes))
+          Text(stringResource(R.string.device_remove_failed_confirm_dialog_yes))
         }
       },
       onDismissRequest = {},

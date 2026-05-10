@@ -12,6 +12,7 @@ import chip.devicecontroller.model.ChipAttributePath
 import chip.devicecontroller.model.ChipEventPath
 import chip.devicecontroller.model.NodeState
 import io.aether.android.CommissioningWindowStatus
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
@@ -877,7 +878,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
     return try {
       suspendCoroutine { continuation ->
-        var completed = false
+        val completed = AtomicBoolean(false)
         val basicInfoPaths =
             listOf(
                 ChipAttributePath.newInstance(
@@ -909,15 +910,13 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
                   eventPath: ChipEventPath?,
                   ex: Exception,
               ) {
-                if (!completed) {
-                  completed = true
+                if (completed.compareAndSet(false, true)) {
                   continuation.resumeWithException(ex)
                 }
               }
 
               override fun onReport(nodeState: NodeState) {
-                if (!completed) {
-                  completed = true
+                if (completed.compareAndSet(false, true)) {
                   continuation.resume(extractBasicInformationAttributes(nodeState))
                 }
               }
@@ -981,7 +980,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         }
     return try {
       suspendCoroutine { continuation ->
-        var completed = false
+        val completed = AtomicBoolean(false)
         chipClient.chipDeviceController.readPath(
             object : ReportCallback {
               override fun onError(
@@ -989,15 +988,13 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
                   eventPath: ChipEventPath?,
                   ex: Exception,
               ) {
-                if (!completed) {
-                  completed = true
+                if (completed.compareAndSet(false, true)) {
                   continuation.resumeWithException(ex)
                 }
               }
 
               override fun onReport(nodeState: NodeState) {
-                if (!completed) {
-                  completed = true
+                if (completed.compareAndSet(false, true)) {
                   continuation.resume(extractFabricsFromNodeState(nodeState))
                 }
               }
@@ -1036,7 +1033,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
     return try {
       suspendCoroutine { continuation ->
-        var completed = false
+        val completed = AtomicBoolean(false)
         chipClient.chipDeviceController.readPath(
             object : ReportCallback {
               override fun onError(
@@ -1044,15 +1041,13 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
                   eventPath: ChipEventPath?,
                   ex: Exception,
               ) {
-                if (!completed) {
-                  completed = true
+                if (completed.compareAndSet(false, true)) {
                   continuation.resumeWithException(ex)
                 }
               }
 
               override fun onReport(nodeState: NodeState) {
-                if (!completed) {
-                  completed = true
+                if (completed.compareAndSet(false, true)) {
                   val currentFabricIndex =
                       nodeState
                           .getEndpointState(ROOT_ENDPOINT.toInt())

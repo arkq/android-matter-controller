@@ -181,14 +181,13 @@ internal fun ThreadRoute(
   LifecycleResumeEffect(Unit) {
     Timber.d("LifecycleResumeEffect")
     threadNetworkUiState.startServiceDiscovery()
+    updateTitle("Thread Network")
     onPauseOrDispose {
       // do any needed clean up here
       Timber.d("LifecycleResumeEffect:onPauseOrDispose")
       threadNetworkUiState.stopServiceDiscovery()
     }
   }
-
-  LaunchedEffect(Unit) { updateTitle("Thread Network") }
 
   ThreadScreen(innerPadding, currentActionInfo, threadCredentialsInfo, onThreadNetworkAction)
 }

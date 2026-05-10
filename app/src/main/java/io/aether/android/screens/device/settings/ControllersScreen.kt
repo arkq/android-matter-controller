@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,7 +55,10 @@ fun ControllersRoute(
     viewModel: ControllersViewModel = hiltViewModel(),
 ) {
   val title = stringResource(R.string.device_settings_admin_fabrics)
-  LaunchedEffect(title) { updateTitle(title) }
+  LifecycleResumeEffect(Unit) {
+    updateTitle(title)
+    onPauseOrDispose {}
+  }
   LaunchedEffect(deviceId) { viewModel.loadControllers(deviceId) }
 
   val uiState by viewModel.uiState.collectAsState()

@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.R
 import timber.log.Timber
 
@@ -45,7 +46,10 @@ internal fun CommissionableRoute(
   val beacons by commissionableViewModel.beaconsLiveData.observeAsState()
   val beaconsList = beacons?.toList() ?: emptyList()
 
-  LaunchedEffect(Unit) { updateTitle("Commissionable Devices") }
+  LifecycleResumeEffect(Unit) {
+    updateTitle("Commissionable Devices")
+    onPauseOrDispose {}
+  }
 
   CommissionableScreen(innerPadding, beaconsList)
 }

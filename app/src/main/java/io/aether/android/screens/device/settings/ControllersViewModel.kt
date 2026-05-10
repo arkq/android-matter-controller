@@ -52,14 +52,19 @@ constructor(
   fun loadControllers(deviceId: Long) {
     Timber.d("ControllersViewModel.loadControllers: deviceId [$deviceId]")
     viewModelScope.launch {
-      _uiState.value = UiState.Loading
+      val previousState = _uiState.value
+      if (previousState !is UiState.Loaded) {
+        _uiState.value = UiState.Loading
+      }
       try {
         val device = devicesRepository.getDevice(deviceId)
         val nodeId = nodeIdFor(device)
         val fabrics = clustersHelper.readFabricsAttribute(nodeId)
         val nocs = clustersHelper.readNOCsAttribute(nodeId)
         if (fabrics == null || nocs == null) {
-          _uiState.value = UiState.Error(R.string.controllers_offline)
+          _uiState.value =
+              if (previousState is UiState.Loaded) previousState
+              else UiState.Error(R.string.controllers_offline)
           return@launch
         }
         val deviceCurrentFabricIndex = clustersHelper.readCurrentFabricIndexAttribute(nodeId)
@@ -87,7 +92,9 @@ constructor(
         _uiState.value = UiState.Loaded(mergedFabrics)
       } catch (e: Exception) {
         Timber.e(e, "loadControllers failed")
-        _uiState.value = UiState.Error(R.string.controllers_offline)
+        _uiState.value =
+            if (previousState is UiState.Loaded) previousState
+            else UiState.Error(R.string.controllers_offline)
       }
     }
   }

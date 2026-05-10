@@ -234,18 +234,15 @@ fun getTimestampForNow(): Timestamp {
 }
 
 /**
- * Formats a com.google.protobuf.Timestamp using the device's locale and system date/time
- * preferences.
+ * Formats a com.google.protobuf.Timestamp using Android date/time formatters so user 12/24-hour
+ * settings are respected.
  */
-fun formatTimestamp(timestamp: Timestamp): String {
+fun formatTimestamp(context: Context, timestamp: Timestamp): String {
   val instant = Instant.ofEpochSecond(timestamp.seconds)
-  val formatter =
-      java.text.DateFormat.getDateTimeInstance(
-          java.text.DateFormat.MEDIUM,
-          java.text.DateFormat.SHORT,
-          java.util.Locale.getDefault(),
-      )
-  return formatter.format(java.util.Date.from(instant))
+  val date = java.util.Date.from(instant)
+  val dateFormatter = android.text.format.DateFormat.getMediumDateFormat(context)
+  val timeFormatter = android.text.format.DateFormat.getTimeFormat(context)
+  return "${dateFormatter.format(date)} ${timeFormatter.format(date)}"
 }
 
 /**

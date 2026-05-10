@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -126,7 +127,10 @@ fun DeviceSettingsRoute(
   }
 
   val title = stringResource(R.string.device_settings)
-  LaunchedEffect(title) { updateTitle(title) }
+  LifecycleResumeEffect(Unit) {
+    updateTitle(title)
+    onPauseOrDispose {}
+  }
 
   DeviceSettingsScreen(
       innerPadding = innerPadding,
@@ -181,6 +185,7 @@ private fun DeviceSettingsScreen(
     onInspect: () -> Unit,
     onManageControllers: () -> Unit,
 ) {
+  val context = LocalContext.current
   var showShareDeviceAlertDialog by remember { mutableStateOf(false) }
   var showRenameDialog by remember { mutableStateOf(false) }
   var showTypeDialog by remember { mutableStateOf(false) }
@@ -285,7 +290,7 @@ private fun DeviceSettingsScreen(
       }
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_added_on),
-          value = formatTimestamp(device.dateCommissioned),
+          value = formatTimestamp(context, device.dateCommissioned),
       )
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_node_id),

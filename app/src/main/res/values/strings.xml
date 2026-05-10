@@ -69,7 +69,6 @@ SPDX-License-Identifier: Apache-2.0
     <!--Accessibility component name  -->
     <string name="menu_button">Menu</string>
     <string name="back_button">Back</string>
-    <string name="technical_information">Technical Information</string>
     <string name="transport_icon">Transport icon</string>
 
     <!-- Device Settings Screen -->
@@ -127,7 +126,7 @@ SPDX-License-Identifier: Apache-2.0
 
     <!-- Device Share Dialog -->
     <string name="device_share_dialog_title">Share this device?</string>
-    <string name="device_share_dialog_body">You can share this device with other controllers. It will allow them to manage this device including fabrics management. Do you want to share this device?</string>
+    <string name="device_share_dialog_body">You can share this device with other controllers. It will allow them to manage this device, including fabric management. Do you want to share this device?</string>
     <string name="device_share_dialog_yes">Yes, share it</string>
     <string name="device_share_dialog_failed">Share device failed</string>
 
@@ -135,5 +134,8 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_remove_dialog_title">Remove this device?</string>
     <string name="device_remove_dialog_body">This device will be removed and unlinked from this controller. Other controllers may still have access to it. Do you want to remove this device?</string>
     <string name="device_remove_dialog_yes">Yes, remove it</string>
+    <string name="device_remove_failed_confirm_dialog_title">Remove device from this app only?</string>
+    <string name="device_remove_failed_confirm_dialog_body">Unlinking this device from this controller failed. You can still remove this device from this app only. Other controllers may still have access to it. Do you want to continue?</string>
+    <string name="device_remove_failed_confirm_dialog_yes">Yes, remove it locally</string>
 
 </resources>

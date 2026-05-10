@@ -127,9 +127,9 @@ internal fun DeviceRoute(
     }
   }
 
-  // Set the title content to show device icon + name immediately, keep in sync.
+  // Set the title content to show device icon + name immediately, keep in sync on resume.
   val defaultDeviceTitle = stringResource(R.string.device_screen_title)
-  LaunchedEffect(deviceUiModel?.device, deviceName) {
+  LifecycleResumeEffect(deviceUiModel?.device, deviceName) {
     val device = deviceUiModel?.device
     val name =
         device?.name?.ifBlank { deviceName }?.ifBlank { defaultDeviceTitle }
@@ -147,6 +147,9 @@ internal fun DeviceRoute(
         }
         Text(text = name)
       }
+    }
+        onPauseOrDispose {
+        // Leave empty if no cleanup is needed
     }
   }
 

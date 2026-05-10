@@ -192,7 +192,10 @@ internal fun HomeRoute(
     }
   }
 
-  LaunchedEffect(Unit) { updateTitle("") }
+  LifecycleResumeEffect(Unit) {
+    updateTitle("")
+    onPauseOrDispose {}
+  }
 
   LifecycleResumeEffect(Unit) {
     Timber.d("HomeScreen: LifecycleResumeEffect")

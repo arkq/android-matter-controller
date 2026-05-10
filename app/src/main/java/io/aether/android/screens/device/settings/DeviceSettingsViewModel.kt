@@ -256,8 +256,16 @@ constructor(
     Timber.d("Removing device [$deviceId]")
     showMsgDialog(R.string.unlinking_device_title, R.string.unlinking_device_body, false)
     viewModelScope.launch {
-      val device = devicesRepository.getDevice(deviceId)
-      val nodeId = nodeIdFor(device)
+      val nodeId =
+          try {
+            nodeIdFor(devicesRepository.getDevice(deviceId))
+          } catch (e: Exception) {
+            Timber.w(e, "removeDevice: device not found, removing local entry")
+            dismissMsgDialog()
+            removeDeviceById(deviceId)
+            _deviceRemovalCompleted.value = true
+            return@launch
+          }
       try {
         chipClient.awaitUnpairDevice(nodeId)
       } catch (e: Exception) {
@@ -276,9 +284,30 @@ constructor(
   fun removeDeviceWithoutUnlink(deviceId: Long) {
     Timber.d("removeDeviceWithoutUnlink: [$deviceId]")
     viewModelScope.launch {
-      val nodeId = nodeIdFor(devicesRepository.getDevice(deviceId))
-      removeAllLogicalDevicesForNode(nodeId)
-      _deviceRemovalCompleted.value = true
+      try {
+        val nodeId =
+            try {
+              nodeIdFor(devicesRepository.getDevice(deviceId))
+            } catch (e: Exception) {
+              Timber.w(e, "removeDeviceWithoutUnlink: device not found, removing local entry")
+              removeDeviceById(deviceId)
+              _deviceRemovalCompleted.value = true
+              return@launch
+            }
+        removeAllLogicalDevicesForNode(nodeId)
+        _deviceRemovalCompleted.value = true
+      } catch (e: Exception) {
+        Timber.e(e, "removeDeviceWithoutUnlink failed")
+        showMsgDialog(R.string.device_remove_dialog_title, e.message)
+      }
+    }
+  }
+
+  private suspend fun removeDeviceById(deviceId: Long) {
+    try {
+      devicesRepository.removeDevice(deviceId)
+    } catch (e: Exception) {
+      Timber.w(e, "removeDeviceById: ignore missing local device [$deviceId]")
     }
   }
 
