@@ -1,0 +1,225 @@
+// SPDX-FileCopyrightText: 2026 The Authors
+// SPDX-License-Identifier: Apache-2.0
+
+package io.aether.android.screens.device.settings
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import io.aether.android.R
+import io.aether.android.chip.vendorLabel
+import io.aether.android.formatFabricId
+import io.aether.android.formatNodeId
+import io.aether.android.screens.common.LoadingIndicator
+
+/** Route composable for the Controllers screen. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FabricsRoute(
+    onBackClick: () -> Unit,
+    nodeId: Long,
+    viewModel: FabricsViewModel = hiltViewModel(),
+) {
+  LaunchedEffect(nodeId) { viewModel.loadFabrics(nodeId) }
+
+  val uiState by viewModel.uiState.collectAsState()
+
+  Scaffold(
+      topBar = {
+        TopAppBar(
+            title = { Text(stringResource(R.string.device_settings_admin_fabrics)) },
+            navigationIcon = {
+              IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.back_button),
+                )
+              }
+            },
+        )
+      },
+  ) { innerPadding ->
+    FabricsScreen(
+        innerPadding = innerPadding,
+        uiState = uiState,
+        onRemoveController = { fabricIndex -> viewModel.removeFabric(nodeId, fabricIndex) },
+    )
+  }
+}
+
+@Composable
+private fun FabricsScreen(
+    innerPadding: PaddingValues,
+    uiState: FabricsViewModel.UiState,
+    onRemoveController: (fabricIndex: Int) -> Unit,
+) {
+  Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+    when (uiState) {
+      is FabricsViewModel.UiState.Loading -> {
+        LoadingIndicator(stringResource(R.string.device_fabrics_loading))
+      }
+
+      is FabricsViewModel.UiState.Error -> {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+          Text(
+              text = stringResource(uiState.messageRes),
+              style = MaterialTheme.typography.bodyMedium,
+              color = MaterialTheme.colorScheme.error,
+              modifier = Modifier.padding(16.dp),
+          )
+        }
+      }
+
+      is FabricsViewModel.UiState.Loaded -> {
+        if (uiState.fabrics.isEmpty()) {
+          Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text(
+                text = stringResource(R.string.device_fabrics_empty),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+          }
+        } else {
+          LazyColumn(
+              modifier = Modifier.fillMaxSize(),
+              contentPadding = PaddingValues(dimensionResource(R.dimen.margin_normal)),
+              verticalArrangement = Arrangement.spacedBy(8.dp),
+          ) {
+            items(items = uiState.fabrics, key = { it.fabricIndex }) { fabric ->
+              FabricItem(
+                  fabric = fabric,
+                  onRemove = { onRemoveController(fabric.fabricIndex) },
+                  canRemove = !fabric.isCurrentFabric,
+              )
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@Composable
+private fun FabricItem(
+    fabric: ManagedFabric,
+    onRemove: () -> Unit,
+    canRemove: Boolean,
+) {
+  var showConfirmDialog by remember(fabric.fabricIndex) { mutableStateOf(false) }
+
+  if (showConfirmDialog && canRemove) {
+    AlertDialog(
+        title = { Text(stringResource(R.string.device_fabric_remove_dialog_title)) },
+        text = { Text(stringResource(R.string.device_fabric_remove_dialog_body)) },
+        confirmButton = {
+          Button(
+              onClick = {
+                showConfirmDialog = false
+                onRemove()
+              },
+              colors =
+                  ButtonDefaults.buttonColors(
+                      containerColor = MaterialTheme.colorScheme.error,
+                      contentColor = MaterialTheme.colorScheme.onError,
+                  ),
+          ) {
+            Text(stringResource(R.string.device_fabric_remove_dialog_yes))
+          }
+        },
+        dismissButton = {
+          TextButton(onClick = { showConfirmDialog = false }) {
+            Text(stringResource(R.string.cancel))
+          }
+        },
+        onDismissRequest = { showConfirmDialog = false },
+    )
+  }
+
+  Surface(
+      modifier = Modifier.fillMaxWidth(),
+      border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+      shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
+  ) {
+    Row(
+        modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content)),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+      Column(modifier = Modifier.weight(1f)) {
+        val label =
+            fabric.label?.takeIf { it.isNotBlank() }
+                ?: stringResource(R.string.device_fabrics_fabric_label, fabric.fabricIndex)
+        Text(text = label, style = MaterialTheme.typography.bodyLarge)
+        fabric.vendorId?.let { vendorId ->
+          Text(
+              text = stringResource(R.string.device_fabrics_fabric_vendor, vendorLabel(vendorId)),
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+        }
+        fabric.fabricId?.let { fabricId ->
+          Text(
+              text =
+                  stringResource(
+                      R.string.device_fabrics_fabric_fabric_id,
+                      formatFabricId(fabricId),
+                  ),
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+        }
+        fabric.nodeId?.let { nodeId ->
+          Text(
+              text = stringResource(R.string.device_fabrics_fabric_node_id, formatNodeId(nodeId)),
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+        }
+      }
+      if (canRemove) {
+        IconButton(onClick = { showConfirmDialog = true }) {
+          Icon(
+              imageVector = Icons.Outlined.Delete,
+              contentDescription = stringResource(R.string.device_fabrics_fabric_remove),
+              tint = MaterialTheme.colorScheme.error,
+          )
+        }
+      }
+    }
+  }
+}

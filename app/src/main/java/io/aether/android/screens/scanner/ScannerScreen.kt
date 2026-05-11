@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.commissionable
+package io.aether.android.screens.scanner
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -14,10 +14,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -36,22 +42,36 @@ import timber.log.Timber
  * Fragment used to display a list of nearby discovered Matter devices (discoverable over BLE,
  * Wi-Fi, or mDNS).
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun CommissionableRoute(
-    innerPadding: PaddingValues,
-    updateTitle: (title: String) -> Unit,
-    commissionableViewModel: CommissionableViewModel = hiltViewModel(),
+internal fun ScannerRoute(
+    onBackClick: () -> Unit,
+    scannerViewModel: ScannerViewModel = hiltViewModel(),
 ) {
-  val beacons by commissionableViewModel.beaconsLiveData.observeAsState()
+  val beacons by scannerViewModel.beaconsLiveData.observeAsState()
   val beaconsList = beacons?.toList() ?: emptyList()
 
-  LaunchedEffect(Unit) { updateTitle("Commissionable Devices") }
-
-  CommissionableScreen(innerPadding, beaconsList)
+  Scaffold(
+      topBar = {
+        TopAppBar(
+            title = { Text(stringResource(R.string.menu_item_scanner)) },
+            navigationIcon = {
+              IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.back_button),
+                )
+              }
+            },
+        )
+      },
+  ) { innerPadding ->
+    ScannerScreen(innerPadding, beaconsList)
+  }
 }
 
 @Composable
-private fun CommissionableScreen(innerPadding: PaddingValues, beaconsList: List<MatterBeacon>) {
+private fun ScannerScreen(innerPadding: PaddingValues, beaconsList: List<MatterBeacon>) {
   Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
     LazyColumn(modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content))) {
       this.items(beaconsList) { MatterBeaconItem(it) }
@@ -117,12 +137,12 @@ fun MatterBeaconItem(beacon: MatterBeacon) {
 
 @Preview
 @Composable
-private fun CommissionableScreenPreview() {
+private fun ScannerScreenPreview() {
   val beaconsList =
       listOf(
           MatterBeacon("Acme LightBulb", 1, 2, 3, Transport.Ble("address")),
           MatterBeacon("Acme Plug", 1, 2, 3, Transport.Mdns("address", 5480, false)),
           MatterBeacon("0AFE867DE", 1, 2, 3, Transport.Hotspot("onhub")),
       )
-  MaterialTheme { CommissionableScreen(PaddingValues(), beaconsList) }
+  MaterialTheme { ScannerScreen(PaddingValues(), beaconsList) }
 }

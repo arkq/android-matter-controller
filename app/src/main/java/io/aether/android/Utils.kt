@@ -16,8 +16,7 @@ import java.io.File
 import java.lang.Long.max
 import java.security.SecureRandom
 import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.math.abs
 import timber.log.Timber
 
@@ -179,6 +178,31 @@ fun isMultiAdminCommissioning(intent: Intent): Boolean {
   return intent.action == "com.google.android.gms.home.matter.ACTION_COMMISSION_DEVICE"
 }
 
+/** Formats a signed Kotlin Long as a full-width unsigned 64-bit hex value. */
+fun formatUint64Hex(value: Long): String {
+  return String.format(Locale.ROOT, "0x%016X", value)
+}
+
+/** Formats a Matter Vendor ID as unsigned 16-bit hex with leading zeroes. */
+fun formatVendorId(vendorId: Int): String {
+  return String.format(Locale.ROOT, "0x%04X", vendorId)
+}
+
+/** Formats a Matter Product ID as unsigned 16-bit hex with leading zeroes. */
+fun formatProductId(productId: Int): String {
+  return String.format(Locale.ROOT, "0x%04X", productId)
+}
+
+/** Formats a Matter Node ID as unsigned 64-bit hex with leading zeroes. */
+fun formatNodeId(nodeId: Long): String {
+  return formatUint64Hex(nodeId)
+}
+
+/** Formats a Matter Fabric ID as unsigned 64-bit hex with leading zeroes. */
+fun formatFabricId(fabricId: Long): String {
+  return formatUint64Hex(fabricId)
+}
+
 /**
  * The Matter APIs make use of SharedPreferences. Useful to print what they are when the app starts.
  */
@@ -210,15 +234,15 @@ fun getTimestampForNow(): Timestamp {
 }
 
 /**
- * Formats a com.google.protobuf.Timestamp according to the specified pattern. If _pattern is null,
- * then the default is "MM.dd.yy HH:mm:ss".
+ * Formats a com.google.protobuf.Timestamp using Android date/time formatters so user 12/24-hour
+ * settings are respected.
  */
-private const val TIMESTAMP_DEFAULT_FORMAT_PATTERN = "MM.dd.yy HH:mm:ss"
-
-fun formatTimestamp(timestamp: Timestamp, _pattern: String?): String {
-  val pattern = _pattern ?: TIMESTAMP_DEFAULT_FORMAT_PATTERN
-  val timestampFormatter = DateTimeFormatter.ofPattern(pattern).withZone(ZoneId.of("UTC"))
-  return timestampFormatter.format(Instant.ofEpochSecond(timestamp.seconds))
+fun formatTimestamp(context: Context, timestamp: Timestamp): String {
+  val instant = Instant.ofEpochSecond(timestamp.seconds)
+  val date = java.util.Date.from(instant)
+  val dateFormatter = android.text.format.DateFormat.getMediumDateFormat(context)
+  val timeFormatter = android.text.format.DateFormat.getTimeFormat(context)
+  return "${dateFormatter.format(date)} ${timeFormatter.format(date)}"
 }
 
 /**

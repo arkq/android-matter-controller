@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Google LLC
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.commissionable
+package io.aether.android.screens.scanner
 
 import kotlinx.coroutines.flow.Flow
 

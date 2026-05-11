@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: 2023 Google LLC
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.commissionable.mdns
+package io.aether.android.screens.scanner.mdns
 
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
-import io.aether.android.screens.commissionable.MatterBeaconProducer
+import io.aether.android.screens.scanner.MatterBeaconProducer
 
 @Module
 @InstallIn(SingletonComponent::class)

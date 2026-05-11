@@ -7,12 +7,20 @@ package io.aether.android.chip
 import chip.devicecontroller.ChipClusters
 import chip.devicecontroller.ChipClusters.BasicInformationCluster
 import chip.devicecontroller.ChipStructs
+import chip.devicecontroller.ReportCallback
+import chip.devicecontroller.model.ChipAttributePath
+import chip.devicecontroller.model.ChipEventPath
+import chip.devicecontroller.model.NodeState
 import io.aether.android.CommissioningWindowStatus
+import io.aether.android.formatNodeId
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import org.json.JSONArray
+import org.json.JSONObject
 import timber.log.Timber
 
 /**
@@ -28,6 +36,25 @@ data class DeviceMatterInfo(
 )
 
 /** Singleton to facilitate access to Clusters functionality. */
+// Timed invoke timeout for commands like removeFabric that require a short grace period.
+private const val TIMED_INVOKE_TIMEOUT_MS = 500
+private const val ROOT_ENDPOINT = 0L
+private const val OPERATIONAL_CREDENTIALS_CLUSTER_ID = 0x003EL
+private const val FABRICS_ATTRIBUTE_ID = 0x0001L
+private const val CURRENT_FABRIC_INDEX_ATTRIBUTE_ID = 0x0005L
+private const val BASIC_INFORMATION_CLUSTER_ID = 0x0028L
+private const val BASIC_INFORMATION_VENDOR_NAME_ATTRIBUTE_ID = 0x0001L
+private const val BASIC_INFORMATION_VENDOR_ID_ATTRIBUTE_ID = 0x0002L
+private const val BASIC_INFORMATION_HARDWARE_VERSION_STRING_ATTRIBUTE_ID = 0x0008L
+private const val BASIC_INFORMATION_SOFTWARE_VERSION_STRING_ATTRIBUTE_ID = 0x000AL
+
+data class BasicInformationAttributes(
+    val vendorName: String? = null,
+    val vendorId: Int? = null,
+    val hardwareVersion: String? = null,
+    val softwareVersion: String? = null,
+)
+
 @Singleton
 class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
@@ -795,7 +822,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
             }
 
             override fun onError(ex: Exception) {
-              Timber.e("Failed to close window. Cause: ${ex.localizedMessage}")
+              Timber.e(ex, "Failed to close window")
             }
           }
       ChipClusters.AdministratorCommissioningCluster(devicePtr, 0)
@@ -834,6 +861,426 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
       ChipClusters.AdministratorCommissioningCluster(devicePtr, 0)
           .readWindowStatusAttribute(callback)
+    }
+  }
+
+  /**
+   * Reads vendor/manufacturer fields and version strings from Basic Information in a single read
+   * request limited to the required attributes.
+   */
+  suspend fun readBasicInformationAttributes(nodeId: Long): BasicInformationAttributes? {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e(e, "Can't get connectedDevicePointer for nodeId: ${formatNodeId(nodeId)}")
+          return null
+        }
+
+    return try {
+      suspendCoroutine { continuation ->
+        val completed = AtomicBoolean(false)
+        val basicInfoPaths =
+            listOf(
+                ChipAttributePath.newInstance(
+                    ROOT_ENDPOINT,
+                    BASIC_INFORMATION_CLUSTER_ID,
+                    BASIC_INFORMATION_VENDOR_NAME_ATTRIBUTE_ID,
+                ),
+                ChipAttributePath.newInstance(
+                    ROOT_ENDPOINT,
+                    BASIC_INFORMATION_CLUSTER_ID,
+                    BASIC_INFORMATION_VENDOR_ID_ATTRIBUTE_ID,
+                ),
+                ChipAttributePath.newInstance(
+                    ROOT_ENDPOINT,
+                    BASIC_INFORMATION_CLUSTER_ID,
+                    BASIC_INFORMATION_HARDWARE_VERSION_STRING_ATTRIBUTE_ID,
+                ),
+                ChipAttributePath.newInstance(
+                    ROOT_ENDPOINT,
+                    BASIC_INFORMATION_CLUSTER_ID,
+                    BASIC_INFORMATION_SOFTWARE_VERSION_STRING_ATTRIBUTE_ID,
+                ),
+            )
+
+        chipClient.chipDeviceController.readPath(
+            object : ReportCallback {
+              override fun onError(
+                  attributePath: ChipAttributePath?,
+                  eventPath: ChipEventPath?,
+                  ex: Exception,
+              ) {
+                if (completed.compareAndSet(false, true)) {
+                  continuation.resumeWithException(ex)
+                }
+              }
+
+              override fun onReport(nodeState: NodeState) {
+                if (completed.compareAndSet(false, true)) {
+                  continuation.resume(extractBasicInformationAttributes(nodeState))
+                }
+              }
+            },
+            connectedDevicePtr,
+            basicInfoPaths,
+            emptyList(),
+            false,
+        )
+      }
+    } catch (e: Exception) {
+      Timber.e(e, "readBasicInformationAttributes failed")
+      null
+    }
+  }
+
+  private fun extractBasicInformationAttributes(nodeState: NodeState): BasicInformationAttributes {
+    val clusterState =
+        nodeState
+            .getEndpointState(ROOT_ENDPOINT.toInt())
+            ?.getClusterState(BASIC_INFORMATION_CLUSTER_ID) ?: return BasicInformationAttributes()
+
+    val vendorName =
+        clusterState.getAttributeState(BASIC_INFORMATION_VENDOR_NAME_ATTRIBUTE_ID)?.value.asString()
+    val vendorId =
+        clusterState.getAttributeState(BASIC_INFORMATION_VENDOR_ID_ATTRIBUTE_ID)?.value.asInt()
+    val hardwareVersion =
+        clusterState
+            .getAttributeState(BASIC_INFORMATION_HARDWARE_VERSION_STRING_ATTRIBUTE_ID)
+            ?.value
+            .asString()
+    val softwareVersion =
+        clusterState
+            .getAttributeState(BASIC_INFORMATION_SOFTWARE_VERSION_STRING_ATTRIBUTE_ID)
+            ?.value
+            .asString()
+
+    return BasicInformationAttributes(
+        vendorName = vendorName,
+        vendorId = vendorId,
+        hardwareVersion = hardwareVersion,
+        softwareVersion = softwareVersion,
+    )
+  }
+
+  /**
+   * Reads the list of fabrics (controllers) from the Operational Credentials Cluster.
+   *
+   * @param nodeId the Matter node ID
+   * @return list of fabric descriptor structs, or null on error
+   */
+  suspend fun readFabricsAttribute(
+      nodeId: Long
+  ): List<ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct>? {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e(e, "Can't get connectedDevicePointer for nodeId: ${formatNodeId(nodeId)}")
+          return null
+        }
+    return try {
+      suspendCoroutine { continuation ->
+        val completed = AtomicBoolean(false)
+        chipClient.chipDeviceController.readPath(
+            object : ReportCallback {
+              override fun onError(
+                  attributePath: ChipAttributePath?,
+                  eventPath: ChipEventPath?,
+                  ex: Exception,
+              ) {
+                if (completed.compareAndSet(false, true)) {
+                  continuation.resumeWithException(ex)
+                }
+              }
+
+              override fun onReport(nodeState: NodeState) {
+                if (completed.compareAndSet(false, true)) {
+                  continuation.resume(extractFabricsFromNodeState(nodeState))
+                }
+              }
+            },
+            connectedDevicePtr,
+            listOf(
+                ChipAttributePath.newInstance(
+                    ROOT_ENDPOINT,
+                    OPERATIONAL_CREDENTIALS_CLUSTER_ID,
+                    FABRICS_ATTRIBUTE_ID,
+                )
+            ),
+            emptyList(),
+            false,
+        )
+      }
+    } catch (e: Exception) {
+      Timber.e(e, "readFabricsAttribute failed")
+      null
+    }
+  }
+
+  /**
+   * Reads the current accessing fabric index from the Operational Credentials cluster.
+   *
+   * @return fabric index, or null when unavailable
+   */
+  suspend fun readCurrentFabricIndexAttribute(nodeId: Long): Int? {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e("readCurrentFabricIndexAttribute: can't get connectedDevicePointer")
+          return null
+        }
+
+    return try {
+      suspendCoroutine { continuation ->
+        val completed = AtomicBoolean(false)
+        chipClient.chipDeviceController.readPath(
+            object : ReportCallback {
+              override fun onError(
+                  attributePath: ChipAttributePath?,
+                  eventPath: ChipEventPath?,
+                  ex: Exception,
+              ) {
+                if (completed.compareAndSet(false, true)) {
+                  continuation.resumeWithException(ex)
+                }
+              }
+
+              override fun onReport(nodeState: NodeState) {
+                if (completed.compareAndSet(false, true)) {
+                  val currentFabricIndex =
+                      nodeState
+                          .getEndpointState(ROOT_ENDPOINT.toInt())
+                          ?.getClusterState(OPERATIONAL_CREDENTIALS_CLUSTER_ID)
+                          ?.getAttributeState(CURRENT_FABRIC_INDEX_ATTRIBUTE_ID)
+                          ?.value
+                          .asInt()
+                  continuation.resume(currentFabricIndex)
+                }
+              }
+            },
+            connectedDevicePtr,
+            listOf(
+                ChipAttributePath.newInstance(
+                    ROOT_ENDPOINT,
+                    OPERATIONAL_CREDENTIALS_CLUSTER_ID,
+                    CURRENT_FABRIC_INDEX_ATTRIBUTE_ID,
+                )
+            ),
+            emptyList(),
+            false,
+        )
+      }
+    } catch (e: Exception) {
+      Timber.e(e, "readCurrentFabricIndexAttribute failed: nodeId [$nodeId]")
+      null
+    }
+  }
+
+  private fun extractFabricsFromNodeState(
+      nodeState: NodeState
+  ): List<ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct> {
+    val attributeState =
+        nodeState
+            .getEndpointState(ROOT_ENDPOINT.toInt())
+            ?.getClusterState(OPERATIONAL_CREDENTIALS_CLUSTER_ID)
+            ?.getAttributeState(FABRICS_ATTRIBUTE_ID) ?: return emptyList()
+
+    val value = attributeState.value
+    if (value is List<*>) {
+      val directValues =
+          value.filterIsInstance<ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct>()
+      if (directValues.isNotEmpty()) {
+        return directValues
+      }
+
+      val mappedValues = value.mapNotNull { decodeFabricDescriptor(it) }
+      if (mappedValues.isNotEmpty()) {
+        return mappedValues
+      }
+    }
+
+    val json = attributeState.json
+    return when {
+      json.has("value") -> decodeFabricDescriptorsFromJsonValue(json.get("value"))
+      json.has("Value") -> decodeFabricDescriptorsFromJsonValue(json.get("Value"))
+      else -> emptyList()
+    }
+  }
+
+  private fun decodeFabricDescriptorsFromJsonValue(
+      value: Any?
+  ): List<ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct> =
+      when (value) {
+        is JSONArray ->
+            List(value.length()) { index -> decodeFabricDescriptor(value.opt(index)) }
+                .filterNotNull()
+        is List<*> -> value.mapNotNull { decodeFabricDescriptor(it) }
+        else -> emptyList()
+      }
+
+  private fun decodeFabricDescriptor(
+      value: Any?
+  ): ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct? =
+      when (value) {
+        is ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct -> value
+        is JSONObject -> decodeFabricDescriptorFromJson(value)
+        is Map<*, *> -> decodeFabricDescriptorFromMap(value)
+        else -> null
+      }
+
+  private fun decodeFabricDescriptorFromJson(
+      json: JSONObject
+  ): ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct? {
+    val vendorId = json.optIntOrNull("vendorID") ?: json.optIntOrNull("vendorId") ?: return null
+    val fabricId = json.optLongOrNull("fabricID") ?: json.optLongOrNull("fabricId") ?: return null
+    val nodeId = json.optLongOrNull("nodeID") ?: json.optLongOrNull("nodeId") ?: return null
+    val fabricIndex =
+        json.optIntOrNull("fabricIndex") ?: json.optIntOrNull("FabricIndex") ?: return null
+    val label = json.optString("label", json.optString("Label", ""))
+    return ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct(
+        byteArrayOf(),
+        vendorId,
+        fabricId,
+        nodeId,
+        label,
+        fabricIndex,
+    )
+  }
+
+  private fun decodeFabricDescriptorFromMap(
+      value: Map<*, *>
+  ): ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct? {
+    val vendorId = value.intValue("vendorID") ?: value.intValue("vendorId") ?: return null
+    val fabricId = value.longValue("fabricID") ?: value.longValue("fabricId") ?: return null
+    val nodeId = value.longValue("nodeID") ?: value.longValue("nodeId") ?: return null
+    val fabricIndex = value.intValue("fabricIndex") ?: return null
+    val label = value["label"]?.toString() ?: ""
+    return ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct(
+        byteArrayOf(),
+        vendorId,
+        fabricId,
+        nodeId,
+        label,
+        fabricIndex,
+    )
+  }
+
+  private fun JSONObject.optIntOrNull(key: String): Int? =
+      if (!has(key) || isNull(key)) null else opt(key).asInt()
+
+  private fun JSONObject.optLongOrNull(key: String): Long? =
+      if (!has(key) || isNull(key)) null else opt(key).asLong()
+
+  private fun Map<*, *>.intValue(key: String): Int? = this[key].asInt()
+
+  private fun Map<*, *>.longValue(key: String): Long? = this[key].asLong()
+
+  private fun Any?.asInt(): Int? =
+      when (this) {
+        is Number -> toInt()
+        is String -> toIntOrNull() ?: removePrefix("0x").toIntOrNull(16)
+        else -> null
+      }
+
+  private fun Any?.asLong(): Long? =
+      when (this) {
+        is Number -> toLong()
+        is String -> toLongOrNull() ?: removePrefix("0x").toLongOrNull(16)
+        else -> null
+      }
+
+  private fun Any?.asString(): String? =
+      when (this) {
+        is String -> this
+        else -> null
+      }
+
+  /**
+   * Reads the list of NOCs from the Operational Credentials Cluster.
+   *
+   * @param nodeId the Matter node ID
+   * @return list of NOC structs, or null on error
+   */
+  suspend fun readNOCsAttribute(
+      nodeId: Long
+  ): List<ChipStructs.OperationalCredentialsClusterNOCStruct>? {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e(e, "Can't get connectedDevicePointer for nodeId: ${formatNodeId(nodeId)}")
+          return null
+        }
+    return try {
+      suspendCoroutine { continuation ->
+        ChipClusters.OperationalCredentialsCluster(connectedDevicePtr, 0)
+            .readNOCsAttribute(
+                object : ChipClusters.OperationalCredentialsCluster.NOCsAttributeCallback {
+                  override fun onSuccess(
+                      values: List<ChipStructs.OperationalCredentialsClusterNOCStruct>
+                  ) {
+                    continuation.resume(values)
+                  }
+
+                  override fun onError(ex: Exception) {
+                    continuation.resumeWithException(ex)
+                  }
+                }
+            )
+      }
+    } catch (e: Exception) {
+      Timber.e(e, "readNOCsAttribute failed")
+      null
+    }
+  }
+
+  /**
+   * Removes a fabric (controller) from the device.
+   *
+   * @param nodeId the Matter node ID
+   * @param fabricIndex the index of the fabric to remove
+   */
+  suspend fun removeFabric(nodeId: Long, fabricIndex: Int) {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e(e, "Can't get connectedDevicePointer for nodeId: ${formatNodeId(nodeId)}")
+          throw IllegalStateException("Failed to get connected device pointer")
+        }
+    return suspendCoroutine { continuation ->
+      ChipClusters.OperationalCredentialsCluster(connectedDevicePtr, 0)
+          .removeFabric(
+              object : ChipClusters.OperationalCredentialsCluster.NOCResponseCallback {
+                override fun onSuccess(
+                    statusCode: Int,
+                    fabricIndex: java.util.Optional<Int>,
+                    debugText: java.util.Optional<String>,
+                ) {
+                  if (statusCode == 0) {
+                    Timber.d("removeFabric succeeded: statusCode=$statusCode")
+                    continuation.resume(Unit)
+                  } else {
+                    val debugMessage = debugText.orElse("")
+                    val error =
+                        IllegalStateException(
+                            "removeFabric returned non-success statusCode=$statusCode debugText=$debugMessage"
+                        )
+                    Timber.e(error.message)
+                    continuation.resumeWithException(error)
+                  }
+                }
+
+                override fun onError(ex: Exception) {
+                  Timber.e(ex, "removeFabric failed")
+                  continuation.resumeWithException(ex)
+                }
+              },
+              fabricIndex,
+              TIMED_INVOKE_TIMEOUT_MS,
+          )
     }
   }
 

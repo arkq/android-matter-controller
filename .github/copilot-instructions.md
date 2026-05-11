@@ -25,16 +25,7 @@ SPDX-License-Identifier: Apache-2.0
 - Never hard-code user-visible strings directly in Kotlin/Java source or layout
   XML.
 
-### 3. Icons Must Use Material Icons
-
-- Always use icons from `androidx.compose.material.icons` (e.g. `Icons.Filled.*`,
-  `Icons.Outlined.*`, `Icons.AutoMirrored.*`) rather than bundling custom
-  drawable XML.
-
-- Add a custom drawable only when no suitable icon exists anywhere in the
-  Material Icons library.
-
-### 4. No Monster Files and God Classes
+### 3. No Monster Files and God Classes
 
 - Each file must contain a **single, well-defined responsibility**. No
   monster files that bundle unrelated composables, classes, or logic.
@@ -51,7 +42,7 @@ SPDX-License-Identifier: Apache-2.0
 - If a file grows beyond a single responsibility, split it before adding more
   code.
 
-### 5. Remove Orphaned Files
+### 4. Remove Orphaned Files
 
 - After making changes, check whether any files, classes, resources, or imports
   have become unused as a direct result of your changes.
@@ -59,7 +50,7 @@ SPDX-License-Identifier: Apache-2.0
 - Remove orphans that **your changes** created. Do not remove preexisting dead
   code unless that is the explicit goal of the task.
 
-### 6. Copyright Headers
+### 5. Copyright Headers
 
 - Every **new file** must include an SPDX copyright header for the current
   year and "The Authors":
@@ -78,6 +69,30 @@ SPDX-License-Identifier: Apache-2.0
   imports or basic syntax remain, provided all original logic has been replaced.
 
 - Do **not** modify copyright headers in files you are not otherwise changing.
+
+## User Interface Rules
+
+### 1. Icons Must Use Material Icons
+
+- Always use icons from `androidx.compose.material.icons` (e.g. `Icons.Filled.*`,
+  `Icons.Outlined.*`, `Icons.AutoMirrored.*`) rather than bundling custom
+  drawable XML.
+- Add a custom drawable only when no suitable icon exists anywhere in the
+  Core Material Icons library.
+
+### 2. Unified Loading Indicator
+
+- When a screen is loading primary content, use the `LoadingIndicator` common
+  composable to show a unified loading state. The text should be a short status
+  message fetched from `res/values/strings.xml`.
+- Loading indicator should be displayed only when showing the screen for the
+  first time or when explicitly refreshing content. Do not show the loading
+  indicator when going back or when screen orientation changes. In those cases,
+  the previously loaded content should be displayed and the state should be
+  refreshed in the background with in-place updates.
+- If there are multiple independent loading states on the same screen, gate
+  them behind a single unified loading state. Show the screen content only when
+  all loading states are complete - do not show partial content.
 
 ## Version Control System Rules
 

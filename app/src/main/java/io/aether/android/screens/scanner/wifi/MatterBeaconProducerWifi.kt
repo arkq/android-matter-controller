@@ -1,16 +1,16 @@
 // SPDX-FileCopyrightText: 2023 Google LLC
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.commissionable.wifi
+package io.aether.android.screens.scanner.wifi
 
 import android.annotation.SuppressLint
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
 import android.os.Build
-import io.aether.android.screens.commissionable.MatterBeacon
-import io.aether.android.screens.commissionable.MatterBeaconInject
-import io.aether.android.screens.commissionable.MatterBeaconProducer
-import io.aether.android.screens.commissionable.Transport
+import io.aether.android.screens.scanner.MatterBeacon
+import io.aether.android.screens.scanner.MatterBeaconInject
+import io.aether.android.screens.scanner.MatterBeaconProducer
+import io.aether.android.screens.scanner.Transport
 import javax.inject.Inject
 import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.delay
@@ -25,8 +25,8 @@ private val MATTER_SSID_PATTERN =
     """MATTER-(\p{XDigit}{3})-(\p{XDigit}{4})-(\p{XDigit}{4})""".toRegex()
 
 /**
- * [MatterBeaconProducer] that looks for Wi-Fi Soft AP advertisements matching a Matter
- * commissionable device.
+ * [MatterBeaconProducer] that looks for Wi-Fi Soft AP advertisements matching a Matter scanner
+ * device.
  *
  * See these links for important details on Wi-Fi scanning.
  * - https://developer.android.com/guide/topics/connectivity/wifi-scan

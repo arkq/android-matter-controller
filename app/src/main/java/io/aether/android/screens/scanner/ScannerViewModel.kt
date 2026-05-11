@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2024 Google LLC
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.commissionable
+package io.aether.android.screens.scanner
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.stateIn
  * [MatterBeaconProducer]s in the dependency injection graph.
  */
 @HiltViewModel
-class CommissionableViewModel
+class ScannerViewModel
 @Inject
 constructor(producers: Set<@JvmSuppressWildcards MatterBeaconProducer>) : ViewModel() {
   /**

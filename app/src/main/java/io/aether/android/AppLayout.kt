@@ -9,38 +9,28 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,34 +50,13 @@ import kotlinx.coroutines.launch
 import me.zhanghai.compose.preference.rememberPreferenceState
 import timber.log.Timber
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppLayout(navController: NavHostController) {
-  var topAppBarTitle by rememberSaveable { mutableStateOf("") }
-
-  val updateTopAppBarTitle: (title: String) -> Unit = remember {
-    { title -> topAppBarTitle = title }
-  }
-
-  var topAppBarActions: @Composable RowScope.() -> Unit by remember {
-    mutableStateOf<@Composable RowScope.() -> Unit>({})
-  }
-
-  val updateTopAppBarActions: (@Composable RowScope.() -> Unit) -> Unit = remember {
-    { actions -> topAppBarActions = actions }
-  }
-
   val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
   val scope = rememberCoroutineScope()
 
   val navBackStackEntry by navController.currentBackStackEntryAsState()
   val currentRoute = navBackStackEntry?.destination?.route
-  val isHomeScreen = currentRoute == DEST_HOME || currentRoute == null
-
-  // Clear TopAppBar actions on every route change so screen-specific actions
-  // (e.g. the edit icon on the device screen) disappear at the same time as the
-  // title, not only when the old screen's composable leaves composition.
-  LaunchedEffect(currentRoute) { topAppBarActions = {} }
 
   val developerUtilitiesViewModel: DeveloperUtilitiesViewModel = hiltViewModel()
   val msgDialogInfo by developerUtilitiesViewModel.msgDialogInfo.collectAsState()
@@ -115,7 +84,7 @@ fun AppLayout(navController: NavHostController) {
                   "the \"Commissionable Devices\" feature is not available.",
           )
         } else {
-          navController.navigate(DEST_COMMISSIONABLE_DEVICES)
+          navController.navigate(DEST_SCANNER)
         }
       }
 
@@ -134,7 +103,7 @@ fun AppLayout(navController: NavHostController) {
       } else {
         @Suppress("DEPRECATION") val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         if (bluetoothAdapter.isEnabled) {
-          navController.navigate(DEST_COMMISSIONABLE_DEVICES)
+          navController.navigate(DEST_SCANNER)
         } else {
           developerUtilitiesViewModel.showMsgDialog(
               "Bluetooth is not enabled",
@@ -179,7 +148,7 @@ fun AppLayout(navController: NavHostController) {
                 )
               },
               label = { Text(stringResource(R.string.menu_item_scanner)) },
-              selected = currentRoute == DEST_COMMISSIONABLE_DEVICES,
+              selected = currentRoute == DEST_SCANNER,
               onClick = onCommissionableDevicesClick,
               modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
           )
@@ -247,33 +216,7 @@ fun AppLayout(navController: NavHostController) {
         }
       },
   ) {
-    Scaffold(
-        topBar = {
-          TopAppBar(
-              title = { Text(text = topAppBarTitle) },
-              navigationIcon = {
-                if (isHomeScreen) {
-                  IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                    Icon(
-                        Icons.Filled.Menu,
-                        contentDescription = stringResource(R.string.menu_button),
-                    )
-                  }
-                } else {
-                  IconButton(onClick = { navController.navigateUp() }) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.back_button),
-                    )
-                  }
-                }
-              },
-              actions = topAppBarActions,
-          )
-        },
-    ) { innerPadding ->
-      AppNavigation(navController, innerPadding, updateTopAppBarTitle, updateTopAppBarActions)
-    }
+    AppNavigation(navController, onMenuClick = { scope.launch { drawerState.open() } })
   }
 
   if (showAboutDialog) {

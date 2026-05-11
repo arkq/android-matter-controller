@@ -3,41 +3,16 @@
 
 package io.aether.android.screens.device.action
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import io.aether.android.R
 import timber.log.Timber
-
-@Composable
-internal fun RemoveDeviceSection(onClick: () -> Unit) {
-  Button(
-      onClick = onClick,
-      modifier = Modifier.fillMaxWidth(),
-      colors =
-          ButtonDefaults.buttonColors(
-              containerColor = MaterialTheme.colorScheme.error,
-              contentColor = MaterialTheme.colorScheme.onError,
-          ),
-  ) {
-    Icon(Icons.Outlined.Delete, contentDescription = null)
-    Spacer(modifier = Modifier.width(8.dp))
-    Text(stringResource(R.string.remove_device).uppercase())
-  }
-}
 
 @Composable
 internal fun RemoveDeviceAlertDialog(
@@ -50,16 +25,25 @@ internal fun RemoveDeviceAlertDialog(
   }
 
   AlertDialog(
-      title = { Text(text = stringResource(R.string.remove_device_dialog_title)) },
-      text = { Text(stringResource(R.string.remove_device_dialog_body)) },
+      title = { Text(text = stringResource(R.string.device_remove_dialog_title)) },
+      text = { Text(stringResource(R.string.device_remove_dialog_body)) },
       confirmButton = {
-        Button(onClick = { onRemoveDeviceOutcome(true) }) {
-          Text(stringResource(R.string.yes_remove_it))
+        Button(
+            onClick = { onRemoveDeviceOutcome(true) },
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError,
+                ),
+        ) {
+          Text(stringResource(R.string.device_remove_dialog_yes))
         }
       },
       onDismissRequest = {},
       dismissButton = {
-        Button(onClick = { onRemoveDeviceOutcome(false) }) { Text(stringResource(R.string.cancel)) }
+        TextButton(onClick = { onRemoveDeviceOutcome(false) }) {
+          Text(stringResource(R.string.cancel))
+        }
       },
   )
 }
@@ -74,24 +58,25 @@ internal fun ConfirmDeviceRemovalAlertDialog(
   }
 
   AlertDialog(
-      title = { Text(text = stringResource(R.string.confirm_remove_device_dialog_title)) },
-      text = { Text(stringResource(R.string.confirm_remove_device_dialog_body)) },
+      title = { Text(text = stringResource(R.string.device_remove_failed_confirm_dialog_title)) },
+      text = { Text(stringResource(R.string.device_remove_failed_confirm_dialog_body)) },
       confirmButton = {
-        Button(onClick = { onConfirmDeviceRemovalOutcome(true) }) {
-          Text(stringResource(R.string.yes_remove_it))
+        Button(
+            onClick = { onConfirmDeviceRemovalOutcome(true) },
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError,
+                ),
+        ) {
+          Text(stringResource(R.string.device_remove_failed_confirm_dialog_yes))
         }
       },
       onDismissRequest = {},
       dismissButton = {
-        Button(onClick = { onConfirmDeviceRemovalOutcome(false) }) {
+        TextButton(onClick = { onConfirmDeviceRemovalOutcome(false) }) {
           Text(stringResource(R.string.cancel))
         }
       },
   )
-}
-
-@Preview(widthDp = 300)
-@Composable
-private fun RemoveDeviceSectionPreview() {
-  MaterialTheme { RemoveDeviceSection({ Timber.d("preview: button clicked") }) }
 }

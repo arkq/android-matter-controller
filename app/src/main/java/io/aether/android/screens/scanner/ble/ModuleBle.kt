@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Google LLC
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.commissionable.ble
+package io.aether.android.screens.scanner.ble
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.BluetoothLeScanner
@@ -14,8 +14,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
-import io.aether.android.screens.commissionable.MatterBeaconInject
-import io.aether.android.screens.commissionable.MatterBeaconProducer
+import io.aether.android.screens.scanner.MatterBeaconInject
+import io.aether.android.screens.scanner.MatterBeaconProducer
 
 /**
  * If this is instantiated, then all permissions have been cleared and Bluetooth is enabled. See

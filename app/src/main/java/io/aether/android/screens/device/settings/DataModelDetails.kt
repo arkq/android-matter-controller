@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.inspect
+package io.aether.android.screens.device.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
@@ -17,12 +17,12 @@ import io.aether.android.chip.MatterConstants
 fun EndpointDetails(endpointInfo: DeviceMatterInfo, modifier: Modifier = Modifier) {
   Column(modifier = modifier) {
     Text(
-        text = stringResource(R.string.inspect_device_types),
+        text = stringResource(R.string.device_data_model_device_types),
         style = MaterialTheme.typography.titleSmall,
     )
     if (endpointInfo.types.isEmpty()) {
       Text(
-          text = stringResource(R.string.inspect_none),
+          text = stringResource(R.string.device_data_model_none),
           style = MaterialTheme.typography.bodySmall,
       )
     } else {
@@ -31,20 +31,20 @@ fun EndpointDetails(endpointInfo: DeviceMatterInfo, modifier: Modifier = Modifie
         val typeString =
             MatterConstants.DeviceTypesMap.getOrDefault(
                 deviceType,
-                stringResource(R.string.inspect_unknown),
+                stringResource(R.string.device_data_model_unknown),
             )
         Text(text = "[${hex}] $typeString", style = MaterialTheme.typography.bodySmall)
       }
     }
 
     Text(
-        text = stringResource(R.string.inspect_server_clusters),
+        text = stringResource(R.string.device_data_model_server_clusters),
         style = MaterialTheme.typography.titleSmall,
     )
     ClusterList(endpointInfo.serverClusters)
 
     Text(
-        text = stringResource(R.string.inspect_client_clusters),
+        text = stringResource(R.string.device_data_model_client_clusters),
         style = MaterialTheme.typography.titleSmall,
     )
     ClusterList(endpointInfo.clientClusters)
@@ -55,7 +55,7 @@ fun EndpointDetails(endpointInfo: DeviceMatterInfo, modifier: Modifier = Modifie
 private fun ClusterList(clusters: List<Long>) {
   if (clusters.isEmpty()) {
     Text(
-        text = stringResource(R.string.inspect_none),
+        text = stringResource(R.string.device_data_model_none),
         style = MaterialTheme.typography.bodySmall,
     )
     return
@@ -65,7 +65,7 @@ private fun ClusterList(clusters: List<Long>) {
     val clusterName =
         MatterConstants.ClustersMap.getOrDefault(
             cluster,
-            stringResource(R.string.inspect_unknown),
+            stringResource(R.string.device_data_model_unknown),
         )
     Text(text = "[${hex}] $clusterName", style = MaterialTheme.typography.bodySmall)
   }

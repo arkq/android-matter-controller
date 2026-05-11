@@ -1,0 +1,104 @@
+// SPDX-FileCopyrightText: 2026 The Authors
+// SPDX-License-Identifier: Apache-2.0
+
+package io.aether.android.screens.device.settings
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.unit.dp
+import io.aether.android.R
+
+@Composable
+internal fun SettingsSection(title: String, content: @Composable () -> Unit) {
+  Surface(
+      modifier = Modifier.fillMaxWidth(),
+      border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+      shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
+  ) {
+    Column(modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal))) {
+      Text(
+          text = title,
+          style = MaterialTheme.typography.titleSmall,
+          color = MaterialTheme.colorScheme.primary,
+          modifier = Modifier.padding(bottom = 8.dp),
+      )
+      content()
+    }
+  }
+}
+
+@Composable
+internal fun SettingsInfoRow(label: String, value: String) {
+  Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+    Text(
+        text = label,
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    Text(text = value, style = MaterialTheme.typography.bodyMedium)
+  }
+}
+
+@Composable
+internal fun SettingsClickableRow(label: String, value: String, onClick: () -> Unit) {
+  Row(
+      modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 4.dp),
+      verticalAlignment = Alignment.CenterVertically,
+  ) {
+    Column(modifier = Modifier.weight(1f)) {
+      Text(
+          text = label,
+          style = MaterialTheme.typography.labelSmall,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+      )
+      Text(text = value, style = MaterialTheme.typography.bodyMedium)
+    }
+  }
+}
+
+@Composable
+internal fun SettingsActionRow(
+    icon: ImageVector,
+    label: String,
+    subtitle: String,
+    onClick: () -> Unit,
+    iconTint: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    labelColor: Color = MaterialTheme.colorScheme.onSurface,
+    subtitleColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+) {
+  Row(
+      modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 8.dp),
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.spacedBy(12.dp),
+  ) {
+    Icon(
+        imageVector = icon,
+        contentDescription = null,
+        tint = iconTint,
+    )
+    Column(modifier = Modifier.weight(1f)) {
+      Text(text = label, style = MaterialTheme.typography.bodyMedium, color = labelColor)
+      Text(
+          text = subtitle,
+          style = MaterialTheme.typography.bodySmall,
+          color = subtitleColor,
+      )
+    }
+  }
+}

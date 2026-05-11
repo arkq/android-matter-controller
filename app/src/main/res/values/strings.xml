@@ -5,7 +5,10 @@ SPDX-FileCopyrightText: 2026 The Authors
 SPDX-License-Identifier: Apache-2.0
 -->
 <resources>
-    <string name="app_name">Æther</string>
+    <string name="app_name" translatable="false">Æther</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
 
     <!-- Menu  -->
     <string name="menu_item_scanner">Matter Device Scanner</string>
@@ -37,17 +40,8 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_type_light_switch">light switch</string>
     <string name="device_type_unrecognized">unrecognized</string>
 
-    <!-- Share Device -->
-    <string name="share_device">Share</string>
-    <string name="share_device_dialog_title">Share this device?</string>
-    <string name="share_device_info" translatable="false">Added on %1$s \nID: %2$s  \nVendor: %3$s (VID:%4$s) \nProduct: %5$s (PID:%6$s)  \nDevice type: %7$s</string>
-
-    <string name="cancel">Cancel</string>
     <string name="empty_dashboard_title">No devices yet</string>
     <string name="empty_dashboard_subtitle">Start by adding your first Matter device</string>
-    <string name="yes_remove_it">Yes, remove it</string>
-    <string name="yes_share_it">Yes, share it</string>
-    <string name="inspect">Inspect</string>
     <string name="brightness">Brightness</string>
     <string name="color_temperature">Color Temperature</string>
 
@@ -56,30 +50,15 @@ SPDX-License-Identifier: Apache-2.0
     <string name="rename_device">Rename device</string>
     <string name="rename_device_label">Device name</string>
     <string name="set_device_name_failed">Failed to set device name</string>
-    <string name="ok">OK</string>
     <string name="loading_device_info">Loading device information…</string>
-    <string name="inspect_device_offline_title">Device Offline</string>
-    <string name="inspect_device_offline">The device is offline and cannot be inspected.</string>
-    <string name="remove_device_dialog_title">Remove this device?</string>
-    <string name="remove_device_dialog_body">This device will be removed and unlinked from this controller. Other services and connection types may still have access.</string>
-    <string name="confirm_remove_device_dialog_title">Error removing the device</string>
-    <string name="confirm_remove_device_dialog_body">Removing the fabric from the device failed. Do you still want to remove it from this controller?</string>
-    <string name="share_device_failed">Share device failed</string>
     <string name="add_device_to_repository_failed">Adding device to app\'s repository failed</string>
     <string name="write_node_label_failed">Failed to write NodeLabel</string>
     <string name="opening_pairing_window_title">Opening pairing window</string>
     <string name="opening_pairing_window_message">This may take a few seconds...</string>
     <string name="error_introspecting_device">Error introspecting the device</string>
-    <string name="inspect_fetching_device_information_message">Fetching device information…\nNote that this may take a while if the device is offline.</string>
-    <string name="inspect_no_information_offline">Oops… We could not retrieve device inspection information. This is probably because the device recently turned offline.</string>
-    <string name="inspect_endpoint_title">Endpoint %1$d</string>
-    <string name="inspect_device_types">Device Types</string>
-    <string name="inspect_server_clusters">Server Clusters</string>
-    <string name="inspect_client_clusters">Client Clusters</string>
-    <string name="inspect_none">None</string>
-    <string name="inspect_unknown">Unknown</string>
-    <string name="inspect_expand_endpoint">Expand endpoint</string>
-    <string name="inspect_collapse_endpoint">Collapse endpoint</string>
+    <string name="controllers_offline">The device is offline and its controllers cannot be retrieved.</string>
+    <string name="unlinking_device_title">Unlinking the device</string>
+    <string name="unlinking_device_body">Calling the device to remove this controller\'s fabric. If the device is offline, this will fail when the call times out, and this may take a while.\n\nUnlinking the device\u2026</string>
 
     <!-- Matter Beacon -->
     <string name="beacon_detail_text" translatable="false">VID: 0x%04X PID: 0x%04X Disc: 0x%03X</string>
@@ -88,9 +67,73 @@ SPDX-License-Identifier: Apache-2.0
     <!--Accessibility component name  -->
     <string name="menu_button">Menu</string>
     <string name="back_button">Back</string>
-    <string name="share_device_body">You can share this device to control it from other apps or services.</string>
-    <string name="technical_information">Technical Information</string>
-    <string name="remove_device">Remove</string>
     <string name="transport_icon">Transport icon</string>
+
+    <!-- Device Settings Screen -->
+    <string name="device_settings">Device settings</string>
+    <string name="device_settings_section_basic">Basic</string>
+    <string name="device_settings_section_general">General</string>
+    <string name="device_settings_section_admin">Admin</string>
+    <string name="device_settings_basic_vendor">Vendor</string>
+    <string name="device_settings_basic_product">Product</string>
+    <string name="device_settings_basic_product_value">%1$s (%2$s)</string>
+    <string name="device_settings_basic_hardware_version">Hardware version</string>
+    <string name="device_settings_basic_software_version">Software version</string>
+    <string name="device_settings_basic_added_on">Added on</string>
+    <string name="device_settings_basic_node_id">Node ID</string>
+    <string name="device_settings_general_name">Name</string>
+    <string name="device_settings_general_type">Type</string>
+    <string name="device_settings_admin_fabrics">Fabrics</string>
+    <string name="device_settings_admin_fabrics_subtitle">Control who can manage this device</string>
+    <string name="device_settings_admin_inspect">Data model</string>
+    <string name="device_settings_admin_inspect_subtitle">Endpoint hierarchy and supported clusters</string>
+    <string name="device_settings_admin_share">Share</string>
+    <string name="device_settings_admin_share_subtitle">Share this device with other controllers</string>
+    <string name="device_settings_admin_remove">Remove</string>
+    <string name="device_settings_admin_remove_subtitle">Remove this device from this controller</string>
+    <string name="device_settings_load_failed">Failed to load device settings.</string>
+
+    <!-- Device Type Dialog -->
+    <string name="device_type_dialog_title">Change device type</string>
+
+    <!-- Device Fabrics Screen -->
+    <string name="device_fabrics_loading">Loading fabrics…</string>
+    <string name="device_fabrics_empty">No fabrics found.</string>
+    <string name="device_fabrics_fabric_label">Fabric %1$d</string>
+    <string name="device_fabrics_fabric_vendor">Vendor: %1$s</string>
+    <string name="device_fabrics_fabric_fabric_id">Fabric ID: %1$s</string>
+    <string name="device_fabrics_fabric_node_id">Node ID: %1$s</string>
+    <string name="device_fabrics_fabric_remove">Remove fabric</string>
+
+    <!-- Device Fabric Remove Dialog -->
+    <string name="device_fabric_remove_dialog_title">Remove fabric?</string>
+    <string name="device_fabric_remove_dialog_body">This will remove the selected fabric from the device. The fabric will no longer be able to manage this device.</string>
+    <string name="device_fabric_remove_dialog_yes">Yes, remove it</string>
+
+    <!-- Device Data Model Screen -->
+    <string name="device_data_model_loading">Loading data model…</string>
+    <string name="device_data_model_empty">Oops… We could not retrieve device data model information.</string>
+    <string name="device_data_model_endpoint_title">Endpoint %1$d</string>
+    <string name="device_data_model_endpoint_expand">Expand endpoint</string>
+    <string name="device_data_model_endpoint_collapse">Collapse endpoint</string>
+    <string name="device_data_model_device_types">Device Types</string>
+    <string name="device_data_model_server_clusters">Server Clusters</string>
+    <string name="device_data_model_client_clusters">Client Clusters</string>
+    <string name="device_data_model_none">None</string>
+    <string name="device_data_model_unknown">Unknown</string>
+
+    <!-- Device Share Dialog -->
+    <string name="device_share_dialog_title">Share this device?</string>
+    <string name="device_share_dialog_body">You can share this device with other controllers. It will allow them to manage this device, including fabric management. Do you want to share this device?</string>
+    <string name="device_share_dialog_yes">Yes, share it</string>
+    <string name="device_share_dialog_failed">Share device failed</string>
+
+    <!-- Device Remove Dialog -->
+    <string name="device_remove_dialog_title">Remove this device?</string>
+    <string name="device_remove_dialog_body">This device will be removed and unlinked from this controller. Other controllers may still have access to it. Do you want to remove this device?</string>
+    <string name="device_remove_dialog_yes">Yes, remove it</string>
+    <string name="device_remove_failed_confirm_dialog_title">Remove device from this app only?</string>
+    <string name="device_remove_failed_confirm_dialog_body">Unlinking this device from this controller failed. You can still remove this device from this app only. Other controllers may still have access to it. Do you want to continue?</string>
+    <string name="device_remove_failed_confirm_dialog_yes">Yes, remove it locally</string>
 
 </resources>

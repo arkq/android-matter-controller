@@ -33,16 +33,21 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -89,6 +94,7 @@ import io.aether.android.TaskStatus
 import io.aether.android.commissioning.AppCommissioningService
 import io.aether.android.getDeviceTypeIconId
 import io.aether.android.isMultiAdminCommissioning
+import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.thread.getActivity
@@ -111,11 +117,11 @@ import timber.log.Timber
  * TODO:
  * - Finding out that a device is offline is not working very well. Much work needed there.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeRoute(
-    innerPadding: PaddingValues,
-    updateTitle: (title: String) -> Unit,
-    navigateToDevice: (deviceId: Long, deviceName: String) -> Unit,
+    navigateToDevice: (nodeId: Long) -> Unit,
+    onMenuClick: () -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
   // Launching GPS commissioning requires Activity.
@@ -152,7 +158,7 @@ internal fun HomeRoute(
 
   // Functions invoked when UI controls are clicked on a specific device in the list.
   val onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit = remember {
-    { navigateToDevice(it.device.deviceId, it.device.name) }
+    { navigateToDevice(nodeIdFor(it.device)) }
   }
   val onOnOffClick: (deviceId: Long, value: Boolean) -> Unit = remember {
     { deviceId, value -> homeViewModel.updateDeviceStateOn(deviceId, value) }
@@ -191,8 +197,6 @@ internal fun HomeRoute(
       commissionDevice(activity!!.applicationContext, commissionDeviceLauncher)
     }
   }
-
-  LaunchedEffect(Unit) { updateTitle("") }
 
   LifecycleResumeEffect(Unit) {
     Timber.d("HomeScreen: LifecycleResumeEffect")
@@ -233,18 +237,34 @@ internal fun HomeRoute(
     }
   }
 
-  HomeScreen(
-      innerPadding,
-      devicesList,
-      msgDialogInfo,
-      onDismissMsgDialog,
-      showNewDeviceAlertDialog,
-      deviceAttestationFailureIgnored,
-      onCommissionedDeviceNameCaptured,
-      onCommissionDevice,
-      onDeviceClick,
-      onOnOffClick,
-  )
+  Scaffold(
+      topBar = {
+        TopAppBar(
+            title = {},
+            navigationIcon = {
+              IconButton(onClick = onMenuClick) {
+                Icon(
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = stringResource(R.string.menu_button),
+                )
+              }
+            },
+        )
+      },
+  ) { innerPadding ->
+    HomeScreen(
+        innerPadding,
+        devicesList,
+        msgDialogInfo,
+        onDismissMsgDialog,
+        showNewDeviceAlertDialog,
+        deviceAttestationFailureIgnored,
+        onCommissionedDeviceNameCaptured,
+        onCommissionDevice,
+        onDeviceClick,
+        onOnOffClick,
+    )
+  }
 }
 
 fun getPlayServicesVersion(context: Context): Long {

@@ -1,7 +1,8 @@
 // SPDX-FileCopyrightText: 2024 Google LLC
+// SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.inspect
+package io.aether.android.screens.device.settings
 
 import androidx.annotation.StringRes
 import androidx.lifecycle.*
@@ -17,9 +18,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-/** The ViewModel for the [InspectScreen]. */
+/** The ViewModel for the [DataModelScreen]. */
 @HiltViewModel
-class InspectViewModel @Inject constructor(private val clustersHelper: ClustersHelper) :
+class DataModelViewModel @Inject constructor(private val clustersHelper: ClustersHelper) :
     ViewModel() {
 
   // The introspection info fetched from the device.
@@ -34,12 +35,12 @@ class InspectViewModel @Inject constructor(private val clustersHelper: ClustersH
   // Inspect device
 
   /** Inspect the device information. */
-  fun inspectDevice(deviceId: Long) {
-    Timber.d("inspectDevice [${deviceId}]")
+  fun inspectDevice(nodeId: Long) {
+    Timber.d("inspectDevice: nodeId [${nodeId}]")
     viewModelScope.launch {
       try {
         // Introspect the device.
-        _deviceMatterInfoList.value = clustersHelper.fetchDeviceMatterInfo(deviceId)
+        _deviceMatterInfoList.value = clustersHelper.fetchDeviceMatterInfo(nodeId)
         Timber.d("after fetch...")
       } catch (e: Exception) {
         Timber.e("*** EXCEPTION GETTING DEVICE MATTER INFO *****", e)
