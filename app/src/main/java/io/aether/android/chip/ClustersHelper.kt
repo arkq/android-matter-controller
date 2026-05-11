@@ -12,6 +12,7 @@ import chip.devicecontroller.model.ChipAttributePath
 import chip.devicecontroller.model.ChipEventPath
 import chip.devicecontroller.model.NodeState
 import io.aether.android.CommissioningWindowStatus
+import io.aether.android.formatNodeId
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -821,7 +822,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
             }
 
             override fun onError(ex: Exception) {
-              Timber.e("Failed to close window. Cause: ${ex.localizedMessage}")
+              Timber.e(ex, "Failed to close window")
             }
           }
       ChipClusters.AdministratorCommissioningCluster(devicePtr, 0)
@@ -872,7 +873,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         try {
           chipClient.getConnectedDevicePointer(nodeId)
         } catch (e: IllegalStateException) {
-          Timber.e("Can't get connectedDevicePointer.")
+          Timber.e(e, "Can't get connectedDevicePointer for nodeId: ${formatNodeId(nodeId)}")
           return null
         }
 
@@ -975,7 +976,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         try {
           chipClient.getConnectedDevicePointer(nodeId)
         } catch (e: IllegalStateException) {
-          Timber.e("Can't get connectedDevicePointer.")
+          Timber.e(e, "Can't get connectedDevicePointer for nodeId: ${formatNodeId(nodeId)}")
           return null
         }
     return try {
@@ -1209,7 +1210,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         try {
           chipClient.getConnectedDevicePointer(nodeId)
         } catch (e: IllegalStateException) {
-          Timber.e("Can't get connectedDevicePointer.")
+          Timber.e(e, "Can't get connectedDevicePointer for nodeId: ${formatNodeId(nodeId)}")
           return null
         }
     return try {
@@ -1246,7 +1247,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         try {
           chipClient.getConnectedDevicePointer(nodeId)
         } catch (e: IllegalStateException) {
-          Timber.e("Can't get connectedDevicePointer.")
+          Timber.e(e, "Can't get connectedDevicePointer for nodeId: ${formatNodeId(nodeId)}")
           throw IllegalStateException("Failed to get connected device pointer")
         }
     return suspendCoroutine { continuation ->

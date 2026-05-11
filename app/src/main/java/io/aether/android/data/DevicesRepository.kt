@@ -7,6 +7,7 @@ import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.aether.android.Device
 import io.aether.android.Devices
+import io.aether.android.formatNodeId
 import io.aether.android.nodeIdFor
 import java.io.IOException
 import javax.inject.Inject
@@ -99,7 +100,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
 
   suspend fun getDeviceByNodeId(nodeId: Long): Device {
     return getAllDevices().devicesList.firstOrNull { nodeIdFor(it) == nodeId }
-        ?: throw Exception("Device not found for nodeId: $nodeId")
+        ?: throw Exception("Device not found for nodeId: ${formatNodeId(nodeId)}")
   }
 
   suspend fun getDevicesByNodeId(nodeId: Long): List<Device> {

@@ -51,8 +51,6 @@ SPDX-License-Identifier: Apache-2.0
     <string name="rename_device_label">Device name</string>
     <string name="set_device_name_failed">Failed to set device name</string>
     <string name="loading_device_info">Loading device information…</string>
-    <string name="device_data_model_device_offline_title">Device Offline</string>
-    <string name="device_data_model_device_offline">The device is offline and cannot be inspected.</string>
     <string name="add_device_to_repository_failed">Adding device to app\'s repository failed</string>
     <string name="write_node_label_failed">Failed to write NodeLabel</string>
     <string name="opening_pairing_window_title">Opening pairing window</string>
