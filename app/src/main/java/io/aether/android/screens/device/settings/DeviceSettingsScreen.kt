@@ -15,13 +15,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -56,12 +62,13 @@ import io.aether.android.screens.thread.getActivity
 import timber.log.Timber
 
 /** Route composable for the Device Settings screen. Wires up the ViewModel and navigation. */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeviceSettingsRoute(
-    innerPadding: PaddingValues,
     navigateToHome: () -> Unit,
-    navigateToInspect: (nodeId: Long) -> Unit,
-    navigateToControllers: (deviceId: Long) -> Unit,
+    navigateToDeviceDataModel: (nodeId: Long) -> Unit,
+    navigateToDeviceFabrics: (deviceId: Long) -> Unit,
+    onBackClick: () -> Unit,
     deviceId: Long,
     viewModel: DeviceSettingsViewModel = hiltViewModel(),
 ) {
@@ -124,36 +131,52 @@ fun DeviceSettingsRoute(
     onPauseOrDispose {}
   }
 
-  DeviceSettingsScreen(
-      innerPadding = innerPadding,
-      device = device,
-      vendorName = vendorName,
-      vendorId = vendorId,
-      hardwareVersion = hardwareVersion,
-      softwareVersion = softwareVersion,
-      msgDialogInfo = msgDialogInfo,
-      showRemoveDeviceAlertDialog = showRemoveDeviceAlertDialog,
-      showConfirmDeviceRemovalAlertDialog = showConfirmDeviceRemovalAlertDialog,
-      onDismissMsgDialog = { viewModel.dismissMsgDialog() },
-      onRenameDevice = { newName -> viewModel.renameDevice(deviceId, newName) },
-      onChangeDeviceType = { type -> viewModel.changeDeviceType(deviceId, type) },
-      onShareDevice = { viewModel.openPairingWindow(deviceId) },
-      onRemoveDeviceClick = { viewModel.showRemoveDeviceAlertDialog() },
-      onRemoveDeviceOutcome = { doIt ->
-        viewModel.dismissRemoveDeviceDialog()
-        if (doIt) {
-          viewModel.removeDevice(deviceId)
-        }
+  Scaffold(
+      topBar = {
+        TopAppBar(
+            title = { Text(stringResource(R.string.device_settings)) },
+            navigationIcon = {
+              IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.back_button),
+                )
+              }
+            },
+        )
       },
-      onConfirmDeviceRemovalOutcome = { doIt ->
-        viewModel.dismissConfirmDeviceRemovalDialog()
-        if (doIt) {
-          viewModel.removeDeviceWithoutUnlink(deviceId)
-        }
-      },
-      onInspect = { device?.let { navigateToInspect(nodeIdFor(it)) } },
-      onManageControllers = { navigateToControllers(deviceId) },
-  )
+  ) { innerPadding ->
+    DeviceSettingsScreen(
+        innerPadding = innerPadding,
+        device = device,
+        vendorName = vendorName,
+        vendorId = vendorId,
+        hardwareVersion = hardwareVersion,
+        softwareVersion = softwareVersion,
+        msgDialogInfo = msgDialogInfo,
+        showRemoveDeviceAlertDialog = showRemoveDeviceAlertDialog,
+        showConfirmDeviceRemovalAlertDialog = showConfirmDeviceRemovalAlertDialog,
+        onDismissMsgDialog = { viewModel.dismissMsgDialog() },
+        onRenameDevice = { newName -> viewModel.renameDevice(deviceId, newName) },
+        onChangeDeviceType = { type -> viewModel.changeDeviceType(deviceId, type) },
+        onShareDevice = { viewModel.openPairingWindow(deviceId) },
+        onRemoveDeviceClick = { viewModel.showRemoveDeviceAlertDialog() },
+        onRemoveDeviceOutcome = { doIt ->
+          viewModel.dismissRemoveDeviceDialog()
+          if (doIt) {
+            viewModel.removeDevice(deviceId)
+          }
+        },
+        onConfirmDeviceRemovalOutcome = { doIt ->
+          viewModel.dismissConfirmDeviceRemovalDialog()
+          if (doIt) {
+            viewModel.removeDeviceWithoutUnlink(deviceId)
+          }
+        },
+        onInspect = { device?.let { navigateToDeviceDataModel(nodeIdFor(it)) } },
+        onManageControllers = { navigateToDeviceFabrics(deviceId) },
+    )
+  }
 }
 
 @Composable

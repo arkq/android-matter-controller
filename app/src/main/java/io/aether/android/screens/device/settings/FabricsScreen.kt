@@ -16,17 +16,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -46,32 +50,49 @@ import io.aether.android.formatFabricId
 import io.aether.android.formatNodeId
 
 /** Route composable for the Controllers screen. */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ControllersRoute(
-    innerPadding: PaddingValues,
+fun FabricsRoute(
+    onBackClick: () -> Unit,
     deviceId: Long,
-    viewModel: ControllersViewModel = hiltViewModel(),
+    viewModel: FabricsViewModel = hiltViewModel(),
 ) {
-  LaunchedEffect(deviceId) { viewModel.loadControllers(deviceId) }
+  LaunchedEffect(deviceId) { viewModel.loadFabrics(deviceId) }
 
   val uiState by viewModel.uiState.collectAsState()
 
-  ControllersScreen(
-      innerPadding = innerPadding,
-      uiState = uiState,
-      onRemoveController = { fabricIndex -> viewModel.removeController(deviceId, fabricIndex) },
-  )
+  Scaffold(
+      topBar = {
+        TopAppBar(
+            title = { Text(stringResource(R.string.device_settings_admin_fabrics)) },
+            navigationIcon = {
+              IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.back_button),
+                )
+              }
+            },
+        )
+      },
+  ) { innerPadding ->
+    FabricsScreen(
+        innerPadding = innerPadding,
+        uiState = uiState,
+        onRemoveController = { fabricIndex -> viewModel.removeFabric(deviceId, fabricIndex) },
+    )
+  }
 }
 
 @Composable
-private fun ControllersScreen(
+private fun FabricsScreen(
     innerPadding: PaddingValues,
-    uiState: ControllersViewModel.UiState,
+    uiState: FabricsViewModel.UiState,
     onRemoveController: (fabricIndex: Int) -> Unit,
 ) {
   Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
     when (uiState) {
-      is ControllersViewModel.UiState.Loading -> {
+      is FabricsViewModel.UiState.Loading -> {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
           Column(
               horizontalAlignment = Alignment.CenterHorizontally,
@@ -86,7 +107,7 @@ private fun ControllersScreen(
         }
       }
 
-      is ControllersViewModel.UiState.Error -> {
+      is FabricsViewModel.UiState.Error -> {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
           Text(
               text = stringResource(uiState.messageRes),
@@ -97,7 +118,7 @@ private fun ControllersScreen(
         }
       }
 
-      is ControllersViewModel.UiState.Loaded -> {
+      is FabricsViewModel.UiState.Loaded -> {
         if (uiState.fabrics.isEmpty()) {
           Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
@@ -112,7 +133,7 @@ private fun ControllersScreen(
               verticalArrangement = Arrangement.spacedBy(8.dp),
           ) {
             items(items = uiState.fabrics, key = { it.fabricIndex }) { fabric ->
-              ControllerItem(
+              FabricItem(
                   fabric = fabric,
                   onRemove = { onRemoveController(fabric.fabricIndex) },
                   canRemove = !fabric.isCurrentFabric,
@@ -126,7 +147,7 @@ private fun ControllersScreen(
 }
 
 @Composable
-private fun ControllerItem(
+private fun FabricItem(
     fabric: ManagedFabric,
     onRemove: () -> Unit,
     canRemove: Boolean,

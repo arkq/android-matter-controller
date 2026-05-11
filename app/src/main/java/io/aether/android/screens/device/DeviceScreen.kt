@@ -8,21 +8,23 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -61,11 +63,11 @@ import timber.log.Timber
  * When the screen is shown, state monitoring is activated to get the device's latest state. This
  * makes it possible to update the device's online status dynamically.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DeviceRoute(
-    innerPadding: PaddingValues,
-    updateActions: (@Composable RowScope.() -> Unit) -> Unit,
     navigateToDeviceSettings: (deviceId: Long) -> Unit,
+    onBackClick: () -> Unit,
     deviceId: Long,
     deviceViewModel: DeviceViewModel = hiltViewModel(),
 ) {
@@ -118,33 +120,46 @@ internal fun DeviceRoute(
     }
   }
 
-  // Set gear icon in the TopAppBar once the device model is loaded.
-  LaunchedEffect(deviceUiModel != null) {
-    if (deviceUiModel != null) {
-      updateActions {
-        IconButton(onClick = { navigateToDeviceSettings(deviceId) }) {
-          Icon(
-              imageVector = Icons.Filled.Settings,
-              contentDescription = stringResource(R.string.device_settings),
-          )
-        }
-      }
-    }
+  Scaffold(
+      topBar = {
+        TopAppBar(
+            title = {
+              Text(deviceUiModel?.device?.name ?: stringResource(R.string.device_screen_title))
+            },
+            navigationIcon = {
+              IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.back_button),
+                )
+              }
+            },
+            actions = {
+              if (deviceUiModel != null) {
+                IconButton(onClick = { navigateToDeviceSettings(deviceId) }) {
+                  Icon(
+                      imageVector = Icons.Filled.Settings,
+                      contentDescription = stringResource(R.string.device_settings),
+                  )
+                }
+              }
+            },
+        )
+      },
+  ) { innerPadding ->
+    DeviceScreen(
+        innerPadding,
+        deviceUiModel,
+        allEndpointUiModels,
+        lastUpdatedDeviceState,
+        endpointOnlineByDeviceId,
+        onOnOffClick,
+        onBrightnessChange,
+        onColorTemperatureChange,
+        msgDialogInfo,
+        onDismissMsgDialog,
+    )
   }
-  DisposableEffect(Unit) { onDispose { updateActions {} } }
-
-  DeviceScreen(
-      innerPadding,
-      deviceUiModel,
-      allEndpointUiModels,
-      lastUpdatedDeviceState,
-      endpointOnlineByDeviceId,
-      onOnOffClick,
-      onBrightnessChange,
-      onColorTemperatureChange,
-      msgDialogInfo,
-      onDismissMsgDialog,
-  )
 }
 
 // -----------------------------------------------------------------------------------------------

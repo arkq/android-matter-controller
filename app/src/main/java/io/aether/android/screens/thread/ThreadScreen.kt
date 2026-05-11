@@ -26,6 +26,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -35,11 +37,15 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -53,6 +59,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -98,9 +105,10 @@ import timber.log.Timber
 // -----------------------------------------------------------------------------------------------
 // Top level Composables
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ThreadRoute(
-    innerPadding: PaddingValues,
+    onBackClick: () -> Unit,
     threadViewModel: ThreadViewModel = hiltViewModel(),
 ) {
   // UI Logic implemented in ThreadNetworkUiState requires Activity.
@@ -186,7 +194,23 @@ internal fun ThreadRoute(
     }
   }
 
-  ThreadScreen(innerPadding, currentActionInfo, threadCredentialsInfo, onThreadNetworkAction)
+  Scaffold(
+      topBar = {
+        TopAppBar(
+            title = { Text(stringResource(R.string.menu_item_thread)) },
+            navigationIcon = {
+              IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.back_button),
+                )
+              }
+            },
+        )
+      },
+  ) { innerPadding ->
+    ThreadScreen(innerPadding, currentActionInfo, threadCredentialsInfo, onThreadNetworkAction)
+  }
 }
 
 @Composable

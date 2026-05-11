@@ -30,7 +30,7 @@ data class ManagedFabric(
 
 /** ViewModel for the Controllers screen. */
 @HiltViewModel
-class ControllersViewModel
+class FabricsViewModel
 @Inject
 constructor(
     private val devicesRepository: DevicesRepository,
@@ -49,8 +49,8 @@ constructor(
   private var _uiState = MutableStateFlow<UiState>(UiState.Loading)
   val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
-  fun loadControllers(deviceId: Long) {
-    Timber.d("ControllersViewModel.loadControllers: deviceId [$deviceId]")
+  fun loadFabrics(deviceId: Long) {
+    Timber.d("FabricsViewModel.loadFabrics: deviceId [$deviceId]")
     viewModelScope.launch {
       val previousState = _uiState.value
       if (previousState !is UiState.Loaded) {
@@ -91,7 +91,7 @@ constructor(
                 .sortedBy { it.fabricIndex }
         _uiState.value = UiState.Loaded(mergedFabrics)
       } catch (e: Exception) {
-        Timber.e(e, "loadControllers failed")
+        Timber.e(e, "loadFabrics failed")
         _uiState.value =
             if (previousState is UiState.Loaded) previousState
             else UiState.Error(R.string.controllers_offline)
@@ -99,10 +99,8 @@ constructor(
     }
   }
 
-  fun removeController(deviceId: Long, fabricIndex: Int) {
-    Timber.d(
-        "ControllersViewModel.removeController: deviceId [$deviceId] fabricIndex [$fabricIndex]"
-    )
+  fun removeFabric(deviceId: Long, fabricIndex: Int) {
+    Timber.d("FabricsViewModel.removeFabric: deviceId [$deviceId] fabricIndex [$fabricIndex]")
     viewModelScope.launch {
       val currentState = _uiState.value
       _uiState.value = UiState.Loading
@@ -119,9 +117,9 @@ constructor(
         }
         clustersHelper.removeFabric(nodeId, fabricIndex)
         // Reload the list after removal.
-        loadControllers(deviceId)
+        loadFabrics(deviceId)
       } catch (e: Exception) {
-        Timber.e(e, "removeController failed")
+        Timber.e(e, "removeFabric failed")
         // Restore previous state and show error.
         _uiState.value =
             if (currentState is UiState.Loaded) currentState

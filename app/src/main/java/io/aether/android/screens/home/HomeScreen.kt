@@ -33,16 +33,21 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -111,10 +116,11 @@ import timber.log.Timber
  * TODO:
  * - Finding out that a device is offline is not working very well. Much work needed there.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeRoute(
-    innerPadding: PaddingValues,
     navigateToDevice: (deviceId: Long, deviceName: String) -> Unit,
+    onMenuClick: () -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
   // Launching GPS commissioning requires Activity.
@@ -230,18 +236,34 @@ internal fun HomeRoute(
     }
   }
 
-  HomeScreen(
-      innerPadding,
-      devicesList,
-      msgDialogInfo,
-      onDismissMsgDialog,
-      showNewDeviceAlertDialog,
-      deviceAttestationFailureIgnored,
-      onCommissionedDeviceNameCaptured,
-      onCommissionDevice,
-      onDeviceClick,
-      onOnOffClick,
-  )
+  Scaffold(
+      topBar = {
+        TopAppBar(
+            title = {},
+            navigationIcon = {
+              IconButton(onClick = onMenuClick) {
+                Icon(
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = stringResource(R.string.menu_button),
+                )
+              }
+            },
+        )
+      },
+  ) { innerPadding ->
+    HomeScreen(
+        innerPadding,
+        devicesList,
+        msgDialogInfo,
+        onDismissMsgDialog,
+        showNewDeviceAlertDialog,
+        deviceAttestationFailureIgnored,
+        onCommissionedDeviceNameCaptured,
+        onCommissionDevice,
+        onDeviceClick,
+        onOnOffClick,
+    )
+  }
 }
 
 fun getPlayServicesVersion(context: Context): Long {

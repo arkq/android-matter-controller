@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2024 Google LLC
+// SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
 package io.aether.android.screens.device.settings
@@ -17,9 +18,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-/** The ViewModel for the [InspectScreen]. */
+/** The ViewModel for the [DataModelScreen]. */
 @HiltViewModel
-class InspectViewModel @Inject constructor(private val clustersHelper: ClustersHelper) :
+class DataModelViewModel @Inject constructor(private val clustersHelper: ClustersHelper) :
     ViewModel() {
 
   // The introspection info fetched from the device.

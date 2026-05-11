@@ -70,7 +70,7 @@ fun HtmlInfoDialog(title: String, htmlInfo: String, onClick: () -> Unit) {
             },
         )
       },
-      confirmButton = { TextButton(onClick = onClick) { Text("OK") } },
+      confirmButton = { TextButton(onClick = onClick) { Text(stringResource(R.string.ok)) } },
       onDismissRequest = {},
       dismissButton = {},
   )

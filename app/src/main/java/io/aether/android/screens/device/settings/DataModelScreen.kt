@@ -12,10 +12,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,39 +43,56 @@ import io.aether.android.screens.common.MsgAlertDialog
 import timber.log.Timber
 
 /**
- * The Inspect Screen shows all the "cluster" information about the currently selected device in the
- * Device screen.
+ * The Data Model Screen shows all the "cluster" information about the currently selected device in
+ * the Device screen.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InspectRoute(
-    innerPadding: PaddingValues,
+fun DataModelRoute(
+    onBackClick: () -> Unit,
     nodeId: Long,
-    inspectViewModel: InspectViewModel = hiltViewModel(),
+    dataModelViewModel: DataModelViewModel = hiltViewModel(),
 ) {
-  Timber.d("InspectRoute nodeId [$nodeId]")
+  Timber.d("DataModelRoute nodeId [$nodeId]")
 
   // Controls the Msg AlertDialog.
   // When the user dismisses the Msg AlertDialog, we "consume" the dialog.
-  val msgDialogInfo by inspectViewModel.msgDialogInfo.collectAsState()
-  val onDismissMsgDialog: () -> Unit = remember { { inspectViewModel.dismissMsgDialog() } }
+  val msgDialogInfo by dataModelViewModel.msgDialogInfo.collectAsState()
+  val onDismissMsgDialog: () -> Unit = remember { { dataModelViewModel.dismissMsgDialog() } }
 
-  // Observes values needed by the InspectScreen.
-  val deviceMatterInfoList by inspectViewModel.deviceMatterInfoList.collectAsState()
+  // Observes values needed by the DataModelScreen.
+  val deviceMatterInfoList by dataModelViewModel.deviceMatterInfoList.collectAsState()
 
   LifecycleResumeEffect(Unit) {
     Timber.d("LifecycleResumeEffect: selectedNodeId [$nodeId]")
-    inspectViewModel.inspectDevice(nodeId)
+    dataModelViewModel.inspectDevice(nodeId)
     onPauseOrDispose {
       // do any needed clean up here
       Timber.d("LifecycleResumeEffect:onPauseOrDispose")
     }
   }
 
-  InspectScreen(innerPadding, deviceMatterInfoList, msgDialogInfo, onDismissMsgDialog)
+  Scaffold(
+      topBar = {
+        TopAppBar(
+            title = { Text(stringResource(R.string.device_settings_admin_inspect)) },
+            navigationIcon = {
+              IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.back_button),
+                )
+              }
+            },
+        )
+      },
+  ) { innerPadding ->
+    DataModelScreen(innerPadding, deviceMatterInfoList, msgDialogInfo, onDismissMsgDialog)
+  }
 }
 
 @Composable
-private fun InspectScreen(
+private fun DataModelScreen(
     innerPadding: PaddingValues,
     deviceMatterInfoList: List<DeviceMatterInfo>?,
     msgDialogInfo: DialogInfo?,
@@ -148,21 +172,21 @@ private fun InspectScreen(
 
 @Preview(widthDp = 300)
 @Composable
-private fun InspectScreenLoadingPreview() {
-  MaterialTheme { InspectScreen(PaddingValues(), null, null, {}) }
+private fun DataModelScreenLoadingPreview() {
+  MaterialTheme { DataModelScreen(PaddingValues(), null, null, {}) }
 }
 
 @Preview(widthDp = 300)
 @Composable
-private fun InspectScreenOfflinePreview() {
-  MaterialTheme { InspectScreen(PaddingValues(), emptyList(), null, {}) }
+private fun DataModelScreenOfflinePreview() {
+  MaterialTheme { DataModelScreen(PaddingValues(), emptyList(), null, {}) }
 }
 
 @Preview(widthDp = 300)
 @Composable
-private fun InspectScreenOnlineNoClustersPreview() {
+private fun DataModelScreenOnlineNoClustersPreview() {
   MaterialTheme {
-    InspectScreen(
+    DataModelScreen(
         PaddingValues(),
         listOf(DeviceMatterInfo(1, listOf(15L, 22L), emptyList(), emptyList(), emptyList())),
         null,
@@ -173,9 +197,9 @@ private fun InspectScreenOnlineNoClustersPreview() {
 
 @Preview(widthDp = 300)
 @Composable
-private fun InspectScreenOnlineWithClustersPreview() {
+private fun DataModelScreenOnlineWithClustersPreview() {
   MaterialTheme {
-    InspectScreen(
+    DataModelScreen(
         PaddingValues(),
         listOf(
             DeviceMatterInfo(0, listOf(22L), listOf(3L), listOf(43L, 48L), listOf(1, 2)),

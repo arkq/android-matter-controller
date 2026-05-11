@@ -5,8 +5,6 @@
 package io.aether.android
 
 import android.net.Uri
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
@@ -15,9 +13,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import io.aether.android.screens.device.DeviceRoute
-import io.aether.android.screens.device.settings.ControllersRoute
+import io.aether.android.screens.device.settings.DataModelRoute
 import io.aether.android.screens.device.settings.DeviceSettingsRoute
-import io.aether.android.screens.device.settings.InspectRoute
+import io.aether.android.screens.device.settings.FabricsRoute
 import io.aether.android.screens.home.HomeRoute
 import io.aether.android.screens.scanner.ScannerRoute
 import io.aether.android.screens.thread.ThreadRoute
@@ -47,8 +45,7 @@ fun routeToDeviceFabrics(nodeId: Long): String = "device/$nodeId/fabrics"
 @Composable
 fun AppNavigation(
     navController: NavHostController,
-    innerPadding: PaddingValues,
-    updateActions: (@Composable RowScope.() -> Unit) -> Unit,
+    onMenuClick: () -> Unit,
 ) {
   // Lambdas to all destinations needed in our various routes.
   // [Top level Route Composables should not be passed the navController explicitly,
@@ -58,19 +55,19 @@ fun AppNavigation(
   val navigateToDevice: (nodeId: Long, deviceName: String) -> Unit = remember {
     { nodeId, deviceName -> navController.navigate(routeToDevice(nodeId, deviceName)) }
   }
-  val navigateToInspect: (nodeId: Long) -> Unit = remember {
+  val navigateToDeviceDataModel: (nodeId: Long) -> Unit = remember {
     { nodeId -> navController.navigate(routeToDeviceDataModel(nodeId)) }
   }
   val navigateToDeviceSettings: (nodeId: Long) -> Unit = remember {
     { nodeId -> navController.navigate(routeToDeviceSettings(nodeId)) }
   }
-  val navigateToControllers: (nodeId: Long) -> Unit = remember {
+  val navigateToDeviceFabrics: (nodeId: Long) -> Unit = remember {
     { nodeId -> navController.navigate(routeToDeviceFabrics(nodeId)) }
   }
 
   NavHost(navController = navController, startDestination = DEST_HOME) {
     // Home
-    composable(DEST_HOME) { HomeRoute(innerPadding, navigateToDevice) }
+    composable(DEST_HOME) { HomeRoute(navigateToDevice, onMenuClick) }
     // Device
     composable(
         ROUTE_DEVICE,
@@ -84,10 +81,9 @@ fun AppNavigation(
             ),
     ) {
       DeviceRoute(
-          innerPadding,
-          updateActions,
-          navigateToDeviceSettings,
-          it.arguments?.getLong(ARG_NODE_ID)!!,
+          navigateToDeviceSettings = navigateToDeviceSettings,
+          onBackClick = { navController.popBackStack() },
+          deviceId = it.arguments?.getLong(ARG_NODE_ID)!!,
       )
     }
     // Device settings
@@ -96,11 +92,11 @@ fun AppNavigation(
         arguments = listOf(navArgument(ARG_NODE_ID) { type = NavType.LongType }),
     ) {
       DeviceSettingsRoute(
-          innerPadding,
-          navigateToHome,
-          navigateToInspect,
-          navigateToControllers,
-          it.arguments?.getLong(ARG_NODE_ID)!!,
+          navigateToHome = navigateToHome,
+          navigateToDeviceDataModel = navigateToDeviceDataModel,
+          navigateToDeviceFabrics = navigateToDeviceFabrics,
+          onBackClick = { navController.popBackStack() },
+          deviceId = it.arguments?.getLong(ARG_NODE_ID)!!,
       )
     }
     // Inspect device from Device Settings
@@ -108,18 +104,24 @@ fun AppNavigation(
         ROUTE_DEVICE_DATA_MODEL,
         arguments = listOf(navArgument(ARG_NODE_ID) { type = NavType.LongType }),
     ) {
-      InspectRoute(innerPadding, it.arguments?.getLong(ARG_NODE_ID)!!)
+      DataModelRoute(
+          onBackClick = { navController.popBackStack() },
+          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!,
+      )
     }
     // Controllers
     composable(
         ROUTE_DEVICE_FABRICS,
         arguments = listOf(navArgument(ARG_NODE_ID) { type = NavType.LongType }),
     ) {
-      ControllersRoute(innerPadding, it.arguments?.getLong(ARG_NODE_ID)!!)
+      FabricsRoute(
+          onBackClick = { navController.popBackStack() },
+          deviceId = it.arguments?.getLong(ARG_NODE_ID)!!,
+      )
     }
     // Matter Device Scanner
-    composable(DEST_SCANNER) { ScannerRoute(innerPadding) }
+    composable(DEST_SCANNER) { ScannerRoute(onBackClick = { navController.popBackStack() }) }
     // Thread network utilities
-    composable(DEST_THREAD) { ThreadRoute(innerPadding) }
+    composable(DEST_THREAD) { ThreadRoute(onBackClick = { navController.popBackStack() }) }
   }
 }
