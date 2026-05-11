@@ -43,6 +43,7 @@ import io.aether.android.DeviceState
 import io.aether.android.DevicesState
 import io.aether.android.R
 import io.aether.android.screens.common.DialogInfo
+import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.device.control.ColorTemperatureDeviceControl
 import io.aether.android.screens.device.control.DimmableDeviceControl
@@ -179,7 +180,7 @@ private fun DeviceScreen(
     onDismissMsgDialog: () -> Unit,
 ) {
   if (deviceUiModel == null) {
-    Text(stringResource(R.string.loading_device_info))
+    LoadingIndicator(stringResource(R.string.loading_device_info), innerPadding)
     return
   }
 

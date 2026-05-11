@@ -82,21 +82,14 @@ SPDX-License-Identifier: Apache-2.0
 
 ### 2. Unified Loading Indicator
 
-- When a screen is loading primary content, use a centered loading layout with:
-
-  - `CircularProgressIndicator()`
-  - A short status message from `res/values/strings.xml` (for example,
-    `R.string.loading_device_info`)
-  - `MaterialTheme.typography.bodyMedium` for the message text
-  - The same `innerPadding`/screen padding used by the loaded state so content
-    is not rendered under app bars
-
+- When a screen is loading primary content, use the `LoadingIndicator` common
+  composable to show a unified loading state. The text should be a short status
+  message fetched from `res/values/strings.xml`.
 - Loading indicator should be displayed only when showing the screen for the
   first time or when explicitly refreshing content. Do not show the loading
   indicator when going back or when screen orientation changes. In those cases,
   the previously loaded content should be displayed and the state should be
   refreshed in the background with in-place updates.
-
 - If there are multiple independent loading states on the same screen, gate
   them behind a single unified loading state. Show the screen content only when
   all loading states are complete - do not show partial content.

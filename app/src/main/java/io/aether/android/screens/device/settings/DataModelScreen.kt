@@ -4,8 +4,6 @@
 
 package io.aether.android.screens.device.settings
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,7 +12,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,7 +25,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -39,6 +35,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.screens.common.DialogInfo
+import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
 import timber.log.Timber
 
@@ -103,18 +100,7 @@ private fun DataModelScreen(
 
   Surface(modifier = Modifier.padding(innerPadding)) {
     if (deviceMatterInfoList == null) {
-      Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-          CircularProgressIndicator()
-          Text(
-              text = stringResource(R.string.device_data_model_loading),
-              style = MaterialTheme.typography.bodyMedium,
-          )
-        }
-      }
+      LoadingIndicator(stringResource(R.string.device_data_model_loading))
     } else {
       Column(
           modifier =

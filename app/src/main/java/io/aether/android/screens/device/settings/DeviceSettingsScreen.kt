@@ -7,10 +7,8 @@ import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
@@ -20,7 +18,6 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,12 +33,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.Device
@@ -53,6 +48,7 @@ import io.aether.android.formatTimestamp
 import io.aether.android.getDeviceTypeDisplayStringId
 import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
+import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.device.action.ConfirmDeviceRemovalAlertDialog
 import io.aether.android.screens.device.action.RemoveDeviceAlertDialog
@@ -247,21 +243,7 @@ private fun DeviceSettingsScreen(
   }
 
   if (device == null) {
-    Box(
-        modifier = Modifier.fillMaxSize().padding(innerPadding),
-        contentAlignment = Alignment.Center,
-    ) {
-      Column(
-          horizontalAlignment = Alignment.CenterHorizontally,
-          verticalArrangement = Arrangement.spacedBy(8.dp),
-      ) {
-        CircularProgressIndicator()
-        Text(
-            text = stringResource(R.string.loading_device_info),
-            style = MaterialTheme.typography.bodyMedium,
-        )
-      }
-    }
+    LoadingIndicator(stringResource(R.string.loading_device_info), innerPadding)
     return
   }
 

@@ -21,7 +21,6 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,6 +47,7 @@ import io.aether.android.R
 import io.aether.android.chip.vendorLabel
 import io.aether.android.formatFabricId
 import io.aether.android.formatNodeId
+import io.aether.android.screens.common.LoadingIndicator
 
 /** Route composable for the Controllers screen. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,18 +93,7 @@ private fun FabricsScreen(
   Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
     when (uiState) {
       is FabricsViewModel.UiState.Loading -> {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-          Column(
-              horizontalAlignment = Alignment.CenterHorizontally,
-              verticalArrangement = Arrangement.spacedBy(8.dp),
-          ) {
-            CircularProgressIndicator()
-            Text(
-                text = stringResource(R.string.device_fabrics_loading),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-          }
-        }
+        LoadingIndicator(stringResource(R.string.device_fabrics_loading))
       }
 
       is FabricsViewModel.UiState.Error -> {
