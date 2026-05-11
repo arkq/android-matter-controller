@@ -63,12 +63,12 @@ import timber.log.Timber
 fun DeviceSettingsRoute(
     navigateToHome: () -> Unit,
     navigateToDeviceDataModel: (nodeId: Long) -> Unit,
-    navigateToDeviceFabrics: (deviceId: Long) -> Unit,
+    navigateToDeviceFabrics: (nodeId: Long) -> Unit,
     onBackClick: () -> Unit,
-    deviceId: Long,
+    nodeId: Long,
     viewModel: DeviceSettingsViewModel = hiltViewModel(),
 ) {
-  Timber.d("DeviceSettingsRoute: deviceId [$deviceId]")
+  Timber.d("DeviceSettingsRoute: nodeId [$nodeId]")
 
   val activity = LocalContext.current.getActivity()
 
@@ -123,7 +123,7 @@ fun DeviceSettingsRoute(
   }
 
   LifecycleResumeEffect(Unit) {
-    viewModel.loadDevice(deviceId)
+    viewModel.loadDevice(nodeId)
     onPauseOrDispose {}
   }
 
@@ -153,24 +153,24 @@ fun DeviceSettingsRoute(
         showRemoveDeviceAlertDialog = showRemoveDeviceAlertDialog,
         showConfirmDeviceRemovalAlertDialog = showConfirmDeviceRemovalAlertDialog,
         onDismissMsgDialog = { viewModel.dismissMsgDialog() },
-        onRenameDevice = { newName -> viewModel.renameDevice(deviceId, newName) },
-        onChangeDeviceType = { type -> viewModel.changeDeviceType(deviceId, type) },
-        onShareDevice = { viewModel.openPairingWindow(deviceId) },
+        onRenameDevice = { newName -> viewModel.renameDevice(nodeId, newName) },
+        onChangeDeviceType = { type -> viewModel.changeDeviceType(nodeId, type) },
+        onShareDevice = { viewModel.openPairingWindow(nodeId) },
         onRemoveDeviceClick = { viewModel.showRemoveDeviceAlertDialog() },
         onRemoveDeviceOutcome = { doIt ->
           viewModel.dismissRemoveDeviceDialog()
           if (doIt) {
-            viewModel.removeDevice(deviceId)
+            viewModel.removeDevice(nodeId)
           }
         },
         onConfirmDeviceRemovalOutcome = { doIt ->
           viewModel.dismissConfirmDeviceRemovalDialog()
           if (doIt) {
-            viewModel.removeDeviceWithoutUnlink(deviceId)
+            viewModel.removeDeviceWithoutUnlink(nodeId)
           }
         },
         onInspect = { device?.let { navigateToDeviceDataModel(nodeIdFor(it)) } },
-        onManageControllers = { navigateToDeviceFabrics(deviceId) },
+        onManageControllers = { navigateToDeviceFabrics(nodeId) },
     )
   }
 }

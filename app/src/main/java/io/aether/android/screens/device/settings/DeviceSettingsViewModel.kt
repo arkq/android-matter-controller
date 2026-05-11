@@ -86,13 +86,12 @@ constructor(
   // -----------------------------------------------------------------------------------------------
   // Load device
 
-  fun loadDevice(deviceId: Long) {
-    Timber.d("loadDevice: deviceId [$deviceId]")
+  fun loadDevice(nodeId: Long) {
+    Timber.d("loadDevice: nodeId [$nodeId]")
     viewModelScope.launch {
       val shouldBlockUiUntilLoaded = _device.value == null
       try {
-        val loadedDevice = devicesRepository.getDevice(deviceId)
-        val nodeId = nodeIdFor(loadedDevice)
+        val loadedDevice = devicesRepository.getDeviceByNodeId(nodeId)
         val basicInfo =
             try {
               clustersHelper.readBasicInformationAttributes(nodeId)
@@ -119,11 +118,12 @@ constructor(
   // -----------------------------------------------------------------------------------------------
   // Rename device
 
-  fun renameDevice(deviceId: Long, newName: String) {
-    Timber.d("renameDevice: deviceId [$deviceId] newName [$newName]")
+  fun renameDevice(nodeId: Long, newName: String) {
+    Timber.d("renameDevice: nodeId [$nodeId] newName [$newName]")
     viewModelScope.launch {
+      val device = devicesRepository.getDeviceByNodeId(nodeId)
       val result =
-          setDeviceNameUseCase.execute(deviceId, newName) {
+          setDeviceNameUseCase.execute(device.deviceId, newName) {
             // Immediately update local state so the UI reflects the new name.
             _device.value = _device.value?.toBuilder()?.setName(newName)?.build()
           }
@@ -136,11 +136,12 @@ constructor(
   // -----------------------------------------------------------------------------------------------
   // Change device type
 
-  fun changeDeviceType(deviceId: Long, deviceType: Device.DeviceType) {
-    Timber.d("changeDeviceType: deviceId [$deviceId] deviceType [$deviceType]")
+  fun changeDeviceType(nodeId: Long, deviceType: Device.DeviceType) {
+    Timber.d("changeDeviceType: nodeId [$nodeId] deviceType [$deviceType]")
     viewModelScope.launch {
       try {
-        devicesRepository.updateDeviceType(deviceId, deviceType)
+        val device = devicesRepository.getDeviceByNodeId(nodeId)
+        devicesRepository.updateDeviceType(device.deviceId, deviceType)
         _device.value = _device.value?.toBuilder()?.setDeviceType(deviceType)?.build()
       } catch (e: Exception) {
         Timber.e(e, "changeDeviceType failed")
@@ -149,7 +150,7 @@ constructor(
   }
 
   // -----------------------------------------------------------------------------------------------
-  // Share device
+  // Dialog and transient UI state
 
   fun showRemoveDeviceAlertDialog() {
     _showRemoveDeviceAlertDialog.value = true
@@ -181,8 +182,11 @@ constructor(
     _pairingWindowOpenForDeviceSharing.value = false
   }
 
+  // -----------------------------------------------------------------------------------------------
+  // Share device
+
   // Open commissioning window for device sharing.
-  fun openPairingWindow(deviceId: Long) {
+  fun openPairingWindow(nodeId: Long) {
     Timber.d("ShareDevice: openPairingWindow")
     viewModelScope.launch {
       showMsgDialog(
@@ -191,8 +195,6 @@ constructor(
           false,
       )
       try {
-        val device = devicesRepository.getDevice(deviceId)
-        val nodeId = nodeIdFor(device)
         val devicePtr = chipClient.awaitGetConnectedDevicePointer(nodeId)
         val isCommissioningWindowOpen = clustersHelper.isCommissioningWindowOpen(devicePtr)
         if (isCommissioningWindowOpen) {
@@ -252,20 +254,10 @@ constructor(
   // -----------------------------------------------------------------------------------------------
   // Remove device
 
-  fun removeDevice(deviceId: Long) {
-    Timber.d("Removing device [$deviceId]")
+  fun removeDevice(nodeId: Long) {
+    Timber.d("Removing device for nodeId [$nodeId]")
     showMsgDialog(R.string.unlinking_device_title, R.string.unlinking_device_body, false)
     viewModelScope.launch {
-      val nodeId =
-          try {
-            nodeIdFor(devicesRepository.getDevice(deviceId))
-          } catch (e: Exception) {
-            Timber.w(e, "removeDevice: device not found, removing local entry")
-            dismissMsgDialog()
-            removeDeviceById(deviceId)
-            _deviceRemovalCompleted.value = true
-            return@launch
-          }
       try {
         chipClient.awaitUnpairDevice(nodeId)
       } catch (e: Exception) {
@@ -274,40 +266,23 @@ constructor(
         _showConfirmDeviceRemovalAlertDialog.value = true
         return@launch
       }
-      Timber.d("removeDevice succeeded! [$deviceId]")
+      Timber.d("removeDevice succeeded for nodeId [$nodeId]")
       dismissMsgDialog()
       removeAllLogicalDevicesForNode(nodeId)
       _deviceRemovalCompleted.value = true
     }
   }
 
-  fun removeDeviceWithoutUnlink(deviceId: Long) {
-    Timber.d("removeDeviceWithoutUnlink: [$deviceId]")
+  fun removeDeviceWithoutUnlink(nodeId: Long) {
+    Timber.d("removeDeviceWithoutUnlink: nodeId [$nodeId]")
     viewModelScope.launch {
       try {
-        val nodeId =
-            try {
-              nodeIdFor(devicesRepository.getDevice(deviceId))
-            } catch (e: Exception) {
-              Timber.w(e, "removeDeviceWithoutUnlink: device not found, removing local entry")
-              removeDeviceById(deviceId)
-              _deviceRemovalCompleted.value = true
-              return@launch
-            }
         removeAllLogicalDevicesForNode(nodeId)
         _deviceRemovalCompleted.value = true
       } catch (e: Exception) {
         Timber.e(e, "removeDeviceWithoutUnlink failed")
         showMsgDialog(R.string.device_remove_dialog_title, e.message)
       }
-    }
-  }
-
-  private suspend fun removeDeviceById(deviceId: Long) {
-    try {
-      devicesRepository.removeDevice(deviceId)
-    } catch (e: Exception) {
-      Timber.w(e, "removeDeviceById: ignore missing local device [$deviceId]")
     }
   }
 

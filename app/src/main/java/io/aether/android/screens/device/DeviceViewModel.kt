@@ -107,15 +107,15 @@ constructor(
   // -----------------------------------------------------------------------------------------------
   // Load device
 
-  fun loadDevice(deviceId: Long) {
-    if (deviceId == deviceUiModel.value?.device?.deviceId) {
-      Timber.d("loadDevice: [${deviceId}] was already loaded")
+  fun loadDevice(nodeId: Long) {
+    if (nodeId == deviceUiModel.value?.device?.let { nodeIdFor(it) }) {
+      Timber.d("loadDevice: nodeId [${nodeId}] was already loaded")
       return
     } else {
-      Timber.d("loadDevice: loading [${deviceId}]")
+      Timber.d("loadDevice: loading nodeId [${nodeId}]")
       viewModelScope.launch {
-        val device = devicesRepository.getDevice(deviceId)
-        val deviceState = devicesStateRepository.loadDeviceState(deviceId)
+        val device = devicesRepository.getDeviceByNodeId(nodeId)
+        val deviceState = devicesStateRepository.loadDeviceState(device.deviceId)
         var isOnline = false
         var isOn = false
         var level = 0
@@ -129,9 +129,7 @@ constructor(
         _deviceUiModel.value = DeviceUiModel(device, isOnline, isOn, level, colorTemperature)
 
         // Load all endpoint devices (siblings) for the same physical node.
-        val nId = nodeIdFor(device)
-        val allDevices = devicesRepository.getAllDevices().devicesList
-        val siblings = allDevices.filter { nodeIdFor(it) == nId }.sortedBy { endpointFor(it) }
+        val siblings = devicesRepository.getDevicesByNodeId(nodeId).sortedBy { endpointFor(it) }
         val models = siblings.map { sibling ->
           val siblingState = devicesStateRepository.loadDeviceState(sibling.deviceId)
           if (siblingState != null) {

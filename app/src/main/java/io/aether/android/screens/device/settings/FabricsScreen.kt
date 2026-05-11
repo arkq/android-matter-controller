@@ -54,10 +54,10 @@ import io.aether.android.screens.common.LoadingIndicator
 @Composable
 fun FabricsRoute(
     onBackClick: () -> Unit,
-    deviceId: Long,
+    nodeId: Long,
     viewModel: FabricsViewModel = hiltViewModel(),
 ) {
-  LaunchedEffect(deviceId) { viewModel.loadFabrics(deviceId) }
+  LaunchedEffect(nodeId) { viewModel.loadFabrics(nodeId) }
 
   val uiState by viewModel.uiState.collectAsState()
 
@@ -79,7 +79,7 @@ fun FabricsRoute(
     FabricsScreen(
         innerPadding = innerPadding,
         uiState = uiState,
-        onRemoveController = { fabricIndex -> viewModel.removeFabric(deviceId, fabricIndex) },
+        onRemoveController = { fabricIndex -> viewModel.removeFabric(nodeId, fabricIndex) },
     )
   }
 }

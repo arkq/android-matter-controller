@@ -67,12 +67,12 @@ import timber.log.Timber
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DeviceRoute(
-    navigateToDeviceSettings: (deviceId: Long) -> Unit,
+    navigateToDeviceSettings: (nodeId: Long) -> Unit,
     onBackClick: () -> Unit,
-    deviceId: Long,
+    nodeId: Long,
     deviceViewModel: DeviceViewModel = hiltViewModel(),
 ) {
-  Timber.d("DeviceRoute deviceId [$deviceId]")
+  Timber.d("DeviceRoute nodeId [$nodeId]")
 
   // Observes values needed by the DeviceScreen.
   val deviceUiModel by deviceViewModel.deviceUiModel.collectAsState()
@@ -111,7 +111,7 @@ internal fun DeviceRoute(
 
   // When app is sent to the background, and pulled back, this kicks in.
   LifecycleResumeEffect(Unit) {
-    deviceViewModel.loadDevice(deviceId)
+    deviceViewModel.loadDevice(nodeId)
     onPauseOrDispose { deviceViewModel.stopMonitoringStateChanges() }
   }
 
@@ -137,7 +137,7 @@ internal fun DeviceRoute(
             },
             actions = {
               if (deviceUiModel != null) {
-                IconButton(onClick = { navigateToDeviceSettings(deviceId) }) {
+                IconButton(onClick = { navigateToDeviceSettings(nodeId) }) {
                   Icon(
                       imageVector = Icons.Filled.Settings,
                       contentDescription = stringResource(R.string.device_settings),

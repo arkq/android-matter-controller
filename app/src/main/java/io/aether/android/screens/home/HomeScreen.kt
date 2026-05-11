@@ -94,6 +94,7 @@ import io.aether.android.TaskStatus
 import io.aether.android.commissioning.AppCommissioningService
 import io.aether.android.getDeviceTypeIconId
 import io.aether.android.isMultiAdminCommissioning
+import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.thread.getActivity
@@ -119,7 +120,7 @@ import timber.log.Timber
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeRoute(
-    navigateToDevice: (deviceId: Long, deviceName: String) -> Unit,
+    navigateToDevice: (nodeId: Long) -> Unit,
     onMenuClick: () -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -157,7 +158,7 @@ internal fun HomeRoute(
 
   // Functions invoked when UI controls are clicked on a specific device in the list.
   val onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit = remember {
-    { navigateToDevice(it.device.deviceId, it.device.name) }
+    { navigateToDevice(nodeIdFor(it.device)) }
   }
   val onOnOffClick: (deviceId: Long, value: Boolean) -> Unit = remember {
     { deviceId, value -> homeViewModel.updateDeviceStateOn(deviceId, value) }

@@ -16,6 +16,7 @@ import chip.platform.NsdManagerServiceResolver
 import chip.platform.PreferencesConfigurationManager
 import chip.platform.PreferencesKeyValueStoreManager
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.aether.android.formatNodeId
 import io.aether.android.stripLinkLocalInIpAddress
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -64,7 +65,8 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
             }
 
             override fun onConnectionFailure(nodeId: Long, error: Exception) {
-              val errorMessage = "Unable to get connected device with nodeId $nodeId."
+              val errorMessage =
+                  "Unable to get connected device with nodeId ${formatNodeId(nodeId)}."
               Timber.e(errorMessage, error)
               continuation.resumeWithException(IllegalStateException(errorMessage))
             }
@@ -253,7 +255,8 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
             }
 
             override fun onConnectionFailure(nodeId: Long, error: Exception) {
-              val errorMessage = "Unable to get connected device with nodeId $nodeId"
+              val errorMessage =
+                  "Unable to get connected device with nodeId ${formatNodeId(nodeId)}"
               Timber.e(errorMessage, error)
               continuation.resumeWithException(IllegalStateException(errorMessage))
             }

@@ -4,7 +4,6 @@
 
 package io.aether.android
 
-import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
@@ -26,15 +25,13 @@ const val DEST_SCANNER = "scanner"
 const val DEST_THREAD = "thread"
 
 const val ARG_NODE_ID = "nodeId"
-const val ARG_DEVICE_NAME = "deviceName"
 
-const val ROUTE_DEVICE = "device/{$ARG_NODE_ID}?$ARG_DEVICE_NAME={$ARG_DEVICE_NAME}"
+const val ROUTE_DEVICE = "device/{$ARG_NODE_ID}"
 const val ROUTE_DEVICE_SETTINGS = "device/{$ARG_NODE_ID}/settings"
 const val ROUTE_DEVICE_DATA_MODEL = "device/{$ARG_NODE_ID}/data-model"
 const val ROUTE_DEVICE_FABRICS = "device/{$ARG_NODE_ID}/fabrics"
 
-fun routeToDevice(nodeId: Long, deviceName: String): String =
-    "device/$nodeId?$ARG_DEVICE_NAME=${Uri.encode(deviceName)}"
+fun routeToDevice(nodeId: Long): String = "device/$nodeId"
 
 fun routeToDeviceSettings(nodeId: Long): String = "device/$nodeId/settings"
 
@@ -52,8 +49,8 @@ fun AppNavigation(
   // as NavController is an unstable type. Indirection like a lambda should be used
   // as the compiler considers lambdas stable.]
   val navigateToHome: () -> Unit = remember { { navController.navigate(DEST_HOME) } }
-  val navigateToDevice: (nodeId: Long, deviceName: String) -> Unit = remember {
-    { nodeId, deviceName -> navController.navigate(routeToDevice(nodeId, deviceName)) }
+  val navigateToDevice: (nodeId: Long) -> Unit = remember {
+    { nodeId -> navController.navigate(routeToDevice(nodeId)) }
   }
   val navigateToDeviceDataModel: (nodeId: Long) -> Unit = remember {
     { nodeId -> navController.navigate(routeToDeviceDataModel(nodeId)) }
@@ -71,19 +68,12 @@ fun AppNavigation(
     // Device
     composable(
         ROUTE_DEVICE,
-        arguments =
-            listOf(
-                navArgument(ARG_NODE_ID) { type = NavType.LongType },
-                navArgument(ARG_DEVICE_NAME) {
-                  type = NavType.StringType
-                  defaultValue = ""
-                },
-            ),
+        arguments = listOf(navArgument(ARG_NODE_ID) { type = NavType.LongType }),
     ) {
       DeviceRoute(
           navigateToDeviceSettings = navigateToDeviceSettings,
           onBackClick = { navController.popBackStack() },
-          deviceId = it.arguments?.getLong(ARG_NODE_ID)!!,
+          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!,
       )
     }
     // Device settings
@@ -96,7 +86,7 @@ fun AppNavigation(
           navigateToDeviceDataModel = navigateToDeviceDataModel,
           navigateToDeviceFabrics = navigateToDeviceFabrics,
           onBackClick = { navController.popBackStack() },
-          deviceId = it.arguments?.getLong(ARG_NODE_ID)!!,
+          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!,
       )
     }
     // Inspect device from Device Settings
@@ -116,7 +106,7 @@ fun AppNavigation(
     ) {
       FabricsRoute(
           onBackClick = { navController.popBackStack() },
-          deviceId = it.arguments?.getLong(ARG_NODE_ID)!!,
+          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!,
       )
     }
     // Matter Device Scanner
