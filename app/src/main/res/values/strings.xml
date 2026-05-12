@@ -54,7 +54,7 @@ SPDX-License-Identifier: Apache-2.0
     <string name="add_device_to_repository_failed">Adding device to app\'s repository failed</string>
     <string name="write_node_label_failed">Failed to write NodeLabel</string>
     <string name="opening_pairing_window_title">Opening pairing window</string>
-    <string name="opening_pairing_window_message">This may take a few seconds...</string>
+    <string name="opening_pairing_window_message">This may take a few seconds…</string>
     <string name="error_introspecting_device">Error introspecting the device</string>
     <string name="controllers_offline">The device is offline and its controllers cannot be retrieved.</string>
     <string name="unlinking_device_title">Unlinking the device</string>

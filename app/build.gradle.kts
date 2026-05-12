@@ -51,7 +51,7 @@ android {
     minSdk = 27
 
     // Specifies the API level used to test the app.
-    targetSdk = 36
+    targetSdk = 37
 
     // Defines the version number of your app.
     versionCode = 1
@@ -142,6 +142,7 @@ dependencies {
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.foundation.layout)
   implementation(libs.androidx.compose.material3)
+  implementation(libs.androidx.compose.material.icons.core)
   implementation(libs.androidx.compose.runtime)
   implementation(libs.androidx.compose.runtime.livedata)
   implementation(libs.androidx.compose.ui.tooling.preview)

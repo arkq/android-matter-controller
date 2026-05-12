@@ -4,17 +4,7 @@
   SPDX-License-Identifier: Apache-2.0
 -->
 <resources>
-    <dimen name="row_item_margin_vertical">12dp</dimen>
-    <dimen name="row_item_margin_horizontal">12dp</dimen>
-    <dimen name="task_size">20sp</dimen>
-    <dimen name="task_details_size">16sp</dimen>
-    <dimen name="task_small_size">12sp</dimen>
-    <dimen name="no_device_title">20sp</dimen>
-    <dimen name="no_device_text">12sp</dimen>
-
     <dimen name="margin_normal">16dp</dimen>
-    <dimen name="margin_small">8dp</dimen>
-    <dimen name="margin_extra_small">4dp</dimen>
     <dimen name="padding_surface_content">12dp</dimen>
     <dimen name="rounded_corner">12dp</dimen>
 </resources>
