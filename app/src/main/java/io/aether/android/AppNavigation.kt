@@ -14,8 +14,8 @@ import androidx.navigation.navArgument
 import io.aether.android.screens.device.DeviceRoute
 import io.aether.android.screens.device.settings.DataModelRoute
 import io.aether.android.screens.device.settings.DeviceSettingsRoute
-import io.aether.android.screens.device.settings.explorer.ExplorerRoute
 import io.aether.android.screens.device.settings.FabricsRoute
+import io.aether.android.screens.device.settings.explorer.ExplorerRoute
 import io.aether.android.screens.home.HomeRoute
 import io.aether.android.screens.scanner.ScannerRoute
 import io.aether.android.screens.thread.ThreadRoute

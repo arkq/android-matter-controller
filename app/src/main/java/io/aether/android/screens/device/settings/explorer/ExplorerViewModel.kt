@@ -51,7 +51,8 @@ data class ExplorerClusterDetails(
 )
 
 @HiltViewModel
-class ExplorerViewModel @Inject constructor(private val clustersHelper: ClustersHelper) : ViewModel() {
+class ExplorerViewModel @Inject constructor(private val clustersHelper: ClustersHelper) :
+    ViewModel() {
   private var _deviceMatterInfoList = MutableStateFlow<List<DeviceMatterInfo>?>(null)
   val deviceMatterInfoList: StateFlow<List<DeviceMatterInfo>?> = _deviceMatterInfoList.asStateFlow()
 
@@ -67,7 +68,8 @@ class ExplorerViewModel @Inject constructor(private val clustersHelper: Clusters
   private var _selectedTabByCluster = MutableStateFlow<Map<Long, ExplorerTab>>(emptyMap())
   val selectedTabByCluster: StateFlow<Map<Long, ExplorerTab>> = _selectedTabByCluster.asStateFlow()
 
-  private var _clusterDetailsByKey = MutableStateFlow<Map<ExplorerClusterKey, ExplorerClusterDetails>>(emptyMap())
+  private var _clusterDetailsByKey =
+      MutableStateFlow<Map<ExplorerClusterKey, ExplorerClusterDetails>>(emptyMap())
   val clusterDetailsByKey: StateFlow<Map<ExplorerClusterKey, ExplorerClusterDetails>> =
       _clusterDetailsByKey.asStateFlow()
 
@@ -91,7 +93,10 @@ class ExplorerViewModel @Inject constructor(private val clustersHelper: Clusters
         if (shouldBlockUiUntilLoaded) {
           _deviceMatterInfoList.value = emptyList()
         }
-        showMsgDialog(R.string.device_settings_admin_explorer, R.string.device_explorer_error_action_failed)
+        showMsgDialog(
+            R.string.device_settings_admin_explorer,
+            R.string.device_explorer_error_action_failed,
+        )
       }
     }
   }
@@ -128,7 +133,8 @@ class ExplorerViewModel @Inject constructor(private val clustersHelper: Clusters
     viewModelScope.launch {
       try {
         val knownSchema = ExplorerSchema.findCluster(clusterId)
-        val attributesFromDevice = clustersHelper.readClusterAttributeList(nodeId, endpoint, clusterId)
+        val attributesFromDevice =
+            clustersHelper.readClusterAttributeList(nodeId, endpoint, clusterId)
         val commandsFromDevice =
             clustersHelper.readClusterAcceptedCommandList(nodeId, endpoint, clusterId)
         val eventsFromDevice = clustersHelper.readClusterEventList(nodeId, endpoint, clusterId)
@@ -138,37 +144,37 @@ class ExplorerViewModel @Inject constructor(private val clustersHelper: Clusters
         val knownEvents = knownSchema?.events.orEmpty().associateBy { it.id }
 
         val attributes =
-            (attributesFromDevice + knownAttributes.keys)
-                .toSet()
-                .sorted()
-                .map { id ->
-                  val known = knownAttributes[id]
-                  ExplorerAttributeUiItem(
-                      id = id,
-                      nameRes = known?.nameRes,
-                      writable = known?.writable == true,
-                  )
-                }
+            (attributesFromDevice + knownAttributes.keys).toSet().sorted().map { id ->
+              val known = knownAttributes[id]
+              ExplorerAttributeUiItem(
+                  id = id,
+                  nameRes = known?.nameRes,
+                  writable = known?.writable == true,
+              )
+            }
         val commands =
-            (commandsFromDevice + knownCommands.keys)
-                .toSet()
-                .sorted()
-                .map { id ->
-                  val known = knownCommands[id]
-                  ExplorerCommandUiItem(id = id, nameRes = known?.nameRes, arguments = known?.arguments.orEmpty())
-                }
+            (commandsFromDevice + knownCommands.keys).toSet().sorted().map { id ->
+              val known = knownCommands[id]
+              ExplorerCommandUiItem(
+                  id = id,
+                  nameRes = known?.nameRes,
+                  arguments = known?.arguments.orEmpty(),
+              )
+            }
         val events =
-            (eventsFromDevice + knownEvents.keys)
-                .toSet()
-                .sorted()
-                .map { id ->
-                  val known = knownEvents[id]
-                  ExplorerEventUiItem(id = id, nameRes = known?.nameRes)
-                }
-        _clusterDetailsByKey.update { it + (key to ExplorerClusterDetails(attributes, commands, events)) }
+            (eventsFromDevice + knownEvents.keys).toSet().sorted().map { id ->
+              val known = knownEvents[id]
+              ExplorerEventUiItem(id = id, nameRes = known?.nameRes)
+            }
+        _clusterDetailsByKey.update {
+          it + (key to ExplorerClusterDetails(attributes, commands, events))
+        }
       } catch (e: Exception) {
         Timber.e(e, "ensureClusterDetails failed")
-        showMsgDialog(R.string.device_settings_admin_explorer, R.string.device_explorer_error_action_failed)
+        showMsgDialog(
+            R.string.device_settings_admin_explorer,
+            R.string.device_explorer_error_action_failed,
+        )
       }
     }
   }
@@ -176,21 +182,35 @@ class ExplorerViewModel @Inject constructor(private val clustersHelper: Clusters
   fun readAttribute(nodeId: Long, endpoint: Int, clusterId: Long, attributeId: Long) {
     viewModelScope.launch {
       try {
-        val value = clustersHelper.readAttributeValue(nodeId, endpoint, clusterId, attributeId).orEmpty()
-        _attributeValueByKey.update { it + (attributeKey(endpoint, clusterId, attributeId) to value) }
+        val value =
+            clustersHelper.readAttributeValue(nodeId, endpoint, clusterId, attributeId).orEmpty()
+        _attributeValueByKey.update {
+          it + (attributeKey(endpoint, clusterId, attributeId) to value)
+        }
       } catch (e: Exception) {
         Timber.e(e, "readAttribute failed")
-        showMsgDialog(R.string.device_settings_admin_explorer, R.string.device_explorer_error_action_failed)
+        showMsgDialog(
+            R.string.device_settings_admin_explorer,
+            R.string.device_explorer_error_action_failed,
+        )
       }
     }
   }
 
-  fun writeAttribute(nodeId: Long, endpoint: Int, clusterId: Long, attributeId: Long, value: String) {
+  fun writeAttribute(
+      nodeId: Long,
+      endpoint: Int,
+      clusterId: Long,
+      attributeId: Long,
+      value: String,
+  ) {
     viewModelScope.launch {
       try {
         if (clusterId == 0x0028L && attributeId == 0x0005L && endpoint == 0) {
           clustersHelper.writeBasicInformationNodeLabelAttribute(nodeId, value)
-          _attributeValueByKey.update { it + (attributeKey(endpoint, clusterId, attributeId) to value) }
+          _attributeValueByKey.update {
+            it + (attributeKey(endpoint, clusterId, attributeId) to value)
+          }
         } else {
           showMsgDialog(
               R.string.device_settings_admin_explorer,
@@ -199,7 +219,10 @@ class ExplorerViewModel @Inject constructor(private val clustersHelper: Clusters
         }
       } catch (e: Exception) {
         Timber.e(e, "writeAttribute failed")
-        showMsgDialog(R.string.device_settings_admin_explorer, R.string.device_explorer_error_action_failed)
+        showMsgDialog(
+            R.string.device_settings_admin_explorer,
+            R.string.device_explorer_error_action_failed,
+        )
       }
     }
   }
@@ -224,7 +247,10 @@ class ExplorerViewModel @Inject constructor(private val clustersHelper: Clusters
         }
       } catch (e: Exception) {
         Timber.e(e, "invokeCommand failed")
-        showMsgDialog(R.string.device_settings_admin_explorer, R.string.device_explorer_error_action_failed)
+        showMsgDialog(
+            R.string.device_settings_admin_explorer,
+            R.string.device_explorer_error_action_failed,
+        )
       }
     }
   }

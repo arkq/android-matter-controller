@@ -48,9 +48,9 @@ private const val BASIC_INFORMATION_VENDOR_ID_ATTRIBUTE_ID = 0x0002L
 private const val BASIC_INFORMATION_NODE_LABEL_ATTRIBUTE_ID = 0x0005L
 private const val BASIC_INFORMATION_HARDWARE_VERSION_STRING_ATTRIBUTE_ID = 0x0008L
 private const val BASIC_INFORMATION_SOFTWARE_VERSION_STRING_ATTRIBUTE_ID = 0x000AL
-private const val GLOBAL_ATTRIBUTE_EVENT_LIST_ID = 0xFFFA
-private const val GLOBAL_ATTRIBUTE_ACCEPTED_COMMAND_LIST_ID = 0xFFF9
-private const val GLOBAL_ATTRIBUTE_ATTRIBUTE_LIST_ID = 0xFFFB
+private const val GLOBAL_ATTRIBUTE_EVENT_LIST_ID = 0xFFFAL
+private const val GLOBAL_ATTRIBUTE_ACCEPTED_COMMAND_LIST_ID = 0xFFF9L
+private const val GLOBAL_ATTRIBUTE_ATTRIBUTE_LIST_ID = 0xFFFBL
 
 data class BasicInformationAttributes(
     val vendorName: String? = null,
@@ -141,7 +141,10 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         try {
           chipClient.getConnectedDevicePointer(nodeId)
         } catch (e: IllegalStateException) {
-          Timber.e(e, "Can't get connectedDevicePointer for writeBasicInformationNodeLabelAttribute.")
+          Timber.e(
+              e,
+              "Can't get connectedDevicePointer for writeBasicInformationNodeLabelAttribute.",
+          )
           return
         }
     return suspendCoroutine { continuation ->

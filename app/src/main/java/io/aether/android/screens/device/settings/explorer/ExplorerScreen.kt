@@ -16,8 +16,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -115,7 +115,9 @@ fun ExplorerRoute(
         onDismissMsgDialog = viewModel::dismissMsgDialog,
         onEndpointSelected = viewModel::selectEndpoint,
         onSearchQueryChange = viewModel::onSearchQueryChange,
-        onToggleCluster = { endpoint, clusterId -> viewModel.toggleCluster(nodeId, endpoint, clusterId) },
+        onToggleCluster = { endpoint, clusterId ->
+          viewModel.toggleCluster(nodeId, endpoint, clusterId)
+        },
         onTabSelected = viewModel::setClusterTab,
         onAttributeSelected = { endpoint, clusterId, attribute ->
           attributeSheetTarget = ExplorerAttributeSheetTarget(endpoint, clusterId, attribute)
@@ -137,8 +139,7 @@ fun ExplorerRoute(
     var editValue by remember(currentAttributeSheetTarget) { mutableStateOf("") }
     ModalBottomSheet(onDismissRequest = { attributeSheetTarget = null }) {
       Column(
-          modifier =
-              Modifier.fillMaxWidth().padding(dimensionResource(R.dimen.margin_normal)),
+          modifier = Modifier.fillMaxWidth().padding(dimensionResource(R.dimen.margin_normal)),
           verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_small)),
       ) {
         val attributeName =
@@ -158,11 +159,10 @@ fun ExplorerRoute(
                 stringResource(
                     R.string.device_explorer_current_value,
                     viewModel.attributeValue(
-                            currentAttributeSheetTarget.endpoint,
-                            currentAttributeSheetTarget.clusterId,
-                            currentAttributeSheetTarget.attribute.id,
-                        )
-                        ?: stringResource(R.string.device_explorer_value_not_read),
+                        currentAttributeSheetTarget.endpoint,
+                        currentAttributeSheetTarget.clusterId,
+                        currentAttributeSheetTarget.attribute.id,
+                    ) ?: stringResource(R.string.device_explorer_value_not_read),
                 ),
             style = MaterialTheme.typography.bodyMedium,
         )
@@ -211,8 +211,7 @@ fun ExplorerRoute(
   if (currentCommandSheetTarget != null) {
     ModalBottomSheet(onDismissRequest = { commandSheetTarget = null }) {
       Column(
-          modifier =
-              Modifier.fillMaxWidth().padding(dimensionResource(R.dimen.margin_normal)),
+          modifier = Modifier.fillMaxWidth().padding(dimensionResource(R.dimen.margin_normal)),
           verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_small)),
       ) {
         val commandName =
@@ -303,16 +302,15 @@ private fun ExplorerScreen(
   val endpointInfo = endpointInfos.firstOrNull { it.endpoint == endpoint }
   val availableClusters = endpointInfo?.serverClusters.orEmpty().sorted()
   val normalizedQuery = searchQuery.trim().lowercase()
-  val filteredClusters =
-      availableClusters.filter { clusterId ->
-        if (normalizedQuery.isBlank()) {
-          true
-        } else {
-          val clusterName = MatterConstants.ClustersMap[clusterId].orEmpty().lowercase()
-          val clusterHex = formatExplorerId(clusterId).lowercase()
-          clusterName.contains(normalizedQuery) || clusterHex.contains(normalizedQuery)
-        }
-      }
+  val filteredClusters = availableClusters.filter { clusterId ->
+    if (normalizedQuery.isBlank()) {
+      true
+    } else {
+      val clusterName = MatterConstants.ClustersMap[clusterId].orEmpty().lowercase()
+      val clusterHex = formatExplorerId(clusterId).lowercase()
+      clusterName.contains(normalizedQuery) || clusterHex.contains(normalizedQuery)
+    }
+  }
 
   Column(
       modifier =
@@ -386,7 +384,9 @@ private fun ExplorerScreen(
                   style = MaterialTheme.typography.titleMedium,
               )
               Icon(
-                  imageVector = if (isExpanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                  imageVector =
+                      if (isExpanded) Icons.Filled.KeyboardArrowUp
+                      else Icons.Filled.KeyboardArrowDown,
                   contentDescription =
                       if (isExpanded) stringResource(R.string.device_explorer_collapse_cluster)
                       else stringResource(R.string.device_explorer_expand_cluster),
