@@ -491,4 +491,6 @@ private fun ExplorerRow(
   }
 }
 
-private fun formatExplorerId(id: Long): String = String.format("0x%04X", id)
+private fun formatExplorerId(id: Long): String {
+  return if (id <= 0xFFFF) String.format("0x%04X", id) else String.format("0x%08X", id)
+}

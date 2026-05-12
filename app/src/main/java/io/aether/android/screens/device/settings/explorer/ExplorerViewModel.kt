@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-enum class ExplorerTab(@StringRes val titleRes: Int) {
+enum class ExplorerTab(@field:StringRes @param:StringRes val titleRes: Int) {
   ATTRIBUTES(R.string.device_explorer_tab_attributes),
   COMMANDS(R.string.device_explorer_tab_commands),
   EVENTS(R.string.device_explorer_tab_events),
@@ -29,19 +29,19 @@ data class ExplorerClusterKey(val endpoint: Int, val clusterId: Long)
 
 data class ExplorerAttributeUiItem(
     val id: Long,
-    @StringRes val nameRes: Int? = null,
+    @field:StringRes @param:StringRes val nameRes: Int? = null,
     val writable: Boolean = false,
 )
 
 data class ExplorerCommandUiItem(
     val id: Long,
-    @StringRes val nameRes: Int? = null,
+    @field:StringRes @param:StringRes val nameRes: Int? = null,
     val arguments: List<ExplorerCommandArgumentDefinition> = emptyList(),
 )
 
 data class ExplorerEventUiItem(
     val id: Long,
-    @StringRes val nameRes: Int? = null,
+    @field:StringRes @param:StringRes val nameRes: Int? = null,
 )
 
 data class ExplorerClusterDetails(
@@ -53,6 +53,12 @@ data class ExplorerClusterDetails(
 @HiltViewModel
 class ExplorerViewModel @Inject constructor(private val clustersHelper: ClustersHelper) :
     ViewModel() {
+  companion object {
+    private const val BASIC_INFORMATION_CLUSTER_ID = 0x0028L
+    private const val BASIC_INFORMATION_NODE_LABEL_ATTRIBUTE_ID = 0x0005L
+    private const val ROOT_ENDPOINT = 0
+  }
+
   private var _deviceMatterInfoList = MutableStateFlow<List<DeviceMatterInfo>?>(null)
   val deviceMatterInfoList: StateFlow<List<DeviceMatterInfo>?> = _deviceMatterInfoList.asStateFlow()
 
@@ -81,7 +87,7 @@ class ExplorerViewModel @Inject constructor(private val clustersHelper: Clusters
 
   fun loadExplorer(nodeId: Long) {
     viewModelScope.launch {
-      val shouldBlockUiUntilLoaded = _deviceMatterInfoList.value == null
+      val isInitialLoad = _deviceMatterInfoList.value == null
       try {
         val infos = clustersHelper.fetchDeviceMatterInfo(nodeId).sortedBy { it.endpoint }
         _deviceMatterInfoList.value = infos
@@ -90,7 +96,7 @@ class ExplorerViewModel @Inject constructor(private val clustersHelper: Clusters
         }
       } catch (e: Exception) {
         Timber.e(e, "loadExplorer failed")
-        if (shouldBlockUiUntilLoaded) {
+        if (isInitialLoad) {
           _deviceMatterInfoList.value = emptyList()
         }
         showMsgDialog(
@@ -206,7 +212,11 @@ class ExplorerViewModel @Inject constructor(private val clustersHelper: Clusters
   ) {
     viewModelScope.launch {
       try {
-        if (clusterId == 0x0028L && attributeId == 0x0005L && endpoint == 0) {
+        if (
+            clusterId == BASIC_INFORMATION_CLUSTER_ID &&
+                attributeId == BASIC_INFORMATION_NODE_LABEL_ATTRIBUTE_ID &&
+                endpoint == ROOT_ENDPOINT
+        ) {
           clustersHelper.writeBasicInformationNodeLabelAttribute(nodeId, value)
           _attributeValueByKey.update {
             it + (attributeKey(endpoint, clusterId, attributeId) to value)
@@ -245,6 +255,8 @@ class ExplorerViewModel @Inject constructor(private val clustersHelper: Clusters
                   R.string.device_explorer_error_unsupported_command,
               )
         }
+      } catch (e: ExplorerValidationException) {
+        showMsgDialog(R.string.device_settings_admin_explorer, e.messageRes)
       } catch (e: Exception) {
         Timber.e(e, "invokeCommand failed")
         showMsgDialog(
@@ -309,12 +321,10 @@ class ExplorerViewModel @Inject constructor(private val clustersHelper: Clusters
   ): Int {
     val parsedValue = value?.trim()?.toIntOrNull()
     if (parsedValue == null) {
-      showMsgDialog(R.string.device_settings_admin_explorer, invalidNumberMessageRes)
-      throw IllegalArgumentException("Invalid number")
+      throw ExplorerValidationException(invalidNumberMessageRes)
     }
     if (parsedValue < min || parsedValue > max) {
-      showMsgDialog(R.string.device_settings_admin_explorer, outOfRangeMessageRes)
-      throw IllegalArgumentException("Out of range")
+      throw ExplorerValidationException(outOfRangeMessageRes)
     }
     return parsedValue
   }
@@ -338,4 +348,7 @@ class ExplorerViewModel @Inject constructor(private val clustersHelper: Clusters
   private fun showMsgDialog(@StringRes titleRes: Int, @StringRes messageRes: Int) {
     _msgDialogInfo.value = DialogInfo(titleRes = titleRes, messageRes = messageRes)
   }
+
+  private class ExplorerValidationException(@field:StringRes @param:StringRes val messageRes: Int) :
+      IllegalArgumentException()
 }

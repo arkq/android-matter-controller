@@ -15,13 +15,13 @@ enum class ExplorerValueType {
 
 data class ExplorerAttributeDefinition(
     val id: Long,
-    @StringRes val nameRes: Int,
+    @field:StringRes @param:StringRes val nameRes: Int,
     val writable: Boolean = false,
 )
 
 data class ExplorerCommandArgumentDefinition(
     val key: String,
-    @StringRes val nameRes: Int,
+    @field:StringRes @param:StringRes val nameRes: Int,
     val type: ExplorerValueType,
     val minValue: Int? = null,
     val maxValue: Int? = null,
@@ -29,13 +29,13 @@ data class ExplorerCommandArgumentDefinition(
 
 data class ExplorerCommandDefinition(
     val id: Long,
-    @StringRes val nameRes: Int,
+    @field:StringRes @param:StringRes val nameRes: Int,
     val arguments: List<ExplorerCommandArgumentDefinition> = emptyList(),
 )
 
 data class ExplorerEventDefinition(
     val id: Long,
-    @StringRes val nameRes: Int,
+    @field:StringRes @param:StringRes val nameRes: Int,
 )
 
 data class ExplorerClusterDefinition(
