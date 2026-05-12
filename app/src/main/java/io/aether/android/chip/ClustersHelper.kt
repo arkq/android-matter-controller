@@ -45,8 +45,12 @@ private const val CURRENT_FABRIC_INDEX_ATTRIBUTE_ID = 0x0005L
 private const val BASIC_INFORMATION_CLUSTER_ID = 0x0028L
 private const val BASIC_INFORMATION_VENDOR_NAME_ATTRIBUTE_ID = 0x0001L
 private const val BASIC_INFORMATION_VENDOR_ID_ATTRIBUTE_ID = 0x0002L
+private const val BASIC_INFORMATION_NODE_LABEL_ATTRIBUTE_ID = 0x0005L
 private const val BASIC_INFORMATION_HARDWARE_VERSION_STRING_ATTRIBUTE_ID = 0x0008L
 private const val BASIC_INFORMATION_SOFTWARE_VERSION_STRING_ATTRIBUTE_ID = 0x000AL
+private const val GLOBAL_ATTRIBUTE_EVENT_LIST_ID = 0xFFFA
+private const val GLOBAL_ATTRIBUTE_ACCEPTED_COMMAND_LIST_ID = 0xFFF9
+private const val GLOBAL_ATTRIBUTE_ATTRIBUTE_LIST_ID = 0xFFFB
 
 data class BasicInformationAttributes(
     val vendorName: String? = null,
@@ -74,6 +78,148 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         }
     fetchDeviceMatterInfo(nodeId, connectedDevicePtr, 0, matterDeviceInfoList)
     return matterDeviceInfoList
+  }
+
+  suspend fun readClusterAttributeList(nodeId: Long, endpoint: Int, clusterId: Long): List<Long> {
+    return readGlobalListAttribute(
+        nodeId = nodeId,
+        endpoint = endpoint,
+        clusterId = clusterId,
+        globalAttributeId = GLOBAL_ATTRIBUTE_ATTRIBUTE_LIST_ID,
+    )
+  }
+
+  suspend fun readClusterAcceptedCommandList(
+      nodeId: Long,
+      endpoint: Int,
+      clusterId: Long,
+  ): List<Long> {
+    return readGlobalListAttribute(
+        nodeId = nodeId,
+        endpoint = endpoint,
+        clusterId = clusterId,
+        globalAttributeId = GLOBAL_ATTRIBUTE_ACCEPTED_COMMAND_LIST_ID,
+    )
+  }
+
+  suspend fun readClusterEventList(nodeId: Long, endpoint: Int, clusterId: Long): List<Long> {
+    return readGlobalListAttribute(
+        nodeId = nodeId,
+        endpoint = endpoint,
+        clusterId = clusterId,
+        globalAttributeId = GLOBAL_ATTRIBUTE_EVENT_LIST_ID,
+    )
+  }
+
+  suspend fun readAttributeValue(
+      nodeId: Long,
+      endpoint: Int,
+      clusterId: Long,
+      attributeId: Long,
+  ): String? {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e(e, "Can't get connectedDevicePointer for readAttributeValue.")
+          return null
+        }
+    val attributeState =
+        chipClient.readAttribute(
+            connectedDevicePtr,
+            ChipAttributePath.newInstance(endpoint.toLong(), clusterId, attributeId),
+        ) ?: return null
+    return when {
+      attributeState.value != null -> attributeState.value.toString()
+      attributeState.json != null -> attributeState.json.toString()
+      else -> null
+    }
+  }
+
+  suspend fun writeBasicInformationNodeLabelAttribute(nodeId: Long, nodeLabel: String) {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e(e, "Can't get connectedDevicePointer for writeBasicInformationNodeLabelAttribute.")
+          return
+        }
+    return suspendCoroutine { continuation ->
+      val callback =
+          object : ChipClusters.DefaultClusterCallback {
+            override fun onSuccess() {
+              continuation.resume(Unit)
+            }
+
+            override fun onError(ex: Exception) {
+              continuation.resumeWithException(ex)
+            }
+          }
+      BasicInformationCluster(connectedDevicePtr, 0).writeNodeLabelAttribute(callback, nodeLabel)
+    }
+  }
+
+  suspend fun moveToLevelCommand(
+      nodeId: Long,
+      endpoint: Int,
+      level: Int,
+      transitionTime: Int,
+  ) {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e(e, "Can't get connectedDevicePointer for moveToLevelCommand.")
+          return
+        }
+    return suspendCoroutine { continuation ->
+      getLevelControlClusterForDevice(connectedDevicePtr, endpoint)
+          .moveToLevel(
+              object : ChipClusters.DefaultClusterCallback {
+                override fun onSuccess() {
+                  continuation.resume(Unit)
+                }
+
+                override fun onError(ex: Exception) {
+                  continuation.resumeWithException(ex)
+                }
+              },
+              level,
+              transitionTime,
+              0,
+              0,
+          )
+    }
+  }
+
+  private suspend fun readGlobalListAttribute(
+      nodeId: Long,
+      endpoint: Int,
+      clusterId: Long,
+      globalAttributeId: Long,
+  ): List<Long> {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e(e, "Can't get connectedDevicePointer for readGlobalListAttribute.")
+          return emptyList()
+        }
+    val attributeState =
+        chipClient.readAttribute(
+            connectedDevicePtr,
+            ChipAttributePath.newInstance(endpoint.toLong(), clusterId, globalAttributeId),
+        ) ?: return emptyList()
+    return readLongList(attributeState.value)
+  }
+
+  private fun readLongList(value: Any?): List<Long> {
+    return when (value) {
+      is List<*> -> value.mapNotNull { (it as? Number)?.toLong() }
+      is LongArray -> value.toList()
+      is IntArray -> value.map { it.toLong() }
+      else -> emptyList()
+    }
   }
 
   /** Fetches MatterDeviceInfo for a specific endpoint. */

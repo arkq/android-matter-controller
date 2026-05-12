@@ -87,6 +87,8 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_settings_admin_fabrics_subtitle">Control who can manage this device</string>
     <string name="device_settings_admin_inspect">Data model</string>
     <string name="device_settings_admin_inspect_subtitle">Endpoint hierarchy and supported clusters</string>
+    <string name="device_settings_admin_explorer">Explorer</string>
+    <string name="device_settings_admin_explorer_subtitle">Read, write, and invoke on cluster data</string>
     <string name="device_settings_admin_share">Share</string>
     <string name="device_settings_admin_share_subtitle">Share this device with other controllers</string>
     <string name="device_settings_admin_remove">Remove</string>
@@ -121,6 +123,57 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_data_model_client_clusters">Client Clusters</string>
     <string name="device_data_model_none">None</string>
     <string name="device_data_model_unknown">Unknown</string>
+
+    <!-- Device Explorer Screen -->
+    <string name="device_explorer_loading">Loading explorer…</string>
+    <string name="device_explorer_tab_attributes">Attributes</string>
+    <string name="device_explorer_tab_commands">Commands</string>
+    <string name="device_explorer_tab_events">Events</string>
+    <string name="device_explorer_endpoint_chip">EP%1$d: %2$s</string>
+    <string name="device_explorer_endpoint_chip_without_type">EP%1$d</string>
+    <string name="device_explorer_endpoint_type_unknown">Unknown</string>
+    <string name="device_explorer_cluster_search">Search clusters</string>
+    <string name="device_explorer_clusters_empty">No clusters found for this endpoint.</string>
+    <string name="device_explorer_cluster_title">%1$s (%2$s)</string>
+    <string name="device_explorer_cluster_unknown">Unknown cluster</string>
+    <string name="device_explorer_expand_cluster">Expand cluster</string>
+    <string name="device_explorer_collapse_cluster">Collapse cluster</string>
+    <string name="device_explorer_loading_cluster">Loading cluster details…</string>
+    <string name="device_explorer_attributes_empty">No attributes available.</string>
+    <string name="device_explorer_commands_empty">No commands available.</string>
+    <string name="device_explorer_events_empty">No events available.</string>
+    <string name="device_explorer_attribute_unknown">Unknown attribute</string>
+    <string name="device_explorer_command_unknown">Unknown command</string>
+    <string name="device_explorer_event_unknown">Unknown event</string>
+    <string name="device_explorer_event_title">%1$s (%2$s)</string>
+    <string name="device_explorer_open">Open</string>
+    <string name="device_explorer_read">Read</string>
+    <string name="device_explorer_write">Write</string>
+    <string name="device_explorer_invoke">Invoke</string>
+    <string name="device_explorer_edit_value">Edit value</string>
+    <string name="device_explorer_current_value">Current value: %1$s</string>
+    <string name="device_explorer_value_not_read">Not read yet</string>
+    <string name="device_explorer_attribute_title">%1$s (%2$s)</string>
+    <string name="device_explorer_command_title">%1$s (%2$s)</string>
+    <string name="device_explorer_argument_with_range">%1$s (%2$d-%3$d)</string>
+    <string name="device_explorer_attribute_node_label">NodeLabel</string>
+    <string name="device_explorer_attribute_on_off">OnOff</string>
+    <string name="device_explorer_attribute_current_level">CurrentLevel</string>
+    <string name="device_explorer_command_off">Off</string>
+    <string name="device_explorer_command_on">On</string>
+    <string name="device_explorer_command_toggle">Toggle</string>
+    <string name="device_explorer_command_move_to_level">MoveToLevel</string>
+    <string name="device_explorer_argument_level">Level</string>
+    <string name="device_explorer_argument_transition_time">Transition Time</string>
+    <string name="device_explorer_error_action_failed">Explorer action failed.</string>
+    <string name="device_explorer_error_unsupported_attribute_write">This attribute cannot be written in Explorer.</string>
+    <string name="device_explorer_error_unsupported_command">This command is not supported in Explorer.</string>
+    <string name="device_explorer_error_invalid_level_number">Please enter a valid number for Level.</string>
+    <string name="device_explorer_error_level_out_of_range">Level must be between 0 and 254.</string>
+    <string name="device_explorer_error_invalid_transition_time_number">Please enter a valid number for Transition Time.</string>
+    <string name="device_explorer_error_transition_time_out_of_range">Transition Time must be between 0 and 65535.</string>
+    <string name="device_explorer_error_invalid_number">Please enter a valid number for %1$s.</string>
+    <string name="device_explorer_error_out_of_range">Value for %1$s must be between %2$d and %3$d.</string>
 
     <!-- Device Share Dialog -->
     <string name="device_share_dialog_title">Share this device?</string>
