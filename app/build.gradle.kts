@@ -36,7 +36,7 @@ android {
    * compileSdk specifies the Android API level Gradle should use to compile your app. This means
    * your app can use the API features included in this API level and lower.
    */
-  compileSdk = 35
+  compileSdk = 37
 
   /**
    * The defaultConfig block encapsulates default settings and entries for all build variants and
@@ -51,7 +51,7 @@ android {
     minSdk = 27
 
     // Specifies the API level used to test the app.
-    targetSdk = 35
+    targetSdk = 36
 
     // Defines the version number of your app.
     versionCode = 1

@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2022 Google LLC
 SPDX-FileCopyrightText: 2026 The Authors
 SPDX-License-Identifier: Apache-2.0
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name" translatable="false">Æther</string>
 
     <string name="cancel">Cancel</string>
@@ -61,7 +61,7 @@ SPDX-License-Identifier: Apache-2.0
     <string name="unlinking_device_body">Calling the device to remove this controller\'s fabric. If the device is offline, this will fail when the call times out, and this may take a while.\n\nUnlinking the device\u2026</string>
 
     <!-- Matter Beacon -->
-    <string name="beacon_detail_text" translatable="false">VID: 0x%04X PID: 0x%04X Disc: 0x%03X</string>
+    <string name="beacon_detail_text" translatable="false" tools:ignore="PluralsCandidate">VID: 0x%04X PID: 0x%04X Disc: 0x%03X</string>
     <string name="device_attestation_warning">WARNING: The device attestation failed but was ignored.</string>
 
     <!--Accessibility component name  -->

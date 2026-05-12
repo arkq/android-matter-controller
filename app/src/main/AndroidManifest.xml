@@ -59,6 +59,7 @@
         <service
             android:name="io.aether.android.commissioning.AppCommissioningService"
             android:exported="true"
+            tools:ignore="ExportedService"
             />
 
         <service android:name="com.google.android.gms.metadata.ModuleDependencies"
