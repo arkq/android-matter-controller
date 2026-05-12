@@ -133,6 +133,7 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_explorer_endpoint_chip_without_type">EP%1$d</string>
     <string name="device_explorer_endpoint_type_unknown">Unknown</string>
     <string name="device_explorer_cluster_search">Search clusters</string>
+    <string name="device_explorer_endpoints_empty">No endpoints available for this device.</string>
     <string name="device_explorer_clusters_empty">No clusters found for this endpoint.</string>
     <string name="device_explorer_cluster_title">%1$s (%2$s)</string>
     <string name="device_explorer_cluster_unknown">Unknown cluster</string>

@@ -295,7 +295,17 @@ private fun ExplorerScreen(
   val endpointInfos = deviceMatterInfoList.sortedBy { it.endpoint }
   val endpoint = selectedEndpoint ?: endpointInfos.firstOrNull()?.endpoint
   if (endpoint == null) {
-    LoadingIndicator(stringResource(R.string.device_explorer_loading), innerPadding)
+    Column(
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(innerPadding)
+                .padding(dimensionResource(R.dimen.margin_normal)),
+    ) {
+      Text(
+          text = stringResource(R.string.device_explorer_endpoints_empty),
+          style = MaterialTheme.typography.bodyMedium,
+      )
+    }
     return
   }
 

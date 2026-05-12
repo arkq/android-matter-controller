@@ -221,7 +221,9 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
       is List<*> -> {
         val numericValues = value.mapNotNull { (it as? Number)?.toLong() }
         if (numericValues.size != value.size) {
-          Timber.w("readLongList: received non-numeric items in global list attribute")
+          throw IllegalStateException(
+              "readLongList: received non-numeric items in global list attribute"
+          )
         }
         numericValues
       }

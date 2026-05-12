@@ -255,7 +255,7 @@ class ExplorerViewModel @Inject constructor(private val clustersHelper: Clusters
                   R.string.device_explorer_error_unsupported_command,
               )
         }
-      } catch (e: ExplorerValidationException) {
+      } catch (e: ExplorerInputValidationException) {
         showMsgDialog(R.string.device_settings_admin_explorer, e.messageRes)
       } catch (e: Exception) {
         Timber.e(e, "invokeCommand failed")
@@ -321,10 +321,10 @@ class ExplorerViewModel @Inject constructor(private val clustersHelper: Clusters
   ): Int {
     val parsedValue = value?.trim()?.toIntOrNull()
     if (parsedValue == null) {
-      throw ExplorerValidationException(invalidNumberMessageRes)
+      throw ExplorerInputValidationException(invalidNumberMessageRes)
     }
     if (parsedValue < min || parsedValue > max) {
-      throw ExplorerValidationException(outOfRangeMessageRes)
+      throw ExplorerInputValidationException(outOfRangeMessageRes)
     }
     return parsedValue
   }
@@ -349,6 +349,7 @@ class ExplorerViewModel @Inject constructor(private val clustersHelper: Clusters
     _msgDialogInfo.value = DialogInfo(titleRes = titleRes, messageRes = messageRes)
   }
 
-  private class ExplorerValidationException(@field:StringRes @param:StringRes val messageRes: Int) :
-      IllegalArgumentException()
+  private class ExplorerInputValidationException(
+      @field:StringRes @param:StringRes val messageRes: Int
+  ) : IllegalArgumentException()
 }
