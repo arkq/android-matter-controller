@@ -78,15 +78,7 @@ jobs:
       - name: Check for formatting violations
         run: git diff --exit-code
 
-  reuse:
-    name: REUSE Compliance Check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: REUSE Compliance Check
-        uses: fsfe/reuse-action@v6
-
-  android-lint:
+  lint:
     name: Android Lint
     runs-on: ubuntu-latest
     steps:
@@ -113,3 +105,11 @@ jobs:
           report-path: app/build/reports/*.xml
           ignore-warnings: false
         continue-on-error: true
+
+  reuse:
+    name: REUSE Compliance Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: REUSE Compliance Check
+        uses: fsfe/reuse-action@v6
