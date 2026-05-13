@@ -30,19 +30,15 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v6
-
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "21"
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v4
-
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
       - name: Restore keystore from GitHub Secrets
         env:
           # To regenerate this key and rotate the secret:
@@ -54,23 +50,18 @@ jobs:
         run: |
           mkdir -p $HOME/.android
           echo $DEBUG_KEYSTORE_B64 | base64 -d > $HOME/.android/debug.keystore
-
-      - name: Build APK with Gradle cache
-        uses: burrunan/gradle-cache-action@v3
-        with:
-          concurrent: true
-          arguments: |
-            -PsigningConfig=persistentDebug
-            ${{ inputs.abi && format('-PselectedAbi={0}', inputs.abi) || '' }}
+      - name: Build APK
+        run: |
+          ./gradlew \
+            -PsigningConfig=persistentDebug \
+            ${{ inputs.abi && format('-PselectedAbi={0}', inputs.abi) || '' }} \
             ${{ inputs.target || 'assembleRelease' }}
-
       - name: Upload APK artifacts
         if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v7
         with:
           path: app/build/outputs/apk/*/*.apk
           archive: false
-
       - name: Create new release
         if: github.event_name == 'push'
         uses: softprops/action-gh-release@v3

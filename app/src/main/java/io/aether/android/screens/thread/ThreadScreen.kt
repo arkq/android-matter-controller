@@ -35,12 +35,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -63,7 +63,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.google.android.gms.threadnetwork.ThreadNetworkCredentials
 import com.google.common.io.BaseEncoding
@@ -544,7 +544,7 @@ private fun OtbrActionDialog(
             ExposedDropdownMenuBox(expanded = false, onExpandedChange = { isExpanded = it }) {
               TextField(
                   // The `menuAnchor` modifier must be passed to the text field for correctness.
-                  modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
+                  modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                   readOnly = true,
                   value = if (otbr == null) "" else otbr!!.serviceName,
                   onValueChange = { Timber.d("FIXME: value changed") },
