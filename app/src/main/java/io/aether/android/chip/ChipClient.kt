@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2022 Google LLC
+// SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
 package io.aether.android.chip
@@ -18,6 +19,7 @@ import chip.platform.PreferencesKeyValueStoreManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.aether.android.formatNodeId
 import io.aether.android.stripLinkLocalInIpAddress
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
@@ -347,6 +349,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
       attributePaths: List<ChipAttributePath>,
   ): Map<ChipAttributePath, AttributeState> {
     return suspendCoroutine { continuation ->
+      val completed = AtomicBoolean(false)
       val callback: ReportCallback =
           object : ReportCallback {
             override fun onError(
@@ -354,20 +357,46 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
                 eventPath: ChipEventPath?,
                 e: Exception?,
             ) {
-              continuation.resumeWithException(IllegalStateException("readAttributes failed", e))
+              if (completed.compareAndSet(false, true)) {
+                continuation.resumeWithException(
+                    IllegalStateException(
+                        "readAttributes failed",
+                        e ?: IllegalStateException("Unknown readAttributes error"),
+                    )
+                )
+              }
             }
 
             override fun onReport(nodeState: NodeState?) {
-              val states: HashMap<ChipAttributePath, AttributeState> = HashMap()
-              for (path in attributePaths) {
-                var endpoint: Int = path.endpointId.id.toInt()
-                states[path] =
-                    nodeState!!
-                        .getEndpointState(endpoint)!!
-                        .getClusterState(path.clusterId.id)!!
-                        .getAttributeState(path.attributeId.id)!!
+              if (!completed.compareAndSet(false, true)) {
+                return
               }
-              continuation.resume(states)
+
+              try {
+                val states: HashMap<ChipAttributePath, AttributeState> = HashMap()
+                val reportState =
+                    nodeState
+                        ?: run {
+                          continuation.resume(states)
+                          return
+                        }
+
+                for (path in attributePaths) {
+                  val endpoint = path.endpointId.id.toInt()
+                  val attributeState =
+                      reportState
+                          .getEndpointState(endpoint)
+                          ?.getClusterState(path.clusterId.id)
+                          ?.getAttributeState(path.attributeId.id)
+                  if (attributeState != null) {
+                    states[path] = attributeState
+                  }
+                }
+
+                continuation.resume(states)
+              } catch (ex: Exception) {
+                continuation.resumeWithException(IllegalStateException("readAttributes failed", ex))
+              }
             }
 
             override fun onDone() {

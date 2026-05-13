@@ -209,11 +209,37 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
           return emptyList()
         }
     val attributeState =
-        chipClient.readAttribute(
-            connectedDevicePtr,
-            ChipAttributePath.newInstance(endpoint.toLong(), clusterId, globalAttributeId),
-        ) ?: return emptyList()
+        try {
+          chipClient.readAttribute(
+              connectedDevicePtr,
+              ChipAttributePath.newInstance(endpoint.toLong(), clusterId, globalAttributeId),
+          )
+        } catch (e: IllegalStateException) {
+          if (isUnsupportedAttributeError(e)) {
+            Timber.d(
+                e,
+                "readGlobalListAttribute: unsupported global attribute endpoint=%d cluster=0x%X attribute=0x%X",
+                endpoint,
+                clusterId,
+                globalAttributeId,
+            )
+            return emptyList()
+          }
+          throw e
+        } ?: return emptyList()
     return readLongList(attributeState.value)
+  }
+
+  private fun isUnsupportedAttributeError(error: Throwable): Boolean {
+    var current: Throwable? = error
+    while (current != null) {
+      val message = current.message.orEmpty()
+      if (message.contains("IM Status: 134") || message.contains("IM Status: 0x86")) {
+        return true
+      }
+      current = current.cause
+    }
+    return false
   }
 
   private fun readLongList(value: Any?): List<Long> {

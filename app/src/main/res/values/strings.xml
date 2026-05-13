@@ -132,9 +132,13 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_explorer_endpoint_chip">EP%1$d: %2$s</string>
     <string name="device_explorer_endpoint_chip_without_type">EP%1$d</string>
     <string name="device_explorer_endpoint_type_unknown">Unknown</string>
+    <string name="device_explorer_toggle_search">Toggle search</string>
+    <string name="device_explorer_endpoint_search">Search endpoints</string>
     <string name="device_explorer_cluster_search">Search clusters</string>
+    <string name="device_explorer_attribute_search">Search attributes</string>
     <string name="device_explorer_endpoints_empty">No endpoints available for this device.</string>
     <string name="device_explorer_clusters_empty">No clusters found for this endpoint.</string>
+    <string name="device_explorer_server_clusters_count">%1$d server clusters</string>
     <string name="device_explorer_cluster_title">%1$s (%2$s)</string>
     <string name="device_explorer_cluster_unknown">Unknown cluster</string>
     <string name="device_explorer_expand_cluster">Expand cluster</string>
@@ -147,6 +151,8 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_explorer_command_unknown">Unknown command</string>
     <string name="device_explorer_event_unknown">Unknown event</string>
     <string name="device_explorer_event_title">%1$s (%2$s)</string>
+    <string name="device_explorer_known_writable">Known writable</string>
+    <string name="device_explorer_no_arguments">This command has no arguments.</string>
     <string name="device_explorer_open">Open</string>
     <string name="device_explorer_read">Read</string>
     <string name="device_explorer_write">Write</string>
