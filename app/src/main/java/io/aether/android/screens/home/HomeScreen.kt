@@ -69,7 +69,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LifecycleResumeEffect
