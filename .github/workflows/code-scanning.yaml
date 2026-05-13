@@ -18,8 +18,7 @@ permissions:
 
 jobs:
 
-  analyze:
-    name: Analyze (${{ matrix.language }})
+  code-ql:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -35,13 +34,12 @@ jobs:
         with:
           languages: java-kotlin
           queries: security-extended
-      - name: Build for CodeQL with Gradle cache
+      - name: Build for CodeQL
         run: ./gradlew assemble --no-daemon --parallel
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
 
   format:
-    name: Kotlin Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -50,6 +48,7 @@ jobs:
         with:
           repository: facebook/ktfmt
           fileName: ktfmt-*-with-dependencies.jar
+          latest: true
       - name: Format Kotlin scripts and source files
         run: |
           java \
@@ -59,7 +58,6 @@ jobs:
         run: git diff --exit-code
 
   lint:
-    name: Android Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -79,7 +77,6 @@ jobs:
           ignore-warnings: false
 
   reuse:
-    name: REUSE Compliance Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
