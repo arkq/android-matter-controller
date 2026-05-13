@@ -21,60 +21,40 @@ jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        language:
-          - java-kotlin
     steps:
       - uses: actions/checkout@v6
-
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "21"
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v4
-
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
-          languages: ${{ matrix.language }}
-
+          languages: java-kotlin
+          queries: security-extended
       - name: Build for CodeQL with Gradle cache
-        uses: burrunan/gradle-cache-action@v3
-        with:
-          concurrent: true
-          arguments: assemble
-
+        run: ./gradlew assemble --no-daemon --parallel
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
 
   format:
     name: Kotlin Format
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v6
-
-      - name: Set up JDK
-        uses: actions/setup-java@v5
+      - name: Download Kotlin formatter
+        uses: robinraju/release-downloader@v1
         with:
-          distribution: temurin
-          java-version: "21"
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v4
-
+          repository: facebook/ktfmt
+          fileName: ktfmt-*-with-dependencies.jar
       - name: Format Kotlin scripts and source files
-        uses: burrunan/gradle-cache-action@v3
-        with:
-          concurrent: true
-          arguments: :app:ktfmtFormat
-
+        run: |
+          java \
+            -jar ktfmt-*-with-dependencies.jar \
+            $(find . -name "*.kt" -o -name "*.kts")
       - name: Check for formatting violations
         run: git diff --exit-code
 
@@ -83,28 +63,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "21"
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v4
-
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
       - name: Run Android Lint
-        uses: burrunan/gradle-cache-action@v3
-        with:
-          concurrent: true
-          arguments: :app:lint
-
+        run: ./gradlew :app:lint --no-daemon --parallel
       - name: Annotate with Android Lint results
         uses: yutailang0119/action-android-lint@v4
         with:
           report-path: app/build/reports/*.xml
           ignore-warnings: false
-        continue-on-error: true
 
   reuse:
     name: REUSE Compliance Check
