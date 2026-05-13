@@ -36,7 +36,7 @@ android {
    * compileSdk specifies the Android API level Gradle should use to compile your app. This means
    * your app can use the API features included in this API level and lower.
    */
-  compileSdk = 35
+  compileSdk = 37
 
   /**
    * The defaultConfig block encapsulates default settings and entries for all build variants and
@@ -51,7 +51,7 @@ android {
     minSdk = 27
 
     // Specifies the API level used to test the app.
-    targetSdk = 35
+    targetSdk = 37
 
     // Defines the version number of your app.
     versionCode = 1
@@ -142,6 +142,7 @@ dependencies {
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.foundation.layout)
   implementation(libs.androidx.compose.material3)
+  implementation(libs.androidx.compose.material.icons.core)
   implementation(libs.androidx.compose.runtime)
   implementation(libs.androidx.compose.runtime.livedata)
   implementation(libs.androidx.compose.ui.tooling.preview)

@@ -38,4 +38,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Æther Matter Controller"
+
 include(":app")

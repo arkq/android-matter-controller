@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2022 Google LLC
 SPDX-FileCopyrightText: 2026 The Authors
 SPDX-License-Identifier: Apache-2.0
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name" translatable="false">Æther</string>
 
     <string name="cancel">Cancel</string>
@@ -30,10 +30,10 @@ SPDX-License-Identifier: Apache-2.0
     </string>
 
     <!-- Device Types -->
-    <string name="device_type_unspecified" translatable="false">unspecified</string>
-    <string name="device_type_light" translatable="false">light</string>
-    <string name="device_type_outlet" translatable="false">outlet</string>
-    <string name="device_type_unknown" translatable="false">unknown</string>
+    <string name="device_type_unspecified">unspecified</string>
+    <string name="device_type_light">light</string>
+    <string name="device_type_outlet">outlet</string>
+    <string name="device_type_unknown">unknown</string>
     <string name="device_type_dimmable_light">dimmable light</string>
     <string name="device_type_color_temperature_light">color temperature light</string>
     <string name="device_type_extended_color_light">extended color light</string>
@@ -54,14 +54,14 @@ SPDX-License-Identifier: Apache-2.0
     <string name="add_device_to_repository_failed">Adding device to app\'s repository failed</string>
     <string name="write_node_label_failed">Failed to write NodeLabel</string>
     <string name="opening_pairing_window_title">Opening pairing window</string>
-    <string name="opening_pairing_window_message">This may take a few seconds...</string>
+    <string name="opening_pairing_window_message">This may take a few seconds…</string>
     <string name="error_introspecting_device">Error introspecting the device</string>
     <string name="controllers_offline">The device is offline and its controllers cannot be retrieved.</string>
     <string name="unlinking_device_title">Unlinking the device</string>
     <string name="unlinking_device_body">Calling the device to remove this controller\'s fabric. If the device is offline, this will fail when the call times out, and this may take a while.\n\nUnlinking the device\u2026</string>
 
     <!-- Matter Beacon -->
-    <string name="beacon_detail_text" translatable="false">VID: 0x%04X PID: 0x%04X Disc: 0x%03X</string>
+    <string name="beacon_detail_text" tools:ignore="PluralsCandidate">VID: 0x%04X PID: 0x%04X Disc: 0x%03X</string>
     <string name="device_attestation_warning">WARNING: The device attestation failed but was ignored.</string>
 
     <!--Accessibility component name  -->
