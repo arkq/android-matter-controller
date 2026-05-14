@@ -1,0 +1,95 @@
+# SPDX-FileCopyrightText: 2026 The Authors
+# SPDX-License-Identifier: Apache-2.0
+
+name: Sync Matter Data Model
+
+on:
+  schedule:
+    # Run at 02:00 UTC on the 1st of every month.
+    - cron: "0 2 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: pip install lxml protobuf
+
+      - name: Install protoc
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q protobuf-compiler
+
+      - name: Shallow-clone connectedhomeip data_model
+        run: |
+          git clone \
+            --depth 1 \
+            --no-checkout \
+            --filter=blob:none \
+            https://github.com/project-chip/connectedhomeip.git \
+            connectedhomeip
+          cd connectedhomeip
+          git sparse-checkout init --cone
+          git sparse-checkout set data_model
+          git checkout
+
+      - name: Run matter-data-model-parser
+        run: |
+          python3 scripts/matter-data-model-parser.py \
+            --data-model-dir connectedhomeip/data_model \
+            --out-proto /tmp/matter_data_model_gen.proto \
+            --out-bin-dir app/src/main/assets/matter
+
+      - name: Copy latest binary
+        run: |
+          # Symlink or copy the highest-version bin as matter_latest.bin
+          latest=$(ls app/src/main/assets/matter/matter_*.bin \
+            | grep -v matter_latest \
+            | sort -V \
+            | tail -n1)
+          if [ -n "$latest" ]; then
+            cp "$latest" app/src/main/assets/matter/matter_latest.bin
+            echo "Latest: $latest"
+          fi
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet app/src/main/assets/matter/ \
+            && echo "changed=false" >> "$GITHUB_OUTPUT" \
+            || echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Create branch and commit
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          BRANCH="chore/sync-matter-data-model-$(date +%Y%m%d)"
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add app/src/main/assets/matter/
+          git commit -m "chore: sync Matter data model assets ($(date +%Y-%m-%d))"
+          git push origin "$BRANCH"
+
+      - name: Open pull request
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="chore/sync-matter-data-model-$(date +%Y%m%d)"
+          gh pr create \
+            --title "chore: sync Matter data model assets ($(date +%Y-%m-%d))" \
+            --body "Automated update of Matter data-model binary assets generated from the connectedhomeip/data_model XML files." \
+            --base master \
+            --head "$BRANCH"

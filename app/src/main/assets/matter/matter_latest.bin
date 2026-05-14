@@ -1,0 +1,192 @@
+
+Identify
+
+Groups
+
+Scenes
+
+On/Off
+Level Control
+Pulse Width Modulation
+
+Descriptor
+Binding
+Access Control
+%Actions
+(Basic Information
+ )OTA Software Update Provider
+!*OTA Software Update Requestor
++Localization Configuration
+,Time Format Localization
+-Unit Localization
+.Power Source Configuration
+/Power Source
+0General Commissioning
+1Network Commissioning
+2Diagnostic Logs
+3General Diagnostics
+4Software Diagnostics
+5Thread Network Diagnostics
+6Wi-Fi Network Diagnostics
+ 7Ethernet Network Diagnostics
+8Time Synchronization
+$9 Bridged Device Basic Information
+
+;Switch
+<Administrator Commissioning
+ >Node Operational Credentials
+?Group Key Management
+@Fixed Label
+A
+User Label
+BProxy Configuration
+CProxy Discovery
+DProxy Valid
+EBoolean State
+FICD Management
+	GTimer
+!HOven Cavity Operational State
+I	Oven Mode
+JLaundry Dryer Controls
+PMode Select
+QLaundry Washer Mode
+8R4Refrigerator And Temperature Controlled Cabinet Mode
+SLaundry Washer Controls
+TRVC Run Mode
+URVC Clean Mode
+VTemperature Control
+WRefrigerator Alarm
+YDishwasher Mode
+[Air Quality
+\Smoke CO Alarm
+]Dishwasher Alarm
+^Microwave Oven Mode
+_Microwave Oven Control
+`Operational State
+aRVC Operational State
+bScenes Management
+e	Groupcast
+qHEPA Filter Monitoring
+&r"Activated Carbon Filter Monitoring
+yWater Tank Level Monitoring
+ ÄBoolean State Configuration
+$ÅValve Configuration And Control
+!êElectrical Power Measurement
+"ëElectrical Energy Measurement
+îWater Heater Management
+ïCommodity Price
+óMessages
+òDevice Energy Management
+ôEnergy EVSE
+õEnergy Preference
+úPower Topology
+ùEnergy EVSE Mode
+ûWater Heater Mode
+"üDevice Energy Management Mode
+†Electrical Grid Conditions
+Å	Door Lock
+ÇWindow Covering
+ÑClosure Control
+ÖClosure Dimension
+–Service Area
+#ÄPump Configuration And Control
+Å
+Thermostat
+ÇFan Control
+,Ñ'Thermostat User Interface Configuration
+Ö
+Humidistat
+ÄColor Control
+ÅBallast Configuration
+ÄIlluminance Measurement
+ÇTemperature Measurement
+ÉPressure Measurement
+ÑFlow Measurement
+"ÖRelative Humidity Measurement
+ÜOccupancy Sensing
+.å)Carbon Monoxide Concentration Measurement
+-ç(Carbon Dioxide Concentration Measurement
+/ì*Nitrogen Dioxide Concentration Measurement
+$ïOzone Concentration Measurement
+$™PM2.5 Concentration Measurement
++´&Formaldehyde Concentration Measurement
+"¨PM1 Concentration Measurement
+#≠PM10 Concentration Measurement
+?Æ:Total Volatile Organic Compounds Concentration Measurement
+$ØRadon Concentration Measurement
+∞Soil Measurement
+±Ambient Context Sensing
+≥Proximity Ranging
+ –Network Identity Management
+—Wi-Fi Network Management
+$“Thread Border Router Management
+”Thread Network Directory
+É
+Wake On Lan
+Ñ
+Channel
+Ö
+Target Navigator
+Ü
+Media Playback
+á
+Media Input
+à
+	Low Power
+â
+Keypad Input
+ä
+Content Launcher
+ã
+Audio Output
+å
+Application Launcher
+ç
+Application Basic
+é
+Account Login
+è
+Content Control
+ê
+Content App Observer
+–
+Zone Management
+ —
+Camera AV Stream Management
+-“
+(Camera AV Settings User Level Management
+”
+WebRTC Transport Provider
+‘
+WebRTC Transport Requestor
+’
+Push AV Stream Transport
+
+÷
+Chime
+ÄCommodity Tariff
+–Ecosystem Information
+—Commissioner Control
+“Joint Fabric Datastore
+”Joint Fabric Administrator
+ÅTLS Certificate Management
+ÇTLS Client Management
+ÜMeter Identification
+áCommodity Metering
+Ö¯«ˇUnit Testing
+Ü¯«ˇFault Injection
+†¯«ˇ
+Sample MEI
+	Door LockDoor Lock Controller
+AggregatorGeneric SwitchPower SourceOTA RequestorBridged NodeOTA ProviderContact Sensor	Root NodeSolar PowerBattery StorageSecondary Network Interface"Speaker#Casting Video Player$Content App'Mode Select(Basic Video Player)Casting Video Client*Video Remote Control+Fan,Air Quality Sensor-Air PurifierAWater Freeze DetectorBWater ValveCWater Leak DetectorDRain SensorESoil SensorpRefrigerator"qTemperature Controlled CabinetrRoom Air ConditionersLaundry WashertRobotic Vacuum Cleaneru
+DishwashervSmoke CO AlarmwCook SurfacexCooktopyMicrowave OvenzExtractor Hood{Oven|Laundry Dryer#êNetwork Infrastructure ManagerëThread Border RouterÄOn/Off LightÅDimmable LightÉOn/Off Light SwitchÑDimmer SwitchÖColor Dimmer SwitchÜLight SensoráOccupancy SensoräOn/Off Plug-in UnitãDimmable Plug-in UnitåColor Temperature LightçExtended Color LightèMounted On/Off Control"êMounted Dimmable Load Control∞Joint Fabric Administrator¿Intercom¡Audio Doorbell¬Camera√Video DoorbellƒFloodlight Camera≈Snapshot Camera
+∆Chime«Camera Controller»Doorbell–Ambient Context Sensor“Proximity RangerÇWindow CoveringÉWindow Covering Controller∞Closure±Closure PanelæClosure ControllerÅ
+ThermostatÇTemperature Sensor	ÉPumpÑPump ControllerÖPressure SensorÜFlow SensoráHumidity Sensorâ	Heat PumpäThermostat Controller	å
+EVSEç
+Device Energy Managementè
+Water Heaterê
+Electrical Sensorë
+Electrical Utility Meterí
+Meter Reference Pointì
+Electrical Energy Tariffî
+Electrical Meter¿Control Bridge–On/Off Sensor

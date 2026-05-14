@@ -11,10 +11,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
-import io.aether.android.chip.MatterConstants
 
 @Composable
-fun EndpointDetails(endpointInfo: DeviceMatterInfo, modifier: Modifier = Modifier) {
+fun EndpointDetails(
+    endpointInfo: DeviceMatterInfo,
+    clustersMap: Map<Long, String>,
+    deviceTypesMap: Map<Long, String>,
+    modifier: Modifier = Modifier,
+) {
   Column(modifier = modifier) {
     Text(
         text = stringResource(R.string.device_data_model_device_types),
@@ -29,7 +33,7 @@ fun EndpointDetails(endpointInfo: DeviceMatterInfo, modifier: Modifier = Modifie
       endpointInfo.types.sorted().forEach { deviceType ->
         val hex = String.format("0x%04X", deviceType)
         val typeString =
-            MatterConstants.DeviceTypesMap.getOrDefault(
+            deviceTypesMap.getOrDefault(
                 deviceType,
                 stringResource(R.string.device_data_model_unknown),
             )
@@ -41,18 +45,18 @@ fun EndpointDetails(endpointInfo: DeviceMatterInfo, modifier: Modifier = Modifie
         text = stringResource(R.string.device_data_model_server_clusters),
         style = MaterialTheme.typography.titleSmall,
     )
-    ClusterList(endpointInfo.serverClusters)
+    ClusterList(endpointInfo.serverClusters, clustersMap)
 
     Text(
         text = stringResource(R.string.device_data_model_client_clusters),
         style = MaterialTheme.typography.titleSmall,
     )
-    ClusterList(endpointInfo.clientClusters)
+    ClusterList(endpointInfo.clientClusters, clustersMap)
   }
 }
 
 @Composable
-private fun ClusterList(clusters: List<Long>) {
+private fun ClusterList(clusters: List<Long>, clustersMap: Map<Long, String>) {
   if (clusters.isEmpty()) {
     Text(
         text = stringResource(R.string.device_data_model_none),
@@ -63,7 +67,7 @@ private fun ClusterList(clusters: List<Long>) {
   clusters.sorted().forEach { cluster ->
     val hex = String.format("0x%04X", cluster)
     val clusterName =
-        MatterConstants.ClustersMap.getOrDefault(
+        clustersMap.getOrDefault(
             cluster,
             stringResource(R.string.device_data_model_unknown),
         )

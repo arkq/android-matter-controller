@@ -1,0 +1,27 @@
+// SPDX-FileCopyrightText: 2026 The Authors
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package matter.data_model;
+
+option java_package = "io.aether.android.matter";
+option java_multiple_files = true;
+
+// A Matter cluster entry (id → name).
+message Cluster {
+  uint32 id = 1;
+  string name = 2;
+}
+
+// A Matter device-type entry (id → name).
+message Device {
+  uint32 id = 1;
+  string name = 2;
+}
+
+// The full data model for one Matter specification version.
+message MatterDataModel {
+  repeated Cluster clusters = 1;
+  repeated Device devices = 2;
+}

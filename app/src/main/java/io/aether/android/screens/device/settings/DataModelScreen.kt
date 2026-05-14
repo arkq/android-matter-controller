@@ -59,6 +59,8 @@ fun DataModelRoute(
 
   // Observes values needed by the DataModelScreen.
   val deviceMatterInfoList by dataModelViewModel.deviceMatterInfoList.collectAsState()
+  val clustersMap = dataModelViewModel.clustersMap
+  val deviceTypesMap = dataModelViewModel.deviceTypesMap
 
   LifecycleResumeEffect(Unit) {
     Timber.d("LifecycleResumeEffect: selectedNodeId [$nodeId]")
@@ -84,7 +86,7 @@ fun DataModelRoute(
         )
       },
   ) { innerPadding ->
-    DataModelScreen(innerPadding, deviceMatterInfoList, msgDialogInfo, onDismissMsgDialog)
+    DataModelScreen(innerPadding, deviceMatterInfoList, clustersMap, deviceTypesMap, msgDialogInfo, onDismissMsgDialog)
   }
 }
 
@@ -92,6 +94,8 @@ fun DataModelRoute(
 private fun DataModelScreen(
     innerPadding: PaddingValues,
     deviceMatterInfoList: List<DeviceMatterInfo>?,
+    clustersMap: Map<Long, String>,
+    deviceTypesMap: Map<Long, String>,
     msgDialogInfo: DialogInfo?,
     onDismissMsgDialog: () -> Unit,
 ) {
@@ -143,6 +147,8 @@ private fun DataModelScreen(
                 endpoint = endpoint,
                 infosByEndpoint = infosByEndpoint,
                 expandedEndpoints = expandedEndpoints,
+                clustersMap = clustersMap,
+                deviceTypesMap = deviceTypesMap,
                 depth = 0,
                 visited = emptySet(),
             )
@@ -159,13 +165,13 @@ private fun DataModelScreen(
 @Preview(widthDp = 300)
 @Composable
 private fun DataModelScreenLoadingPreview() {
-  MaterialTheme { DataModelScreen(PaddingValues(), null, null, {}) }
+  MaterialTheme { DataModelScreen(PaddingValues(), null, emptyMap(), emptyMap(), null, {}) }
 }
 
 @Preview(widthDp = 300)
 @Composable
 private fun DataModelScreenOfflinePreview() {
-  MaterialTheme { DataModelScreen(PaddingValues(), emptyList(), null, {}) }
+  MaterialTheme { DataModelScreen(PaddingValues(), emptyList(), emptyMap(), emptyMap(), null, {}) }
 }
 
 @Preview(widthDp = 300)
@@ -175,6 +181,8 @@ private fun DataModelScreenOnlineNoClustersPreview() {
     DataModelScreen(
         PaddingValues(),
         listOf(DeviceMatterInfo(1, listOf(15L, 22L), emptyList(), emptyList(), emptyList())),
+        emptyMap(),
+        emptyMap(),
         null,
         {},
     )
@@ -198,6 +206,8 @@ private fun DataModelScreenOnlineWithClustersPreview() {
             ),
             DeviceMatterInfo(2, listOf(266L), listOf(4L, 6L, 29L), listOf(43L, 44L), emptyList()),
         ),
+        emptyMap(),
+        emptyMap(),
         null,
         {},
     )
