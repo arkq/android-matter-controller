@@ -72,6 +72,16 @@ def collect_all_types(data_model_dir: str, versions: list[str]) -> list[str]:
 # ---------------------------------------------------------------------------
 # Pass 2 – write the shared .proto file
 # ---------------------------------------------------------------------------
+# NOTE: The generated proto is richer than app/src/main/proto/matter_data_model.proto
+# (the Android-side proto).  The binary files written below are consumed by the
+# Android app, which uses only the Cluster.id/name, Device.id/name, and
+# MatterDataModel.clusters/devices fields.  Because proto3 ignores unknown
+# fields on deserialization, the binaries are fully forward-compatible with the
+# slim Android proto.  The shared field numbers are identical:
+#   Cluster:       id=1, name=2  (Android reads); attributes=3, commands=4 (ignored)
+#   Device:        id=1, name=2  (Android reads); required_clusters=3      (ignored)
+#   MatterDataModel: clusters=1, devices=2 (Android reads); structs=3      (ignored)
+# ---------------------------------------------------------------------------
 
 def generate_proto_file(
     all_types: list[str],
