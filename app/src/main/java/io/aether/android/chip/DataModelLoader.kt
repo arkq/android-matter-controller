@@ -16,12 +16,12 @@ data class ClusterAttribute(val clusterId: Long, val attributeId: Long)
  * Loads Matter data-model binary assets and exposes the cluster / device-type maps used throughout
  * the app.
  *
- * Binary files are stored under `assets/matter/` and follow the naming convention
- * `v<version>.bin` (e.g. `v1.0.bin`, `v1.1.bin`).
+ * Binary files are stored under `assets/matter/` and follow the naming convention `v<version>.bin`
+ * (e.g. `v1.0.bin`, `v1.1.bin`).
  *
  * The loader is a singleton; call [load] to obtain a snapshot of the model for a particular spec
- * version, or use the convenience properties [clustersMap] and [devicesMap] which always
- * reflect the latest version.
+ * version, or use the convenience properties [clustersMap] and [devicesMap] which always reflect
+ * the latest version.
  */
 @Singleton
 class DataModelLoader @Inject constructor(@ApplicationContext private val context: Context) {
@@ -44,7 +44,8 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
     private const val ASSETS_DIR = "matter"
 
     /** Converts a file name like `v1.0.bin` to a version string `1.0`. */
-    private fun fileNameToVersion(name: String): String = name.removePrefix("v").removeSuffix(".bin")
+    private fun fileNameToVersion(name: String): String =
+        name.removePrefix("v").removeSuffix(".bin")
   }
 
   // ---------------------------------------------------------------------------
@@ -77,8 +78,7 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
    * Returns an empty [MatterDataModel] if the requested asset cannot be found.
    */
   fun load(version: String? = null): MatterDataModel {
-    val fileName =
-        if (version == null) "v${getVersions().last()}.bin" else "v$version.bin"
+    val fileName = if (version == null) "v${getVersions().last()}.bin" else "v$version.bin"
     return try {
       context.assets.open("$ASSETS_DIR/$fileName").use { stream ->
         MatterDataModel.parseFrom(stream)
@@ -101,5 +101,4 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
   val clustersMap: Map<Long, String> by lazy {
     load().clustersList.associate { it.id.toLong() to it.name }
   }
-
 }

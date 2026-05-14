@@ -54,6 +54,10 @@ jobs:
           java \
             -jar ktfmt-*-with-dependencies.jar \
             $(find . -name "*.kt" -o -name "*.kts")
+      - name: Format Python scripts
+        run: |
+          pip install ruff
+          ruff format --quiet .
       - name: Check for formatting violations
         run: git diff --exit-code
 
