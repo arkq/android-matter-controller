@@ -17,11 +17,10 @@ data class ClusterAttribute(val clusterId: Long, val attributeId: Long)
  * the app.
  *
  * Binary files are stored under `assets/matter/` and follow the naming convention
- * `matter_<version>.bin` (e.g. `matter_1_0.bin`, `matter_1_1.bin`). A special `matter_latest.bin`
- * file is used as the default when no version is specified.
+ * `v<version>.bin` (e.g. `v1.0.bin`, `v1.1.bin`).
  *
  * The loader is a singleton; call [load] to obtain a snapshot of the model for a particular spec
- * version, or use the convenience properties [clustersMap] and [deviceTypesMap] which always
+ * version, or use the convenience properties [clustersMap] and [devicesMap] which always
  * reflect the latest version.
  */
 @Singleton
@@ -43,11 +42,9 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
     val ColorTemperatureAttribute = ClusterAttribute(ColorControlClusterId, 7L)
 
     private const val ASSETS_DIR = "matter"
-    private const val LATEST_FILE = "matter_latest.bin"
 
-    /** Converts a file name like `matter_1_0.bin` to a version string `1.0`. */
-    private fun fileNameToVersion(name: String): String =
-        name.removePrefix("matter_").removeSuffix(".bin").replace('_', '.')
+    /** Converts a file name like `v1.0.bin` to a version string `1.0`. */
+    private fun fileNameToVersion(name: String): String = name.removePrefix("v").removeSuffix(".bin")
   }
 
   // ---------------------------------------------------------------------------
@@ -57,13 +54,11 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
   /**
    * Returns the list of Matter spec versions available as binary assets, sorted in ascending order
    * (e.g. `["1.0", "1.1", "1.2"]`).
-   *
-   * The special `latest` entry is excluded from this list.
    */
   fun getVersions(): List<String> {
     val files = context.assets.list(ASSETS_DIR) ?: return emptyList()
     return files
-        .filter { it.startsWith("matter_") && it.endsWith(".bin") && it != LATEST_FILE }
+        .filter { it.startsWith("v") && it.endsWith(".bin") }
         .map { fileNameToVersion(it) }
         .sortedWith(
             Comparator { a, b ->
@@ -83,7 +78,7 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
    */
   fun load(version: String? = null): MatterDataModel {
     val fileName =
-        if (version == null) LATEST_FILE else "matter_" + version.replace('.', '_') + ".bin"
+        if (version == null) "v${getVersions().last()}.bin" else "v$version.bin"
     return try {
       context.assets.open("$ASSETS_DIR/$fileName").use { stream ->
         MatterDataModel.parseFrom(stream)
@@ -97,13 +92,14 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
   // Convenience properties backed by the latest model
   // ---------------------------------------------------------------------------
 
+  /** Maps device ID → device name using the latest bundled data model. */
+  val devicesMap: Map<Long, String> by lazy {
+    load().devicesList.associate { it.id.toLong() to it.name }
+  }
+
   /** Maps cluster ID → cluster name using the latest bundled data model. */
   val clustersMap: Map<Long, String> by lazy {
     load().clustersList.associate { it.id.toLong() to it.name }
   }
 
-  /** Maps device-type ID → device-type name using the latest bundled data model. */
-  val deviceTypesMap: Map<Long, String> by lazy {
-    load().devicesList.associate { it.id.toLong() to it.name }
-  }
 }

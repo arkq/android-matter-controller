@@ -13,7 +13,7 @@
 # across ALL versions so that the generated MatterType enum stays
 # compatible between versions, then writes:
 #   - one shared .proto file  (--out-proto)
-#   - one binary file per version  (--out-bin-dir/matter_<ver>.bin)
+#   - one binary file per version  (--out-bin-dir/v<ver>.bin)
 #
 # Dependencies:  pip install lxml protobuf
 
@@ -72,7 +72,7 @@ def collect_all_types(data_model_dir: str, versions: list[str]) -> list[str]:
 # ---------------------------------------------------------------------------
 # Pass 2 – write the shared .proto file
 # ---------------------------------------------------------------------------
-# NOTE: The generated proto is richer than app/src/main/proto/matter_data_model.proto
+# NOTE: The generated proto is richer than app/src/main/proto/MatterDataModel.proto
 # (the Android-side proto).  The binary files written below are consumed by the
 # Android app, which uses only the Cluster.id/name, Device.id/name, and
 # MatterDataModel.clusters/devices fields.  Because proto3 ignores unknown
@@ -141,15 +141,15 @@ def generate_proto_file(
             "message Device {\n"
             "  uint32 id = 1;\n"
             "  string name = 2;\n"
-            "  repeated uint32 required_clusters = 3;\n"
+            "  repeated uint32 clusters = 3;\n"
             "}\n\n"
         )
 
         # Root universe
         f.write(
             "message MatterDataModel {\n"
-            "  repeated Cluster clusters = 1;\n"
-            "  repeated Device devices = 2;\n"
+            "  repeated Device devices = 1;\n"
+            "  repeated Cluster clusters = 2;\n"
             "  repeated StructDef structs = 3;\n"
             "}\n"
         )
@@ -229,82 +229,73 @@ def populate_binary(
             dt.id = int(root.get("id", "0"), 0)
             dt.name = root.get("name", "")
             for cl in root.xpath("//clusters/cluster[@usage='mandatory']"):
-                dt.required_clusters.append(int(cl.get("code", "0"), 0))
+                dt.clusters.append(int(cl.get("code", "0"), 0))
 
     with open(output_bin, "wb") as f:
         f.write(universe.SerializeToString())
 
 
-# ---------------------------------------------------------------------------
-# Entry point
-# ---------------------------------------------------------------------------
-
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description=(
-            "Parse Matter data-model XML files and emit a shared .proto plus "
-            "one binary (.bin) file per spec version."
-        )
+parser = argparse.ArgumentParser(
+    description=(
+        "Parse Matter data-model XML files and emit a shared .proto plus "
+        "one binary (.bin) file per spec version."
     )
-    parser.add_argument(
-        "--data-model-dir",
-        required=True,
-        metavar="DIR",
-        help=(
-            "Top-level Matter data-model directory that contains one "
-            "sub-directory per spec version (e.g. connectedhomeip/data_model)."
-        ),
+)
+parser.add_argument(
+    "--data-model-dir",
+    required=True,
+    metavar="DIR",
+    help=(
+        "Top-level Matter data-model directory that contains one "
+        "sub-directory per spec version (e.g. connectedhomeip/data_model)."
+    ),
+)
+parser.add_argument(
+    "--out-proto",
+    required=True,
+    metavar="FILE",
+    help="Path to write the generated .proto file.",
+)
+parser.add_argument(
+    "--out-bin-dir",
+    required=True,
+    metavar="DIR",
+    help=(
+        "Directory to write the per-version binary files.  "
+        "Each file is named v<version>.bin (dots replaced by underscores)."
+    ),
+)
+args = parser.parse_args()
+
+versions = _discover_versions(args.data_model_dir)
+if not versions:
+    print(
+        f"No version sub-directories found in {args.data_model_dir!r}.",
+        file=sys.stderr,
     )
-    parser.add_argument(
-        "--out-proto",
-        required=True,
-        metavar="FILE",
-        help="Path to write the generated .proto file.",
-    )
-    parser.add_argument(
-        "--out-bin-dir",
-        required=True,
-        metavar="DIR",
-        help=(
-            "Directory to write the per-version binary files.  "
-            "Each file is named matter_<version>.bin (dots replaced by underscores)."
-        ),
-    )
-    args = parser.parse_args()
+    sys.exit(1)
 
-    versions = _discover_versions(args.data_model_dir)
-    if not versions:
-        print(
-            f"No version sub-directories found in {args.data_model_dir!r}.",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+print(f"Found {len(versions)} version(s): {', '.join(versions)}")
 
-    print(f"Found {len(versions)} version(s): {', '.join(versions)}")
+# Pass 1 – collect types from ALL versions
+print("Collecting unique types across all versions…")
+all_types = collect_all_types(args.data_model_dir, versions)
+print(f"  {len(all_types)} unique types found.")
 
-    # Pass 1 – collect types from ALL versions
-    print("Collecting unique types across all versions…")
-    all_types = collect_all_types(args.data_model_dir, versions)
-    print(f"  {len(all_types)} unique types found.")
+# Pass 2 – write proto
+print(f"Writing proto → {args.out_proto}")
+generate_proto_file(all_types, args.out_proto)
 
-    # Pass 2 – write proto
-    print(f"Writing proto → {args.out_proto}")
-    generate_proto_file(all_types, args.out_proto)
+# Pass 3 – compile proto
+print("Compiling proto…")
+pb2 = compile_proto(args.out_proto)
 
-    # Pass 3 – compile proto
-    print("Compiling proto…")
-    pb2 = compile_proto(args.out_proto)
+# Pass 4 – write one binary per version
+os.makedirs(args.out_bin_dir, exist_ok=True)
+for version in versions:
+    bin_name = "matter_" + version.replace(".", "_") + ".bin"
+    output_bin = os.path.join(args.out_bin_dir, bin_name)
+    print(f"Writing {output_bin}…")
+    populate_binary(args.data_model_dir, version, pb2, output_bin)
 
-    # Pass 4 – write one binary per version
-    os.makedirs(args.out_bin_dir, exist_ok=True)
-    for version in versions:
-        bin_name = "matter_" + version.replace(".", "_") + ".bin"
-        output_bin = os.path.join(args.out_bin_dir, bin_name)
-        print(f"Writing {output_bin}…")
-        populate_binary(args.data_model_dir, version, pb2, output_bin)
-
-    print("Done.")
-
-
-if __name__ == "__main__":
-    main()
+print("Done.")

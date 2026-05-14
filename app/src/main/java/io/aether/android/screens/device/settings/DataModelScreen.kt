@@ -60,7 +60,7 @@ fun DataModelRoute(
   // Observes values needed by the DataModelScreen.
   val deviceMatterInfoList by dataModelViewModel.deviceMatterInfoList.collectAsState()
   val clustersMap = dataModelViewModel.clustersMap
-  val deviceTypesMap = dataModelViewModel.deviceTypesMap
+  val devicesMap = dataModelViewModel.devicesMap
 
   LifecycleResumeEffect(Unit) {
     Timber.d("LifecycleResumeEffect: selectedNodeId [$nodeId]")
@@ -90,7 +90,7 @@ fun DataModelRoute(
         innerPadding,
         deviceMatterInfoList,
         clustersMap,
-        deviceTypesMap,
+        devicesMap,
         msgDialogInfo,
         onDismissMsgDialog,
     )
@@ -102,7 +102,7 @@ private fun DataModelScreen(
     innerPadding: PaddingValues,
     deviceMatterInfoList: List<DeviceMatterInfo>?,
     clustersMap: Map<Long, String>,
-    deviceTypesMap: Map<Long, String>,
+    devicesMap: Map<Long, String>,
     msgDialogInfo: DialogInfo?,
     onDismissMsgDialog: () -> Unit,
 ) {
@@ -155,7 +155,7 @@ private fun DataModelScreen(
                 infosByEndpoint = infosByEndpoint,
                 expandedEndpoints = expandedEndpoints,
                 clustersMap = clustersMap,
-                deviceTypesMap = deviceTypesMap,
+                devicesMap = devicesMap,
                 depth = 0,
                 visited = emptySet(),
             )

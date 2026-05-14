@@ -29,7 +29,7 @@ constructor(
 ) : ViewModel() {
 
   val clustersMap: Map<Long, String> = dataModelLoader.clustersMap
-  val deviceTypesMap: Map<Long, String> = dataModelLoader.deviceTypesMap
+  val devicesMap: Map<Long, String> = dataModelLoader.devicesMap
 
   // The introspection info fetched from the device.
   private var _deviceMatterInfoList = MutableStateFlow<List<DeviceMatterInfo>?>(null)

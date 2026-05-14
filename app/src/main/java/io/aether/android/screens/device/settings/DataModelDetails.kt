@@ -16,7 +16,7 @@ import io.aether.android.chip.DeviceMatterInfo
 fun EndpointDetails(
     endpointInfo: DeviceMatterInfo,
     clustersMap: Map<Long, String>,
-    deviceTypesMap: Map<Long, String>,
+    devicesMap: Map<Long, String>,
     modifier: Modifier = Modifier,
 ) {
   Column(modifier = modifier) {
@@ -33,7 +33,7 @@ fun EndpointDetails(
       endpointInfo.types.sorted().forEach { deviceType ->
         val hex = String.format("0x%04X", deviceType)
         val typeString =
-            deviceTypesMap.getOrDefault(
+            devicesMap.getOrDefault(
                 deviceType,
                 stringResource(R.string.device_data_model_unknown),
             )
