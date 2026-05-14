@@ -9,17 +9,20 @@ import io.aether.android.matter.MatterDataModel
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/** A reference to a specific attribute on a specific cluster. */
+data class ClusterAttribute(val clusterId: Long, val attributeId: Long)
+
 /**
- * Loads Matter data-model binary assets and exposes the cluster / device-type maps used
- * throughout the app.
+ * Loads Matter data-model binary assets and exposes the cluster / device-type maps used throughout
+ * the app.
  *
  * Binary files are stored under `assets/matter/` and follow the naming convention
- * `matter_<version>.bin` (e.g. `matter_1_0.bin`, `matter_1_1.bin`).  A special
- * `matter_latest.bin` file is used as the default when no version is specified.
+ * `matter_<version>.bin` (e.g. `matter_1_0.bin`, `matter_1_1.bin`). A special `matter_latest.bin`
+ * file is used as the default when no version is specified.
  *
- * The loader is a singleton; call [load] to obtain a snapshot of the model for a
- * particular spec version, or use the convenience properties [clustersMap] and
- * [deviceTypesMap] which always reflect the latest version.
+ * The loader is a singleton; call [load] to obtain a snapshot of the model for a particular spec
+ * version, or use the convenience properties [clustersMap] and [deviceTypesMap] which always
+ * reflect the latest version.
  */
 @Singleton
 class DataModelLoader @Inject constructor(@ApplicationContext private val context: Context) {
@@ -30,11 +33,10 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
   // ---------------------------------------------------------------------------
 
   companion object {
+    // Well-known cluster IDs
     const val OnOffClusterId: Long = 6L
     const val LevelControlClusterId: Long = 8L
     const val ColorControlClusterId: Long = 768L
-
-    data class ClusterAttribute(val clusterId: Long, val attributeId: Long)
 
     val OnOffAttribute = ClusterAttribute(OnOffClusterId, 0L)
     val LevelAttribute = ClusterAttribute(LevelControlClusterId, 0L)
@@ -53,8 +55,8 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
   // ---------------------------------------------------------------------------
 
   /**
-   * Returns the list of Matter spec versions available as binary assets,
-   * sorted in ascending order (e.g. `["1.0", "1.1", "1.2"]`).
+   * Returns the list of Matter spec versions available as binary assets, sorted in ascending order
+   * (e.g. `["1.0", "1.1", "1.2"]`).
    *
    * The special `latest` entry is excluded from this list.
    */
@@ -63,19 +65,25 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
     return files
         .filter { it.startsWith("matter_") && it.endsWith(".bin") && it != LATEST_FILE }
         .map { fileNameToVersion(it) }
-        .sortedWith(compareBy { it.split(".").map(String::toInt) })
+        .sortedWith(
+            Comparator { a, b ->
+              val aParts = a.split(".").map(String::toInt)
+              val bParts = b.split(".").map(String::toInt)
+              aParts.zip(bParts).firstOrNull { (x, y) -> x != y }?.let { (x, y) -> x - y }
+                  ?: (aParts.size - bParts.size)
+            }
+        )
   }
 
   /**
-   * Loads the data model for the given [version] (e.g. `"1.0"`).
-   * When [version] is `null` the latest bundled model is returned.
+   * Loads the data model for the given [version] (e.g. `"1.0"`). When [version] is `null` the
+   * latest bundled model is returned.
    *
    * Returns an empty [MatterDataModel] if the requested asset cannot be found.
    */
   fun load(version: String? = null): MatterDataModel {
     val fileName =
-        if (version == null) LATEST_FILE
-        else "matter_" + version.replace('.', '_') + ".bin"
+        if (version == null) LATEST_FILE else "matter_" + version.replace('.', '_') + ".bin"
     return try {
       context.assets.open("$ASSETS_DIR/$fileName").use { stream ->
         MatterDataModel.parseFrom(stream)

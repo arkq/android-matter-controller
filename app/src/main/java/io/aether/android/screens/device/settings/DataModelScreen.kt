@@ -86,7 +86,14 @@ fun DataModelRoute(
         )
       },
   ) { innerPadding ->
-    DataModelScreen(innerPadding, deviceMatterInfoList, clustersMap, deviceTypesMap, msgDialogInfo, onDismissMsgDialog)
+    DataModelScreen(
+        innerPadding,
+        deviceMatterInfoList,
+        clustersMap,
+        deviceTypesMap,
+        msgDialogInfo,
+        onDismissMsgDialog,
+    )
   }
 }
 
