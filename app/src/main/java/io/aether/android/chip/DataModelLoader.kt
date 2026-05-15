@@ -92,13 +92,16 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
   // Convenience properties backed by the latest model
   // ---------------------------------------------------------------------------
 
+  /** Cached latest bundled data model, loaded and parsed only once on first access. */
+  private val latestModel: MatterDataModel by lazy { load() }
+
   /** Maps device ID → device name using the latest bundled data model. */
   val devicesMap: Map<Long, String> by lazy {
-    load().devicesList.associate { it.id.toLong() to it.name }
+    latestModel.devicesList.associate { it.id.toLong() to it.name }
   }
 
   /** Maps cluster ID → cluster name using the latest bundled data model. */
   val clustersMap: Map<Long, String> by lazy {
-    load().clustersList.associate { it.id.toLong() to it.name }
+    latestModel.clustersList.associate { it.id.toLong() to it.name }
   }
 }
