@@ -19,18 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Install protocol buffer compiler
+        uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          python-version: "3.12"
+          packages: protobuf-compiler
 
       - name: Install Python dependencies
         run: pip install lxml protobuf
-
-      - name: Install protoc
-        run: |
-          sudo apt-get update -q
-          sudo apt-get install -y -q protobuf-compiler
 
       - name: Shallow-clone Matter SDK data model directory
         run: |
@@ -52,12 +47,9 @@ jobs:
             --out-bin-dir app/src/main/assets/matter \
             connectedhomeip/data_model
 
-      - name: Commit and push changes
-        uses: stefanzweifel/git-auto-commit-action@v7
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v8
         with:
           branch: chore/sync-matter-data-model
-          commit_message: "chore: Sync Matter data model assets"
-          file_pattern: 'app/src/main/assets/matter/v*.bin'
-          commit_user_name: "github-actions[bot]"
-          commit_user_email: "github-actions[bot]@users.noreply.github.com"
-          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          commit-message: "chore: Sync Matter data model assets"
+          add-paths: app/src/main/assets/matter/v*.bin
