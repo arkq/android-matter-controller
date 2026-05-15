@@ -32,7 +32,7 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y -q protobuf-compiler
 
-      - name: Shallow-clone connectedhomeip data_model
+      - name: Shallow-clone Matter SDK data model directory
         run: |
           git clone \
             --depth 1 \
@@ -45,39 +45,19 @@ jobs:
           git sparse-checkout set data_model
           git checkout
 
-      - name: Run matter-data-model-parser
+      - name: Sync Matter data model assets
         run: |
           scripts/matter-data-model-parser.py \
             --out-proto /tmp/matter_data_model_gen.proto \
             --out-bin-dir app/src/main/assets/matter \
             connectedhomeip/data_model
 
-      - name: Check for changes
-        id: changes
-        run: |
-          git diff --quiet app/src/main/assets/matter \
-            && echo "changed=false" >> "$GITHUB_OUTPUT" \
-            || echo "changed=true" >> "$GITHUB_OUTPUT"
-
-      - name: Create branch and commit
-        if: steps.changes.outputs.changed == 'true'
-        run: |
-          BRANCH="chore/sync-matter-data-model-$(date +%Y%m%d)"
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -b "$BRANCH"
-          git add app/src/main/assets/matter
-          git commit -m "chore: sync Matter data model assets ($(date +%Y-%m-%d))"
-          git push origin "$BRANCH"
-
-      - name: Open pull request
-        if: steps.changes.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          BRANCH="chore/sync-matter-data-model-$(date +%Y%m%d)"
-          gh pr create \
-            --title "chore: sync Matter data model assets ($(date +%Y-%m-%d))" \
-            --body "Automated update of Matter data-model generated from Matter SDK XML files." \
-            --base master \
-            --head "$BRANCH"
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          branch: chore/sync-matter-data-model
+          commit_message: "chore: Sync Matter data model assets"
+          file_pattern: 'app/src/main/assets/matter/v*.bin'
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
