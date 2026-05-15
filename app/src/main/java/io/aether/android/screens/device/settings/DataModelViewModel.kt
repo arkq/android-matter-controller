@@ -9,6 +9,7 @@ import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.aether.android.R
 import io.aether.android.chip.ClustersHelper
+import io.aether.android.chip.DataModelLoader
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.screens.common.DialogInfo
 import javax.inject.Inject
@@ -20,8 +21,15 @@ import timber.log.Timber
 
 /** The ViewModel for the [DataModelScreen]. */
 @HiltViewModel
-class DataModelViewModel @Inject constructor(private val clustersHelper: ClustersHelper) :
-    ViewModel() {
+class DataModelViewModel
+@Inject
+constructor(
+    private val clustersHelper: ClustersHelper,
+    private val dataModelLoader: DataModelLoader,
+) : ViewModel() {
+
+  val clustersMap: Map<Long, String> = dataModelLoader.clustersMap
+  val devicesMap: Map<Long, String> = dataModelLoader.devicesMap
 
   // The introspection info fetched from the device.
   private var _deviceMatterInfoList = MutableStateFlow<List<DeviceMatterInfo>?>(null)

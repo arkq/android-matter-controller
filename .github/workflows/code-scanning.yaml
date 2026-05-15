@@ -39,7 +39,7 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
 
-  format:
+  format-kotlin:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -57,7 +57,18 @@ jobs:
       - name: Check for formatting violations
         run: git diff --exit-code
 
-  lint:
+  format-python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Download Python formatter
+        run: pip install ruff
+      - name: Format Python scripts
+        run: ruff format --quiet .
+      - name: Check for formatting violations
+        run: git diff --exit-code
+
+  lint-android:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -68,13 +79,22 @@ jobs:
           java-version: "21"
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
-      - name: Run Android Lint
+      - name: Run Android linter
         run: ./gradlew :app:lint --no-daemon --parallel
-      - name: Annotate with Android Lint results
+      - name: Annotate with Android linter results
         uses: yutailang0119/action-android-lint@v4
         with:
           report-path: app/build/reports/*.xml
           ignore-warnings: false
+
+  lint-python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Download Python linter
+        run: pip install ruff
+      - name: Run Python linter
+        run: ruff check .
 
   reuse:
     runs-on: ubuntu-latest
