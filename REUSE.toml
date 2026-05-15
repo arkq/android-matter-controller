@@ -4,6 +4,11 @@
 version = 1
 
 [[annotations]]
+path = "app/src/main/assets/matter/v*.bin"
+SPDX-FileCopyrightText = "2026 The Authors"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
 path = "docs/GoogleHomeMobileSDK.pdf"
 SPDX-FileCopyrightText = "2022 Google LLC"
 SPDX-License-Identifier = "Apache-2.0"
