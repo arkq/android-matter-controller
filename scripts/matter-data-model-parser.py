@@ -192,23 +192,27 @@ def populate_binary(
 
         # Clusters
         if root.tag == "cluster":
-            c = universe.clusters.add()
-            c.id = int(root.get("id", "0"), 0)
-            c.name = root.get("name", "unknown")
-            for attr in root.xpath("//attribute"):
-                a = c.attributes.add()
-                a.id = int(attr.get("code", "0"), 0)
-                a.name = attr.get("name", "")
-                a.type = get_type_enum(attr.get("type", ""))
-                a.writable = "W" in attr.get("access", "")
-            for cmd in root.xpath("//command"):
-                co = c.commands.add()
-                co.id = int(cmd.get("code", "0"), 0)
-                co.name = cmd.get("name", "")
-                for arg in cmd.xpath("./arg"):
-                    p = co.parameters.add()
-                    p.name = arg.get("name", "")
-                    p.type = get_type_enum(arg.get("type", ""))
+            # Find all cluster ID entries within the clusterIds container
+            for cluster in root.xpath("./clusterIds/clusterId"):
+                if not cluster.get("id") or not cluster.get("name"):
+                    continue  # Skip entries without an ID or name
+                c = universe.clusters.add()
+                c.id = int(cluster.get("id"), 0)
+                c.name = cluster.get("name")
+                for attr in root.xpath("//attribute"):
+                    a = c.attributes.add()
+                    a.id = int(attr.get("code", "0"), 0)
+                    a.name = attr.get("name", "")
+                    a.type = get_type_enum(attr.get("type", ""))
+                    a.writable = "W" in attr.get("access", "")
+                for cmd in root.xpath("//command"):
+                    co = c.commands.add()
+                    co.id = int(cmd.get("code", "0"), 0)
+                    co.name = cmd.get("name", "")
+                    for arg in cmd.xpath("./arg"):
+                        p = co.parameters.add()
+                        p.name = arg.get("name", "")
+                        p.type = get_type_enum(arg.get("type", ""))
 
         # Device types
         elif root.tag == "deviceType":
