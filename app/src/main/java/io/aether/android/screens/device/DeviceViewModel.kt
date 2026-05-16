@@ -21,9 +21,9 @@ import io.aether.android.STATE_CHANGES_MONITORING_MODE
 import io.aether.android.StateChangesMonitoringMode
 import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
-import io.aether.android.chip.MatterConstants.ColorTemperatureAttribute
-import io.aether.android.chip.MatterConstants.LevelAttribute
-import io.aether.android.chip.MatterConstants.OnOffAttribute
+import io.aether.android.chip.DataModelLoader.Companion.ColorTemperatureAttribute
+import io.aether.android.chip.DataModelLoader.Companion.LevelAttribute
+import io.aether.android.chip.DataModelLoader.Companion.OnOffAttribute
 import io.aether.android.chip.SubscriptionHelper
 import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository

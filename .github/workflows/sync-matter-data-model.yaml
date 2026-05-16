@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: 2026 The Authors
+# SPDX-License-Identifier: Apache-2.0
+
+name: Sync Matter Data Model
+
+on:
+  schedule:
+    # Run at 02:00 UTC on the 1st of every month.
+    - cron: "0 2 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-matter-data-model:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          repository: project-chip/connectedhomeip
+          path: matter-sdk
+      - name: Install protocol buffer compiler
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: protobuf-compiler
+      - name: Install Python dependencies
+        run: pip install lxml protobuf
+      - name: Sync Matter data model assets
+        run: scripts/matter-data-model-parser.py matter-sdk/data_model
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: chore/sync-matter-data-model
+          commit-message: "chore: Sync Matter data model assets"
+          add-paths: app/src/main/assets/matter/v*.bin

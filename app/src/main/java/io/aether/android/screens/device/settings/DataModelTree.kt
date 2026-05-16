@@ -27,6 +27,8 @@ fun EndpointTree(
     endpoint: Int,
     infosByEndpoint: Map<Int, DeviceMatterInfo>,
     expandedEndpoints: MutableMap<Int, Boolean>,
+    clustersMap: Map<Long, String>,
+    devicesMap: Map<Long, String>,
     depth: Int,
     visited: Set<Int>,
 ) {
@@ -63,6 +65,8 @@ fun EndpointTree(
 
   EndpointDetails(
       endpointInfo = endpointInfo,
+      clustersMap = clustersMap,
+      devicesMap = devicesMap,
       modifier = Modifier.padding(start = startPadding + 28.dp, bottom = 8.dp),
   )
   endpointInfo.parts.forEach { child ->
@@ -70,6 +74,8 @@ fun EndpointTree(
         endpoint = child,
         infosByEndpoint = infosByEndpoint,
         expandedEndpoints = expandedEndpoints,
+        clustersMap = clustersMap,
+        devicesMap = devicesMap,
         depth = depth + 1,
         visited = nextVisited,
     )
