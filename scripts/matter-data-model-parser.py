@@ -3,27 +3,26 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Usage:
-#   ./matter-data-model-parser.py \
-#       --data-model-dir matter-sdk/data_model \
+#   scripts/matter-data-model-parser.py \
 #       --out-proto MatterDataModel.proto \
-#       --out-bin-dir app/src/main/assets/matter
+#       --out-bin-dir app/src/main/assets/matter \
+#       matter-sdk/data_model
 #
-# The script scans every version sub-directory inside --data-model-dir
-# (e.g. 1.0, 1.1, 1.2, ...), collects ALL unique attribute/argument types
-# across ALL versions so that the generated MatterType enum stays
+# The script scans every version sub-directory inside Matter SDK data model
+# dir (e.g. 1.0, 1.1, 1.2, ...) and collects ALL unique attribute/argument
+# types across ALL versions so that the generated MatterType enum stays
 # compatible between versions, then writes:
-#   - one shared .proto file  (--out-proto)
-#   - one binary file per version  (--out-bin-dir/v<ver>.bin)
+#   - one shared .proto file
+#   - one binary file per version
 #
 # Dependencies:  pip install lxml protobuf
 
-import os
 import re
-import glob
 import argparse
 import importlib
 import subprocess
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 
 import lxml.etree as ET
@@ -34,16 +33,13 @@ import lxml.etree as ET
 # ---------------------------------------------------------------------------
 
 
-def _clean_type_name(t: str) -> str:
+def _clean_name(t: str) -> str:
     """Return the UPPER_SNAKE_CASE variant used in the proto enum."""
     return t.upper().replace("-", "_").replace(" ", "_").replace(".", "_")
 
 
-def _xml_files_for_version(data_model_dir: str, version: str) -> list[str]:
-    return glob.glob(
-        os.path.join(data_model_dir, version, "**", "*.xml"),
-        recursive=True,
-    )
+def _xml_files_for_version(data_model_dir: Path, version: str) -> list[Path]:
+    return list(data_model_dir.joinpath(version).rglob("**/*.xml"))
 
 
 # ---------------------------------------------------------------------------
@@ -51,16 +47,40 @@ def _xml_files_for_version(data_model_dir: str, version: str) -> list[str]:
 # ---------------------------------------------------------------------------
 
 
-def collect_all_types(data_model_dir: str, versions: list[str]) -> list[str]:
-    unique_types: set[str] = set()
+def collect_all_types(data_model_dir: Path, versions: list[str]) -> list[str]:
+    types: set[str] = set()
     for version in versions:
         for xml_file in _xml_files_for_version(data_model_dir, version):
             tree = ET.parse(xml_file)
             for t in tree.xpath(
-                "//attribute/@type | //arg/@type | //item/@type",
+                "|".join(
+                    [
+                        "//attribute/@type",
+                        "//arg/@type",
+                        "//item/@type",
+                    ]
+                )
             ):
-                unique_types.add(_clean_type_name(t.strip()))
-    return sorted(filter(None, unique_types))
+                types.add(_clean_name(t.strip()))
+    return sorted(filter(None, types))
+
+
+def collect_all_privileges(data_model_dir: Path, versions: list[str]) -> list[str]:
+    privileges: set[str] = set()
+    for version in versions:
+        for xml_file in _xml_files_for_version(data_model_dir, version):
+            tree = ET.parse(xml_file)
+            for p in tree.xpath(
+                "|".join(
+                    [
+                        "//access/@readPrivilege",
+                        "//access/@writePrivilege",
+                        "//access/@invokePrivilege",
+                    ]
+                )
+            ):
+                privileges.add(_clean_name(p.strip()))
+    return sorted(filter(None, privileges))
 
 
 # ---------------------------------------------------------------------------
@@ -70,6 +90,7 @@ def collect_all_types(data_model_dir: str, versions: list[str]) -> list[str]:
 
 def generate_proto_file(
     types: list[str],
+    privileges: list[str],
     output_proto: str,
     java_package: str = "io.aether.android.matter",
 ) -> None:
@@ -86,6 +107,12 @@ def generate_proto_file(
         f.write("enum MatterType {\n  TYPE_UNKNOWN = 0;\n")
         for i, t in enumerate(types, 1):
             f.write(f"  TYPE_{t} = {i};\n")
+        f.write("}\n\n")
+
+        # MatterPrivilege enum (union of all privileges across all versions)
+        f.write("enum MatterPrivilege {\n  PRIVILEGE_UNKNOWN = 0;\n")
+        for i, p in enumerate(privileges, 1):
+            f.write(f"  PRIVILEGE_{p} = {i};\n")
         f.write("}\n\n")
 
         # Struct support
@@ -106,7 +133,8 @@ def generate_proto_file(
             "  uint32 id = 1;\n"
             "  string name = 2;\n"
             "  MatterType type = 3;\n"
-            "  bool writable = 4;\n"
+            "  MatterPrivilege readPrivilege = 4;\n"
+            "  MatterPrivilege writePrivilege = 5;\n"
             "}\n\n"
             "message Parameter {\n"
             "  string name = 1;\n"
@@ -148,7 +176,7 @@ def generate_proto_file(
 def compile_proto(proto_file: str):
     subprocess.run(["protoc", "--python_out=.", proto_file], check=True)
     module_name = Path(proto_file).stem.replace("-", "_") + "_pb2"
-    sys.path.insert(0, os.getcwd())
+    sys.path.insert(0, str(Path(proto_file).parent.resolve()))
     return importlib.import_module(module_name)
 
 
@@ -158,69 +186,183 @@ def compile_proto(proto_file: str):
 
 
 def populate_binary(
-    data_model_dir: str,
+    data_model_dir: Path,
     version: str,
     pb2,
-    output_bin: str,
+    output_bin: Path,
 ) -> None:
-    xml_files = _xml_files_for_version(data_model_dir, version)
-    universe = pb2.MatterDataModel()
 
-    def get_type_enum(type_str: str):
-        if not type_str:
-            return pb2.TYPE_UNKNOWN
-        clean = "TYPE_" + _clean_type_name(type_str)
-        return getattr(pb2, clean, pb2.TYPE_UNKNOWN)
+    @dataclass
+    class DeviceDef:
+        id: int
+        name: str
+        clusters: set[int]
 
-    processed_structs: set[str] = set()
+    @dataclass
+    class FieldDef:
+        id: int
+        name: str
+        type: str
 
-    for xml_file in xml_files:
+    @dataclass
+    class StructDef:
+        name: str
+        fields: list[FieldDef]
+
+    @dataclass
+    class AttributeDef:
+        id: int
+        name: str
+        type: str
+        read_privilege: str = ""
+        write_privilege: str = ""
+
+    @dataclass
+    class CommandDef:
+        id: int
+        name: str
+        parameters: list[FieldDef]
+
+    @dataclass
+    class ClusterDef:
+        id: int
+        name: str
+        attributes: list[AttributeDef]
+        commands: list[CommandDef]
+
+    base_device_clusters: set[int] = set()
+    devices: dict[int, DeviceDef] = {}
+    structs: dict[str, StructDef] = {}
+    clusters: dict[int, ClusterDef] = {}
+
+    for xml_file in _xml_files_for_version(data_model_dir, version):
         tree = ET.parse(xml_file)
         root = tree.getroot()
 
-        # Structs (global)
+        # Devices
+        if root.tag == "deviceType":
+            if root.get("name") == "Base Device Type":
+                for cl in root.xpath("./clusters/cluster"):
+                    base_device_clusters.add(int(cl.get("id"), 16))
+                continue
+            d = DeviceDef(id=int(root.get("id"), 16), name=root.get("name"), clusters=set())
+            for cl in root.xpath("./clusters/cluster"):
+                d.clusters.add(int(cl.get("id"), 16))
+            devices[d.id] = d
+
+        # Structs
         for struct in tree.xpath("//struct"):
-            s_name = struct.get("name")
-            if s_name and s_name not in processed_structs:
-                sd = universe.structs.add()
-                sd.name = s_name
-                for item in struct.xpath("./item"):
-                    f = sd.fields.add()
-                    f.name = item.get("name", "unknown")
-                    f.type = get_type_enum(item.get("type", ""))
-                processed_structs.add(s_name)
+            s = StructDef(name=struct.get("name"), fields=[])
+            for field in struct.xpath("./field"):
+                s.fields.append(
+                    FieldDef(
+                        id=int(field.get("id"), 16),
+                        name=field.get("name"),
+                        # Type might not be given for generic container fields
+                        type=_clean_name(field.get("type", "")),
+                    )
+                )
+            structs[s.name] = s
 
         # Clusters
         if root.tag == "cluster":
             # Find all cluster ID entries within the clusterIds container
             for cluster in root.xpath("./clusterIds/clusterId"):
-                if not cluster.get("id") or not cluster.get("name"):
-                    continue  # Skip entries without an ID or name
-                c = universe.clusters.add()
-                c.id = int(cluster.get("id"), 0)
-                c.name = cluster.get("name")
-                for attr in root.xpath("//attribute"):
-                    a = c.attributes.add()
-                    a.id = int(attr.get("code", "0"), 0)
-                    a.name = attr.get("name", "")
-                    a.type = get_type_enum(attr.get("type", ""))
-                    a.writable = "W" in attr.get("access", "")
-                for cmd in root.xpath("//command"):
-                    co = c.commands.add()
-                    co.id = int(cmd.get("code", "0"), 0)
-                    co.name = cmd.get("name", "")
-                    for arg in cmd.xpath("./arg"):
-                        p = co.parameters.add()
-                        p.name = arg.get("name", "")
-                        p.type = get_type_enum(arg.get("type", ""))
+                if not cluster.get("id"):
+                    # Skip entries without an ID
+                    continue
+                c = ClusterDef(
+                    id=int(cluster.get("id"), 16),
+                    name=cluster.get("name"),
+                    attributes=[],
+                    commands=[],
+                )
+                for attr in root.xpath("./attributes/attribute"):
+                    c.attributes.append(
+                        a := AttributeDef(
+                            id=int(attr.get("id"), 16),
+                            name=attr.get("name"),
+                            # Type might be omitted for deprecated attributes
+                            type=_clean_name(attr.get("type", "")),
+                        )
+                    )
+                    if access := attr.xpath("./access"):
+                        a.read_privilege = _clean_name(access[0].get("readPrivilege", ""))
+                        a.write_privilege = _clean_name(access[0].get("writePrivilege", ""))
+                for cmd in root.xpath("./commands/command"):
+                    fields = []
+                    for field in cmd.xpath("./field"):
+                        fields.append(
+                            FieldDef(
+                                id=int(field.get("id", "0"), 16),
+                                name=field.get("name"),
+                                # Reserved fields might not have a type
+                                type=_clean_name(field.get("type", "")),
+                            )
+                        )
+                    c.commands.append(
+                        CommandDef(
+                            id=int(cmd.get("id"), 16),
+                            name=cmd.get("name"),
+                            parameters=fields,
+                        )
+                    )
+                clusters[c.id] = c
 
-        # Device types
-        elif root.tag == "deviceType":
-            dt = universe.devices.add()
-            dt.id = int(root.get("id", "0"), 0)
-            dt.name = root.get("name", "")
-            for cl in root.xpath("//clusters/cluster[@usage='mandatory']"):
-                dt.clusters.append(int(cl.get("code", "0"), 0))
+    def get_type_enum(type: str):
+        if not type:
+            return pb2.TYPE_UNKNOWN
+        return getattr(pb2, "TYPE_" + type, pb2.TYPE_UNKNOWN)
+
+    def get_privilege_enum(privilege: str):
+        if not privilege:
+            return pb2.PRIVILEGE_UNKNOWN
+        return getattr(pb2, "PRIVILEGE_" + privilege, pb2.PRIVILEGE_UNKNOWN)
+
+    universe = pb2.MatterDataModel()
+
+    # Add base device clusters to all devices that don't explicitly list them
+    for dev in devices.values():
+        if not dev.clusters:
+            dev.clusters.update(base_device_clusters)
+
+    # Sort devices by ID and clusters by ID for deterministic output
+    for dev in sorted(devices.values(), key=lambda x: x.id):
+        pb_dev = universe.devices.add()
+        pb_dev.id = dev.id
+        pb_dev.name = dev.name
+        for cluster in sorted(dev.clusters):
+            pb_dev.clusters.append(cluster)
+
+    # Sort structs by name for deterministic output
+    for struct in sorted(structs.values(), key=lambda x: x.name):
+        pb_struct = universe.structs.add()
+        pb_struct.name = struct.name
+        for field in sorted(struct.fields, key=lambda x: x.id):
+            pb_field = pb_struct.fields.add()
+            pb_field.type = get_type_enum(field.type)
+            pb_field.name = field.name
+
+    # Sort clusters by ID for deterministic output
+    for cluster in sorted(clusters.values(), key=lambda x: x.id):
+        pb_cluster = universe.clusters.add()
+        pb_cluster.id = cluster.id
+        pb_cluster.name = cluster.name
+        for attr in sorted(cluster.attributes, key=lambda x: x.id):
+            pb_attr = pb_cluster.attributes.add()
+            pb_attr.id = attr.id
+            pb_attr.name = attr.name
+            pb_attr.type = get_type_enum(attr.type)
+            pb_attr.readPrivilege = get_privilege_enum(attr.read_privilege)
+            pb_attr.writePrivilege = get_privilege_enum(attr.write_privilege)
+        for cmd in sorted(cluster.commands, key=lambda x: x.id):
+            pb_cmd = pb_cluster.commands.add()
+            pb_cmd.id = cmd.id
+            pb_cmd.name = cmd.name
+            for param in sorted(cmd.parameters, key=lambda x: x.id):
+                pb_param = pb_cmd.parameters.add()
+                pb_param.type = get_type_enum(param.type)
+                pb_param.name = param.name
 
     with open(output_bin, "wb") as f:
         f.write(universe.SerializeToString())
@@ -235,12 +377,14 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "--out-proto",
     metavar="FILE",
+    type=Path,
     default="MatterDataModel.proto",
     help="path to write the generated .proto file; default: %(default)s",
 )
 parser.add_argument(
     "--out-bin-dir",
     metavar="DIR",
+    type=Path,
     default="app/src/main/assets/matter",
     help=(
         "directory to write the per-version binary files; "
@@ -249,6 +393,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "DATA_MODEL_DIR",
+    type=Path,
     help=(
         "top-level Matter data-model directory that contains one "
         "sub-directory per spec version (e.g. matter-sdk/data_model)"
@@ -258,16 +403,13 @@ parser.add_argument(
 args = parser.parse_args()
 
 versions = []
-# Discover version sub-directories (e.g. 1.0, 1.1, 1.2, ...)
-for entry in os.scandir(args.DATA_MODEL_DIR):
+# Discover version sub-directories (e.g. 1.0, 1.1, 1.2, 1.2.1, etc.)
+for entry in args.DATA_MODEL_DIR.iterdir():
     if entry.is_dir() and re.match(r"^\d+\.\d+", entry.name):
         versions.append(entry.name)
 
 if not versions:
-    print(
-        f"ERROR: No version sub-directories found in {args.DATA_MODEL_DIR!r}.",
-        file=sys.stderr,
-    )
+    print(f"ERROR: No version sub-directories found in {args.DATA_MODEL_DIR}", file=sys.stderr)
     sys.exit(1)
 
 versions.sort(key=lambda v: [int(x) for x in v.split(".")])
@@ -276,18 +418,20 @@ print(f"Found {len(versions)} version(s): {', '.join(versions)}")
 # Pass 1 – collect types from ALL versions
 print("Collecting unique types across all versions...")
 types = collect_all_types(args.DATA_MODEL_DIR, versions)
+print("Collecting unique privileges across all versions...")
+privileges = collect_all_privileges(args.DATA_MODEL_DIR, versions)
 
 # Pass 2 – write proto
 print(f"Writing {args.out_proto}...")
-generate_proto_file(types, args.out_proto)
+generate_proto_file(types, privileges, args.out_proto)
 
 # Pass 3 – compile proto
 print("Compiling proto...")
 pb2 = compile_proto(args.out_proto)
 
 # Pass 4 – write one binary per version
-os.makedirs(args.out_bin_dir, exist_ok=True)
+args.out_bin_dir.mkdir(parents=True, exist_ok=True)
 for version in versions:
-    output_bin = os.path.join(args.out_bin_dir, f"v{version}.bin")
+    output_bin = args.out_bin_dir / f"v{version}.bin"
     print(f"Writing {output_bin}...")
     populate_binary(args.DATA_MODEL_DIR, version, pb2, output_bin)
