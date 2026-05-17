@@ -9,7 +9,6 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -111,7 +110,7 @@ fun ExplorerRoute(
               IconButton(onClick = { showSearch = !showSearch }) {
                 Icon(
                     imageVector = Icons.Filled.Search,
-                    contentDescription = stringResource(R.string.device_explorer_toggle_search),
+                    contentDescription = stringResource(R.string.device_explorer_search_toggle),
                 )
               }
             },
@@ -120,7 +119,7 @@ fun ExplorerRoute(
   ) { innerPadding ->
     MsgAlertDialog(msgDialogInfo, viewModel::dismissMsgDialog)
     if (deviceMatterInfoList == null) {
-      LoadingIndicator(stringResource(R.string.device_explorer_loading), innerPadding)
+      LoadingIndicator(stringResource(R.string.device_explorer_loading_endpoints), innerPadding)
       return@Scaffold
     }
 
@@ -258,15 +257,11 @@ private fun BreadcrumbBar(
       horizontalArrangement = Arrangement.spacedBy(4.dp),
   ) {
     navStack.forEachIndexed { index, level ->
-      if (index > 0) {
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-      } else {
-        Spacer(modifier = Modifier.size(24.dp))
-      }
+      Icon(
+          imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+          contentDescription = null,
+          tint = MaterialTheme.colorScheme.onSurfaceVariant,
+      )
       val label = breadcrumbLabelFor(level, deviceMatterInfoList, clustersMap, devicesMap)
       val isLast = index == navStack.size - 1
       if (isLast) {
@@ -349,7 +344,7 @@ private fun EndpointListContent(
       SearchTextField(
           value = searchQuery,
           onValueChange = onSearchQueryChange,
-          label = { Text(stringResource(R.string.device_explorer_endpoint_search)) },
+          label = { Text(stringResource(R.string.device_explorer_search_endpoint)) },
       )
     }
 
@@ -445,7 +440,7 @@ private fun ClusterListContent(
       SearchTextField(
           value = searchQuery,
           onValueChange = onSearchQueryChange,
-          label = { Text(stringResource(R.string.device_explorer_cluster_search)) },
+          label = { Text(stringResource(R.string.device_explorer_search_cluster)) },
       )
     }
 
@@ -558,7 +553,7 @@ private fun ClusterDetailContent(
     }
 
     if (isLoading || details == null) {
-      LoadingIndicator(stringResource(R.string.device_explorer_loading_cluster))
+      LoadingIndicator(stringResource(R.string.device_explorer_loading_clusters))
       return@Column
     }
 
@@ -572,7 +567,7 @@ private fun ClusterDetailContent(
             SearchTextField(
                 value = attributeSearchQuery,
                 onValueChange = onAttributeSearchQueryChange,
-                label = { Text(stringResource(R.string.device_explorer_attribute_search)) },
+                label = { Text(stringResource(R.string.device_explorer_search_attribute)) },
             )
           }
 
@@ -629,7 +624,7 @@ private fun ClusterDetailContent(
             SearchTextField(
                 value = commandSearchQuery,
                 onValueChange = onCommandSearchQueryChange,
-                label = { Text(stringResource(R.string.device_explorer_command_search)) },
+                label = { Text(stringResource(R.string.device_explorer_search_command)) },
             )
           }
 
@@ -684,7 +679,7 @@ private fun ClusterDetailContent(
             SearchTextField(
                 value = eventSearchQuery,
                 onValueChange = onEventSearchQueryChange,
-                label = { Text(stringResource(R.string.device_explorer_event_search)) },
+                label = { Text(stringResource(R.string.device_explorer_search_event)) },
             )
           }
 
@@ -752,18 +747,21 @@ private fun AttributeDetailContent(
               .padding(dimensionResource(R.dimen.margin_normal)),
       verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {
-    Text(
-        text = formatIdAndName(attribute.id, attribute.name),
-        style = MaterialTheme.typography.titleMedium,
-    )
-
-    Text(
-        text =
-            stringResource(
-                R.string.device_explorer_attribute_type,
-                typeLabelFor(attribute.type),
-            ),
-        style = MaterialTheme.typography.bodyMedium,
+    HighlightedOutlinedTextField(
+        value = editValue,
+        onValueChange = { editValue = it },
+        successTrigger = readSuccessCount + writeSuccessCount,
+        resetKey = attribute.id,
+        label = {
+          Text(
+              stringResource(
+                  R.string.device_explorer_label_with_type,
+                  stringResource(R.string.device_explorer_value),
+                  typeLabelFor(attribute.type),
+              )
+          )
+        },
+        modifier = Modifier.fillMaxWidth(),
     )
 
     Text(
@@ -784,23 +782,23 @@ private fun AttributeDetailContent(
         style = MaterialTheme.typography.bodyMedium,
     )
 
-    HighlightedOutlinedTextField(
-        value = editValue,
-        onValueChange = { editValue = it },
-        successTrigger = readSuccessCount + writeSuccessCount,
-        resetKey = attribute.id,
-        label = { Text(stringResource(R.string.device_explorer_value)) },
+    Row(
         modifier = Modifier.fillMaxWidth(),
-    )
-
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
+    ) {
       val focusManager = LocalFocusManager.current
-      Button(onClick = onRead) { Text(stringResource(R.string.device_explorer_read)) }
       Button(
+          modifier = Modifier.weight(1f),
+          onClick = onRead,
+      ) {
+        Text(stringResource(R.string.device_explorer_read))
+      }
+      Button(
+          modifier = Modifier.weight(1f),
           onClick = {
             onWrite(editValue)
             focusManager.clearFocus()
-          }
+          },
       ) {
         Text(stringResource(R.string.device_explorer_write))
       }
@@ -826,11 +824,6 @@ private fun CommandInvokeContent(
       modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),
       verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {
-    Text(
-        text = formatIdAndName(command.id, command.name),
-        style = MaterialTheme.typography.titleMedium,
-    )
-
     if (command.arguments.isNotEmpty()) {
       command.arguments.forEach { argument ->
         HighlightedOutlinedTextField(
@@ -839,15 +832,19 @@ private fun CommandInvokeContent(
             successTrigger = invokeSuccessCount,
             resetKey = command.id,
             label = {
-              val label = buildCommandArgumentLabel(argument, typeLabelFor)
-              Text(label)
+              Text(
+                  stringResource(
+                      R.string.device_explorer_label_with_type,
+                      argument.name,
+                      typeLabelFor(argument.type),
+                  )
+              )
             },
             modifier = Modifier.fillMaxWidth(),
         )
       }
     }
 
-    Spacer(modifier = Modifier.weight(1f))
     Button(
         onClick = { onInvoke(commandArguments.toMap()) },
         modifier = Modifier.fillMaxWidth(),
@@ -878,19 +875,6 @@ private fun ExplorerRow(
       }
     }
   }
-}
-
-@Composable
-private fun buildCommandArgumentLabel(
-    argument: ExplorerCommandArgumentDefinition,
-    typeLabelFor: (MatterType) -> String,
-): String {
-  val typeLabel = typeLabelFor(argument.type)
-  return stringResource(
-      R.string.device_explorer_argument_with_type,
-      argument.name,
-      typeLabel,
-  )
 }
 
 private fun formatEndpointLabel(endpoint: Int, name: String?): String =

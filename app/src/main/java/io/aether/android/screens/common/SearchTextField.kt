@@ -29,7 +29,7 @@ fun SearchTextField(
           IconButton(onClick = { onValueChange("") }) {
             Icon(
                 imageVector = Icons.Filled.Close,
-                contentDescription = stringResource(R.string.device_explorer_clear_search),
+                contentDescription = stringResource(R.string.device_explorer_search_clear),
             )
           }
         }

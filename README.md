@@ -15,8 +15,14 @@ hub or other third-party controller hardware.
 
 From the repository root:
 
-```console
-./gradlew -PselectedAbi=arm64-v8a :app:assembleRelease
+```bash
+./gradlew :app:assembleDebug
+```
+
+It is also possible to build for a specific ABI, e.g. for `arm64-v8a`:
+
+```bash
+./gradlew -PselectedAbi=arm64-v8a :app:assembleDebug
 ```
 
 ## License

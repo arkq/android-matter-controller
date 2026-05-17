@@ -29,6 +29,13 @@ SPDX-License-Identifier: Apache-2.0
         &lt;p>Version: %1$s&lt;/p>
     </string>
 
+    <!-- Attribute Access Privileges -->
+    <string name="attr_access_privilege_view">View</string>
+    <string name="attr_access_privilege_operate">Operate</string>
+    <string name="attr_access_privilege_manage">Manage</string>
+    <string name="attr_access_privilege_administer">Administer</string>
+    <string name="attr_access_privilege_unknown">Unknown</string>
+
     <!-- Device Types -->
     <string name="device_type_unspecified">unspecified</string>
     <string name="device_type_light">light</string>
@@ -125,19 +132,20 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_data_model_unknown">Unknown</string>
 
     <!-- Device Explorer Screen -->
-    <string name="device_explorer_loading">Loading explorer…</string>
+    <string name="device_explorer_loading_endpoints">Loading endpoints…</string>
+    <string name="device_explorer_loading_clusters">Loading clusters…</string>
+    <string name="device_explorer_search_toggle">Toggle search</string>
+    <string name="device_explorer_search_clear">Clear search</string>
+    <string name="device_explorer_search_endpoint">Search endpoints</string>
+    <string name="device_explorer_search_cluster">Search clusters</string>
+    <string name="device_explorer_search_attribute">Search attributes</string>
+    <string name="device_explorer_search_command">Search commands</string>
+    <string name="device_explorer_search_event">Search events</string>
     <string name="device_explorer_tab_attributes">Attributes</string>
     <string name="device_explorer_tab_commands">Commands</string>
     <string name="device_explorer_tab_events">Events</string>
     <string name="device_explorer_endpoint_type_unknown">Unknown</string>
-    <string name="device_explorer_toggle_search">Toggle search</string>
-    <string name="device_explorer_clear_search">Clear search</string>
     <string name="device_explorer_root">Root</string>
-    <string name="device_explorer_endpoint_search">Search endpoints</string>
-    <string name="device_explorer_cluster_search">Search clusters</string>
-    <string name="device_explorer_attribute_search">Search attributes</string>
-    <string name="device_explorer_command_search">Search commands</string>
-    <string name="device_explorer_event_search">Search events</string>
     <string name="device_explorer_endpoints_empty">No endpoints available for this device.</string>
     <string name="device_explorer_clusters_empty">No clusters found for this endpoint.</string>
     <string name="device_explorer_no_results">No results matching your search.</string>
@@ -149,7 +157,6 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_explorer_clusters_section_empty">No clusters in this section.</string>
     <string name="device_explorer_cluster_counts">Attributes: %1$d • Commands: %2$d • Events: %3$d</string>
     <string name="device_explorer_cluster_unknown">Unknown cluster</string>
-    <string name="device_explorer_loading_cluster">Loading cluster details…</string>
     <string name="device_explorer_attributes_empty">No attributes available.</string>
     <string name="device_explorer_commands_empty">No commands available.</string>
     <string name="device_explorer_events_empty">No events available.</string>
@@ -161,15 +168,9 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_explorer_invoke">Invoke</string>
     <string name="device_explorer_attribute_read_privilege">Read privilege: %1$s</string>
     <string name="device_explorer_attribute_write_privilege">Write privilege: %1$s</string>
-    <string name="device_explorer_privilege_not_available">N/A</string>
-    <string name="device_explorer_privilege_view">View</string>
-    <string name="device_explorer_privilege_operate">Operate</string>
-    <string name="device_explorer_privilege_manage">Manage</string>
-    <string name="device_explorer_privilege_administer">Administer</string>
-    <string name="device_explorer_argument_with_type">%1$s (%2$s)</string>
+    <string name="device_explorer_label_with_type">%1$s [%2$s]</string>
     <string name="device_explorer_command_arguments_count">Arguments: %1$d</string>
     <string name="device_explorer_value">Value</string>
-    <string name="device_explorer_attribute_type">Type: %1$s</string>
     <string name="device_explorer_attribute_metadata">Read: %1$s • Write: %2$s • Type: %3$s</string>
     <string name="device_explorer_error_action_failed">Explorer action failed.</string>
     <string name="device_explorer_error_unsupported_attribute_write">This attribute cannot be written in Explorer.</string>

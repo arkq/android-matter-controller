@@ -210,9 +210,9 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
 @StringRes
 fun MatterPrivilege.labelRes(): Int =
     when (this) {
-      MatterPrivilege.PRIVILEGE_VIEW -> R.string.device_explorer_privilege_view
-      MatterPrivilege.PRIVILEGE_OPERATE -> R.string.device_explorer_privilege_operate
-      MatterPrivilege.PRIVILEGE_MANAGE -> R.string.device_explorer_privilege_manage
-      MatterPrivilege.PRIVILEGE_ADMIN -> R.string.device_explorer_privilege_administer
-      else -> R.string.device_explorer_privilege_not_available
+      MatterPrivilege.PRIVILEGE_VIEW -> R.string.attr_access_privilege_view
+      MatterPrivilege.PRIVILEGE_OPERATE -> R.string.attr_access_privilege_operate
+      MatterPrivilege.PRIVILEGE_MANAGE -> R.string.attr_access_privilege_manage
+      MatterPrivilege.PRIVILEGE_ADMIN -> R.string.attr_access_privilege_administer
+      else -> R.string.attr_access_privilege_unknown
     }

@@ -80,7 +80,9 @@ def collect_all_types(data_model_dir: Path, versions: list[str]) -> list[str]:
             for elem in tree.xpath("//*[@type]"):
                 if t := _get_type(elem):
                     types[t] += 1
-    return sorted(types.keys(), key=lambda t: types[t], reverse=True)
+    # Sort by usage count (descending) and then alphabetically
+    # for deterministic output, and return just the type names.
+    return sorted(types.keys(), key=lambda t: (-types[t], t))
 
 
 def collect_all_privileges(data_model_dir: Path, versions: list[str]) -> list[str]:

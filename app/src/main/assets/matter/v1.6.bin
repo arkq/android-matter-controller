@@ -184,18 +184,18 @@ ThermostatõÅÇÑÇÖÜ±
 î
 Electrical Meterêëá
  ¿Control BridgebÄÄÜ
-–On/Off SensorbÄïIdentifyIdentifyTime (IdentifyType” "Identify
+–On/Off SensorbÄïIdentifyIdentifyTime (IdentifyType‰ "Identify
 IdentifyTime"<@TriggerEffect
-EffectIdentifierì
-EffectVariant‘ŒGroupsNameSupportÙ "&AddGroup
+EffectIdentifierè
+EffectVariantﬁŒGroupsNameSupport¯ "&AddGroup
 GroupID	
 	GroupName"+AddGroupResponse
 
-Status
+Status
 GroupID	"	ViewGroup
 GroupID	"=ViewGroupResponse
 
-Status
+Status
 GroupID	
 	GroupName"%GetGroupMembership
 	GroupListx";GetGroupMembershipResponse
@@ -203,14 +203,14 @@ ThermostatõÅÇÑÇÖÜ±
 	GroupListx"RemoveGroup
 GroupID	"0RemoveGroupResponse
 
-Status
+Status
 GroupID	"RemoveAllGroups"5AddGroupIfIdentifying
 GroupID	
-	GroupName∂On/OffOnOff ÄÄGlobalSceneControl ÅÄOnTime (ÇÄOffWaitTime (ÉÄStartUpOnOffò ("Off"On"
+	GroupName∂On/OffOnOff ÄÄGlobalSceneControl ÅÄOnTime (ÇÄOffWaitTime (ÉÄStartUpOnOffñ ("Off"On"
 Toggle";@OffWithEffect
-EffectIdentifierì
-EffectVariant"AOnWithRecallGlobalScene"BBOnWithTimedOff
-OnOffControlà
+EffectIdentifierè
+EffectVariant"AOnWithRecallGlobalScene"BBOnWithTimedOff
+OnOffControl˙
 
 OnTime
 OffWaitTimeäLevel ControlCurrentLevel RemainingTime MinLevel MaxLevel CurrentFrequency MinFrequency MaxFrequency Options (OnOffTransitionTime (OnLevel (OnTransitionTime (OffTransitionTime (DefaultMoveRate (ÄÄStartUpCurrentLevel ("RMoveToLevel	
@@ -230,12 +230,12 @@ ThermostatõÅÇÑÇÖÜ±
 OptionsMask
 OptionsOverride"MoveToLevelWithOnOff"MoveWithOnOff"StepWithOnOff"StopWithOnOff")MoveToClosestFrequency
 	Frequencyã
-DescriptorDeviceTypeListå 
+DescriptorDeviceTypeListë 
 ServerListw 
-ClientListw 	PartsList$ TagListh EndpointUniqueID BindingBinding◊ (¡Access ControlACLÿ (	Extensionâ (%SubjectsPerAccessControlEntry $TargetsPerAccessControlEntry %AccessControlEntriesPerFabric CommissioningARL– ARL˝ AuxiliaryACLÿ "$ReviewFabricRestrictions
-ARL–"/ ReviewFabricRestrictionsResponse	
+ClientListw 	PartsList$ TagListk EndpointUniqueID BindingBindingÿ (¡Access ControlACL◊ (	Extension˙ (%SubjectsPerAccessControlEntry $TargetsPerAccessControlEntry %AccessControlEntriesPerFabric CommissioningARLœ ARLË AuxiliaryACL◊ "$ReviewFabricRestrictions
+ARLœ"/ ReviewFabricRestrictionsResponse	
 Tokenˆ%Actions
-ActionList˙ EndpointLists¸ SetupURL "+InstantAction
+ActionList˚ EndpointLists˝ SetupURL "+InstantAction
 ActionID
 InvokeID"OInstantActionWithTransition
 ActionID
@@ -267,15 +267,15 @@ StopAction
 ActionID
 InvokeID
 Duration’(Basic InformationDataModelRevision 
-VendorName VendorID ProductName 	ProductID 	NodeLabel (Location (HardwareVersion HardwareVersionString 	SoftwareVersion 
+VendorName VendorID ProductName 	ProductID 	NodeLabel (Location (HardwareVersion HardwareVersionString 	SoftwareVersion 
 SoftwareVersionString ManufacturingDate 
 PartNumber 
-ProductURL ProductLabel SerialNumber LocalConfigDisabled (	Reachable UniqueID CapabilityMinimas ProductAppearanceî SpecificationVersion MaxPathsPerInvoke ConfigurationVersion ¿)OTA Software Update Provider"¨
+ProductURL ProductLabel SerialNumber LocalConfigDisabled (	Reachable UniqueID CapabilityMinimaq ProductAppearanceñ SpecificationVersion MaxPathsPerInvoke ConfigurationVersion ¿)OTA Software Update Provider"¨
 QueryImage
-VendorID
+VendorID
 	ProductID
 SoftwareVersion
-ProtocolsSupportedÊ
+ProtocolsSupported¸
 HardwareVersion
 Location
 RequestorCanConsent
@@ -292,46 +292,46 @@ QueryImage
 UpdateToken
 
 NewVersion";ApplyUpdateResponse
-ActionË
+Action·
 DelayedActionTime"=NotifyUpdateApplied
 UpdateToken
-SoftwareVersion˛*OTA Software Update RequestorDefaultOTAProviders– (UpdatePossible UpdateState_ UpdateStateProgress "sAnnounceOTAProvider
+SoftwareVersion˛*OTA Software Update RequestorDefaultOTAProvidersÔ (UpdatePossible UpdateStatea UpdateStateProgress "sAnnounceOTAProvider
 ProviderNodeID
 
-VendorID
-AnnouncementReason‚
+VendorID
+AnnouncementReasonﬂ
 MetadataForNode
 EndpointN+Localization ConfigurationActiveLocale (SupportedLocales# p,Time Format Localization
-HourFormat• (ActiveCalendarType~ (SupportedCalendarTypes¶ S-Unit LocalizationTemperatureUnitƒ ("SupportedTemperatureUnitsµ -.Power Source ConfigurationSources$ Á/Power SourceStatus€ Order Description !WiredAssessedInputVoltage #WiredAssessedInputFrequency WiredCurrentType‹ WiredAssessedCurrent WiredNominalVoltage WiredMaximumCurrent 	WiredPresent 
-ActiveWiredFaultsC 
-BatVoltage BatPercentRemaining BatTimeRemaining BatChargeLevel› BatReplacementNeeded BatReplaceabilityﬁ 
-BatPresent ActiveBatFaultsE !BatReplacementDescription BatCommonDesignationﬂ BatANSIDesignation BatIECDesignation BatApprovedChemistry‡ BatCapacity BatQuantity BatChargeState· BatTimeToFullCharge "BatFunctionalWhileCharging BatChargingCurrent ActiveBatChargeFaultsG EndpointList$ Î0General Commissioning
-Breadcrumb (BasicCommissioningInfo¢ RegulatoryConfigZ LocationCapabilityZ $SupportsConcurrentConnection TCAcceptedVersion TCMinRequiredVersion TCAcknowledgements- "TCAcknowledgementsRequired 	TCUpdateDeadline 
-RecoveryIdentifier NetworkRecoveryReasonﬂ #IsCommissioningWithoutPower "6ArmFailSafe
+HourFormat¨ (ActiveCalendarType| (SupportedCalendarTypes± S-Unit LocalizationTemperatureUnit≈ ("SupportedTemperatureUnits  -.Power Source ConfigurationSources$ Á/Power SourceStatusí Order Description !WiredAssessedInputVoltage #WiredAssessedInputFrequency WiredCurrentTypeö WiredAssessedCurrent WiredNominalVoltage WiredMaximumCurrent 	WiredPresent 
+ActiveWiredFaultsO 
+BatVoltage BatPercentRemaining BatTimeRemaining BatChargeLevel‰ BatReplacementNeeded BatReplaceabilityÁ 
+BatPresent ActiveBatFaultsJ !BatReplacementDescription BatCommonDesignationÊ BatANSIDesignation BatIECDesignation BatApprovedChemistry„ BatCapacity BatQuantity BatChargeStateÂ BatTimeToFullCharge "BatFunctionalWhileCharging BatChargingCurrent ActiveBatChargeFaultsI EndpointList$ Î0General Commissioning
+Breadcrumb (BasicCommissioningInfo¢ RegulatoryConfig\ LocationCapability\ $SupportsConcurrentConnection TCAcceptedVersion TCMinRequiredVersion TCAcknowledgements- "TCAcknowledgementsRequired 	TCUpdateDeadline 
+RecoveryIdentifier NetworkRecoveryReasonÉ #IsCommissioningWithoutPower "6ArmFailSafe
 ExpiryLengthSeconds
 
 Breadcrumb"5ArmFailSafeResponse
-	ErrorCode[
+	ErrorCodeZ
 	DebugText"QSetRegulatoryConfig
-NewRegulatoryConfigZ
+NewRegulatoryConfig\
 CountryCode
 
 Breadcrumb"=SetRegulatoryConfigResponse
-	ErrorCode[
+	ErrorCodeZ
 	DebugText"CommissioningComplete"?CommissioningCompleteResponse
-	ErrorCode[
+	ErrorCodeZ
 	DebugText"<SetTCAcknowledgements
 	TCVersion
 TCUserResponse-"0SetTCAcknowledgementsResponse
-	ErrorCode[±1Network CommissioningMaxNetworks NetworksŒ ScanMaxTimeSeconds ConnectMaxTimeSeconds InterfaceEnabled (LastNetworkingStatus3 LastNetworkID LastConnectErrorValue% SupportedWiFiBands§  	SupportedThreadFeatures• 
+	ErrorCodeZ±1Network CommissioningMaxNetworks NetworksÏ ScanMaxTimeSeconds ConnectMaxTimeSeconds InterfaceEnabled (LastNetworkingStatus3 LastNetworkID LastConnectErrorValue% SupportedWiFiBands≤  	SupportedThreadFeatures∆ 
 ThreadVersion "(ScanNetworks
 SSID
 
 Breadcrumb"kScanNetworksResponse
 NetworkingStatus3
 	DebugText
-WiFiScanResults©
-ThreadScanResults´"EAddOrUpdateWiFiNetwork
+WiFiScanResultsª
+ThreadScanResults∫"EAddOrUpdateWiFiNetwork
 SSID
 Credentials
 
@@ -356,63 +356,63 @@ ErrorValue%"CReorderNetwork
 NetworkIndex
 
 Breadcrumb«2Diagnostic Logs"VRetrieveLogsRequest
-IntentÅ
-RequestedProtocolÇ
+Intentı
+RequestedProtocolò
 TransferFileDesignator"ZRetrieveLogsResponse
 
 Status
 
 LogContent
 UTCTimeStamp
-TimeSinceBootÉí3General DiagnosticsNetworkInterfaces∫ RebootCount UpTime TotalOperationalHours 
-BootReason{ ActiveHardwareFaultsO ActiveRadioFaultsQ ActiveNetworkFaults)  TestEventTriggersEnabled 	DoNotUse
-DeviceLoadStatusÖ "3TestEventTrigger
+TimeSinceBootóí3General DiagnosticsNetworkInterfacesµ RebootCount UpTime TotalOperationalHours 
+BootReason{ ActiveHardwareFaultsL ActiveRadioFaultsN ActiveNetworkFaults)  TestEventTriggersEnabled 	DoNotUse
+DeviceLoadStatusÕ "3TestEventTrigger
 	EnableKey
 EventTrigger"TimeSnapshot"<TimeSnapshotResponse
 SystemTimeMs'
-PosixTimeMsâ";PayloadTestRequest
+PosixTimeMs˝";PayloadTestRequest
 	EnableKey	
 Value	
 Count"$PayloadTestResponse
-Payloadï4Software DiagnosticsThreadMetricså CurrentHeapFree CurrentHeapUsed  CurrentHeapHighWatermark "ResetWatermarks™5Thread Network DiagnosticsChannel RoutingRoleÓ NetworkName PanId ExtendedPanId MeshLocalPrefixÔ OverrunCount NeighborTable 
-RouteTableÚ 	PartitionId 
-	Weighting DataVersion StableDataVersion LeaderRouterId DetachedRoleCount ChildRoleCount RouterRoleCount LeaderRoleCount AttachAttemptCount PartitionIdChangeCount )!BetterPartitionAttachAttemptCount ParentChangeCount TxTotalCount TxUnicastCount TxBroadcastCount TxAckRequestedCount TxAckedCount TxNoAckRequestedCount TxDataCount TxDataPollCount TxBeaconCount TxBeaconRequestCount  TxOtherCount !TxRetryCount #"TxDirectMaxRetryExpiryCount %#TxIndirectMaxRetryExpiryCount $TxErrCcaCount %TxErrAbortCount &TxErrBusyChannelCount 'RxTotalCount (RxUnicastCount )RxBroadcastCount *RxDataCount +RxDataPollCount ,RxBeaconCount -RxBeaconRequestCount .RxOtherCount /RxAddressFilteredCount 0RxDestAddrFilteredCount 1RxDuplicatedCount 2RxErrNoFrameCount !3RxErrUnknownNeighborCount  4RxErrInvalidSrcAddrCount 5RxErrSecCount 6RxErrFcsCount 7RxErrOtherCount 8ActiveTimestamp 9PendingTimestamp :Delay ;SecurityPolicyß <ChannelPage0Mask %=OperationalDatasetComponents® >ActiveNetworkFaultsList) ?
-ExtAddress @Rloc16 "ResetCountsÂ6Wi-Fi Network DiagnosticsBSSID SecurityTypeë WiFiVersioní ChannelNumber RSSI BeaconLostCount BeaconRxCount PacketMulticastRxCount PacketMulticastTxCount 	PacketUnicastRxCount 
-PacketUnicastTxCount CurrentMaxRate OverrunCount "ResetCountsÚ7Ethernet Network DiagnosticsPHYRateà 
+Payloadï4Software DiagnosticsThreadMetricsÆ CurrentHeapFree CurrentHeapUsed  CurrentHeapHighWatermark "ResetWatermarks™5Thread Network DiagnosticsChannel RoutingRoleî NetworkName PanId ExtendedPanId MeshLocalPrefix¯ OverrunCount NeighborTableÉ 
+RouteTableÜ 	PartitionId 
+	Weighting DataVersion StableDataVersion LeaderRouterId DetachedRoleCount ChildRoleCount RouterRoleCount LeaderRoleCount AttachAttemptCount PartitionIdChangeCount )!BetterPartitionAttachAttemptCount ParentChangeCount TxTotalCount TxUnicastCount TxBroadcastCount TxAckRequestedCount TxAckedCount TxNoAckRequestedCount TxDataCount TxDataPollCount TxBeaconCount TxBeaconRequestCount  TxOtherCount !TxRetryCount #"TxDirectMaxRetryExpiryCount %#TxIndirectMaxRetryExpiryCount $TxErrCcaCount %TxErrAbortCount &TxErrBusyChannelCount 'RxTotalCount (RxUnicastCount )RxBroadcastCount *RxDataCount +RxDataPollCount ,RxBeaconCount -RxBeaconRequestCount .RxOtherCount /RxAddressFilteredCount 0RxDestAddrFilteredCount 1RxDuplicatedCount 2RxErrNoFrameCount !3RxErrUnknownNeighborCount  4RxErrInvalidSrcAddrCount 5RxErrSecCount 6RxErrFcsCount 7RxErrOtherCount 8ActiveTimestamp 9PendingTimestamp :Delay ;SecurityPolicyƒ <ChannelPage0Mask %=OperationalDatasetComponents¿ >ActiveNetworkFaultsList) ?
+ExtAddress @Rloc16 "ResetCountsÂ6Wi-Fi Network DiagnosticsBSSID SecurityTypeï WiFiVersionú ChannelNumber RSSI BeaconLostCount BeaconRxCount PacketMulticastRxCount PacketMulticastTxCount 	PacketUnicastRxCount 
+PacketUnicastTxCount CurrentMaxRate OverrunCount "ResetCountsÚ7Ethernet Network DiagnosticsPHYRateë 
 FullDuplex PacketRxCount PacketTxCount 
-TxErrCount CollisionCount OverrunCount CarrierDetect TimeSinceReset "ResetCountsÀ8Time SynchronizationUTCTime Granularityp 
-TimeSourceq TrustedTimeSource⁄ 
-DefaultNTP TimeZoneà 	DSTOffsetä 	LocalTime TimeZoneDatabase€ 	NTPServerAvailable 
+TxErrCount CollisionCount OverrunCount CarrierDetect TimeSinceReset "ResetCountsÀ8Time SynchronizationUTCTime Granularityv 
+TimeSourcez TrustedTimeSourceä 
+DefaultNTP TimeZoneà 	DSTOffsetá 	LocalTime TimeZoneDatabaseâ 	NTPServerAvailable 
 TimeZoneListMaxSize DSTOffsetListMaxSize SupportsDNSResolve ":
 SetUTCTime
 UTCTime
-Granularityp
+Granularityv
 
-TimeSourceq"0SetTrustedTimeSource
-TrustedTimeSource‹"SetTimeZone
+TimeSourcez"0SetTrustedTimeSource
+TrustedTimeSource‚"SetTimeZone
 TimeZoneà".SetTimeZoneResponse
 DSTOffsetRequired" SetDSTOffset
-	DSTOffsetä"!SetDefaultNTP
+	DSTOffsetá"!SetDefaultNTP
 
 DefaultNTPú9 Bridged Device Basic InformationDataModelRevision 
-VendorName VendorID ProductName 	ProductID 	NodeLabel (Location (HardwareVersion HardwareVersionString 	SoftwareVersion 
+VendorName VendorID ProductName 	ProductID 	NodeLabel (Location (HardwareVersion HardwareVersionString 	SoftwareVersion 
 SoftwareVersionString ManufacturingDate 
 PartNumber 
-ProductURL ProductLabel SerialNumber LocalConfigDisabled (	Reachable UniqueID CapabilityMinimas ProductAppearanceî SpecificationVersion MaxPathsPerInvoke ConfigurationVersion "6Ä
+ProductURL ProductLabel SerialNumber LocalConfigDisabled (	Reachable UniqueID CapabilityMinimaq ProductAppearanceñ SpecificationVersion MaxPathsPerInvoke ConfigurationVersion "6Ä
 KeepActive
 StayActiveDuration
-	TimeoutMsS;SwitchNumberOfPositions CurrentPosition MultiPressMax ∂<Administrator CommissioningWindowStatusÂ AdminFabricIndex AdminVendorId "zOpenCommissioningWindow
+	TimeoutMsS;SwitchNumberOfPositions CurrentPosition MultiPressMax ∂<Administrator CommissioningWindowStatusÍ AdminFabricIndex AdminVendorId "zOpenCommissioningWindow
 CommissioningTimeout
 PAKEPasscodeVerifier
 Discriminator
 
 Iterations
 Salt":OpenBasicCommissioningWindow
-CommissioningTimeout"RevokeCommissioningπ>Operational CredentialsNOCsã Fabricsç SupportedFabrics CommissionedFabrics TrustedRootCertificatesW CurrentFabricIndex "*AttestationRequest
+CommissioningTimeout"RevokeCommissioningπ>Operational CredentialsNOCsÑ Fabrics˛ SupportedFabrics CommissionedFabrics TrustedRootCertificatesW CurrentFabricIndex "*AttestationRequest
 AttestationNonce"JAttestationResponse
 AttestationElements
 AttestationSignature"1CertificateChainRequest
-CertificateTypeè"-CertificateChainResponse
+CertificateTypeË"-CertificateChainResponse
 Certificate"0
 CSRRequest
 CSRNonce
@@ -423,44 +423,44 @@ CSRRequest
 	ICACValue
 IPKValue
 CaseAdminSubject4
-AdminVendorId"*	UpdateNOC
+AdminVendorId"*	UpdateNOC
 NOCValue
 	ICACValue"@NOCResponse
 
-StatusCodeê
+StatusCodeç
 FabricIndex
 	DebugText" 	UpdateFabricLabel	
 Label"!
 RemoveFabric
 FabricIndex"4AddTrustedRootCertificate
 RootCACertificate"USetVIDVerificationStatement
-VendorID
+VendorID
 VIDVerificationStatement
 VVSC"DSignVIDVerificationRequest
 FabricIndex
 ClientChallenge"YSignVIDVerificationResponse
 FabricIndex
 FabricBindingVersion
-	Signatureâ?Group Key ManagementGroupKeyMapÑ (
-GroupTableÜ MaxGroupsPerFabric MaxGroupKeysPerFabric GroupcastAdoptionÇ ("KeySetWrite
-GroupKeySet`"!
+	Signatureâ?Group Key ManagementGroupKeyMapÄ (
+GroupTableˇ MaxGroupsPerFabric MaxGroupKeysPerFabric GroupcastAdoption› ("KeySetWrite
+GroupKeySet_"!
 KeySetRead
 GroupKeySetID"'KeySetReadResponse
-GroupKeySet`"#KeySetRemove
+GroupKeySet_"#KeySetRemove
 GroupKeySetID"$KeySetReadAllIndices
 
 DoNotUse"4KeySetReadAllIndicesResponse
-GroupKeySetIDs2 @Fixed Label	LabelListI !A
-User Label	LabelListI (#EBoolean State
+GroupKeySetIDs2 @Fixed Label	LabelListM !A
+User Label	LabelListM (#EBoolean State
 StateValue ÒFICD ManagementIdleModeDuration ActiveModeDuration ActiveModeThreshold RegisteredClientsÎ 
-ICDCounter !ClientsSupportedPerFabric "UserActiveModeTriggerHintü ( UserActiveModeTriggerInstruction OperatingMode= 	MaximumCheckInBackoff "hRegisterClient
+ICDCounter !ClientsSupportedPerFabric "UserActiveModeTriggerHint  ( UserActiveModeTriggerInstruction OperatingMode= 	MaximumCheckInBackoff "hRegisterClient
 CheckInNodeID
 
 MonitoredSubject4
 Key
 VerificationKey
 
-ClientType…"*RegisterClientResponse
+ClientType«"*RegisterClientResponse
 
 ICDCounter"<UnregisterClient
 CheckInNodeID
@@ -469,19 +469,19 @@ ICDCounter"<UnregisterClient
 StayActiveDuration"2StayActiveResponse
 PromisedActiveDurationkHOven Cavity Operational State"Pause"Stop"	Start"
 Resume"OperationalCommandResponseMI	Oven ModeSupportedModesCurrentModeStartUpMode
-OnModeZJLaundry Dryer ControlsSupportedDrynessLevelsè SelectedDrynessLevel™ (∞PMode SelectDescription StandardNamespaceV SupportedModes| CurrentMode StartUpMode (OnMode ("ChangeToMode
+OnModeZJLaundry Dryer ControlsSupportedDrynessLevels¶ SelectedDrynessLevel® (±PMode SelectDescription StandardNamespaceV SupportedModesÄ CurrentMode StartUpMode (OnMode ("ChangeToMode
 NewModeWQLaundry Washer ModeSupportedModesCurrentModeStartUpMode
 OnModexR4Refrigerator And Temperature Controlled Cabinet ModeSupportedModesCurrentModeStartUpMode
 OnMode~SLaundry Washer Controls
-SpinSpeeds# SpinSpeedCurrent (NumberOfRinsesï (SupportedRinsesÍ PTRVC Run ModeSupportedModesCurrentModeStartUpMode
+SpinSpeeds# SpinSpeedCurrent (NumberOfRinsesì (SupportedRinsesÌ PTRVC Run ModeSupportedModesCurrentModeStartUpMode
 OnModeRURVC Clean ModeSupportedModesCurrentModeStartUpMode
 OnMode˚VTemperature ControlTemperatureSetpoint MinTemperature MaxTemperature Step  SelectedTemperatureLevel "SupportedTemperatureLevels# "CSetTemperature
 TargetTemperature
 TargetTemperatureLevel/WRefrigerator Alarm"ModifyEnabledAlarmsSYDishwasher ModeSupportedModesCurrentModeStartUpMode
 OnMode"[Air Quality
-AirQuality˛ Ä\Smoke CO AlarmExpressedStateÂ 
-SmokeState COState BatteryAlert DeviceMutedÊ TestInProgress HardwareFaultAlert EndOfServiceAlertÁ InterconnectSmokeAlarm 	InterconnectCOAlarm 
-ContaminationStateË  SmokeSensitivityLevelÈ (
+AirQuality’ Ä\Smoke CO AlarmExpressedState· 
+SmokeState COState BatteryAlert DeviceMuted˜ TestInProgress HardwareFaultAlert EndOfServiceAlertﬂ InterconnectSmokeAlarm 	InterconnectCOAlarm 
+ContaminationState⁄  SmokeSensitivityLevelÖ (
 ExpiryDate 	Unmounted "SelfTestRequest]Dishwasher AlarmÅ^Microwave Oven ModeSupportedModesCurrentModeStartUpMode
 OnMode"ChangeToMode"ChangeToModeResponseÊ_Microwave Oven ControlCookTime MaxCookTime PowerSetting MinPower MaxPower 	PowerStep SupportedWatts2 SelectedWattIndex 
 WattRating "qSetCookingParameters
@@ -490,28 +490,28 @@ WattRating "qSetCookingParameters
 PowerSetting
 WattSettingIndex
 StartAfterSetting"AddMoreTime
-	TimeToAddã`Operational State	PhaseList# CurrentPhase CountdownTime OperationalStateListˇ OperationalStateñ OperationalErrorc "Pause"Stop"	Start"
+	TimeToAddã`Operational State	PhaseList# CurrentPhase CountdownTime OperationalStateListÓ OperationalStateî OperationalErrorc "Pause"Stop"	Start"
 Resume"8OperationalCommandResponse
 CommandResponseStatecpaRVC Operational State"Pause"Stop"	Start"
-Resume"OperationalCommandResponse"ÄGoHome”bScenes ManagementDoNotUse SceneTableSize FabricSceneInfoÚ "fAddScene
+Resume"OperationalCommandResponse"ÄGoHome—bScenes ManagementDoNotUse SceneTableSize FabricSceneInfoÒ "eAddScene
 GroupID	
 SceneID
 TransitionTime
-	SceneName
-ExtensionFieldSetStructsÅ"8AddSceneResponse
+	SceneName
+ExtensionFieldSetStructs"8AddSceneResponse
 
 Status
 GroupID	
 SceneID"'	ViewScene
 GroupID	
-SceneID"}ViewSceneResponse
+SceneID"|ViewSceneResponse
 
 Status
 GroupID	
 SceneID
 TransitionTime
-	SceneName
-ExtensionFieldSetStructsÅ")RemoveScene
+	SceneName
+ExtensionFieldSetStructs")RemoveScene
 GroupID	
 SceneID"=RemoveSceneResponse
 
@@ -537,8 +537,8 @@ StoreScene
 Status
 Capacity
 GroupID	
-	SceneList√"x@	CopyScene	
-Mode¶
+	SceneListƒ"x@	CopyScene	
+Modeì
 GroupIdentifierFrom	
 SceneIdentifierFrom
 GroupIdentifierTo	
@@ -553,14 +553,14 @@ StoreScene
 MinorUnderTemperatureThreshold"
 MajorUnderTemperatureThreshold%
 !CriticalUnderTemperatureThreshold°e	Groupcast
-Membership˜ MaxMembershipCount MaxMcastAddrCount UsedMcastAddrCount FabricUnderTest "	JoinGroup
+Membershipﬂ MaxMembershipCount MaxMcastAddrCount UsedMcastAddrCount FabricUnderTest "	JoinGroup
 GroupID	
 	Endpoints$
 KeySetID
 Key
 UseAuxiliaryACL
 ReplaceEndpoints
-McastAddrPolicyæ"*
+McastAddrPolicyº"*
 LeaveGroup
 GroupID	
 	Endpoints$"2LeaveGroupResponse
@@ -571,63 +571,63 @@ LeaveGroup
 Key";ConfigureAuxiliaryACL
 GroupID	
 UseAuxiliaryACL"=GroupcastTesting
-TestOperation˘
-DurationSecondsÕqHEPA Filter Monitoring	Condition DegradationDirection÷ ChangeIndication◊ InPlaceIndicator LastChangedTime (ReplacementProductListÿ "ResetConditionŸr"Activated Carbon Filter Monitoring	Condition DegradationDirection÷ ChangeIndication◊ InPlaceIndicator LastChangedTime (ReplacementProductListÿ "ResetCondition“yWater Tank Level Monitoring	Condition DegradationDirection÷ ChangeIndication◊ InPlaceIndicator LastChangedTime (ReplacementProductListÿ "ResetCondition÷ÄBoolean State ConfigurationCurrentSensitivityLevel ("SupportedSensitivityLevels DefaultSensitivityLevel AlarmsActive+ AlarmsSuppressed+ AlarmsEnabled+ AlarmsSupported+ SensorFault• "%SuppressAlarm
+TestOperation“
+DurationSecondsÕqHEPA Filter Monitoring	Condition DegradationDirection› ChangeIndication◊ InPlaceIndicator LastChangedTime (ReplacementProductList "ResetConditionŸr"Activated Carbon Filter Monitoring	Condition DegradationDirection› ChangeIndication◊ InPlaceIndicator LastChangedTime (ReplacementProductList "ResetCondition“yWater Tank Level Monitoring	Condition DegradationDirection› ChangeIndication◊ InPlaceIndicator LastChangedTime (ReplacementProductList "ResetCondition÷ÄBoolean State ConfigurationCurrentSensitivityLevel ("SupportedSensitivityLevels DefaultSensitivityLevel AlarmsActive+ AlarmsSuppressed+ AlarmsEnabled+ AlarmsSupported+ SensorFaultΩ "%SuppressAlarm
 AlarmsToSuppress+"1EnableDisableAlarm
-AlarmsToEnableDisable+ŸÅValve Configuration and ControlOpenDuration DefaultOpenDuration (AutoCloseTime RemainingDuration CurrentStaten TargetStaten CurrentLevel TargetLevel DefaultOpenLevel (	
-ValveFault¬ 
+AlarmsToEnableDisable+ŸÅValve Configuration and ControlOpenDuration DefaultOpenDuration (AutoCloseTime RemainingDuration CurrentStateo TargetStateo CurrentLevel TargetLevel DefaultOpenLevel (	
+ValveFault¡ 
 	LevelStep ")Open
 OpenDuration
-TargetLevel"	Close»êElectrical Power Measurement	PowerModeï  NumberOfMeasurementTypes Accuracy“ Ranges≠ VoltageØ ActiveCurrent ReactiveCurrent ApparentCurrent ActivePower 	ReactivePowerÃ 
-ApparentPower  
-RMSVoltageØ 
-RMSCurrent RMSPower 	Frequency HarmonicCurrents∞ HarmonicPhases∞ PowerFactor NeutralCurrent ◊ëElectrical Energy MeasurementAccuracyù  CumulativeEnergyImported,  CumulativeEnergyExported, PeriodicEnergyImported, PeriodicEnergyExported, CumulativeEnergyResetµ œîWater Heater ManagementHeaterTypesÀ 
-HeatDemandÀ 
-TankVolume EstimatedHeatRequired TankPercentage 
-BoostStateÏ "Boost
-	BoostInfoÃ"CancelBoost¶ïCommodity Price
-TariffUnit√ Currency¿ CurrentPrice† PriceForecastù "'GetDetailedPriceRequest
-Detailsû"/GetDetailedPriceResponse
-CurrentPrice†",GetDetailedForecastRequest
-Detailsû"3GetDetailedForecastResponse
-PriceForecastùÒóMessagesMessages∂ ActiveMessageIDsæ "âPresentMessagesRequest
+TargetLevel"	Close»êElectrical Power Measurement	PowerMode∫  NumberOfMeasurementTypes AccuracyÚ RangesØ Voltage¬ ActiveCurrent ReactiveCurrent ApparentCurrent ActivePower 	ReactivePowerÃ 
+ApparentPowerª 
+RMSVoltage¬ 
+RMSCurrent RMSPower 	Frequency HarmonicCurrentsÆ HarmonicPhasesÆ PowerFactor NeutralCurrent ◊ëElectrical Energy MeasurementAccuracyú  CumulativeEnergyImported,  CumulativeEnergyExported, PeriodicEnergyImported, PeriodicEnergyExported, CumulativeEnergyResetó œîWater Heater ManagementHeaterTypes÷ 
+HeatDemand÷ 
+TankVolume EstimatedHeatRequired TankPercentage 
+BoostState— "Boost
+	BoostInfo’"CancelBoost¶ïCommodity Price
+TariffUnit≈ Currency¶ CurrentPriceõ PriceForecastÏ "'GetDetailedPriceRequest
+Details÷"/GetDetailedPriceResponse
+CurrentPriceõ",GetDetailedForecastRequest
+Details÷"3GetDetailedForecastResponse
+PriceForecastÏÒóMessagesMessages® ActiveMessageIDs∞ "âPresentMessagesRequest
 	MessageID.
-Priority∫
-MessageControlª
+Priority∑
+MessageControl∂
 	StartTime
 Duration
 MessageText
-	Responsesº"*CancelMessagesRequest
+	Responses±"*CancelMessagesRequest
 
-MessageIDsæƒòDevice Energy ManagementESATypeø ESACanGenerate ESAState¿ AbsMinPower AbsMaxPower "PowerAdjustmentCapabilityÇ Forecast√ OptOutStateƒ "8PowerAdjustRequest	
+MessageIDs∞ƒòDevice Energy ManagementESATypeú ESACanGenerate ESAStateõ AbsMinPower AbsMaxPower "PowerAdjustmentCapabilityÑ Forecastû OptOutState∏ "8PowerAdjustRequest	
 Power
 Duration	
-Cause;"CancelPowerAdjustRequest"=StartTimeAdjustRequest
+Cause:"CancelPowerAdjustRequest"=StartTimeAdjustRequest
 RequestedStartTime	
-Cause;")PauseRequest
+Cause:")PauseRequest
 Duration	
-Cause;"ResumeRequest"JModifyForecastRequest
+Cause:"ResumeRequest"JModifyForecastRequest
 
 ForecastID
-SlotAdjustments≈	
-Cause;"?RequestConstraintBasedForecast
-Constraints«	
-Cause;"CancelRequestÈôEnergy EVSEState: SupplyStateì 
+SlotAdjustments≠	
+Cause:"?RequestConstraintBasedForecast
+Constraints§	
+Cause:"CancelRequestÈôEnergy EVSEState< SupplyState√ 
 FaultStatei ChargingEnabledUntil DischargingEnabledUntil CircuitCapacity MinimumChargeCurrent MaximumChargeCurrent MaximumDischargeCurrent "	UserMaximumChargeCurrent ("
-RandomizationDelayWindow (#NextChargeStartTime $NextChargeTargetTime  %NextChargeRequiredEnergy &NextChargeTargetSoC !'ApproximateEVEfficiency (0StateOfCharge 1BatteryCapacity 2	VehicleID @	SessionID ASessionDuration BSessionEnergyCharged CSessionEnergyDischarged "2GetTargetsResponse
-ChargingTargetSchedules´"Disable"`EnableCharging
+RandomizationDelayWindow (#NextChargeStartTime $NextChargeTargetTime  %NextChargeRequiredEnergy &NextChargeTargetSoC !'ApproximateEVEfficiency (0StateOfCharge 1BatteryCapacity 2	VehicleID @	SessionID ASessionDuration BSessionEnergyCharged CSessionEnergyDischarged "2GetTargetsResponse
+ChargingTargetSchedules≠"Disable"`EnableCharging
 ChargingEnabledUntil
 MinimumChargeCurrent
 MaximumChargeCurrent"OEnableDischarging
 DischargingEnabledUntil
 MaximumDischargeCurrent"StartDiagnostics",
 SetTargets
-ChargingTargetSchedules´"
-GetTargets"ClearTargets∂õEnergy PreferenceEnergyBalancesø CurrentEnergyBalance (EnergyPrioritiesπ "LowPowerModeSensitivitiesø (CurrentLowPowerModeSensitivity (FúPower TopologyAvailableEndpoints$ ActiveEndpoints$ UùEnergy EVSE ModeSupportedModesCurrentModeStartUpMode
+ChargingTargetSchedules≠"
+GetTargets"ClearTargets∂õEnergy PreferenceEnergyBalances™ CurrentEnergyBalance (EnergyPrioritiesß "LowPowerModeSensitivities™ (CurrentLowPowerModeSensitivity (FúPower TopologyAvailableEndpoints$ ActiveEndpoints$ UùEnergy EVSE ModeSupportedModesCurrentModeStartUpMode
 OnModeVûWater Heater ModeSupportedModesCurrentModeStartUpMode
 OnModebüDevice Energy Management ModeSupportedModesCurrentModeStartUpMode
-OnModez†Electrical Grid Conditions LocalGenerationAvailable (CurrentConditionsÕ ForecastConditionsí ¯Å	Door Lock	LockStateñ LockTypeó ActuatorEnabled 	DoorStateÖ DoorOpenEvents (DoorClosedEvents (
-OpenPeriod (#NumberOfTotalUsersSupported !NumberOfPINUsersSupported "NumberOfRFIDUsersSupported 0(NumberOfWeekDaySchedulesSupportedPerUser 0(NumberOfYearDaySchedulesSupportedPerUser )!NumberOfHolidaySchedulesSupported MaxPINCodeLength MinPINCodeLength MaxRFIDCodeLength MinRFIDCodeLength CredentialRulesSupportò +#NumberOfCredentialsSupportedPerUser !Language ("LEDSettingsô (#AutoRelockTime ($SoundVolumeö (%OperatingMode= ( &SupportedOperatingModesõ %'DefaultConfigurationRegisterú  (EnableLocalProgramming ()EnableOneTouchLocking (*EnableInsideStatusLED (!+EnablePrivacyModeButton (#,LocalProgrammingFeaturesù (0WrongCodeEntryLimit (&1UserCodeTemporaryDisableTime (2SendPINOverTheAir (&3RequirePINforRemoteOperation (4SecurityLevel 5ExpiringUserTimeout (#ÄAliroReaderVerificationKey #ÅAliroReaderGroupIdentifier &ÇAliroReaderGroupSubIdentifier ;É2AliroExpeditedTransactionSupportedProtocolVersionsW ÑAliroGroupResolvingKey -Ö$AliroSupportedBLEUWBProtocolVersionsW #ÜAliroBLEAdvertisingVersion 3á*NumberOfAliroCredentialIssuerKeysSupported +à"NumberOfAliroEndpointKeysSupported "LockDoor
+OnModez†Electrical Grid Conditions LocalGenerationAvailable (CurrentConditions© ForecastConditionsÌ ¯Å	Door Lock	LockState¥ LockTypeµ ActuatorEnabled 	DoorStateÖ DoorOpenEvents (DoorClosedEvents (
+OpenPeriod (#NumberOfTotalUsersSupported !NumberOfPINUsersSupported "NumberOfRFIDUsersSupported 0(NumberOfWeekDaySchedulesSupportedPerUser 0(NumberOfYearDaySchedulesSupportedPerUser )!NumberOfHolidaySchedulesSupported MaxPINCodeLength MinPINCodeLength MaxRFIDCodeLength MinRFIDCodeLength CredentialRulesSupportñ +#NumberOfCredentialsSupportedPerUser !Language ("LEDSettings¢ (#AutoRelockTime ($SoundVolume¬ (%OperatingMode= ( &SupportedOperatingModes∑ %'DefaultConfigurationRegisterê  (EnableLocalProgramming ()EnableOneTouchLocking (*EnableInsideStatusLED (!+EnablePrivacyModeButton (#,LocalProgrammingFeatures≥ (0WrongCodeEntryLimit (&1UserCodeTemporaryDisableTime (2SendPINOverTheAir (&3RequirePINforRemoteOperation (4SecurityLevel 5ExpiringUserTimeout (#ÄAliroReaderVerificationKey #ÅAliroReaderGroupIdentifier &ÇAliroReaderGroupSubIdentifier ;É2AliroExpeditedTransactionSupportedProtocolVersionsW ÑAliroGroupResolvingKey -Ö$AliroSupportedBLEUWBProtocolVersionsW #ÜAliroBLEAdvertisingVersion 3á*NumberOfAliroCredentialIssuerKeysSupported +à"NumberOfAliroEndpointKeysSupported "LockDoor
 PINCode"
 UnlockDoor
 PINCode"
@@ -636,7 +636,7 @@ UnlockDoor
 PINCode"ÇSetWeekDaySchedule
 WeekDayIndex
 	UserIndex
-DaysMask≤
+DaysMaskß
 	StartHour
 StartMinute
 EndHour
@@ -646,8 +646,8 @@ UnlockDoor
 WeekDayIndex
 	UserIndex
 
-Status
-DaysMask≤
+Status
+DaysMaskß
 	StartHour
 StartMinute
 EndHour
@@ -663,7 +663,7 @@ UnlockDoor
 YearDayIndex
 	UserIndex
 
-Status
+Status
 LocalStartTime
 LocalEndTime"9ClearYearDaySchedule
 YearDayIndex
@@ -675,12 +675,12 @@ UnlockDoor
 HolidayIndex"uGetHolidayScheduleResponse
 HolidayIndex
 
-Status
+Status
 LocalStartTime
 LocalEndTime
 OperatingMode="*ClearHolidaySchedule
 HolidayIndex"SetUser
-OperationTypeK
+OperationTypeF
 	UserIndex
 UserName
 UserUniqueID
@@ -696,12 +696,12 @@ UserStatus"
 UserStatus"
 UserType 
 CredentialRulet
-CredentialsL
+CredentialsK
 CreatorFabricIndex
 LastModifiedFabricIndex
 NextUserIndex"	ClearUser
 	UserIndex"u"SetCredential
-OperationTypeK
+OperationTypeF
 
 Credential(
 CredentialData
@@ -729,38 +729,38 @@ UnboltDoor
 SigningKey
 VerificationKey
 GroupIdentifier
-GroupResolvingKey")ClearAliroReaderConfigﬁÇWindow CoveringTypeﬂ NumberOfActuationsLift NumberOfActuationsTilt ConfigStatus‡ %CurrentPositionLiftPercentage %	CurrentPositionTiltPercentage 
-OperationalStatus· 'TargetPositionLiftPercent100ths 'TargetPositionTiltPercent100ths EndProductType‚ ( CurrentPositionLiftPercent100ths ( CurrentPositionTiltPercent100ths Mode„ (SafetyStatus‰ "
+GroupResolvingKey")ClearAliroReaderConfigﬁÇWindow CoveringTypeã NumberOfActuationsLift NumberOfActuationsTilt ConfigStatusŸ %CurrentPositionLiftPercentage %	CurrentPositionTiltPercentage 
+OperationalStatus¸ 'TargetPositionLiftPercent100ths 'TargetPositionTiltPercent100ths EndProductType‡ ( CurrentPositionLiftPercent100ths ( CurrentPositionTiltPercent100ths ModeÙ (SafetyStatusÇ "
 UpOrOpen"DownOrClose"
 StopMotion"2GoToLiftPercentage
 LiftPercent100thsValue"2GoToTiltPercentage
-TiltPercent100thsValue˜ÑClosure ControlCountdownTime 	MainStateè CurrentErrorListö OverallCurrentStateê OverallTargetStateë LatchControlModesÖ "Stop"/MoveTo
-Positionô	
+TiltPercent100thsValue˜ÑClosure ControlCountdownTime 	MainState¸ CurrentErrorListÎ OverallCurrentStateÑ OverallTargetStateÖ LatchControlModesÁ "Stop"/MoveTo
+Positionî	
 Latch	
-Speedo"	CalibrateáÖClosure DimensionCurrentStateÑ TargetStateÑ 
-Resolution 	StepValue Unitÿ 	UnitRangeŸ 
-LimitRange⁄ TranslationDirection€ RotationAxis‹ 	Overflow› 
-ModulationTypeﬁ LatchControlModesÖ "/	SetTarget
+Speedn"	CalibrateáÖClosure DimensionCurrentState› TargetState› 
+Resolution 	StepValue Unit÷ 	UnitRangeò 
+LimitRangeã TranslationDirectionî RotationAxisç 	OverflowÜ 
+ModulationTypeˇ LatchControlModesÁ "/	SetTarget
 Position	
 Latch	
-Speedo"6Step
+Speedn"6Step
 	Direction⁄
 NumberOfSteps	
-Speedoæ–Service AreaSupportedAreasÿ SupportedMaps⁄ SelectedAreas9 CurrentArea EstimatedEndTime Progress‹ "SelectAreas
-NewAreas9"4SelectAreasResponse
-Statusﬁ
+Speednæ–Service AreaSupportedAreasÈ SupportedMapsÒ SelectedAreas8 CurrentArea EstimatedEndTime Progressı "SelectAreas
+NewAreas8"4SelectAreasResponse
+Statusê
 
 StatusText"SkipArea
 SkippedArea"1SkipAreaResponse
-Statusﬂ
+Statusë
 
 StatusTextÀÄPump Configuration and ControlMaxPressure MaxSpeed MaxFlow MinConstPressure MaxConstPressure MinCompPressure MaxCompPressure MinConstSpeed MaxConstSpeed 	MinConstFlow 
 MaxConstFlow MinConstTemp MaxConstTemp 
-PumpStatusπ EffectiveOperationMode EffectiveControlModeÄ Capacity Speed LifetimeRunningHours8 (Power8  LifetimeEnergyConsumed ( OperationMode (!ControlModeÄ ("	AlarmMaskåÅ
-ThermostatLocalTemperature OutdoorTemperature 	Occupancya AbsMinHeatSetpointLimit AbsMaxHeatSetpointLimit AbsMinCoolSetpointLimit AbsMaxCoolSetpointLimit PICoolingDemandPIHeatingDemand	HVACSystemTypeConfiguration&LocalTemperatureCalibration∆ (!OccupiedCoolingSetpoint (!OccupiedHeatingSetpoint (#UnoccupiedCoolingSetpoint (#UnoccupiedHeatingSetpoint (MinHeatSetpointLimit (MaxHeatSetpointLimit (MinCoolSetpointLimit (MaxCoolSetpointLimit (MinSetpointDeadBand∆ (RemoteSensingı (%ControlSequenceOfOperationß (
-SystemModeX (ThermostatRunningModeΩ "#TemperatureSetpointHold® ()$TemperatureSetpointHoldDuration (&%"ThermostatProgrammingOperationMode)ThermostatRunningStateŸ 0SetpointChangeSourceˆ 1SetpointChangeAmount˜ %2SetpointChangeSourceTimestamp 4OccupiedSetback5OccupiedSetbackMin6OccupiedSetbackMax7UnoccupiedSetback8UnoccupiedSetbackMin9UnoccupiedSetbackMax:EmergencyHeatDeltaS (@ACType¯ (A
-ACCapacity (BACRefrigerantType˘ (CACCompressorType˙ (DACErrorCode˚ (EACLouverPosition¸ (FACCoilTemperature GACCapacityFormat˝ (HPresetTypesÒ IScheduleTypesÛ JNumberOfPresets KNumberOfSchedules #LNumberOfScheduleTransitions (M NumberOfScheduleTransitionPerDay NActivePresetHandle OActiveScheduleHandle PPresetsı (Q	Schedules˜ (#RSetpointHoldExpiryTimestamp  SMaxThermostatSuggestions TThermostatSuggestionsˇ $UCurrentThermostatSuggestion¿ /V&ThermostatSuggestionNotFollowingReasonÄ "+SetpointRaiseLower	
-Mode©
+PumpStatus√ EffectiveOperationModeÇ EffectiveControlMode} Capacity Speed LifetimeRunningHours9 (Power9  LifetimeEnergyConsumed ( OperationModeÇ (!ControlMode} ("	AlarmMaskåÅ
+ThermostatLocalTemperature OutdoorTemperature 	Occupancy` AbsMinHeatSetpointLimit AbsMaxHeatSetpointLimit AbsMinCoolSetpointLimit AbsMaxCoolSetpointLimit PICoolingDemandPIHeatingDemand	HVACSystemTypeConfiguration&LocalTemperatureCalibration” (!OccupiedCoolingSetpoint (!OccupiedHeatingSetpoint (#UnoccupiedCoolingSetpoint (#UnoccupiedHeatingSetpoint (MinHeatSetpointLimit (MaxHeatSetpointLimit (MinCoolSetpointLimit (MaxCoolSetpointLimit (MinSetpointDeadBand” (RemoteSensingÄ (%ControlSequenceOfOperationí (
+SystemModeX (ThermostatRunningMode∆ "#TemperatureSetpointHold≈ ()$TemperatureSetpointHoldDuration (&%"ThermostatProgrammingOperationMode)ThermostatRunningStateŸ 0SetpointChangeSourceÜ 1SetpointChangeAmountÂ %2SetpointChangeSourceTimestamp 4OccupiedSetback5OccupiedSetbackMin6OccupiedSetbackMax7UnoccupiedSetback8UnoccupiedSetbackMin9UnoccupiedSetbackMax:EmergencyHeatDeltaR (@ACType” (A
+ACCapacity (BACRefrigerantType“ (CACCompressorTypeœ (DACErrorCode– (EACLouverPosition— (FACCoilTemperature GACCapacityFormatŒ (HPresetTypesÙ IScheduleTypes¯ JNumberOfPresets KNumberOfSchedules #LNumberOfScheduleTransitions (M NumberOfScheduleTransitionPerDay NActivePresetHandle OActiveScheduleHandle PPresetsÛ (Q	Schedulesˆ (#RSetpointHoldExpiryTimestamp  SMaxThermostatSuggestions TThermostatSuggestionsË $UCurrentThermostatSuggestionø /V&ThermostatSuggestionNotFollowingReasonÅ "+SetpointRaiseLower	
+Mode¿
 
 Amount"1AddThermostatSuggestionResponse
 UniqueID"0SetActiveScheduleRequest
@@ -769,14 +769,14 @@ ACCapacity (BACRefrigerantType˘ (CACCompressorType˙ (D
 PresetHandle
 EffectiveTime
 ExpirationInMinutes",RemoveThermostatSuggestion
-UniqueIDÿÇFan ControlFanModeÑ (FanModeSequence˚ PercentSetting (PercentCurrent SpeedMax SpeedSetting (SpeedCurrent RockSupportó RockSettingó (	WindSupportò 
-WindSettingò (AirflowDirectionÖ ("/Step
+UniqueIDÿÇFan ControlFanMode„ (FanModeSequence‚ PercentSetting (PercentCurrent SpeedMax SpeedSetting (SpeedCurrent RockSupportó RockSettingó (	WindSupportô 
+WindSettingô (AirflowDirection‘ ("/Step
 	Direction⁄
 Wrap
-	LowestOffëÑ'Thermostat User Interface ConfigurationTemperatureDisplayModeÌ (KeypadLockoutÓ ((ScheduleProgrammingVisibilityÔ (éÄColor Control
-CurrentHue CurrentSaturation RemainingTime CurrentX CurrentY DriftCompensationÊ CompensationText ColorTemperatureMireds 	ColorModeÁ Options (NumberOfPrimaries 	Primary1X 	Primary1Y Primary1Intensity 	Primary2X 	Primary2Y Primary2Intensity 	Primary3X 	Primary3Y Primary3Intensity  	Primary4X !	Primary4Y "Primary4Intensity $	Primary5X %	Primary5Y &Primary5Intensity (	Primary6X )	Primary6Y *Primary6Intensity 0WhitePointX 1WhitePointY 2ColorPointRX 3ColorPointRY 4ColorPointRIntensity 6ColorPointGX 7ColorPointGY 8ColorPointGIntensity :ColorPointBX ;ColorPointBY <ColorPointBIntensity ÄÄEnhancedCurrentHue ÅÄEnhancedColorModeË ÇÄColorLoopActive ÉÄColorLoopDirectionõ ÑÄColorLoopTime #ÖÄColorLoopStartEnhancedHue $ÜÄColorLoopStoredEnhancedHue äÄColorCapabilitiesÈ $ãÄColorTempPhysicalMinMireds $åÄColorTempPhysicalMaxMireds )çÄCoupleColorTempToLevelMinMireds )êÄStartUpColorTemperatureMireds ("^	MoveToHue
+	LowestOffëÑ'Thermostat User Interface ConfigurationTemperatureDisplayModeà (KeypadLockoutÊ ((ScheduleProgrammingVisibilityÑ (éÄColor Control
+CurrentHue CurrentSaturation RemainingTime CurrentX CurrentY DriftCompensationﬁ CompensationText ColorTemperatureMireds 	ColorMode’ Options (NumberOfPrimaries 	Primary1X 	Primary1Y Primary1Intensity 	Primary2X 	Primary2Y Primary2Intensity 	Primary3X 	Primary3Y Primary3Intensity  	Primary4X !	Primary4Y "Primary4Intensity $	Primary5X %	Primary5Y &Primary5Intensity (	Primary6X )	Primary6Y *Primary6Intensity 0WhitePointX 1WhitePointY 2ColorPointRX 3ColorPointRY 4ColorPointRIntensity 6ColorPointGX 7ColorPointGY 8ColorPointGIntensity :ColorPointBX ;ColorPointBY <ColorPointBIntensity ÄÄEnhancedCurrentHue ÅÄEnhancedColorMode· ÇÄColorLoopActive ÉÄColorLoopDirectionÈ ÑÄColorLoopTime #ÖÄColorLoopStartEnhancedHue $ÜÄColorLoopStoredEnhancedHue äÄColorCapabilities” $ãÄColorTempPhysicalMinMireds $åÄColorTempPhysicalMaxMireds )çÄCoupleColorTempToLevelMinMireds )êÄStartUpColorTemperatureMireds ("^	MoveToHue
 Hue
-	Direction 
+	DirectionÃ
 TransitionTime
 OptionsMask
 OptionsOverride"IMoveHue
@@ -831,7 +831,7 @@ Saturation
 OptionsMask
 OptionsOverride"p@EnhancedMoveToHue
 EnhancedHue
-	Direction 
+	DirectionÃ
 TransitionTime
 OptionsMask
 OptionsOverride"QAEnhancedMoveHue
@@ -850,9 +850,9 @@ Saturation
 TransitionTime
 OptionsMask
 OptionsOverride"}DColorLoopSet
-UpdateFlagsÍ
-ActionÎ
-	Directionõ
+UpdateFlags¢
+Action‘
+	DirectionÈ
 Time
 StartHue
 OptionsMask
@@ -871,28 +871,28 @@ Saturation
 ColorTemperatureMinimumMireds!
 ColorTemperatureMaximumMireds
 OptionsMask
-OptionsOverrideíÄIlluminance MeasurementMeasuredValue MinMeasuredValue MaxMeasuredValue 	Tolerance LightSensorTypeﬁ xÇTemperature MeasurementMeasuredValue MinMeasuredValue MaxMeasuredValue 	Tolerance ‚ÉPressure MeasurementMeasuredValue MinMeasuredValue MaxMeasuredValue 	Tolerance ScaledValue MinScaledValue MaxScaledValue ScaledTolerance Scale qÑFlow MeasurementMeasuredValue MinMeasuredValue MaxMeasuredValue 	Tolerance ~ÖRelative Humidity MeasurementMeasuredValue MinMeasuredValue MaxMeasuredValue 	Tolerance √ÜOccupancy Sensing	Occupancya OccupancySensorType± "OccupancySensorTypeBitmap≤ HoldTime (HoldTimeLimits… &PIROccupiedToUnoccupiedDelay (&PIRUnoccupiedToOccupiedDelay (* PIRUnoccupiedToOccupiedThreshold (- #UltrasonicOccupiedToUnoccupiedDelay (-!#UltrasonicUnoccupiedToOccupiedDelay (1"'UltrasonicUnoccupiedToOccupiedThreshold (20(PhysicalContactOccupiedToUnoccupiedDelay (21(PhysicalContactUnoccupiedToOccupiedDelay (62,PhysicalContactUnoccupiedToOccupiedThreshold (’å)Carbon Monoxide Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÅ 	MeasurementMediumÇ 
+OptionsOverrideíÄIlluminance MeasurementMeasuredValue MinMeasuredValue MaxMeasuredValue 	Tolerance LightSensorTypeË xÇTemperature MeasurementMeasuredValue MinMeasuredValue MaxMeasuredValue 	Tolerance ‚ÉPressure MeasurementMeasuredValue MinMeasuredValue MaxMeasuredValue 	Tolerance ScaledValue MinScaledValue MaxScaledValue ScaledTolerance Scale qÑFlow MeasurementMeasuredValue MinMeasuredValue MaxMeasuredValue 	Tolerance ~ÖRelative Humidity MeasurementMeasuredValue MinMeasuredValue MaxMeasuredValue 	Tolerance √ÜOccupancy Sensing	Occupancy` OccupancySensorTypeø "OccupancySensorTypeBitmapæ HoldTime (HoldTimeLimits° &PIROccupiedToUnoccupiedDelay (&PIRUnoccupiedToOccupiedDelay (* PIRUnoccupiedToOccupiedThreshold (- #UltrasonicOccupiedToUnoccupiedDelay (-!#UltrasonicUnoccupiedToOccupiedDelay (1"'UltrasonicUnoccupiedToOccupiedThreshold (20(PhysicalContactOccupiedToUnoccupiedDelay (21(PhysicalContactUnoccupiedToOccupiedDelay (62,PhysicalContactUnoccupiedToOccupiedThreshold (’å)Carbon Monoxide Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÛ 	MeasurementMediumÚ 
 
-LevelValueÉ ‘ç(Carbon Dioxide Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÅ 	MeasurementMediumÇ 
+LevelValueÁ ‘ç(Carbon Dioxide Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÛ 	MeasurementMediumÚ 
 
-LevelValueÉ ÷ì*Nitrogen Dioxide Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÅ 	MeasurementMediumÇ 
+LevelValueÁ ÷ì*Nitrogen Dioxide Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÛ 	MeasurementMediumÚ 
 
-LevelValueÉ ÀïOzone Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÅ 	MeasurementMediumÇ 
+LevelValueÁ ÀïOzone Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÛ 	MeasurementMediumÚ 
 
-LevelValueÉ À™PM2.5 Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÅ 	MeasurementMediumÇ 
+LevelValueÁ À™PM2.5 Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÛ 	MeasurementMediumÚ 
 
-LevelValueÉ “´&Formaldehyde Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÅ 	MeasurementMediumÇ 
+LevelValueÁ “´&Formaldehyde Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÛ 	MeasurementMediumÚ 
 
-LevelValueÉ …¨PM1 Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÅ 	MeasurementMediumÇ 
+LevelValueÁ …¨PM1 Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÛ 	MeasurementMediumÚ 
 
-LevelValueÉ  ≠PM10 Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÅ 	MeasurementMediumÇ 
+LevelValueÁ  ≠PM10 Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÛ 	MeasurementMediumÚ 
 
-LevelValueÉ ÊÆ:Total Volatile Organic Compounds Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÅ 	MeasurementMediumÇ 
+LevelValueÁ ÊÆ:Total Volatile Organic Compounds Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÛ 	MeasurementMediumÚ 
 
-LevelValueÉ ÀØRadon Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÅ 	MeasurementMediumÇ 
+LevelValueÁ ÀØRadon Concentration MeasurementMeasuredValue& MinMeasuredValue& MaxMeasuredValue& PeakMeasuredValue& PeakMeasuredValueWindow AverageMeasuredValue& "AverageMeasuredValueWindow Uncertainty& MeasurementUnitÛ 	MeasurementMediumÚ 
 
-LevelValueÉ ^∞Soil Measurement$SoilMoistureMeasurementLimitsù !SoilMoistureMeasuredValue Ò±Ambient Context SensingHumanActivityDetected ObjectIdentified AudioContextDetected AmbientContextType˚ #AmbientContextTypeSupportedh ObjectCountReached ObjectCountConfig¸ (ObjectCount $SimultaneousDetectionLimit (	HoldTime (
-HoldTimeLimits… PredictedActivity˝ ë—Wi-Fi Network Management
+LevelValueÁ ^∞Soil Measurement$SoilMoistureMeasurementLimitsú !SoilMoistureMeasuredValue Ò±Ambient Context SensingHumanActivityDetected ObjectIdentified AudioContextDetected AmbientContextTypeŸ #AmbientContextTypeSupportedk ObjectCountReached ObjectCountConfigÒ (ObjectCount $SimultaneousDetectionLimit (	HoldTime (
+HoldTimeLimits° PredictedActivityÂ ë—Wi-Fi Network Management
 SSID PassphraseSurrogate "NetworkPassphraseRequest"-NetworkPassphraseResponse
 
 Passphraseí“Thread Border Router ManagementBorderRouterName BorderAgentID ThreadVersion InterfaceEnabled ActiveDatasetTimestamp PendingDatasetTimestamp "GetActiveDatasetRequest"GetPendingDatasetRequest" DatasetResponse
@@ -900,15 +900,15 @@ Passphraseí“Thread Border Router ManagementBorderRouterName 
 ActiveDataset
 
 Breadcrumb"0SetPendingDatasetRequest
-PendingDataset®”Thread Network DirectoryPreferredExtendedPanID (ThreadNetworks˘ ThreadNetworkTableSize "$
+PendingDataset®”Thread Network DirectoryPreferredExtendedPanID (ThreadNetworks˙ ThreadNetworkTableSize "$
 AddNetwork
 OperationalDataset"$RemoveNetwork
 ExtendedPanID",GetOperationalDataset
 ExtendedPanID"6OperationalDatasetResponse
 OperationalDataset<É
 Wake On LAN
-MACAddress LinkLocalAddressg ÛÑ
-ChannelChannelListí Lineup≥ CurrentChannelA "ChangeChannel	
+MACAddress LinkLocalAddressf ÛÑ
+ChannelChannelListê LineupØ CurrentChannelA "ChangeChannel	
 Match"/ChangeChannelResponse
 
 Status
@@ -918,31 +918,31 @@ MACAddress LinkLocalAddressg ÛÑ
 Count"ÇGetProgramGuide
 	StartTime
 EndTime
-ChannelListí
-	PageTokenm
-RecordingFlagπ
-ExternalIDList6
+ChannelListê
+	PageTokenl
+RecordingFlagº
+ExternalIDList7
 Data"7ProgramGuideResponse
-Paging≤
-ProgramList≥"^RecordProgram
+Pagingç
+ProgramList¨"^RecordProgram
 ProgramIdentifier
 ShouldRecordSeries
-ExternalIDList6
+ExternalIDList7
 Data"dCancelRecordProgram
 ProgramIdentifier
 ShouldRecordSeries
-ExternalIDList6
+ExternalIDList7
 DataôÖ
 Target Navigator
-TargetListè CurrentTarget "&NavigateTarget
+TargetListí CurrentTarget "&NavigateTarget
 
 Target
 Data"0NavigateTargetResponse
 
 Status
 DataÃÜ
-Media PlaybackCurrentStateá 	StartTime Duration SampledPositionë PlaybackSpeed& SeekRangeEnd SeekRangeStart ActiveAudioTrackY AvailableAudioTracks∏ 	ActiveTextTrackY 
-AvailableTextTracks∏ "Play"	Pause"Stop"	StartOver"Previous"Next"#Rewind
+Media PlaybackCurrentStateâ 	StartTime Duration SampledPositionï PlaybackSpeed& SeekRangeEnd SeekRangeStart ActiveAudioTrackY AvailableAudioTracks¥ 	ActiveTextTrackY 
+AvailableTextTracks¥ "Play"	Pause"Stop"	StartOver"Previous"Next"#Rewind
 AudioAdvanceUnmuted"(FastForward
 AudioAdvanceUnmuted".SkipForward
 DeltaPositionMilliseconds"/	SkipBackward
@@ -955,45 +955,45 @@ TargetListè CurrentTarget "&NavigateTarget
 TrackID
 AudioOutputIndex""ActivateTextTrack
 TrackID"DeactivateTextTrack¢á
-Media Input	InputList£ CurrentInput "SelectInput	
+Media Input	InputList≥ CurrentInput "SelectInput	
 Index"ShowInputStatus"HideInputStatus"$RenameInput	
 Index
 Nameà
 	Low Power"SleepKâ
 Keypad Input"SendKey
-KeyCode†"SendKeyResponse
+KeyCodeå"SendKeyResponse
 
 Status»ä
-Content LauncherAcceptHeader# $SupportedStreamingProtocols› "eLaunchContent
-Search†
+Content LauncherAcceptHeader# $SupportedStreamingProtocolsá "eLaunchContent
+Search•
 AutoPlay
 Data
-PlaybackPreferences©
+PlaybackPreferencesπ
 UseCurrentContext"d	LaunchURL
 
 ContentURL
 DisplayString
-BrandingInformation°
-PlaybackPreferences©"*LauncherResponse
+BrandingInformation£
+PlaybackPreferencesπ"*LauncherResponse
 
 Status
 Data}ã
 Audio Output
-OutputListÆ CurrentOutput "SelectOutput	
+OutputList∂ CurrentOutput "SelectOutput	
 Index"%RenameOutput	
 Index
 Name—å
 Application LauncherCatalogList2 
-CurrentApp∞ "&	LaunchApp
-Application1
+CurrentApp† "&	LaunchApp
+Application0
 Data"StopApp
-Application1"HideApp
-Application1"*LauncherResponse
+Application0"HideApp
+Application0"*LauncherResponse
 
 Status
 Dataƒç
 Application Basic
-VendorName VendorID ApplicationName 	ProductID Application1 StatusÙ ApplicationVersion AllowedVendorListı ∑é
+VendorName VendorID ApplicationName 	ProductID Application0 Status‡ ApplicationVersion AllowedVendorListá ∑é
 Account Login"(GetSetupPIN
 TempAccountIdentifier"%GetSetupPINResponse
 SetupPIN"<Login
@@ -1003,8 +1003,8 @@ VendorName VendorID ApplicationName 	ProductID 
 "Logout
 Node
 æè
-Content ControlEnabled OnDemandRatings≥ OnDemandRatingThreshold  ScheduledContentRatings≥ 'ScheduledContentRatingThreshold ScreenDailyTime RemainingScreenTime BlockUnrated BlockChannelListµ 	BlockApplicationListj 
-BlockContentTimeWindow£ "#	UpdatePIN
+Content ControlEnabled OnDemandRatings≤ OnDemandRatingThreshold  ScheduledContentRatings≤ 'ScheduledContentRatingThreshold ScreenDailyTime RemainingScreenTime BlockUnrated BlockChannelList´ 	BlockApplicationListj 
+BlockContentTimeWindow∞ "#	UpdatePIN
 
 OldPIN
 
@@ -1020,12 +1020,12 @@ ScreenTime"BlockUnratedContent"UnblockUnratedContent"*	SetOnDeman
 "SetScheduledContentRatingThreshold
 
 Rating"#AddBlockChannels
-Channelsµ"+RemoveBlockChannels
+Channels´"+RemoveBlockChannels
 ChannelIndexes2"*AddBlockApplications
 Applicationsj"-RemoveBlockApplications
 Applicationsj".SetBlockContentTimeWindow
 
-TimeWindow∑"7RemoveBlockContentTimeWindow
+TimeWindowæ"7RemoveBlockContentTimeWindow
 TimeWindowIndexes2ëê
 Content App Observer"/ContentAppMessage
 Data
@@ -1034,34 +1034,34 @@ TimeWindow∑"7RemoveBlockContentTimeWindow
 Status
 Data
 EncodingHintù–
-Zone ManagementMaxUserDefinedZones MaxZones Zones˜ Triggers˘ SensitivityMax Sensitivity (TwoDCartesianMaxè "$CreateTwoDCartesianZone	
-Zone∆"/CreateTwoDCartesianZoneResponse
+Zone ManagementMaxUserDefinedZones MaxZones Zones˙ Triggers˚ SensitivityMax Sensitivity (TwoDCartesianMax° "$CreateTwoDCartesianZone	
+Zone "/CreateTwoDCartesianZoneResponse
 
 ZoneIDT"2UpdateTwoDCartesianZone
 
 ZoneIDT	
-Zone∆"
+Zone "
 RemoveZone
 
 ZoneIDT"'CreateOrUpdateTrigger
-Triggerê"RemoveTrigger
+Trigger¶"RemoveTrigger
 
 ZoneIDT¥—
-Camera AV Stream ManagementMaxConcurrentEncoders MaxEncodedPixelRate VideoSensorParams˛ NightVisionUsesInfrared MinViewportResolution5 %RateDistortionTradeOffPointsˇ MaxContentBufferSize MicrophoneCapabilitiesë SpeakerCapabilitiesë 	TwoWayTalkSupportÅ 
-SnapshotCapabilitiesÇ MaxNetworkBandwidth CurrentFrameRate HDRModeEnabled (SupportedStreamUsages… AllocatedVideoStreams™ AllocatedAudioStreams¨ !AllocatedSnapshotStreamsÑ StreamUsagePriorities… )SoftRecordingPrivacyModeEnabled (* SoftLivestreamPrivacyModeEnabled (HardPrivacyModeOn NightVisioní (NightVisionIllumí (Viewport  (SpeakerMuted (SpeakerVolumeLevel (SpeakerMaxLevel SpeakerMinLevel MicrophoneMuted (MicrophoneVolumeLevel (MicrophoneMaxLevel  MicrophoneMinLevel !MicrophoneAGCEnabled ("ImageRotation (#ImageFlipHorizontal ($ImageFlipVertical ($%LocalVideoRecordingEnabled ('&LocalSnapshotRecordingEnabled ('StatusLightEnabled ((StatusLightBrightnesso (%)ImageRotationDiscreteAngles ("tAudioStreamAllocate
-StreamUsage@
+Camera AV Stream ManagementMaxConcurrentEncoders MaxEncodedPixelRate VideoSensorParamsô NightVisionUsesInfrared MinViewportResolution5 %RateDistortionTradeOffPointsÒ MaxContentBufferSize MicrophoneCapabilitiesœ SpeakerCapabilitiesœ 	TwoWayTalkSupportó 
+SnapshotCapabilitiesÚ MaxNetworkBandwidth CurrentFrameRate HDRModeEnabled (SupportedStreamUsages∏ AllocatedVideoStreams™ AllocatedAudioStreams© !AllocatedSnapshotStreamsÛ StreamUsagePriorities∏ )SoftRecordingPrivacyModeEnabled (* SoftLivestreamPrivacyModeEnabled (HardPrivacyModeOn NightVision† (NightVisionIllum† (ViewportÃ (SpeakerMuted (SpeakerVolumeLevel (SpeakerMaxLevel SpeakerMinLevel MicrophoneMuted (MicrophoneVolumeLevel (MicrophoneMaxLevel  MicrophoneMinLevel !MicrophoneAGCEnabled ("ImageRotation (#ImageFlipHorizontal ($ImageFlipVertical ($%LocalVideoRecordingEnabled ('&LocalSnapshotRecordingEnabled ('StatusLightEnabled ((StatusLightBrightnessn (%)ImageRotationDiscreteAngles ("tAudioStreamAllocate
+StreamUsage?
 
-AudioCodec«
+AudioCodec°
 ChannelCount
 
 SampleRate
 BitRate
 BitDepth"2AudioStreamAllocateResponse
-AudioStreamID<",AudioStreamDeallocate
-AudioStreamID<"ﬂVideoStreamAllocate
-StreamUsage@
+AudioStreamID;",AudioStreamDeallocate
+AudioStreamID;"ﬂVideoStreamAllocate
+StreamUsage?
 
-VideoCodec»
+VideoCodecÀ
 MinFrameRate
 MaxFrameRate
 MinResolution5
@@ -1081,7 +1081,7 @@ OSDEnabled"2VideoStreamAllocateResponse
 OSDEnabled",VideoStreamDeallocate
 VideoStreamID/"ñSnapshotStreamAllocate
 
-ImageCodec÷
+ImageCodecÕ
 MaxFrameRate
 MinResolution5
 MaxResolution5
@@ -1096,16 +1096,16 @@ OSDEnabled"9SnapshotStreamAllocateResponse
 OSDEnabled"3
 SnapshotStreamDeallocate
 SnapshotStreamIDü".SetStreamPriorities
-StreamPriorities…"CCaptureSnapshot
+StreamPriorities∏"CCaptureSnapshot
 SnapshotStreamIDü
 RequestedResolution5"FCaptureSnapshotResponse
 Data
 
-ImageCodec÷
+ImageCodecÕ
 
 Resolution5⁄“
-(Camera AV Settings User Level ManagementMPTZPosition§ 
-MaxPresets MPTZPresetsõ DPTZStreamsù ZoomMax TiltMin TiltMax PanMin PanMax 	MovementStateü ".MPTZSetPosition
+(Camera AV Settings User Level ManagementMPTZPositionÇ 
+MaxPresets MPTZPresetsÔ DPTZStreamsÏ ZoomMax TiltMin TiltMax PanMin PanMax 	MovementStateâ ".MPTZSetPosition
 Pan
 Tilt
 Zoom"@MPTZRelativeMove
@@ -1117,92 +1117,92 @@ MaxPresets MPTZPresetsõ DPTZStreamsù ZoomMax 
 Name""MPTZRemovePreset
 PresetID"5DPTZSetViewport
 VideoStreamID/
-Viewport "NDPTZRelativeMove
+ViewportÃ"NDPTZRelativeMove
 VideoStreamID/
 
 DeltaX
 
 DeltaY
 	ZoomDelta«”
-WebRTC Transport ProviderCurrentSessionsÜ "ƒSolicitOffer
-StreamUsage@
+WebRTC Transport ProviderCurrentSessionsÄ "ƒSolicitOffer
+StreamUsage?
 OriginatingEndpointID
 VideoStreamID/
-AudioStreamID<
+AudioStreamID;
 
-ICEServers¡
+ICEServers≤
 ICETransportPolicy
 MetadataEnabled
-VideoStreams•
-AudioStreams¶"fSolicitOfferResponse
-WebRTCSessionID?
+VideoStreamsˇ
+AudioStreamsÍ"fSolicitOfferResponse
+WebRTCSessionID@
 DeferredOffer
 VideoStreamID/
-AudioStreamID<"‰ProvideOffer
-WebRTCSessionID?
+AudioStreamID;"‰ProvideOffer
+WebRTCSessionID@
 SDP
-StreamUsage@
+StreamUsage?
 OriginatingEndpointID
 VideoStreamID/
-AudioStreamID<
+AudioStreamID;
 
-ICEServers¡
+ICEServers≤
 ICETransportPolicy
 MetadataEnabled
-VideoStreams•
-AudioStreams¶"SProvideOfferResponse
-WebRTCSessionID?
+VideoStreamsˇ
+AudioStreamsÍ"SProvideOfferResponse
+WebRTCSessionID@
 VideoStreamID/
-AudioStreamID<"/ProvideAnswer
-WebRTCSessionID?
+AudioStreamID;"/ProvideAnswer
+WebRTCSessionID@
 SDP"AProvideICECandidates
-WebRTCSessionID?
-ICECandidatesà"0
+WebRTCSessionID@
+ICECandidates"0
 EndSession
-WebRTCSessionID?
-Reasonäò‘
-WebRTC Transport RequestorCurrentSessionsÜ "NOffer
-WebRTCSessionID?
+WebRTCSessionID@
+Reason§ò‘
+WebRTC Transport RequestorCurrentSessionsÄ "NOffer
+WebRTCSessionID@
 SDP
 
-ICEServers¡
+ICEServers≤
 ICETransportPolicy"(Answer
-WebRTCSessionID?
+WebRTCSessionID@
 SDP":ICECandidates
-WebRTCSessionID?
-ICECandidatesà")End
-WebRTCSessionID?
-Reasonäº’
-Push AV Stream TransportSupportedFormatså CurrentConnectionsó ".AllocatePushTransport
-TransportOptionsÀ">AllocatePushTransportResponse
-TransportConfigurationÃ"-DeallocatePushTransport
+WebRTCSessionID@
+ICECandidates")End
+WebRTCSessionID@
+Reason§º’
+Push AV Stream TransportSupportedFormatsÙ CurrentConnections˝ ".AllocatePushTransport
+TransportOptions…">AllocatePushTransportResponse
+TransportConfiguration»"-DeallocatePushTransport
 ConnectionIDd"@ModifyPushTransport
 ConnectionIDd
-TransportOptionsÀ">SetTransportStatus
+TransportOptions…">SetTransportStatus
 ConnectionIDd
-TransportStatusî"hManuallyTriggerTransport
+TransportStatusù"hManuallyTriggerTransport
 ConnectionIDd
-ActivationReasonò
-TimeControlñ
+ActivationReasonü
+TimeControlú
 UserDefined"#FindTransport
 ConnectionIDd"7FindTransportResponse
-TransportConfigurationsór÷
-ChimeInstalledChimeSounds‡ SelectedChime (Enabled ("PlayChimeSound
+TransportConfigurations˝r÷
+ChimeInstalledChimeSoundsÁ SelectedChime (Enabled ("PlayChimeSound
 ChimeIDæÄCommodity Tariff
-TariffInfoÍ 
-TariffUnit√ 	StartDate 
-DayEntriesÎ DayPatternsÏ CalendarPeriodsÓ IndividualDays 
-CurrentDayƒ NextDayƒ 	CurrentDayEntry‘ 
-CurrentDayEntryDate NextDayEntry‘ NextDayEntryDate TariffComponents≈ TariffPeriodsÒ  CurrentTariffComponents≈ NextTariffComponents≈ "DefaultRandomizationOffset !DefaultRandomizationTypeå "+GetTariffComponent
+TariffInfoë 
+TariffUnit≈ 	StartDate 
+DayEntriesÈ DayPatternsÍ CalendarPeriodsÊ IndividualDaysÎ 
+CurrentDayß NextDayß 	CurrentDayEntryÀ 
+CurrentDayEntryDate NextDayEntryÀ NextDayEntryDate TariffComponentsπ TariffPeriodsı  CurrentTariffComponentsπ NextTariffComponentsπ "DefaultRandomizationOffset !DefaultRandomizationType€ "+GetTariffComponent
 TariffComponentID"NGetTariffComponentResponse	
 Label
-DayEntryIDs9
-TariffComponent’"GetDayEntry
+DayEntryIDs8
+TariffComponent‘"GetDayEntry
 
 DayEntryID"&GetDayEntryResponse
-DayEntry‘N–Ecosystem InformationDeviceDirectory‚ LocationDirectory‰ ◊—Commissioner Control SupportedDeviceCategoriesÉ "URequestCommissioningApproval
+DayEntryÀN–Ecosystem InformationDeviceDirectoryÓ LocationDirectoryÔ ◊—Commissioner Control SupportedDeviceCategoriesì "URequestCommissioningApproval
 	RequestID
-VendorID
+VendorID
 	ProductID	
 Label"=CommissionNode
 	RequestID
@@ -1213,29 +1213,29 @@ DayEntryID"&GetDayEntryResponse
 
 Iterations
 Salt„“Joint Fabric DatastoreAnchorRootCA AnchorNodeID
- AnchorVendorID FriendlyName GroupKeySetListª 	GroupListº NodeListæ 	AdminList¿ Status\ 	EndpointGroupIDList¬ 
-EndpointBindingListƒ NodeKeySetList∆ NodeACLList» NodeEndpointList  "	AddKeySet
-GroupKeySet“""UpdateKeySet
-GroupKeySet“"#RemoveKeySet
+ AnchorVendorID FriendlyName GroupKeySetList∆ 	GroupList≈ NodeList« 	AdminList¡ Status[ 	EndpointGroupIDListƒ 
+EndpointBindingList¬ NodeKeySetList» NodeACLList¿ NodeEndpointList√ "	AddKeySet
+GroupKeySet…""UpdateKeySet
+GroupKeySet…"#RemoveKeySet
 GroupKeySetID"wAddGroup
 GroupID	
 FriendlyName
 GroupKeySetID
 GroupCAT
 GroupCATVersion
-GroupPermissionô"zUpdateGroup
+GroupPermissionç"zUpdateGroup
 GroupID	
 FriendlyName
 GroupKeySetID
 GroupCAT
 GroupCATVersion
-GroupPermissionô"RemoveGroup
+GroupPermissionç"RemoveGroup
 GroupID	"BAddAdmin
 
 NodeID
 
 FriendlyName
-VendorID
+VendorID
 ICAC"7UpdateAdmin
 
 NodeID
@@ -1285,7 +1285,7 @@ EndpointID
 
 
 EndpointID
-Bindingã"L RemoveBindingFromEndpointForNode
+Binding‹"L RemoveBindingFromEndpointForNode
 
 ListID
 
@@ -1296,18 +1296,18 @@ EndpointID
 
 NodeID
 
-ACLEntryä"-RemoveACLFromNode
+ACLEntry€"-RemoveACLFromNode
 
 ListID
 
 NodeID
 ·”Joint Fabric AdministratorAdministratorFabricIndex "ICACCSRRequest"1ICACCSRResponse
 
-StatusCodeÅ
+StatusCode’
 ICACCSR"AddICAC
 	ICACValue"!ICACResponse
 
-StatusCodeÕ"ÅOpenJointCommissioningWindow
+StatusCodeº"ÅOpenJointCommissioningWindow
 CommissioningTimeout
 PAKEPasscodeVerifier
 Discriminator
@@ -1315,14 +1315,14 @@ StatusCodeÕ"ÅOpenJointCommissioningWindow
 Iterations
 Salt"TransferAnchorRequest"+TransferAnchorResponse
 
-StatusCode‡"TransferAnchorComplete"4 AnnounceJointFabricAdministrator
+StatusCodeõ"TransferAnchorComplete"4 AnnounceJointFabricAdministrator
 
-EndpointIDïÅTLS Certificate ManagementMaxRootCertificates $ProvisionedRootCertificates† MaxClientCertificates &ProvisionedClientCertificates¢ "5ProvisionRootCertificate
+EndpointIDïÅTLS Certificate ManagementMaxRootCertificates $ProvisionedRootCertificates˚ MaxClientCertificates &ProvisionedClientCertificates¸ "5ProvisionRootCertificate
 Certificate
 CAID]". ProvisionRootCertificateResponse
 CAID]"!FindRootCertificate
 CAID]"8FindRootCertificateResponse
-CertificateDetails†"*LookupRootCertificate
+CertificateDetails˚"*LookupRootCertificate
 Fingerprint"+LookupRootCertificateResponse
 CAID]"#RemoveRootCertificate
 CAID]"#	ClientCSR	
@@ -1336,10 +1336,10 @@ EndpointIDïÅTLS Certificate ManagementMaxRootCertificates $P
 IntermediateCertificatesW"$
 FindClientCertificate	
 CCDID^":FindClientCertificateResponse
-CertificateDetails¢",LookupClientCertificate
+CertificateDetails¸",LookupClientCertificate
 Fingerprint".LookupClientCertificateResponse	
 CCDID^"&RemoveClientCertificate	
-CCDID^√ÇTLS Client ManagementMaxProvisioned ProvisionedEndpointsò "QProvisionEndpoint
+CCDID^√ÇTLS Client ManagementMaxProvisioned ProvisionedEndpointsˆ "QProvisionEndpoint
 Hostname
 Port
 CAID]	
@@ -1350,21 +1350,21 @@ EndpointIDÑ".ProvisionEndpointResponse
 EndpointIDÑ"!FindEndpoint
 
 EndpointIDÑ"'FindEndpointResponse
-Endpointü"#RemoveEndpoint
+Endpointö"#RemoveEndpoint
 
-EndpointIDÑëÜMeter Identification	MeterTypeó PointOfDelivery MeterSerialNumber ProtocolVersion PowerThresholdç àáCommodity MeteringMeteredQuantityï  MeteredQuantityTimestamp 
-TariffUnit√  MaximumMeteredQuantities a
+EndpointIDÑëÜMeter Identification	MeterType˛ PointOfDelivery MeterSerialNumber ProtocolVersion PowerThresholdÜ àáCommodity MeteringMeteredQuantityÓ  MeteredQuantityTimestamp 
+TariffUnit≈  MaximumMeteredQuantities a
 AVMetadataStruct
 UTCTime
-MotionZonesActive¸
+MotionZonesActive˘
 BlackAndWhiteActive
 UserDefinedj
 AccessControlEntryStruct
-	Privilegeõ
-AuthMode∂
-Subjects¢
-Targets∑
-AuxiliaryTypeÑ(
+	Privilegeö
+AuthModeù
+Subjects≥
+Targets∞
+AuxiliaryType¡(
 AccessControlExtensionStruct
 DataF
 AccessControlTargetStruct
@@ -1377,44 +1377,44 @@ DeviceTypeUL
 Cluster
 RestrictionsŒ,
 AccessRestrictionStruct	
-Type¸
+TypeÃ
 IDh
 ActionStruct
 ActionID
 Name	
-Type¯
+Type›
 EndpointListID
-SupportedCommands≠	
-StateN+
+SupportedCommands§	
+StateC+
 AdditionalInfoStruct
 Name	
 Value4
 AmbientContextTypeStruct
-AmbientContextSensedh7
+AmbientContextSensedk7
 AppInfoStruct
 CatalogVendorID
 ApplicationID4
 ApplicationEPStruct
-Application1
+Application0
 Endpoint;
 ApplicationStruct
 CatalogVendorID
 ApplicationID6
 AreaInfoStruct
-LocationInfo»
-LandmarkInfo’2
+LocationInfo–
+LandmarkInfoÊ2
 
 AreaStruct
 
 AreaID	
 MapID
-AreaInfo÷?
+AreaInfoÕ?
 AtomicAttributeStatusStruct
-AttributeIDé
+AttributeIDå
 
 StatusCode 
 AttributeValuePairStruct
-AttributeIDé
+AttributeIDå
 ValueUnsigned8
 ValueSigned8
 ValueUnsigned16
@@ -1425,20 +1425,20 @@ StatusCode 
 ValueSigned64{
 AudioCapabilitiesStruct
 MaxNumberOfChannels
-SupportedCodecs˝
-SupportedSampleRates9
-SupportedBitDepths√;
+SupportedCodecs‰
+SupportedSampleRates8
+SupportedBitDepthsƒ;
 AudioStreamStruct
 AudioStreamName
-AudioStreamID<C
+AudioStreamID;C
 !AuxiliaryLoadSwitchSettingsStruct
 
 Number
-RequiredState‚8
+RequiredState“8
 #AuxiliaryLoadSwitchesSettingsStruct
-SwitchStates„$
+SwitchStatesÂ$
 BalanceStruct
-Step	
+Step	
 Label[
 BasicCommissioningInfo
 FailSafeExpiryLengthSeconds 
@@ -1452,14 +1452,14 @@ Identifiers
 BrandingInformationStruct
 ProviderName
 
-Background0
-Logo0
-ProgressBar0
+Background1
+Logo1
+ProgressBar1
 
-Splash0
-	WaterMark0é
+Splash1
+	WaterMark1é
 CMAFContainerOptionsStruct
-CMAFInterfaceÜ
+CMAFInterfaceÿ
 SegmentDuration
 ChunkDuration
 SessionGroup
@@ -1467,7 +1467,7 @@ Background0
 MetadataEnabled8
 CalendarPeriodStruct
 	StartDate
-DayPatternIDs9À
+DayPatternIDs8À
 CapabilityMinimaStruct
 CaseSessionsPerFabric
 SubscriptionsPerFabric$
@@ -1483,16 +1483,16 @@ Background0
 AffiliateCallSign
 
 Identifier	
-Type¨7
+Typeé7
 ChannelPagingStruct
-PreviousTokenm
-	NextTokenmO
+PreviousTokenl
+	NextTokenlO
 ChargingTargetScheduleStruct
-DayOfWeekForSequenceê
-ChargingTargetsëY
+DayOfWeekForSequenceƒ
+ChargingTargets£Y
 ChargingTargetStruct!
 TargetTimeMinutesPastMidnight
-	TargetSoC
+	TargetSoC
 AddedEnergy)
 ChimeSoundStruct
 ChimeID
@@ -1508,20 +1508,20 @@ Identifier
 RestrictionsŒ`
 CommodityPriceComponentStruct
 
-Price”
-Sourceé
+Price—
+Sourceï
 Description
 TariffComponentIDt
 CommodityPriceStruct
 PeriodStart
 	PeriodEnd
 
-Price”
+Price—
 
 PriceLevel
 Description
 
-Componentsìf
+ComponentsËf
 ConstraintsStruct
 	StartTime
 Duration
@@ -1529,18 +1529,18 @@ Componentsìf
 MaximumEnergy
 LoadControlG
 ContainerOptionsStruct
-ContainerTypeú
-CMAFContainerOptionsá)
+ContainerTypeÎ
+CMAFContainerOptions◊)
 ContentSearchStruct
-ParameterListùG
+ParameterList∑G
 
 CostStruct
-CostTypeª	
+CostTypeï	
 Value%
 DecimalPoints
 Currency<
 CredentialStruct
-CredentialTypeÍ
+CredentialTypeÏ
 CredentialIndexâ
 CumulativeEnergyResetStruct
 ImportedResetTimestamp
@@ -1553,7 +1553,7 @@ CostStruct
 
 DPTZStruct
 VideoStreamID/
-Viewport @
+ViewportÃ@
 DSTOffsetStruct
 
 Offset%
@@ -1566,13 +1566,13 @@ ValidUntilQ
 
 
 ListID
-ACLEntryä
-StatusEntry\_
+ACLEntry€
+StatusEntry[_
 !DatastoreAccessControlEntryStruct
-	Privilegeô
-AuthMode∂
-Subjects¢
-Targets∑O
+	Privilegeç
+AuthModeØ
+Subjects≥
+TargetsøO
 "DatastoreAccessControlTargetStruct
 Cluster
 Endpoint
@@ -1583,7 +1583,7 @@ DeviceTypeUd
 NodeID
 
 FriendlyName
-VendorID
+VendorID
 ICACN
 DatastoreBindingTargetStruct
 Node
@@ -1599,8 +1599,8 @@ DeviceTypeUd
 EndpointID
 
 ListID
-Bindingã
-StatusEntry\L
+Binding‹
+StatusEntry[L
 DatastoreEndpointEntryStruct
 
 EndpointID
@@ -1615,39 +1615,39 @@ EndpointID
 
 EndpointID
 GroupID	
-StatusEntry\ë
+StatusEntry[ë
 $DatastoreGroupInformationEntryStruct
 GroupID
 FriendlyName
 GroupKeySetID
 GroupCAT
 GroupCATVersion
-GroupPermissionô÷
+GroupPermissionç÷
 DatastoreGroupKeySetStruct
 GroupKeySetID
-GroupKeySecurityPolicyπ
+GroupKeySecurityPolicy∏
 	EpochKey0
 EpochStartTime0
 	EpochKey1
 EpochStartTime1
 	EpochKey2
 EpochStartTime2
-GroupKeyMulticastPolicy∫a
+GroupKeyMulticastPolicy∑a
 #DatastoreNodeInformationEntryStruct
 
 NodeID
 
 FriendlyName
-CommissioningStatusEntry\P
+CommissioningStatusEntry[P
 DatastoreNodeKeySetEntryStruct
 
 NodeID
 
 GroupKeySetID
-StatusEntry\N
+StatusEntry[N
 DatastoreStatusEntryStruct
 
-State”
+StateŸ
 UpdateTimestamp
 FailureCoden
 DayEntryStruct
@@ -1656,16 +1656,16 @@ DayEntryID
 	StartTime
 Duration
 RandomizationOffset
-RandomizationTypeåF
+RandomizationType€F
 DayPatternStruct
 DayPatternID
 
-DaysOfWeek‰
-DayEntryIDs94
+DaysOfWeek‹
+DayEntryIDs84
 	DayStruct
 Date
-DayTypeÂ
-DayEntryIDs9ƒ
+DayTypeﬁ
+DayEntryIDs8ƒ
 DeviceLoadStruct
 CurrentSubscriptions!
 CurrentSubscriptionsForFabric!
@@ -1679,36 +1679,36 @@ DeviceTypeU
 DimensionStateStruct
 Position	
 Latch	
-Speedo5
+Speedn5
 DimensionStruct	
-Widthr
+Widthu
 
-Heightr
-Metric„≤
+Heightu
+Metricä≤
 EcosystemDeviceStruct
 
 DeviceName
 DeviceNameLastEdit
 BridgedEndpoint
 OriginalEndpoint
-DeviceTypeså
+DeviceTypesë
 UniqueLocationIDs#
 UniqueLocationIDsLastEdith
 EcosystemLocationStruct
 UniqueLocationID
-LocationDescriptor»
+LocationDescriptor–
 LocationDescriptorLastEdit†
 ElectricalGridConditionsStruct
 PeriodStart
 	PeriodEnd
 GridCarbonIntensity
-GridCarbonLevelú
+GridCarbonLeveló
 LocalCarbonIntensity
-LocalCarbonLevelúL
+LocalCarbonLevelóL
 EndpointListStruct
 EndpointListID
 Name	
-Type˘
+TypeÔ
 	Endpoints$ó
 EnergyMeasurementStruct
 
@@ -1718,19 +1718,19 @@ DeviceName
 StartSystime'
 
 EndSystime'
-ApparentEnergyô
-ReactiveEnergyöQ
+ApparentEnergy·
+ReactiveEnergy‡Q
 ErrorStateStruct
-ErrorStateID´
+ErrorStateIDö
 ErrorStateLabel
 ErrorStateDetailsA
 ExtensionFieldSetStruct
 	ClusterID
-AttributeValueList}
+AttributeValueListÈ}
 FabricDescriptorStruct
 RootPublicKey
-VendorID
-FabricIDä
+VendorID
+FabricIDÒ
 
 NodeID
 	
@@ -1752,8 +1752,8 @@ ForecastID
 
 IsPausable
 
-Slotsˇ
-ForecastUpdateReasonº?
+Slots˘
+ForecastUpdateReasonü?
 GroupInfoMapStruct
 GroupId	
 	Endpoints$
@@ -1763,14 +1763,14 @@ IsPausable
 GroupKeySetIDÕ
 GroupKeySetStruct
 GroupKeySetID
-GroupKeySecurityPolicy¥
+GroupKeySecurityPolicy´
 	EpochKey0
 EpochStartTime0
 	EpochKey1
 EpochStartTime1
 	EpochKey2
 EpochStartTime2
-GroupKeyMulticastPolicyµ/
+GroupKeyMulticastPolicy™/
 GroupcastAdoptionStruct
 GroupcastAdopted7
 HarmonicMeasurementStruct	
@@ -1793,7 +1793,7 @@ Credential
 CAID]G
 InputInfoStruct	
 Index
-	InputTypeÈ
+	InputTypeÙ
 Name
 Description#
 LabelStruct	
@@ -1808,7 +1808,7 @@ Credential
 LineupName
 
 PostalCode
-LineupInfoTypeÄL
+LineupInfoType˘L
 LocationDescriptorStruct
 LocationName
 FloorNumber
@@ -1816,7 +1816,7 @@ PostalCode
 MPTZPresetStruct
 PresetID
 Name
-Settings§)
+SettingsÇ)
 
 MPTZStruct
 Pan
@@ -1837,13 +1837,13 @@ PercentMin
 FixedMin
 FixedTypicalÄ
 MeasurementAccuracyStruct
-MeasurementTypeú
+MeasurementTypeù
 Measured
 MinMeasuredValue
 MaxMeasuredValue
-AccuracyRangesæÃ
+AccuracyRanges¥Ã
 MeasurementRangeStruct
-MeasurementTypeú
+MeasurementTypeù
 Min
 Max
 StartTimestamp
@@ -1862,20 +1862,20 @@ MaxSystime'g
 	Endpoints$
 KeySetID
 HasAuxiliaryACL
-McastAddrPolicyæ?
+McastAddrPolicyº?
 MessageResponseOptionStruct
 MessageResponseID	
 LabelÄ
 MessageStruct
 	MessageID.
-Priority∫
-MessageControlª
+Priority∑
+MessageControl∂
 	StartTime
 Duration
 MessageText
-	Responsesº=
+	Responses±=
 MeteredQuantityStruct
-TariffComponentIDs9
+TariffComponentIDs8
 Quantity/
 ModeOptionStruct
 Label
@@ -1883,7 +1883,7 @@ MaxSystime'g
 
 ModeTags'
 ModeTagStruct
-MfgCode	
+MfgCode	
 ValueV_
 MonitoringRegistrationStruct
 CheckInNodeID
@@ -1891,7 +1891,7 @@ MaxSystime'g
 MonitoredSubject4
 Key
 
-ClientType…(
+ClientType«(
 	NOCStruct
 NOC
 ICAC
@@ -1922,11 +1922,11 @@ ExtAddress
 OffPremiseServicesReachableIPv4#
 OffPremiseServicesReachableIPv6
 HardwareAddresse
-IPv4Addressesî
-IPv6Addressesñ	
-TypeóG
+IPv4AddressesÅ
+IPv6AddressesÇ	
+TypeˆG
 ObjectCountConfigStruct
-CountingObjectf
+CountingObjectg
 ObjectCountThreshold∑
 OperationalDatasetComponents
 ActiveTimestampPresent
@@ -1942,33 +1942,33 @@ ExtAddress
 SecurityPolicyPresent
 ChannelMaskPresentL
 OperationalStateStruct
-OperationalStateIDñ
+OperationalStateIDî
 OperationalStateLabel8
 OutputInfoStruct	
 Index
 
-OutputTypeˇ
+OutputTypeè
 NameQ
 OverallCurrentStateStruct
-Positioné	
+Position€	
 Latch	
-Speedo
+Speedn
 SecureState?
 OverallTargetStateStruct
-Positionô	
+Positionî	
 Latch	
-Speedo3
+Speedn3
 PageTokenStruct	
 Limit	
 After
 
 Before;
 ParameterStruct	
-Type‰	
+Typeê	
 Value
-ExternalIDList61
+ExternalIDList71
 PeakPeriodStruct
-SeverityÊ
+Severityá
 
 PeakPeriod5
 PlaybackPositionStruct
@@ -1976,12 +1976,12 @@ PeakPeriod5
 PositionS
 PlaybackPreferencesStruct
 PlaybackPosition
-	TextTrack¶
-AudioTrackséE
+	TextTrackø
+AudioTracks±E
 PowerAdjustCapabilityStruct
-PowerAdjustCapability¡
+PowerAdjustCapability©
 
-CauseÅQ
+CauseÖQ
 PowerAdjustStruct
 MinPower
 MaxPower
@@ -1989,34 +1989,34 @@ PeakPeriod5
 MaxDurationb
 PowerThresholdStruct
 PowerThreshold
-ApparentPowerThreshold 
-PowerThresholdSource÷ä
+ApparentPowerThresholdª
+PowerThresholdSourceää
 PredictedActivityStruct
 StartTimestamp
 EndTimestamp
-AmbientContextTypeh
+AmbientContextTypek
 CrowdDetected
 
 CrowdCount
 
-Confidencev
+Confidencev
 PresetStruct
 PresetHandle
-PresetScenarioÕ
+PresetScenario“
 Name
 CoolingSetpoint
 HeatingSetpoint
 BuiltInU
 PresetTypeStruct
-PresetScenarioÕ
+PresetScenario“
 NumberOfPresets
-PresetTypeFeaturesÌ)
+PresetTypeFeaturesà)
 PriceStruct
-Amount”
-Currency¿9
+Amount—
+Currency¶9
 ProductAppearanceStruct
-Finish£
-PrimaryColor§'
+Finish∫
+PrimaryColor¶'
 ProgramCastStruct
 Name
 Role6
@@ -2039,16 +2039,16 @@ Identifier
 DvbiUrl
 ReleaseDate
 ParentalGuidanceText
-RecordingFlagπ
+RecordingFlagº
 
-SeriesInfo≠
-CategoryListÆ
-CastList∞
-ExternalIDList6V
+SeriesInfoø
+CategoryList´
+CastList™
+ExternalIDList7V
 ProgressStruct
 
 AreaID
-Status◊
+StatusÉ
 TotalOperationalTime
 EstimatedTime4
 ProviderLocation
@@ -2060,7 +2060,7 @@ SeriesInfo≠
 MaxP
 "RateDistortionTradeOffPointsStruct
 
-Codec»
+CodecÀ
 
 Resolution5
 
@@ -2070,7 +2070,7 @@ MinBitRate6
 RatingName
 RatingNameDescR
 ReplacementProductStruct
-ProductIdentifierType’
+ProductIdentifierType˛
 ProductIdentifierValueõ
 RouteTableStruct
 
@@ -2100,10 +2100,10 @@ SceneValid
 SystemModeX
 Name
 PresetHandle
-TransitionsÓ
+Transitions˜
 BuiltInâ
 ScheduleTransitionStruct
-	DayOfWeekl
+	DayOfWeekm
 TransitionTime
 PresetHandle
 
@@ -2114,12 +2114,12 @@ SystemModeX
 
 SystemModeX
 NumberOfSchedules
-ScheduleTypeFeatures-
+ScheduleTypeFeaturesé-
 SecurityPolicy
 RotationTime	
 Flags+
 SemanticTagStruct
-MfgCode	
+MfgCode	
 ValueV+
 SeriesInfoStruct
 
@@ -2145,7 +2145,7 @@ SlotStruct
 MaxPower
 NominalEnergy
 
-CostsΩ
+Costs•
 MinPowerAdjustment
 MaxPowerAdjustment
 MinDurationAdjustment
@@ -2155,13 +2155,13 @@ SlotStruct
 Resolution5
 MaxFrameRate
 
-ImageCodec÷
+ImageCodecÕ
 RequiresEncodedPixels
 RequiresHardwareEncoder‚
 SnapshotStreamStruct
 SnapshotStreamIDü
 
-ImageCodec÷
+ImageCodecÕ
 	FrameRate
 MinResolution5
 MaxResolution5
@@ -2175,10 +2175,10 @@ OSDEnabled<
 StyleInformationStruct
 ImageURL	
 Color	
-Sizeü@
+Size®@
 SupportedFormatStruct
-ContainerFormatú
-IngestMethodì*
+ContainerFormatÎ
+IngestMethodÂ*
 TLSCertStruct
 CAID]
 Certificateb
@@ -2207,28 +2207,28 @@ Identifier
 TariffComponentStruct
 TariffComponentID
 
-PriceÁ
+Priceì
 FriendlyCredit
-AuxiliaryLoadã
+AuxiliaryLoad–
 
-PeakPeriodË
-PowerThresholdç
+PeakPeriodà
+PowerThresholdÜ
 	Threshold	
 Label
 	Predicted[
 TariffInformationStruct
 TariffLabel
 ProviderName
-Currency¿
-	BlockModeÈH
+Currency¶
+	BlockMode”H
 TariffPeriodStruct	
 Label
-DayEntryIDs9
-TariffComponentIDs9?
+DayEntryIDs8
+TariffComponentIDs8?
 TariffPriceStruct
-	PriceTypeé
+	PriceTypeï
 
-Price”
+Price—
 
 PriceLevelc
 ThermostatSuggestionStruct
@@ -2263,9 +2263,9 @@ PriceLevelc
 	EndMinuteH
 TimeWindowStruct
 TimeWindowIndex
-	DayOfWeek·
+	DayOfWeek‹
 
-TimePeriod°3
+TimePeriodØ3
 TimeZoneStruct
 
 Offset%
@@ -2273,42 +2273,42 @@ TimePeriod°3
 NameP
 TrackAttributesStruct
 LanguageCode
-Characteristicsß
+Characteristics¨
 DisplayNameU
 TrackPreferenceStruct
 LanguageCode
-Characteristicsß
+Characteristics¨
 AudioOutputIndex+
 TrackStruct
 ID
-TrackAttributes™]
+TrackAttributes…]
 TransportConfigurationStruct
 ConnectionIDd
-TransportStatusî
-TransportOptionsÀ|
+TransportStatusù
+TransportOptions…|
 'TransportMotionTriggerTimeControlStruct
 InitialDuration
 AugmentationDuration
 MaxDuration
 BlindDuration·
 TransportOptionsStruct
-StreamUsage@
+StreamUsage?
 VideoStreamID/
-AudioStreamID<
+AudioStreamID;
 TLSEndpointIDÑ
 URL
-TriggerOptionsà
-IngestMethodì
-ContainerOptionsâ
+TriggerOptionsï
+IngestMethodÂ
+ContainerOptions⁄
 
 ExpiryTime
 VideoStreams™
-AudioStreams¨Ö
+AudioStreams©Ö
 TransportTriggerOptionsStruct
-TriggerTypeï
-MotionZonesä
+TriggerTypeû
+MotionZones˜
 MotionSensitivity
-MotionTimeControlñ
+MotionTimeControlú
 MaxPreRollLen7
 TransportZoneOptionsStruct
 ZoneT
@@ -2324,8 +2324,8 @@ ExpiryTime
 YG
 TwoDCartesianZoneStruct
 Name
-UseÛ
-VerticesÙ	
+Useü
+Vertices¯	
 Color#
 UnitRangeStruct
 Min
@@ -2353,38 +2353,38 @@ ExpiryTime
 OneShot
 EmergencyBoost
 TemporarySetpoint
-TargetPercentage
-TargetReheat≥
+TargetPercentage
+TargetReheat≥
 WebRTCSessionStruct
-ID?
+ID@
 
 PeerNodeID
 
 PeerEndpointID
-StreamUsage@
+StreamUsage?
 VideoStreamID/
-AudioStreamID<
+AudioStreamID;
 MetadataEnabled
-VideoStreams•
-AudioStreams¶X
+VideoStreamsˇ
+AudioStreamsÍX
 WeeklyScheduleTransitionStruct
 TransitionTime
 HeatSetpoint
 CoolSetpointi
 WiFiInterfaceScanResultStruct
-Security˜
+Securityõ
 SSID	
 BSSID
 Channel
-WiFiBandÜ
+WiFiBandã
 RSSI[
 ZoneInformationStruct
 
 ZoneIDT
-ZoneTypeı
+ZoneTypeû
 
-ZoneSourceˆ
-TwoDCartesianZone∆ä
+ZoneSourceù
+TwoDCartesianZone ä
 ZoneTriggerControlStruct
 
 ZoneIDT
