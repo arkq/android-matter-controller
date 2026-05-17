@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import io.aether.android.LocalAetherExtendedColors
 import kotlinx.coroutines.delay
 
 private enum class FieldHighlight {
@@ -28,7 +29,7 @@ private enum class FieldHighlight {
 
 @Composable
 private fun fieldHighlightColors(highlight: FieldHighlight): TextFieldColors {
-  val successColor = Color(0xFF4CAF50)
+  val successColor = LocalAetherExtendedColors.current.success
   val editedColor = MaterialTheme.colorScheme.error
   val standardFocused = MaterialTheme.colorScheme.primary
   val standardUnfocused = MaterialTheme.colorScheme.outline
