@@ -243,11 +243,11 @@ def populate_binary(
         if root.tag == "deviceType":
             if root.get("name") == "Base Device Type":
                 for cl in root.xpath("./clusters/cluster"):
-                    base_device_clusters.add(int(cl.get("id"), 16))
+                    base_device_clusters.add(int(cl.get("id"), 0))
                 continue
-            d = DeviceDef(id=int(root.get("id"), 16), name=root.get("name"), clusters=set())
+            d = DeviceDef(id=int(root.get("id"), 0), name=root.get("name"), clusters=set())
             for cl in root.xpath("./clusters/cluster"):
-                d.clusters.add(int(cl.get("id"), 16))
+                d.clusters.add(int(cl.get("id"), 0))
             devices[d.id] = d
 
         # Structs
@@ -256,7 +256,7 @@ def populate_binary(
             for field in struct.xpath("./field"):
                 s.fields.append(
                     FieldDef(
-                        id=int(field.get("id"), 16),
+                        id=int(field.get("id"), 0),
                         name=field.get("name"),
                         # Type might not be given for generic container fields
                         type=_clean_name(field.get("type", "")),
@@ -272,7 +272,7 @@ def populate_binary(
                     # Skip entries without an ID
                     continue
                 c = ClusterDef(
-                    id=int(cluster.get("id"), 16),
+                    id=int(cluster.get("id"), 0),
                     name=cluster.get("name"),
                     attributes=[],
                     commands=[],
@@ -280,7 +280,7 @@ def populate_binary(
                 for attr in root.xpath("./attributes/attribute"):
                     c.attributes.append(
                         a := AttributeDef(
-                            id=int(attr.get("id"), 16),
+                            id=int(attr.get("id"), 0),
                             name=attr.get("name"),
                             # Type might be omitted for deprecated attributes
                             type=_clean_name(attr.get("type", "")),
@@ -294,7 +294,7 @@ def populate_binary(
                     for field in cmd.xpath("./field"):
                         fields.append(
                             FieldDef(
-                                id=int(field.get("id", "0"), 16),
+                                id=int(field.get("id", "0"), 0),
                                 name=field.get("name"),
                                 # Reserved fields might not have a type
                                 type=_clean_name(field.get("type", "")),
@@ -302,7 +302,7 @@ def populate_binary(
                         )
                     c.commands.append(
                         CommandDef(
-                            id=int(cmd.get("id"), 16),
+                            id=int(cmd.get("id"), 0),
                             name=cmd.get("name"),
                             parameters=fields,
                         )

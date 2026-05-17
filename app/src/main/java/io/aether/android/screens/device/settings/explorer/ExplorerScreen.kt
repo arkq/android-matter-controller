@@ -239,14 +239,11 @@ private fun BreadcrumbBar(
       horizontalArrangement = Arrangement.spacedBy(4.dp),
   ) {
     navStack.forEachIndexed { index, level ->
-      if (index > 0) {
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-      }
-
+      Icon(
+          imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+          contentDescription = null,
+          tint = MaterialTheme.colorScheme.onSurfaceVariant,
+      )
       val label = breadcrumbLabelFor(level, deviceMatterInfoList, clustersMap, devicesMap)
       val isLast = index == navStack.size - 1
       if (isLast) {
