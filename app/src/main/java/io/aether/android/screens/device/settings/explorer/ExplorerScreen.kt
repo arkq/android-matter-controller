@@ -250,13 +250,16 @@ private fun BreadcrumbBar(
           Modifier.fillMaxWidth()
               .horizontalScroll(scrollState)
               .padding(
-                  horizontal = dimensionResource(R.dimen.margin_normal),
-                  vertical = 6.dp,
+                  start = 6.dp,
+                  top = 6.dp,
+                  end = dimensionResource(R.dimen.margin_normal),
+                  bottom = 6.dp,
               ),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.spacedBy(4.dp),
   ) {
     navStack.forEachIndexed { index, level ->
+      // Show arrow icon before every item (including the first one).
       Icon(
           imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
           contentDescription = null,
@@ -386,14 +389,8 @@ private fun EndpointListContent(
                   append("\n")
                   append(
                       stringResource(
-                          R.string.device_explorer_server_clusters_count,
+                          R.string.device_explorer_endpoint_metadata,
                           info.serverClusters.size,
-                      )
-                  )
-                  append(" • ")
-                  append(
-                      stringResource(
-                          R.string.device_explorer_client_clusters_count,
                           info.clientClusters.size,
                       )
                   )
@@ -602,12 +599,21 @@ private fun ClusterDetailContent(
                                 ?: stringResource(R.string.device_explorer_attribute_unknown),
                         ),
                     secondaryText =
-                        stringResource(
-                            R.string.device_explorer_attribute_metadata,
-                            stringResource(attribute.readPrivilege.labelRes()),
-                            stringResource(attribute.writePrivilege.labelRes()),
-                            typeLabelFor(attribute.type),
-                        ),
+                        buildString {
+                          append(
+                              stringResource(
+                                  R.string.device_explorer_attribute_metadata,
+                                  stringResource(attribute.readPrivilege.labelRes()),
+                                  stringResource(attribute.writePrivilege.labelRes()),
+                                  typeLabelFor(attribute.type),
+                              )
+                          )
+                          if (!attribute.isSupported) {
+                            append("\n")
+                            append(stringResource(R.string.device_explorer_not_supported))
+                          }
+                        },
+                    isDimmed = !attribute.isSupported,
                     onClick = { onAttributeSelected(attribute) },
                 )
               }
@@ -659,10 +665,19 @@ private fun ClusterDetailContent(
                                 ?: stringResource(R.string.device_explorer_command_unknown),
                         ),
                     secondaryText =
-                        stringResource(
-                            R.string.device_explorer_command_arguments_count,
-                            command.arguments.size,
-                        ),
+                        buildString {
+                          append(
+                              stringResource(
+                                  R.string.device_explorer_command_arguments_count,
+                                  command.arguments.size,
+                              )
+                          )
+                          if (!command.isSupported) {
+                            append("\n")
+                            append(stringResource(R.string.device_explorer_not_supported))
+                          }
+                        },
+                    isDimmed = !command.isSupported,
                     onClick = { onCommandSelected(command) },
                 )
               }
@@ -789,7 +804,10 @@ private fun AttributeDetailContent(
       val focusManager = LocalFocusManager.current
       Button(
           modifier = Modifier.weight(1f),
-          onClick = onRead,
+          onClick = {
+            focusManager.clearFocus()
+            onRead()
+          },
       ) {
         Text(stringResource(R.string.device_explorer_read))
       }
@@ -824,6 +842,7 @@ private fun CommandInvokeContent(
       modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),
       verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {
+    val focusManager = LocalFocusManager.current
     if (command.arguments.isNotEmpty()) {
       command.arguments.forEach { argument ->
         HighlightedOutlinedTextField(
@@ -846,7 +865,10 @@ private fun CommandInvokeContent(
     }
 
     Button(
-        onClick = { onInvoke(commandArguments.toMap()) },
+        onClick = {
+          focusManager.clearFocus()
+          onInvoke(commandArguments.toMap())
+        },
         modifier = Modifier.fillMaxWidth(),
     ) {
       Text(stringResource(R.string.device_explorer_invoke))
@@ -858,8 +880,14 @@ private fun CommandInvokeContent(
 private fun ExplorerRow(
     text: String,
     secondaryText: String? = null,
+    isDimmed: Boolean = false,
     onClick: (() -> Unit)? = null,
 ) {
+  val primaryColor =
+      if (isDimmed) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.9f)
+      else MaterialTheme.colorScheme.onSurface
+  val secondaryColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+
   Row(
       modifier =
           Modifier.fillMaxWidth()
@@ -869,9 +897,13 @@ private fun ExplorerRow(
       verticalAlignment = Alignment.CenterVertically,
   ) {
     Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-      Text(text = text, style = MaterialTheme.typography.bodyLarge)
+      Text(text = text, style = MaterialTheme.typography.bodyLarge, color = primaryColor)
       if (!secondaryText.isNullOrBlank()) {
-        Text(text = secondaryText, style = MaterialTheme.typography.bodySmall)
+        Text(
+            text = secondaryText,
+            style = MaterialTheme.typography.bodySmall,
+            color = secondaryColor,
+        )
       }
     }
   }

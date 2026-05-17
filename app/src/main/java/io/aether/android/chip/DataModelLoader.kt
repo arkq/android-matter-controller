@@ -150,6 +150,8 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
     )
   }
 
+  // Return technical and short user-friendly type labels for a given [MatterType].
+  // These labels should not be localized as they are meant to be technical.
   fun shortTypeLabel(matterType: MatterType): String =
       when (matterType) {
         MatterType.TYPE_BOOL -> "BOOL"

@@ -38,12 +38,14 @@ data class ExplorerAttributeUiItem(
     val type: MatterType = MatterType.TYPE_UNKNOWN,
     val readPrivilege: MatterPrivilege = MatterPrivilege.PRIVILEGE_UNKNOWN,
     val writePrivilege: MatterPrivilege = MatterPrivilege.PRIVILEGE_UNKNOWN,
+    val isSupported: Boolean = true,
 )
 
 data class ExplorerCommandUiItem(
     val id: Long,
     val name: String? = null,
     val arguments: List<ExplorerCommandArgumentDefinition> = emptyList(),
+    val isSupported: Boolean = true,
 )
 
 data class ExplorerEventUiItem(
@@ -269,6 +271,19 @@ constructor(
                   )
                   emptyList()
                 }
+        val generatedCommandsFromDevice =
+            runCatching {
+                  clustersHelper.readClusterGeneratedCommandList(nodeId, endpoint, clusterId)
+                }
+                .getOrElse {
+                  Timber.w(
+                      it,
+                      "readClusterGeneratedCommandList failed endpoint=%d cluster=0x%X",
+                      endpoint,
+                      clusterId,
+                  )
+                  emptyList()
+                }
         val eventsFromDevice =
             runCatching { clustersHelper.readClusterEventList(nodeId, endpoint, clusterId) }
                 .getOrElse {
@@ -284,6 +299,8 @@ constructor(
         val knownAttributes = knownSchema?.attributes.orEmpty().associateBy { it.id }
         val knownCommands = knownSchema?.commands.orEmpty().associateBy { it.id }
         val knownEvents = knownSchema?.events.orEmpty().associateBy { it.id }
+        val supportedAttributeIds = attributesFromDevice.toSet()
+        val supportedCommandIds = (commandsFromDevice + generatedCommandsFromDevice).toSet()
 
         val attributes =
             (attributesFromDevice + knownAttributes.keys).toSet().sorted().map { id ->
@@ -294,15 +311,17 @@ constructor(
                   type = known?.type ?: MatterType.TYPE_UNKNOWN,
                   readPrivilege = known?.readPrivilege ?: MatterPrivilege.PRIVILEGE_UNKNOWN,
                   writePrivilege = known?.writePrivilege ?: MatterPrivilege.PRIVILEGE_UNKNOWN,
+                  isSupported = id in supportedAttributeIds,
               )
             }
         val commands =
-            (commandsFromDevice + knownCommands.keys).toSet().sorted().map { id ->
+            (supportedCommandIds + knownCommands.keys).toList().sorted().map { id ->
               val known = knownCommands[id]
               ExplorerCommandUiItem(
                   id = id,
                   name = known?.name,
                   arguments = known?.arguments.orEmpty(),
+                  isSupported = id in supportedCommandIds,
               )
             }
         val events =

@@ -51,6 +51,7 @@ private const val BASIC_INFORMATION_HARDWARE_VERSION_STRING_ATTRIBUTE_ID = 0x000
 private const val BASIC_INFORMATION_SOFTWARE_VERSION_STRING_ATTRIBUTE_ID = 0x000AL
 private const val GLOBAL_ATTRIBUTE_EVENT_LIST_ID = 0xFFFAL
 private const val GLOBAL_ATTRIBUTE_ACCEPTED_COMMAND_LIST_ID = 0xFFF9L
+private const val GLOBAL_ATTRIBUTE_GENERATED_COMMAND_LIST_ID = 0xFFF8L
 private const val GLOBAL_ATTRIBUTE_ATTRIBUTE_LIST_ID = 0xFFFBL
 
 data class BasicInformationAttributes(
@@ -100,6 +101,19 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         endpoint = endpoint,
         clusterId = clusterId,
         globalAttributeId = GLOBAL_ATTRIBUTE_ACCEPTED_COMMAND_LIST_ID,
+    )
+  }
+
+  suspend fun readClusterGeneratedCommandList(
+      nodeId: Long,
+      endpoint: Int,
+      clusterId: Long,
+  ): List<Long> {
+    return readGlobalListAttribute(
+        nodeId = nodeId,
+        endpoint = endpoint,
+        clusterId = clusterId,
+        globalAttributeId = GLOBAL_ATTRIBUTE_GENERATED_COMMAND_LIST_ID,
     )
   }
 
