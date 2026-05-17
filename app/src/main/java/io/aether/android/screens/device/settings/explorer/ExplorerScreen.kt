@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -20,7 +21,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,9 +29,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -45,17 +45,20 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
+import io.aether.android.chip.labelRes
 import io.aether.android.matter.MatterType
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
+import io.aether.android.screens.common.SearchTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -255,6 +258,8 @@ private fun BreadcrumbBar(
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+      } else {
+        Spacer(modifier = Modifier.size(24.dp))
       }
       val label = breadcrumbLabelFor(level, deviceMatterInfoList, clustersMap, devicesMap)
       val isLast = index == navStack.size - 1
@@ -455,6 +460,7 @@ private fun ClusterListContent(
           Text(
               text = stringResource(R.string.device_explorer_clusters_section_empty),
               style = MaterialTheme.typography.bodyMedium,
+              modifier = Modifier.padding(horizontal = 8.dp),
           )
         }
       } else {
@@ -487,6 +493,7 @@ private fun ClusterListContent(
           Text(
               text = stringResource(R.string.device_explorer_clusters_section_empty),
               style = MaterialTheme.typography.bodyMedium,
+              modifier = Modifier.padding(horizontal = 8.dp),
           )
         }
       } else {
@@ -529,7 +536,7 @@ private fun ClusterDetailContent(
     onCommandSelected: (ExplorerCommandUiItem) -> Unit,
 ) {
   Column(modifier = Modifier.fillMaxSize()) {
-    TabRow(selectedTabIndex = tab.ordinal) {
+    PrimaryTabRow(selectedTabIndex = tab.ordinal) {
       ExplorerTab.entries.forEach { t ->
         Tab(
             selected = tab == t,
@@ -591,10 +598,8 @@ private fun ClusterDetailContent(
                     secondaryText =
                         stringResource(
                             R.string.device_explorer_attribute_metadata,
-                            attribute.readPrivilegeLabel
-                                ?: stringResource(R.string.device_explorer_privilege_not_available),
-                            attribute.writePrivilegeLabel
-                                ?: stringResource(R.string.device_explorer_privilege_not_available),
+                            stringResource(attribute.readPrivilege.labelRes()),
+                            stringResource(attribute.writePrivilege.labelRes()),
                             typeLabelFor(attribute.type),
                         ),
                     onClick = { onAttributeSelected(attribute) },
@@ -752,8 +757,7 @@ private fun AttributeDetailContent(
         text =
             stringResource(
                 R.string.device_explorer_attribute_read_privilege,
-                attribute.readPrivilegeLabel
-                    ?: stringResource(R.string.device_explorer_privilege_not_available),
+                stringResource(attribute.readPrivilege.labelRes()),
             ),
         style = MaterialTheme.typography.bodyMedium,
     )
@@ -762,8 +766,7 @@ private fun AttributeDetailContent(
         text =
             stringResource(
                 R.string.device_explorer_attribute_write_privilege,
-                attribute.writePrivilegeLabel
-                    ?: stringResource(R.string.device_explorer_privilege_not_available),
+                stringResource(attribute.writePrivilege.labelRes()),
             ),
         style = MaterialTheme.typography.bodyMedium,
     )
@@ -776,8 +779,14 @@ private fun AttributeDetailContent(
     )
 
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+      val focusManager = LocalFocusManager.current
       Button(onClick = onRead) { Text(stringResource(R.string.device_explorer_read)) }
-      Button(onClick = { onWrite(editValue) }) {
+      Button(
+          onClick = {
+            onWrite(editValue)
+            focusManager.clearFocus()
+          }
+      ) {
         Text(stringResource(R.string.device_explorer_write))
       }
     }
@@ -822,7 +831,10 @@ private fun CommandInvokeContent(
 
     Spacer(modifier = Modifier.weight(1f))
     Button(
-        onClick = { onInvoke(commandArguments.toMap()) },
+        onClick = {
+          onInvoke(commandArguments.toMap())
+          commandArguments.keys.forEach { commandArguments[it] = "" }
+        },
         modifier = Modifier.fillMaxWidth(),
     ) {
       Text(stringResource(R.string.device_explorer_invoke))
@@ -854,50 +866,16 @@ private fun ExplorerRow(
 }
 
 @Composable
-private fun SearchTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: @Composable (() -> Unit),
-) {
-  OutlinedTextField(
-      value = value,
-      onValueChange = onValueChange,
-      label = label,
-      trailingIcon = {
-        if (value.isNotEmpty()) {
-          IconButton(onClick = { onValueChange("") }) {
-            Icon(
-                imageVector = Icons.Filled.Close,
-                contentDescription = stringResource(R.string.device_explorer_clear_search),
-            )
-          }
-        }
-      },
-      modifier = Modifier.fillMaxWidth(),
-  )
-}
-
-@Composable
 private fun buildCommandArgumentLabel(
     argument: ExplorerCommandArgumentDefinition,
     typeLabelFor: (MatterType) -> String,
 ): String {
   val typeLabel = typeLabelFor(argument.type)
-  return if (argument.minValue != null && argument.maxValue != null) {
-    stringResource(
-        R.string.device_explorer_argument_with_type_and_range,
-        argument.name,
-        typeLabel,
-        argument.minValue,
-        argument.maxValue,
-    )
-  } else {
-    stringResource(
-        R.string.device_explorer_argument_with_type,
-        argument.name,
-        typeLabel,
-    )
-  }
+  return stringResource(
+      R.string.device_explorer_argument_with_type,
+      argument.name,
+      typeLabel,
+  )
 }
 
 private fun formatEndpointLabel(endpoint: Int, name: String?): String =

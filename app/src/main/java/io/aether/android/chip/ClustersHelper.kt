@@ -137,65 +137,6 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     }
   }
 
-  suspend fun writeBasicInformationNodeLabelAttribute(nodeId: Long, nodeLabel: String) {
-    val connectedDevicePtr =
-        try {
-          chipClient.getConnectedDevicePointer(nodeId)
-        } catch (e: IllegalStateException) {
-          Timber.e(
-              e,
-              "Can't get connectedDevicePointer for writeBasicInformationNodeLabelAttribute.",
-          )
-          return
-        }
-    return suspendCoroutine { continuation ->
-      val callback =
-          object : ChipClusters.DefaultClusterCallback {
-            override fun onSuccess() {
-              continuation.resume(Unit)
-            }
-
-            override fun onError(ex: Exception) {
-              continuation.resumeWithException(ex)
-            }
-          }
-      BasicInformationCluster(connectedDevicePtr, 0).writeNodeLabelAttribute(callback, nodeLabel)
-    }
-  }
-
-  suspend fun moveToLevelCommand(
-      nodeId: Long,
-      endpoint: Int,
-      level: Int,
-      transitionTime: Int,
-  ) {
-    val connectedDevicePtr =
-        try {
-          chipClient.getConnectedDevicePointer(nodeId)
-        } catch (e: IllegalStateException) {
-          Timber.e(e, "Can't get connectedDevicePointer for moveToLevelCommand.")
-          return
-        }
-    return suspendCoroutine { continuation ->
-      getLevelControlClusterForDevice(connectedDevicePtr, endpoint)
-          .moveToLevel(
-              object : ChipClusters.DefaultClusterCallback {
-                override fun onSuccess() {
-                  continuation.resume(Unit)
-                }
-
-                override fun onError(ex: Exception) {
-                  continuation.resumeWithException(ex)
-                }
-              },
-              level,
-              transitionTime,
-              0,
-              0,
-          )
-    }
-  }
-
   suspend fun invokeGenericCommand(
       nodeId: Long,
       endpoint: Int,

@@ -49,9 +49,13 @@ def _clean_name(t: str) -> str:
 def _get_type(element: ET._Element) -> str:
     """Extract the type from an XML element, handling any special cases."""
     type = _clean_name(element.get("type", "").strip())
-    # For list types, we need to the the element type from the "entry" element
-    if type == "LIST" and (entry := element.find("./entry")) is not None:
-        return f"{type}_{_get_type(entry)}"
+    if (
+        type == "LIST"
+        # For list types, we need to get the element type from the "entry" element.
+        and (entry := element.find("./entry")) is not None
+        and (entry_type := _get_type(entry))
+    ):
+        return f"{type}_{entry_type}"
     return type
 
 
@@ -74,7 +78,8 @@ def collect_all_types(data_model_dir: Path, versions: list[str]) -> list[str]:
             tree = ET.parse(xml_file)
             # Iterate over all elements with a "type" attribute.
             for elem in tree.xpath("//*[@type]"):
-                types[_get_type(elem)] += 1
+                if t := _get_type(elem):
+                    types[t] += 1
     return sorted(types.keys(), key=lambda t: types[t], reverse=True)
 
 
@@ -93,7 +98,8 @@ def collect_all_privileges(data_model_dir: Path, versions: list[str]) -> list[st
                     ]
                 )
             ):
-                privileges.add(_clean_name(p.strip()))
+                if p := _clean_name(p.strip()):
+                    privileges.add(p)
     return sorted(filter(None, privileges))
 
 

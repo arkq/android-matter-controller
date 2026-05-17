@@ -161,8 +161,11 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_explorer_attribute_read_privilege">Read privilege: %1$s</string>
     <string name="device_explorer_attribute_write_privilege">Write privilege: %1$s</string>
     <string name="device_explorer_privilege_not_available">N/A</string>
+    <string name="device_explorer_privilege_view">View</string>
+    <string name="device_explorer_privilege_operate">Operate</string>
+    <string name="device_explorer_privilege_manage">Manage</string>
+    <string name="device_explorer_privilege_administer">Administer</string>
     <string name="device_explorer_argument_with_type">%1$s (%2$s)</string>
-    <string name="device_explorer_argument_with_type_and_range">%1$s (%2$s, %3$d-%4$d)</string>
     <string name="device_explorer_command_arguments_count">Arguments: %1$d</string>
     <string name="device_explorer_value">Value</string>
     <string name="device_explorer_attribute_type">Type: %1$s</string>

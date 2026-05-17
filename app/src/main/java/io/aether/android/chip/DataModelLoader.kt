@@ -4,7 +4,9 @@
 package io.aether.android.chip
 
 import android.content.Context
+import androidx.annotation.StringRes
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.aether.android.R
 import io.aether.android.matter.MatterDataModel
 import io.aether.android.matter.MatterPrivilege
 import io.aether.android.matter.MatterType
@@ -182,15 +184,15 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
         MatterType.TYPE_INT16 -> "I16"
         MatterType.TYPE_INT32 -> "I32"
         MatterType.TYPE_INT64 -> "I64"
+        MatterType.TYPE_LIST_STRING,
+        MatterType.TYPE_LIST_OCTSTR -> "LIST[STR]"
         MatterType.TYPE_LIST_UINT8 -> "LIST[U8]"
         MatterType.TYPE_LIST_UINT16 -> "LIST[U16]"
-        MatterType.TYPE_LIST_UINT32 -> "LIST[U32]"
-        MatterType.TYPE_LIST_STRING -> "LIST[STR]"
-        MatterType.TYPE_LIST_OCTSTR -> "LIST[STR]"
-        MatterType.TYPE_LIST_CLUSTER_ID -> "LIST[U32]"
-        MatterType.TYPE_LIST_GROUP_ID -> "LIST[U32]"
-        MatterType.TYPE_LIST_SUBJECT_ID -> "LIST[U64]"
+        MatterType.TYPE_LIST_UINT32,
+        MatterType.TYPE_LIST_CLUSTER_ID,
+        MatterType.TYPE_LIST_GROUP_ID,
         MatterType.TYPE_LIST_ENDPOINT_NO -> "LIST[U32]"
+        MatterType.TYPE_LIST_SUBJECT_ID -> "LIST[U64]"
         MatterType.TYPE_UNKNOWN,
         MatterType.UNRECOGNIZED -> "N/A"
         else -> matterType.name
@@ -204,3 +206,13 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
       val writePrivilege: MatterPrivilege = MatterPrivilege.PRIVILEGE_UNKNOWN,
   )
 }
+
+@StringRes
+fun MatterPrivilege.labelRes(): Int =
+    when (this) {
+      MatterPrivilege.PRIVILEGE_VIEW -> R.string.device_explorer_privilege_view
+      MatterPrivilege.PRIVILEGE_OPERATE -> R.string.device_explorer_privilege_operate
+      MatterPrivilege.PRIVILEGE_MANAGE -> R.string.device_explorer_privilege_manage
+      MatterPrivilege.PRIVILEGE_ADMIN -> R.string.device_explorer_privilege_administer
+      else -> R.string.device_explorer_privilege_not_available
+    }

@@ -11,6 +11,7 @@ import io.aether.android.R
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.chip.DataModelLoader
 import io.aether.android.chip.DeviceMatterInfo
+import io.aether.android.matter.MatterPrivilege
 import io.aether.android.matter.MatterType
 import io.aether.android.screens.common.DialogInfo
 import java.io.ByteArrayOutputStream
@@ -35,8 +36,8 @@ data class ExplorerAttributeUiItem(
     val id: Long,
     val name: String? = null,
     val type: MatterType = MatterType.TYPE_UNKNOWN,
-    val readPrivilegeLabel: String? = null,
-    val writePrivilegeLabel: String? = null,
+    val readPrivilege: MatterPrivilege = MatterPrivilege.PRIVILEGE_UNKNOWN,
+    val writePrivilege: MatterPrivilege = MatterPrivilege.PRIVILEGE_UNKNOWN,
 )
 
 data class ExplorerCommandUiItem(
@@ -282,8 +283,8 @@ constructor(
                   id = id,
                   name = known?.name,
                   type = known?.type ?: MatterType.TYPE_UNKNOWN,
-                  readPrivilegeLabel = known?.readPrivilegeLabel,
-                  writePrivilegeLabel = known?.writePrivilegeLabel,
+                  readPrivilege = known?.readPrivilege ?: MatterPrivilege.PRIVILEGE_UNKNOWN,
+                  writePrivilege = known?.writePrivilege ?: MatterPrivilege.PRIVILEGE_UNKNOWN,
               )
             }
         val commands =
