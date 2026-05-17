@@ -4,6 +4,8 @@
 package io.aether.android.screens.device.settings.explorer
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -29,15 +31,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +50,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -59,6 +65,7 @@ import io.aether.android.matter.MatterType
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.common.SearchTextField
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,6 +84,9 @@ fun ExplorerRoute(
   val loadingClusterKeys by viewModel.loadingClusterKeys.collectAsState()
   val clusterDetailsByKey by viewModel.clusterDetailsByKey.collectAsState()
   val attributeValueByKey by viewModel.attributeValueByKey.collectAsState()
+  val attributeReadSuccessCount by viewModel.attributeReadSuccessCount.collectAsState()
+  val attributeWriteSuccessCount by viewModel.attributeWriteSuccessCount.collectAsState()
+  val commandInvokeSuccessCount by viewModel.commandInvokeSuccessCount.collectAsState()
   val msgDialogInfo by viewModel.msgDialogInfo.collectAsState()
   val clustersMap = viewModel.clustersMap
   val devicesMap = viewModel.devicesMap
@@ -191,6 +201,8 @@ fun ExplorerRoute(
               attribute = level.attribute,
               currentValue = currentValue,
               typeLabelFor = viewModel::shortTypeLabel,
+              readSuccessCount = attributeReadSuccessCount,
+              writeSuccessCount = attributeWriteSuccessCount,
               onRead = {
                 viewModel.readAttribute(
                     nodeId,
@@ -214,6 +226,7 @@ fun ExplorerRoute(
             CommandInvokeContent(
                 command = level.command,
                 typeLabelFor = viewModel::shortTypeLabel,
+                invokeSuccessCount = commandInvokeSuccessCount,
                 onInvoke = { argumentValues ->
                   viewModel.invokeCommand(
                       nodeId,
@@ -721,6 +734,8 @@ private fun AttributeDetailContent(
     attribute: ExplorerAttributeUiItem,
     currentValue: String?,
     typeLabelFor: (MatterType) -> String,
+    readSuccessCount: Int,
+    writeSuccessCount: Int,
     onRead: () -> Unit,
     onWrite: (String) -> Unit,
 ) {
@@ -729,6 +744,27 @@ private fun AttributeDetailContent(
   LaunchedEffect(attribute.id, currentValue) {
     if (currentValue != null) {
       editValue = currentValue
+    }
+  }
+
+  var lastSeenReadCount by remember(attribute.id) { mutableIntStateOf(readSuccessCount) }
+  var lastSeenWriteCount by remember(attribute.id) { mutableIntStateOf(writeSuccessCount) }
+  var fieldHighlight by remember(attribute.id) { mutableStateOf(FieldHighlight.STANDARD) }
+
+  LaunchedEffect(readSuccessCount) {
+    if (readSuccessCount > lastSeenReadCount) {
+      lastSeenReadCount = readSuccessCount
+      fieldHighlight = FieldHighlight.SUCCESS
+      delay(2000)
+      if (fieldHighlight == FieldHighlight.SUCCESS) fieldHighlight = FieldHighlight.STANDARD
+    }
+  }
+  LaunchedEffect(writeSuccessCount) {
+    if (writeSuccessCount > lastSeenWriteCount) {
+      lastSeenWriteCount = writeSuccessCount
+      fieldHighlight = FieldHighlight.SUCCESS
+      delay(2000)
+      if (fieldHighlight == FieldHighlight.SUCCESS) fieldHighlight = FieldHighlight.STANDARD
     }
   }
 
@@ -773,9 +809,13 @@ private fun AttributeDetailContent(
 
     OutlinedTextField(
         value = editValue,
-        onValueChange = { editValue = it },
+        onValueChange = {
+          editValue = it
+          fieldHighlight = FieldHighlight.EDITED
+        },
         label = { Text(stringResource(R.string.device_explorer_value)) },
         modifier = Modifier.fillMaxWidth(),
+        colors = fieldHighlightColors(fieldHighlight),
     )
 
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -797,6 +837,7 @@ private fun AttributeDetailContent(
 private fun CommandInvokeContent(
     command: ExplorerCommandUiItem,
     typeLabelFor: (MatterType) -> String,
+    invokeSuccessCount: Int,
     onInvoke: (Map<String, String>) -> Unit,
 ) {
   val commandArguments =
@@ -805,6 +846,18 @@ private fun CommandInvokeContent(
           command.arguments.forEach { map[it.key] = "" }
         }
       }
+
+  var lastSeenInvokeCount by remember(command.id) { mutableIntStateOf(invokeSuccessCount) }
+  var fieldHighlight by remember(command.id) { mutableStateOf(FieldHighlight.STANDARD) }
+
+  LaunchedEffect(invokeSuccessCount) {
+    if (invokeSuccessCount > lastSeenInvokeCount) {
+      lastSeenInvokeCount = invokeSuccessCount
+      fieldHighlight = FieldHighlight.SUCCESS
+      delay(2000)
+      if (fieldHighlight == FieldHighlight.SUCCESS) fieldHighlight = FieldHighlight.STANDARD
+    }
+  }
 
   Column(
       modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),
@@ -819,22 +872,23 @@ private fun CommandInvokeContent(
       command.arguments.forEach { argument ->
         OutlinedTextField(
             value = commandArguments[argument.key].orEmpty(),
-            onValueChange = { commandArguments[argument.key] = it },
+            onValueChange = {
+              commandArguments[argument.key] = it
+              fieldHighlight = FieldHighlight.EDITED
+            },
             label = {
               val label = buildCommandArgumentLabel(argument, typeLabelFor)
               Text(label)
             },
             modifier = Modifier.fillMaxWidth(),
+            colors = fieldHighlightColors(fieldHighlight),
         )
       }
     }
 
     Spacer(modifier = Modifier.weight(1f))
     Button(
-        onClick = {
-          onInvoke(commandArguments.toMap())
-          commandArguments.keys.forEach { commandArguments[it] = "" }
-        },
+        onClick = { onInvoke(commandArguments.toMap()) },
         modifier = Modifier.fillMaxWidth(),
     ) {
       Text(stringResource(R.string.device_explorer_invoke))
@@ -844,7 +898,6 @@ private fun CommandInvokeContent(
 
 @Composable
 private fun ExplorerRow(
-    text: String,
     secondaryText: String? = null,
     onClick: (() -> Unit)? = null,
 ) {

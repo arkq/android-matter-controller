@@ -121,6 +121,15 @@ constructor(
   private val _attributeValueByKey = MutableStateFlow<Map<String, String>>(emptyMap())
   val attributeValueByKey: StateFlow<Map<String, String>> = _attributeValueByKey.asStateFlow()
 
+  private val _attributeReadSuccessCount = MutableStateFlow(0)
+  val attributeReadSuccessCount: StateFlow<Int> = _attributeReadSuccessCount.asStateFlow()
+
+  private val _attributeWriteSuccessCount = MutableStateFlow(0)
+  val attributeWriteSuccessCount: StateFlow<Int> = _attributeWriteSuccessCount.asStateFlow()
+
+  private val _commandInvokeSuccessCount = MutableStateFlow(0)
+  val commandInvokeSuccessCount: StateFlow<Int> = _commandInvokeSuccessCount.asStateFlow()
+
   private val _msgDialogInfo = MutableStateFlow<DialogInfo?>(null)
   val msgDialogInfo: StateFlow<DialogInfo?> = _msgDialogInfo.asStateFlow()
 
@@ -319,6 +328,7 @@ constructor(
         _attributeValueByKey.update {
           it + (attributeKey(endpoint, clusterId, attributeId) to value)
         }
+        _attributeReadSuccessCount.update { it + 1 }
       } catch (e: Exception) {
         Timber.e(e, "readAttribute failed")
         showMsgDialog(
@@ -359,9 +369,8 @@ constructor(
         _attributeValueByKey.update {
           it + (attributeKey(endpoint, clusterId, attributeId) to value)
         }
+        _attributeWriteSuccessCount.update { it + 1 }
       } catch (e: ExplorerInputValidationException) {
-        showMsgDialog(R.string.device_settings_admin_explorer, e.messageRes)
-      } catch (e: ExplorerUnsupportedValueException) {
         showMsgDialog(
             R.string.device_settings_admin_explorer,
             R.string.device_explorer_error_unsupported_attribute_write,
@@ -393,9 +402,8 @@ constructor(
                 .orEmpty()
         val payload = ExplorerTlvCodec.encodeCommandPayload(arguments, argumentValues)
         clustersHelper.invokeGenericCommand(nodeId, endpoint, clusterId, commandId, payload)
+        _commandInvokeSuccessCount.update { it + 1 }
       } catch (e: ExplorerInputValidationException) {
-        showMsgDialog(R.string.device_settings_admin_explorer, e.messageRes)
-      } catch (e: ExplorerUnsupportedValueException) {
         showMsgDialog(
             R.string.device_settings_admin_explorer,
             R.string.device_explorer_error_unsupported_command,
