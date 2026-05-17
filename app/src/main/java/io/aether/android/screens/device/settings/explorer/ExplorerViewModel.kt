@@ -11,6 +11,7 @@ import io.aether.android.R
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.chip.DataModelLoader
 import io.aether.android.chip.DeviceMatterInfo
+import io.aether.android.matter.MatterType
 import io.aether.android.screens.common.DialogInfo
 import java.io.ByteArrayOutputStream
 import java.nio.charset.StandardCharsets
@@ -33,10 +34,9 @@ data class ExplorerClusterKey(val endpoint: Int, val clusterId: Long)
 data class ExplorerAttributeUiItem(
     val id: Long,
     val name: String? = null,
-    val type: ExplorerValueType = ExplorerValueType.UNKNOWN,
+    val type: MatterType = MatterType.TYPE_UNKNOWN,
     val readPrivilegeLabel: String? = null,
     val writePrivilegeLabel: String? = null,
-    val writable: Boolean = false,
 )
 
 data class ExplorerCommandUiItem(
@@ -126,9 +126,11 @@ constructor(
   val clustersMap: Map<Long, String> = dataModelLoader.clustersMap
   val devicesMap: Map<Long, String> = dataModelLoader.devicesMap
 
-  private val knownClustersById: Map<Long, ExplorerClusterDefinition> by lazy {
-    ExplorerSchema.buildKnownClustersById(dataModelLoader.load())
+  val knownClustersById: Map<Long, ExplorerClusterDefinition> by lazy {
+    ExplorerSchema.buildKnownClustersById(dataModelLoader.load(), dataModelLoader.genericAttributes)
   }
+
+  fun shortTypeLabel(type: MatterType): String = dataModelLoader.shortTypeLabel(type)
 
   fun loadExplorer(nodeId: Long) {
     viewModelScope.launch {
@@ -279,10 +281,9 @@ constructor(
               ExplorerAttributeUiItem(
                   id = id,
                   name = known?.name,
-                  type = known?.type ?: ExplorerValueType.UNKNOWN,
+                  type = known?.type ?: MatterType.TYPE_UNKNOWN,
                   readPrivilegeLabel = known?.readPrivilegeLabel,
                   writePrivilegeLabel = known?.writePrivilegeLabel,
-                  writable = known?.writable == true,
               )
             }
         val commands =
@@ -338,7 +339,7 @@ constructor(
       try {
         val attributeType =
             knownClustersById[clusterId]?.attributes?.firstOrNull { it.id == attributeId }?.type
-                ?: ExplorerValueType.UNKNOWN
+                ?: MatterType.TYPE_UNKNOWN
         val payload =
             ExplorerTlvCodec.encodeAnonymousValue(
                 type = attributeType,
@@ -481,16 +482,16 @@ constructor(
     }
 
     fun encodeAnonymousValue(
-        type: ExplorerValueType,
+        type: MatterType,
         rawValue: String,
         @StringRes invalidNumberMessageRes: Int,
     ): ByteArray? {
-      if (type == ExplorerValueType.UNKNOWN) {
+      if (type == MatterType.TYPE_UNKNOWN || type == MatterType.UNRECOGNIZED) {
         return null
       }
       val out = ByteArrayOutputStream()
       when (type) {
-        ExplorerValueType.BOOLEAN -> {
+        MatterType.TYPE_BOOL -> {
           val parsed = rawValue.trim().toBooleanStrictOrNull()
           when (parsed) {
             true -> out.write(TLV_ANON_BOOL_TRUE)
@@ -501,56 +502,82 @@ constructor(
                 )
           }
         }
-        ExplorerValueType.STRING -> {
+        MatterType.TYPE_STRING,
+        MatterType.TYPE_OCTSTR,
+        MatterType.TYPE_IPV4ADR,
+        MatterType.TYPE_IPV6ADR,
+        MatterType.TYPE_IPV6PRE,
+        MatterType.TYPE_HWADR -> {
           val bytes = rawValue.toByteArray(StandardCharsets.UTF_8)
           requireStringLength(bytes)
           out.write(TLV_ANON_STRING_1)
           out.write(bytes.size)
           out.write(bytes)
         }
-        ExplorerValueType.UINT8 ->
+        MatterType.TYPE_UINT8,
+        MatterType.TYPE_ENUM8,
+        MatterType.TYPE_MAP8 ->
             writeAnonymousUnsigned(
                 out,
                 TLV_ANON_UNSIGNED_1,
                 parseUnsigned(rawValue, 0xFF, invalidNumberMessageRes),
                 1,
             )
-        ExplorerValueType.UINT16 ->
+        MatterType.TYPE_UINT16,
+        MatterType.TYPE_ENUM16,
+        MatterType.TYPE_MAP16 ->
             writeAnonymousUnsigned(
                 out,
                 TLV_ANON_UNSIGNED_2,
                 parseUnsigned(rawValue, 0xFFFF, invalidNumberMessageRes),
                 2,
             )
-        ExplorerValueType.UINT32 ->
+        MatterType.TYPE_UINT24,
+        MatterType.TYPE_UINT32,
+        MatterType.TYPE_CLUSTER_ID,
+        MatterType.TYPE_ATTRIBUTE_ID,
+        MatterType.TYPE_ENDPOINT_NO,
+        MatterType.TYPE_DEVTYPE_ID,
+        MatterType.TYPE_GROUP_ID,
+        MatterType.TYPE_VENDOR_ID,
+        MatterType.TYPE_MESSAGE_ID,
+        MatterType.TYPE_SNAPSHOT_STREAM_ID,
+        MatterType.TYPE_TLS_ENDPOINT_ID ->
             writeAnonymousUnsigned(
                 out,
                 TLV_ANON_UNSIGNED_4,
                 parseUnsigned(rawValue, 0xFFFFFFFFL, invalidNumberMessageRes),
                 4,
             )
-        ExplorerValueType.UINT64 ->
+        MatterType.TYPE_UINT64,
+        MatterType.TYPE_EPOCH_S,
+        MatterType.TYPE_EPOCH_US,
+        MatterType.TYPE_FABRIC_IDX,
+        MatterType.TYPE_NODE_ID,
+        MatterType.TYPE_SUBJECT_ID,
+        MatterType.TYPE_TLSCAID,
+        MatterType.TYPE_TLSCCDID ->
             writeAnonymousUnsigned(
                 out,
                 TLV_ANON_UNSIGNED_8,
                 parseUnsigned(rawValue, Long.MAX_VALUE, invalidNumberMessageRes),
                 8,
             )
-        ExplorerValueType.INT8 ->
+        MatterType.TYPE_INT8 ->
             writeAnonymousSigned(
                 out,
                 TLV_ANON_SIGNED_1,
                 parseSigned(rawValue, -128, 127, invalidNumberMessageRes),
                 1,
             )
-        ExplorerValueType.INT16 ->
+        MatterType.TYPE_INT16 ->
             writeAnonymousSigned(
                 out,
                 TLV_ANON_SIGNED_2,
                 parseSigned(rawValue, -32768, 32767, invalidNumberMessageRes),
                 2,
             )
-        ExplorerValueType.INT32 ->
+        MatterType.TYPE_INT32 ->
             writeAnonymousSigned(
                 out,
                 TLV_ANON_SIGNED_4,
@@ -562,14 +589,14 @@ constructor(
                 ),
                 4,
             )
-        ExplorerValueType.INT64 ->
+        MatterType.TYPE_INT64 ->
             writeAnonymousSigned(
                 out,
                 TLV_ANON_SIGNED_8,
                 parseSigned(rawValue, Long.MIN_VALUE, Long.MAX_VALUE, invalidNumberMessageRes),
                 8,
             )
-        ExplorerValueType.UNKNOWN -> return null
+        else -> return null
       }
       return out.toByteArray()
     }
@@ -582,7 +609,7 @@ constructor(
     ) {
       val requiredValue = rawValue?.trim().orEmpty()
       when (definition.type) {
-        ExplorerValueType.BOOLEAN -> {
+        MatterType.TYPE_BOOL -> {
           val parsed = requiredValue.toBooleanStrictOrNull()
           when (parsed) {
             true -> out.write(TLV_CONTEXT_BOOL_TRUE)
@@ -594,7 +621,12 @@ constructor(
           }
           out.write(tag)
         }
-        ExplorerValueType.STRING -> {
+        MatterType.TYPE_STRING,
+        MatterType.TYPE_OCTSTR,
+        MatterType.TYPE_IPV4ADR,
+        MatterType.TYPE_IPV6ADR,
+        MatterType.TYPE_IPV6PRE,
+        MatterType.TYPE_HWADR -> {
           val bytes = requiredValue.toByteArray(StandardCharsets.UTF_8)
           requireStringLength(bytes)
           out.write(TLV_CONTEXT_STRING_1)
@@ -602,7 +634,9 @@ constructor(
           out.write(bytes.size)
           out.write(bytes)
         }
-        ExplorerValueType.UINT8 ->
+        MatterType.TYPE_UINT8,
+        MatterType.TYPE_ENUM8,
+        MatterType.TYPE_MAP8 ->
             writeContextUnsigned(
                 out,
                 tag,
@@ -610,7 +644,9 @@ constructor(
                 parseUnsigned(requiredValue, 0xFF, R.string.device_explorer_error_invalid_number),
                 1,
             )
-        ExplorerValueType.UINT16 ->
+        MatterType.TYPE_UINT16,
+        MatterType.TYPE_ENUM16,
+        MatterType.TYPE_MAP16 ->
             writeContextUnsigned(
                 out,
                 tag,
@@ -618,7 +654,17 @@ constructor(
                 parseUnsigned(requiredValue, 0xFFFF, R.string.device_explorer_error_invalid_number),
                 2,
             )
-        ExplorerValueType.UINT32 ->
+        MatterType.TYPE_UINT24,
+        MatterType.TYPE_UINT32,
+        MatterType.TYPE_CLUSTER_ID,
+        MatterType.TYPE_ATTRIBUTE_ID,
+        MatterType.TYPE_ENDPOINT_NO,
+        MatterType.TYPE_DEVTYPE_ID,
+        MatterType.TYPE_GROUP_ID,
+        MatterType.TYPE_VENDOR_ID,
+        MatterType.TYPE_MESSAGE_ID,
+        MatterType.TYPE_SNAPSHOT_STREAM_ID,
+        MatterType.TYPE_TLS_ENDPOINT_ID ->
             writeContextUnsigned(
                 out,
                 tag,
@@ -630,7 +676,14 @@ constructor(
                 ),
                 4,
             )
-        ExplorerValueType.UINT64 ->
+        MatterType.TYPE_UINT64,
+        MatterType.TYPE_EPOCH_S,
+        MatterType.TYPE_EPOCH_US,
+        MatterType.TYPE_FABRIC_IDX,
+        MatterType.TYPE_NODE_ID,
+        MatterType.TYPE_SUBJECT_ID,
+        MatterType.TYPE_TLSCAID,
+        MatterType.TYPE_TLSCCDID ->
             writeContextUnsigned(
                 out,
                 tag,
@@ -642,7 +695,7 @@ constructor(
                 ),
                 8,
             )
-        ExplorerValueType.INT8 ->
+        MatterType.TYPE_INT8 ->
             writeContextSigned(
                 out,
                 tag,
@@ -655,7 +708,7 @@ constructor(
                 ),
                 1,
             )
-        ExplorerValueType.INT16 ->
+        MatterType.TYPE_INT16 ->
             writeContextSigned(
                 out,
                 tag,
@@ -668,7 +721,7 @@ constructor(
                 ),
                 2,
             )
-        ExplorerValueType.INT32 ->
+        MatterType.TYPE_INT32 ->
             writeContextSigned(
                 out,
                 tag,
@@ -681,7 +734,7 @@ constructor(
                 ),
                 4,
             )
-        ExplorerValueType.INT64 ->
+        MatterType.TYPE_INT64 ->
             writeContextSigned(
                 out,
                 tag,
@@ -694,7 +747,7 @@ constructor(
                 ),
                 8,
             )
-        ExplorerValueType.UNKNOWN -> throw ExplorerUnsupportedValueException()
+        else -> throw ExplorerUnsupportedValueException()
       }
     }
 
@@ -751,9 +804,7 @@ constructor(
         max: Long,
         @StringRes invalidNumberMessageRes: Int,
     ): Long {
-      val parsed =
-          value.trim().toLongOrNull()
-              ?: throw ExplorerInputValidationException(invalidNumberMessageRes)
+      val parsed = parseFlexibleLong(value, invalidNumberMessageRes)
       if (parsed < 0 || parsed > max) {
         throw ExplorerInputValidationException(invalidNumberMessageRes)
       }
@@ -766,13 +817,29 @@ constructor(
         max: Long,
         @StringRes invalidNumberMessageRes: Int,
     ): Long {
-      val parsed =
-          value.trim().toLongOrNull()
-              ?: throw ExplorerInputValidationException(invalidNumberMessageRes)
+      val parsed = parseFlexibleLong(value, invalidNumberMessageRes)
       if (parsed < min || parsed > max) {
         throw ExplorerInputValidationException(invalidNumberMessageRes)
       }
       return parsed
+    }
+
+    private fun parseFlexibleLong(value: String, @StringRes invalidNumberMessageRes: Int): Long {
+      val normalized = value.trim()
+      if (normalized.isBlank()) {
+        throw ExplorerInputValidationException(invalidNumberMessageRes)
+      }
+      return when {
+        normalized.startsWith("0x", ignoreCase = true) ->
+            normalized.substring(2).toLongOrNull(16)
+                ?: throw ExplorerInputValidationException(invalidNumberMessageRes)
+        normalized.startsWith("-0x", ignoreCase = true) ->
+            -(normalized.substring(3).toLongOrNull(16)
+                ?: throw ExplorerInputValidationException(invalidNumberMessageRes))
+        else ->
+            normalized.toLongOrNull()
+                ?: throw ExplorerInputValidationException(invalidNumberMessageRes)
+      }
     }
 
     private fun requireStringLength(bytes: ByteArray) {

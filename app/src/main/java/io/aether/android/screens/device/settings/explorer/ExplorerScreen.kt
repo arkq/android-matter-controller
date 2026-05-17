@@ -20,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,6 +53,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
+import io.aether.android.matter.MatterType
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
 
@@ -75,6 +77,7 @@ fun ExplorerRoute(
   val msgDialogInfo by viewModel.msgDialogInfo.collectAsState()
   val clustersMap = viewModel.clustersMap
   val devicesMap = viewModel.devicesMap
+  val knownClustersById = viewModel.knownClustersById
 
   var showSearch by rememberSaveable { mutableStateOf(false) }
 
@@ -140,6 +143,7 @@ fun ExplorerRoute(
                 endpoint = level.endpoint,
                 infos = infos,
                 clustersMap = clustersMap,
+                knownClustersById = knownClustersById,
                 showSearch = showSearch,
                 searchQuery = clusterSearchQuery,
                 onSearchQueryChange = viewModel::onClusterSearchQueryChange,
@@ -153,6 +157,7 @@ fun ExplorerRoute(
               tab = level.tab,
               isLoading = loadingClusterKeys.contains(key),
               details = clusterDetailsByKey[key],
+              typeLabelFor = viewModel::shortTypeLabel,
               showSearch = showSearch,
               attributeSearchQuery = attributeSearchQuery,
               commandSearchQuery = commandSearchQuery,
@@ -182,6 +187,7 @@ fun ExplorerRoute(
           AttributeDetailContent(
               attribute = level.attribute,
               currentValue = currentValue,
+              typeLabelFor = viewModel::shortTypeLabel,
               onRead = {
                 viewModel.readAttribute(
                     nodeId,
@@ -204,6 +210,7 @@ fun ExplorerRoute(
         is ExplorerLevel.CommandInvoke ->
             CommandInvokeContent(
                 command = level.command,
+                typeLabelFor = viewModel::shortTypeLabel,
                 onInvoke = { argumentValues ->
                   viewModel.invokeCommand(
                       nodeId,
@@ -227,10 +234,13 @@ private fun BreadcrumbBar(
     devicesMap: Map<Long, String>,
     onPopToIndex: (Int) -> Unit,
 ) {
+  val scrollState = rememberScrollState()
+  LaunchedEffect(navStack.size) { scrollState.animateScrollTo(scrollState.maxValue) }
+
   Row(
       modifier =
           Modifier.fillMaxWidth()
-              .horizontalScroll(rememberScrollState())
+              .horizontalScroll(scrollState)
               .padding(
                   horizontal = dimensionResource(R.dimen.margin_normal),
                   vertical = 6.dp,
@@ -239,11 +249,13 @@ private fun BreadcrumbBar(
       horizontalArrangement = Arrangement.spacedBy(4.dp),
   ) {
     navStack.forEachIndexed { index, level ->
-      Icon(
-          imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-          contentDescription = null,
-          tint = MaterialTheme.colorScheme.onSurfaceVariant,
-      )
+      if (index > 0) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+      }
       val label = breadcrumbLabelFor(level, deviceMatterInfoList, clustersMap, devicesMap)
       val isLast = index == navStack.size - 1
       if (isLast) {
@@ -277,14 +289,15 @@ private fun breadcrumbLabelFor(
       ExplorerLevel.EndpointList -> stringResource(R.string.device_explorer_root)
       is ExplorerLevel.ClusterList -> {
         val info = deviceMatterInfoList.firstOrNull { it.endpoint == level.endpoint }
-        val firstType = info?.types?.firstOrNull()
         val endpointName =
-            if (firstType == null) {
-              null
-            } else {
-              devicesMap[firstType]
-                  ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
-            }
+            info
+                ?.types
+                .orEmpty()
+                .map { typeId ->
+                  devicesMap[typeId]
+                      ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
+                }
+                .joinToString(" & ")
         formatEndpointLabel(level.endpoint, endpointName)
       }
       is ExplorerLevel.ClusterDetail -> {
@@ -310,10 +323,10 @@ private fun EndpointListContent(
     if (normalizedQuery.isBlank()) {
       true
     } else {
-      val endpointText = "ep${info.endpoint}".lowercase()
-      val firstType = info.types.firstOrNull()
-      val typeName = devicesMap[firstType].orEmpty().lowercase()
-      endpointText.contains(normalizedQuery) || typeName.contains(normalizedQuery)
+      val endpointText = formatEndpointId(info.endpoint).lowercase()
+      val typeNames =
+          info.types.joinToString(" ") { typeId -> devicesMap[typeId].orEmpty().lowercase() }
+      endpointText.contains(normalizedQuery) || typeNames.contains(normalizedQuery)
     }
   }
 
@@ -322,11 +335,10 @@ private fun EndpointListContent(
       verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {
     if (showSearch) {
-      OutlinedTextField(
+      SearchTextField(
           value = searchQuery,
           onValueChange = onSearchQueryChange,
           label = { Text(stringResource(R.string.device_explorer_endpoint_search)) },
-          modifier = Modifier.fillMaxWidth(),
       )
     }
 
@@ -340,21 +352,43 @@ private fun EndpointListContent(
 
     LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
       items(filteredInfos, key = { it.endpoint }) { info ->
-        val firstType = info.types.firstOrNull()
-        val endpointName =
-            if (firstType == null) {
-              null
-            } else {
-              devicesMap[firstType]
-                  ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
+        val endpointTypeLabels =
+            info.types.map { typeId ->
+              val name =
+                  devicesMap[typeId]
+                      ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
+              formatIdAndName(typeId, name)
             }
+        val endpointTypeNames =
+            info.types.map { typeId ->
+              devicesMap[typeId] ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
+            }
+        val titleName = endpointTypeNames.joinToString(" & ")
         ExplorerRow(
-            text = formatEndpointLabel(info.endpoint, endpointName),
+            text = formatEndpointLabel(info.endpoint, titleName),
             secondaryText =
-                stringResource(
-                    R.string.device_explorer_server_clusters_count,
-                    info.serverClusters.size,
-                ),
+                buildString {
+                  append(
+                      stringResource(
+                          R.string.device_explorer_device_types_label,
+                          endpointTypeLabels.joinToString(", "),
+                      )
+                  )
+                  append("\n")
+                  append(
+                      stringResource(
+                          R.string.device_explorer_server_clusters_count,
+                          info.serverClusters.size,
+                      )
+                  )
+                  append(" • ")
+                  append(
+                      stringResource(
+                          R.string.device_explorer_client_clusters_count,
+                          info.clientClusters.size,
+                      )
+                  )
+                },
             onClick = { onSelectEndpoint(info.endpoint) },
         )
       }
@@ -367,15 +401,17 @@ private fun ClusterListContent(
     endpoint: Int,
     infos: List<DeviceMatterInfo>,
     clustersMap: Map<Long, String>,
+    knownClustersById: Map<Long, ExplorerClusterDefinition>,
     showSearch: Boolean,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     onSelectCluster: (Long) -> Unit,
 ) {
   val endpointInfo = infos.firstOrNull { it.endpoint == endpoint }
-  val availableClusters = endpointInfo?.serverClusters.orEmpty().sorted()
+  val serverClusters = endpointInfo?.serverClusters.orEmpty().sorted()
+  val clientClusters = endpointInfo?.clientClusters.orEmpty().sorted()
   val normalizedQuery = searchQuery.trim().lowercase()
-  val filteredClusters = availableClusters.filter { clusterId ->
+  val clusterMatchesQuery: (Long) -> Boolean = { clusterId ->
     if (normalizedQuery.isBlank()) {
       true
     } else {
@@ -384,21 +420,22 @@ private fun ClusterListContent(
       name.contains(normalizedQuery) || hex.contains(normalizedQuery)
     }
   }
+  val filteredServerClusters = serverClusters.filter(clusterMatchesQuery)
+  val filteredClientClusters = clientClusters.filter(clusterMatchesQuery)
 
   Column(
       modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),
       verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {
     if (showSearch) {
-      OutlinedTextField(
+      SearchTextField(
           value = searchQuery,
           onValueChange = onSearchQueryChange,
           label = { Text(stringResource(R.string.device_explorer_cluster_search)) },
-          modifier = Modifier.fillMaxWidth(),
       )
     }
 
-    if (filteredClusters.isEmpty()) {
+    if (filteredServerClusters.isEmpty() && filteredClientClusters.isEmpty()) {
       Text(
           text = stringResource(R.string.device_explorer_clusters_empty),
           style = MaterialTheme.typography.bodyMedium,
@@ -406,17 +443,69 @@ private fun ClusterListContent(
       return@Column
     }
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-      items(filteredClusters, key = { it }) { clusterId ->
-        ExplorerRow(
-            text =
-                formatIdAndName(
-                    clusterId,
-                    clustersMap[clusterId]
-                        ?: stringResource(R.string.device_explorer_cluster_unknown),
-                ),
-            onClick = { onSelectCluster(clusterId) },
+    LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+      item(key = "server-title") {
+        Text(
+            text = stringResource(R.string.device_explorer_server_clusters_section),
+            style = MaterialTheme.typography.titleSmall,
         )
+      }
+      if (filteredServerClusters.isEmpty()) {
+        item(key = "server-empty") {
+          Text(
+              text = stringResource(R.string.device_explorer_clusters_section_empty),
+              style = MaterialTheme.typography.bodyMedium,
+          )
+        }
+      } else {
+        items(filteredServerClusters, key = { "s-$it" }) { clusterId ->
+          val name =
+              clustersMap[clusterId] ?: stringResource(R.string.device_explorer_cluster_unknown)
+          val known = knownClustersById[clusterId]
+          ExplorerRow(
+              text = formatIdAndName(clusterId, name),
+              secondaryText =
+                  stringResource(
+                      R.string.device_explorer_cluster_counts,
+                      known?.attributes?.size ?: 0,
+                      known?.commands?.size ?: 0,
+                      known?.events?.size ?: 0,
+                  ),
+              onClick = { onSelectCluster(clusterId) },
+          )
+        }
+      }
+
+      item(key = "client-title") {
+        Text(
+            text = stringResource(R.string.device_explorer_client_clusters_section),
+            style = MaterialTheme.typography.titleSmall,
+        )
+      }
+      if (filteredClientClusters.isEmpty()) {
+        item(key = "client-empty") {
+          Text(
+              text = stringResource(R.string.device_explorer_clusters_section_empty),
+              style = MaterialTheme.typography.bodyMedium,
+          )
+        }
+      } else {
+        items(filteredClientClusters, key = { "c-$it" }) { clusterId ->
+          val name =
+              clustersMap[clusterId] ?: stringResource(R.string.device_explorer_cluster_unknown)
+          val known = knownClustersById[clusterId]
+          ExplorerRow(
+              text = formatIdAndName(clusterId, name),
+              secondaryText =
+                  stringResource(
+                      R.string.device_explorer_cluster_counts,
+                      known?.attributes?.size ?: 0,
+                      known?.commands?.size ?: 0,
+                      known?.events?.size ?: 0,
+                  ),
+              onClick = { onSelectCluster(clusterId) },
+          )
+        }
       }
     }
   }
@@ -427,6 +516,7 @@ private fun ClusterDetailContent(
     tab: ExplorerTab,
     isLoading: Boolean,
     details: ExplorerClusterDetails?,
+    typeLabelFor: (MatterType) -> String,
     showSearch: Boolean,
     attributeSearchQuery: String,
     commandSearchQuery: String,
@@ -461,11 +551,10 @@ private fun ClusterDetailContent(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
         ) {
           if (showSearch) {
-            OutlinedTextField(
+            SearchTextField(
                 value = attributeSearchQuery,
                 onValueChange = onAttributeSearchQueryChange,
                 label = { Text(stringResource(R.string.device_explorer_attribute_search)) },
-                modifier = Modifier.fillMaxWidth(),
             )
           }
 
@@ -488,6 +577,7 @@ private fun ClusterDetailContent(
             )
           } else {
             LazyColumn(
+                modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
               items(filtered, key = { it.id }) { attribute ->
@@ -497,6 +587,15 @@ private fun ClusterDetailContent(
                             attribute.id,
                             attribute.name
                                 ?: stringResource(R.string.device_explorer_attribute_unknown),
+                        ),
+                    secondaryText =
+                        stringResource(
+                            R.string.device_explorer_attribute_metadata,
+                            attribute.readPrivilegeLabel
+                                ?: stringResource(R.string.device_explorer_privilege_not_available),
+                            attribute.writePrivilegeLabel
+                                ?: stringResource(R.string.device_explorer_privilege_not_available),
+                            typeLabelFor(attribute.type),
                         ),
                     onClick = { onAttributeSelected(attribute) },
                 )
@@ -511,11 +610,10 @@ private fun ClusterDetailContent(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
         ) {
           if (showSearch) {
-            OutlinedTextField(
+            SearchTextField(
                 value = commandSearchQuery,
                 onValueChange = onCommandSearchQueryChange,
                 label = { Text(stringResource(R.string.device_explorer_command_search)) },
-                modifier = Modifier.fillMaxWidth(),
             )
           }
 
@@ -537,7 +635,10 @@ private fun ClusterDetailContent(
                 style = MaterialTheme.typography.bodyMedium,
             )
           } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
               items(filteredCommands, key = { it.id }) { command ->
                 ExplorerRow(
                     text =
@@ -545,6 +646,11 @@ private fun ClusterDetailContent(
                             command.id,
                             command.name
                                 ?: stringResource(R.string.device_explorer_command_unknown),
+                        ),
+                    secondaryText =
+                        stringResource(
+                            R.string.device_explorer_command_arguments_count,
+                            command.arguments.size,
                         ),
                     onClick = { onCommandSelected(command) },
                 )
@@ -559,11 +665,10 @@ private fun ClusterDetailContent(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
         ) {
           if (showSearch) {
-            OutlinedTextField(
+            SearchTextField(
                 value = eventSearchQuery,
                 onValueChange = onEventSearchQueryChange,
                 label = { Text(stringResource(R.string.device_explorer_event_search)) },
-                modifier = Modifier.fillMaxWidth(),
             )
           }
 
@@ -585,7 +690,10 @@ private fun ClusterDetailContent(
                 style = MaterialTheme.typography.bodyMedium,
             )
           } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
               items(filteredEvents, key = { it.id }) { event ->
                 ExplorerRow(
                     text =
@@ -607,6 +715,7 @@ private fun ClusterDetailContent(
 private fun AttributeDetailContent(
     attribute: ExplorerAttributeUiItem,
     currentValue: String?,
+    typeLabelFor: (MatterType) -> String,
     onRead: () -> Unit,
     onWrite: (String) -> Unit,
 ) {
@@ -626,20 +735,15 @@ private fun AttributeDetailContent(
       verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {
     Text(
-        text =
-            stringResource(
-                R.string.device_explorer_attribute_title,
-                attribute.name ?: stringResource(R.string.device_explorer_attribute_unknown),
-                formatExplorerId(attribute.id),
-            ),
+        text = formatIdAndName(attribute.id, attribute.name),
         style = MaterialTheme.typography.titleMedium,
     )
 
     Text(
         text =
             stringResource(
-                R.string.device_explorer_current_value,
-                currentValue ?: stringResource(R.string.device_explorer_value_not_read),
+                R.string.device_explorer_attribute_type,
+                typeLabelFor(attribute.type),
             ),
         style = MaterialTheme.typography.bodyMedium,
     )
@@ -667,7 +771,7 @@ private fun AttributeDetailContent(
     OutlinedTextField(
         value = editValue,
         onValueChange = { editValue = it },
-        label = { Text(stringResource(R.string.device_explorer_edit_value)) },
+        label = { Text(stringResource(R.string.device_explorer_value)) },
         modifier = Modifier.fillMaxWidth(),
     )
 
@@ -683,6 +787,7 @@ private fun AttributeDetailContent(
 @Composable
 private fun CommandInvokeContent(
     command: ExplorerCommandUiItem,
+    typeLabelFor: (MatterType) -> String,
     onInvoke: (Map<String, String>) -> Unit,
 ) {
   val commandArguments =
@@ -697,37 +802,17 @@ private fun CommandInvokeContent(
       verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {
     Text(
-        text =
-            stringResource(
-                R.string.device_explorer_command_title,
-                command.name ?: stringResource(R.string.device_explorer_command_unknown),
-                formatExplorerId(command.id),
-            ),
+        text = formatIdAndName(command.id, command.name),
         style = MaterialTheme.typography.titleMedium,
     )
 
-    if (command.arguments.isEmpty()) {
-      Text(
-          text = stringResource(R.string.device_explorer_no_arguments),
-          style = MaterialTheme.typography.bodyMedium,
-      )
-    } else {
+    if (command.arguments.isNotEmpty()) {
       command.arguments.forEach { argument ->
         OutlinedTextField(
             value = commandArguments[argument.key].orEmpty(),
             onValueChange = { commandArguments[argument.key] = it },
             label = {
-              val label =
-                  if (argument.minValue != null && argument.maxValue != null) {
-                    stringResource(
-                        R.string.device_explorer_argument_with_range,
-                        argument.name,
-                        argument.minValue,
-                        argument.maxValue,
-                    )
-                  } else {
-                    argument.name
-                  }
+              val label = buildCommandArgumentLabel(argument, typeLabelFor)
               Text(label)
             },
             modifier = Modifier.fillMaxWidth(),
@@ -755,7 +840,7 @@ private fun ExplorerRow(
       modifier =
           Modifier.fillMaxWidth()
               .clickable(enabled = onClick != null) { onClick?.invoke() }
-              .padding(vertical = 8.dp),
+              .padding(horizontal = 8.dp, vertical = 8.dp),
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically,
   ) {
@@ -768,11 +853,58 @@ private fun ExplorerRow(
   }
 }
 
+@Composable
+private fun SearchTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: @Composable (() -> Unit),
+) {
+  OutlinedTextField(
+      value = value,
+      onValueChange = onValueChange,
+      label = label,
+      trailingIcon = {
+        if (value.isNotEmpty()) {
+          IconButton(onClick = { onValueChange("") }) {
+            Icon(
+                imageVector = Icons.Filled.Close,
+                contentDescription = stringResource(R.string.device_explorer_clear_search),
+            )
+          }
+        }
+      },
+      modifier = Modifier.fillMaxWidth(),
+  )
+}
+
+@Composable
+private fun buildCommandArgumentLabel(
+    argument: ExplorerCommandArgumentDefinition,
+    typeLabelFor: (MatterType) -> String,
+): String {
+  val typeLabel = typeLabelFor(argument.type)
+  return if (argument.minValue != null && argument.maxValue != null) {
+    stringResource(
+        R.string.device_explorer_argument_with_type_and_range,
+        argument.name,
+        typeLabel,
+        argument.minValue,
+        argument.maxValue,
+    )
+  } else {
+    stringResource(
+        R.string.device_explorer_argument_with_type,
+        argument.name,
+        typeLabel,
+    )
+  }
+}
+
 private fun formatEndpointLabel(endpoint: Int, name: String?): String =
     if (name.isNullOrBlank()) {
-      "[EP$endpoint]"
+      "[${formatEndpointId(endpoint)}]"
     } else {
-      "[EP$endpoint] $name"
+      "[${formatEndpointId(endpoint)}] $name"
     }
 
 private fun formatIdAndName(id: Long, name: String?): String {
@@ -786,3 +918,6 @@ private fun formatIdAndName(id: Long, name: String?): String {
 
 private fun formatExplorerId(id: Long): String =
     if (id <= 0xFFFF) String.format("0x%04X", id) else String.format("0x%08X", id)
+
+private fun formatEndpointId(endpoint: Int): String =
+    if (endpoint <= 0xFF) String.format("0x%02X", endpoint) else String.format("0x%04X", endpoint)
