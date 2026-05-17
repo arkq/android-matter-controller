@@ -22,6 +22,7 @@ import argparse
 import importlib
 import subprocess
 import sys
+from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -35,7 +36,23 @@ import lxml.etree as ET
 
 def _clean_name(t: str) -> str:
     """Return the UPPER_SNAKE_CASE variant used in the proto enum."""
-    return t.upper().replace("-", "_").replace(" ", "_").replace(".", "_")
+    # Insert an underscore before any capital letter preceded by a lowercase
+    # letter or digit e.g., 'camelCase' -> 'camel_Case'
+    s1 = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", t)
+    # Handle consecutive capitals followed by lowercase e.g., 'HTTPResponse' -> 'HTTP_Response'
+    s2 = re.sub(r"([A-Z])([A-Z][a-z])", r"\1_\2", s1)
+    # Replace other delimiters, capitalize, and clean up multiple/trailing underscores
+    cleaned = s2.replace("-", "_").replace(" ", "_").replace(".", "_").upper()
+    return re.sub(r"_+", "_", cleaned).strip("_")
+
+
+def _get_type(element: ET._Element) -> str:
+    """Extract the type from an XML element, handling any special cases."""
+    type = _clean_name(element.get("type", "").strip())
+    # For list types, we need to the the element type from the "entry" element
+    if type == "LIST" and (entry := element.find("./entry")) is not None:
+        return f"{type}_{_get_type(entry)}"
+    return type
 
 
 def _xml_files_for_version(data_model_dir: Path, version: str) -> list[Path]:
@@ -48,24 +65,21 @@ def _xml_files_for_version(data_model_dir: Path, version: str) -> list[Path]:
 
 
 def collect_all_types(data_model_dir: Path, versions: list[str]) -> list[str]:
-    types: set[str] = set()
+    """Collect all unique attribute/argument types across ALL versions."""
+    # Keep track of how many times each type is used across all versions to
+    # compact the generated proto (most common types get lower enum values).
+    types: dict[str, int] = defaultdict(int)
     for version in versions:
         for xml_file in _xml_files_for_version(data_model_dir, version):
             tree = ET.parse(xml_file)
-            for t in tree.xpath(
-                "|".join(
-                    [
-                        "//attribute/@type",
-                        "//arg/@type",
-                        "//item/@type",
-                    ]
-                )
-            ):
-                types.add(_clean_name(t.strip()))
-    return sorted(filter(None, types))
+            # Iterate over all elements with a "type" attribute.
+            for elem in tree.xpath("//*[@type]"):
+                types[_get_type(elem)] += 1
+    return sorted(types.keys(), key=lambda t: types[t], reverse=True)
 
 
 def collect_all_privileges(data_model_dir: Path, versions: list[str]) -> list[str]:
+    """Collect all unique privileges across ALL versions."""
     privileges: set[str] = set()
     for version in versions:
         for xml_file in _xml_files_for_version(data_model_dir, version):
@@ -245,21 +259,27 @@ def populate_binary(
                 for cl in root.xpath("./clusters/cluster"):
                     base_device_clusters.add(int(cl.get("id"), 0))
                 continue
-            d = DeviceDef(id=int(root.get("id"), 0), name=root.get("name"), clusters=set())
+            d = DeviceDef(
+                id=int(root.get("id"), 0),
+                name=root.get("name"),
+                clusters=set(),
+            )
             for cl in root.xpath("./clusters/cluster"):
                 d.clusters.add(int(cl.get("id"), 0))
             devices[d.id] = d
 
         # Structs
         for struct in tree.xpath("//struct"):
-            s = StructDef(name=struct.get("name"), fields=[])
+            s = StructDef(
+                name=struct.get("name"),
+                fields=[],
+            )
             for field in struct.xpath("./field"):
                 s.fields.append(
                     FieldDef(
                         id=int(field.get("id"), 0),
                         name=field.get("name"),
-                        # Type might not be given for generic container fields
-                        type=_clean_name(field.get("type", "")),
+                        type=_get_type(field),
                     )
                 )
             structs[s.name] = s
@@ -282,8 +302,7 @@ def populate_binary(
                         a := AttributeDef(
                             id=int(attr.get("id"), 0),
                             name=attr.get("name"),
-                            # Type might be omitted for deprecated attributes
-                            type=_clean_name(attr.get("type", "")),
+                            type=_get_type(attr),
                         )
                     )
                     if access := attr.xpath("./access"):
@@ -296,8 +315,7 @@ def populate_binary(
                             FieldDef(
                                 id=int(field.get("id", "0"), 0),
                                 name=field.get("name"),
-                                # Reserved fields might not have a type
-                                type=_clean_name(field.get("type", "")),
+                                type=_get_type(field),
                             )
                         )
                     c.commands.append(
