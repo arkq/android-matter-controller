@@ -140,6 +140,7 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_explorer_event_search">Search events</string>
     <string name="device_explorer_endpoints_empty">No endpoints available for this device.</string>
     <string name="device_explorer_clusters_empty">No clusters found for this endpoint.</string>
+    <string name="device_explorer_no_results">No results matching your search.</string>
     <string name="device_explorer_server_clusters_count">%1$d server clusters</string>
     <string name="device_explorer_client_clusters_count">%1$d client clusters</string>
     <string name="device_explorer_device_types_label">Device types: %1$s</string>
