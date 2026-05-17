@@ -10,6 +10,7 @@ import chip.devicecontroller.ChipStructs
 import chip.devicecontroller.ReportCallback
 import chip.devicecontroller.model.ChipAttributePath
 import chip.devicecontroller.model.ChipEventPath
+import chip.devicecontroller.model.InvokeElement
 import chip.devicecontroller.model.NodeState
 import io.aether.android.CommissioningWindowStatus
 import io.aether.android.formatNodeId
@@ -193,6 +194,55 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
               0,
           )
     }
+  }
+
+  suspend fun invokeGenericCommand(
+      nodeId: Long,
+      endpoint: Int,
+      clusterId: Long,
+      commandId: Long,
+      tlvPayload: ByteArray,
+  ) {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e(e, "Can't get connectedDevicePointer for invokeGenericCommand.")
+          return
+        }
+
+    chipClient.invoke(
+        connectedDevicePtr,
+        InvokeElement.newInstance(
+            endpoint.toLong(),
+            clusterId,
+            commandId,
+            tlvPayload,
+            "",
+        ),
+    )
+  }
+
+  suspend fun writeGenericAttribute(
+      nodeId: Long,
+      endpoint: Int,
+      clusterId: Long,
+      attributeId: Long,
+      tlvPayload: ByteArray,
+  ) {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e(e, "Can't get connectedDevicePointer for writeGenericAttribute.")
+          return
+        }
+
+    chipClient.writeAttribute(
+        connectedDevicePtr,
+        ChipAttributePath.newInstance(endpoint.toLong(), clusterId, attributeId),
+        tlvPayload,
+    )
   }
 
   private suspend fun readGlobalListAttribute(

@@ -133,9 +133,12 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_explorer_endpoint_chip_without_type">EP%1$d</string>
     <string name="device_explorer_endpoint_type_unknown">Unknown</string>
     <string name="device_explorer_toggle_search">Toggle search</string>
+    <string name="device_explorer_root">Root</string>
     <string name="device_explorer_endpoint_search">Search endpoints</string>
     <string name="device_explorer_cluster_search">Search clusters</string>
     <string name="device_explorer_attribute_search">Search attributes</string>
+    <string name="device_explorer_command_search">Search commands</string>
+    <string name="device_explorer_event_search">Search events</string>
     <string name="device_explorer_endpoints_empty">No endpoints available for this device.</string>
     <string name="device_explorer_clusters_empty">No clusters found for this endpoint.</string>
     <string name="device_explorer_server_clusters_count">%1$d server clusters</string>
@@ -160,6 +163,9 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_explorer_edit_value">Edit value</string>
     <string name="device_explorer_current_value">Current value: %1$s</string>
     <string name="device_explorer_value_not_read">Not read yet</string>
+    <string name="device_explorer_attribute_read_privilege">Read privilege: %1$s</string>
+    <string name="device_explorer_attribute_write_privilege">Write privilege: %1$s</string>
+    <string name="device_explorer_privilege_not_available">Not available</string>
     <string name="device_explorer_attribute_title">%1$s (%2$s)</string>
     <string name="device_explorer_command_title">%1$s (%2$s)</string>
     <string name="device_explorer_argument_with_range">%1$s (%2$d-%3$d)</string>
@@ -181,6 +187,8 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_explorer_error_transition_time_out_of_range">Transition Time must be between 0 and 65535.</string>
     <string name="device_explorer_error_invalid_number">Please enter a valid number for %1$s.</string>
     <string name="device_explorer_error_out_of_range">Value for %1$s must be between %2$d and %3$d.</string>
+    <string name="device_explorer_error_invalid_boolean">Please enter true or false.</string>
+    <string name="device_explorer_error_unsupported_value_type">The selected value type is not supported yet.</string>
 
     <!-- Device Share Dialog -->
     <string name="device_share_dialog_title">Share this device?</string>

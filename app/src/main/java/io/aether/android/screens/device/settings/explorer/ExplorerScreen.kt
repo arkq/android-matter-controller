@@ -8,16 +8,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -53,7 +52,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
-import io.aether.android.chip.MatterConstants
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
 
@@ -69,9 +67,14 @@ fun ExplorerRoute(
   val endpointSearchQuery by viewModel.endpointSearchQuery.collectAsState()
   val clusterSearchQuery by viewModel.clusterSearchQuery.collectAsState()
   val attributeSearchQuery by viewModel.attributeSearchQuery.collectAsState()
+  val commandSearchQuery by viewModel.commandSearchQuery.collectAsState()
+  val eventSearchQuery by viewModel.eventSearchQuery.collectAsState()
+  val loadingClusterKeys by viewModel.loadingClusterKeys.collectAsState()
   val clusterDetailsByKey by viewModel.clusterDetailsByKey.collectAsState()
   val attributeValueByKey by viewModel.attributeValueByKey.collectAsState()
   val msgDialogInfo by viewModel.msgDialogInfo.collectAsState()
+  val clustersMap = viewModel.clustersMap
+  val devicesMap = viewModel.devicesMap
 
   var showSearch by rememberSaveable { mutableStateOf(false) }
 
@@ -117,6 +120,8 @@ fun ExplorerRoute(
       BreadcrumbBar(
           navStack = navStack,
           deviceMatterInfoList = infos,
+          clustersMap = clustersMap,
+          devicesMap = devicesMap,
           onPopToIndex = viewModel::popToIndex,
       )
 
@@ -124,6 +129,7 @@ fun ExplorerRoute(
         ExplorerLevel.EndpointList ->
             EndpointListContent(
                 infos = infos,
+                devicesMap = devicesMap,
                 showSearch = showSearch,
                 searchQuery = endpointSearchQuery,
                 onSearchQueryChange = viewModel::onEndpointSearchQueryChange,
@@ -133,6 +139,7 @@ fun ExplorerRoute(
             ClusterListContent(
                 endpoint = level.endpoint,
                 infos = infos,
+                clustersMap = clustersMap,
                 showSearch = showSearch,
                 searchQuery = clusterSearchQuery,
                 onSearchQueryChange = viewModel::onClusterSearchQueryChange,
@@ -144,10 +151,15 @@ fun ExplorerRoute(
           val key = ExplorerClusterKey(level.endpoint, level.clusterId)
           ClusterDetailContent(
               tab = level.tab,
+              isLoading = loadingClusterKeys.contains(key),
               details = clusterDetailsByKey[key],
               showSearch = showSearch,
               attributeSearchQuery = attributeSearchQuery,
+              commandSearchQuery = commandSearchQuery,
+              eventSearchQuery = eventSearchQuery,
               onAttributeSearchQueryChange = viewModel::onAttributeSearchQueryChange,
+              onCommandSearchQueryChange = viewModel::onCommandSearchQueryChange,
+              onEventSearchQueryChange = viewModel::onEventSearchQueryChange,
               onTabSelected = { tab ->
                 viewModel.setClusterDetailTab(level.endpoint, level.clusterId, tab)
               },
@@ -155,17 +167,7 @@ fun ExplorerRoute(
                 viewModel.openAttributeDetail(level.endpoint, level.clusterId, attribute)
               },
               onCommandSelected = { command ->
-                if (command.arguments.isEmpty()) {
-                  viewModel.invokeCommand(
-                      nodeId,
-                      level.endpoint,
-                      level.clusterId,
-                      command.id,
-                      emptyMap(),
-                  )
-                } else {
-                  viewModel.openCommandInvoke(level.endpoint, level.clusterId, command)
-                }
+                viewModel.openCommandInvoke(level.endpoint, level.clusterId, command)
               },
           )
         }
@@ -221,10 +223,10 @@ fun ExplorerRoute(
 private fun BreadcrumbBar(
     navStack: List<ExplorerLevel>,
     deviceMatterInfoList: List<DeviceMatterInfo>,
+    clustersMap: Map<Long, String>,
+    devicesMap: Map<Long, String>,
     onPopToIndex: (Int) -> Unit,
 ) {
-  if (navStack.size <= 1) return
-
   Row(
       modifier =
           Modifier.fillMaxWidth()
@@ -237,8 +239,7 @@ private fun BreadcrumbBar(
       horizontalArrangement = Arrangement.spacedBy(4.dp),
   ) {
     navStack.forEachIndexed { index, level ->
-      if (index == 0) return@forEachIndexed
-      if (index > 1) {
+      if (index > 0) {
         Icon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
@@ -246,7 +247,7 @@ private fun BreadcrumbBar(
         )
       }
 
-      val label = breadcrumbLabelFor(level, deviceMatterInfoList)
+      val label = breadcrumbLabelFor(level, deviceMatterInfoList, clustersMap, devicesMap)
       val isLast = index == navStack.size - 1
       if (isLast) {
         Text(
@@ -272,32 +273,36 @@ private fun BreadcrumbBar(
 private fun breadcrumbLabelFor(
     level: ExplorerLevel,
     deviceMatterInfoList: List<DeviceMatterInfo>,
+    clustersMap: Map<Long, String>,
+    devicesMap: Map<Long, String>,
 ): String =
     when (level) {
-      ExplorerLevel.EndpointList -> stringResource(R.string.device_settings_admin_explorer)
+      ExplorerLevel.EndpointList -> stringResource(R.string.device_explorer_root)
       is ExplorerLevel.ClusterList -> {
         val info = deviceMatterInfoList.firstOrNull { it.endpoint == level.endpoint }
         val firstType = info?.types?.firstOrNull()
-        if (firstType == null) {
-          stringResource(R.string.device_explorer_endpoint_chip_without_type, level.endpoint)
-        } else {
-          val typeName =
-              MatterConstants.DeviceTypesMap[firstType]
+        val endpointName =
+            if (firstType == null) {
+              null
+            } else {
+              devicesMap[firstType]
                   ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
-          stringResource(R.string.device_explorer_endpoint_chip, level.endpoint, typeName)
-        }
+            }
+        formatEndpointLabel(level.endpoint, endpointName)
       }
-      is ExplorerLevel.ClusterDetail ->
-          MatterConstants.ClustersMap[level.clusterId]
-              ?: stringResource(R.string.device_explorer_cluster_unknown)
-      is ExplorerLevel.AttributeDetail ->
-          level.attribute.name ?: formatExplorerId(level.attribute.id)
-      is ExplorerLevel.CommandInvoke -> level.command.name ?: formatExplorerId(level.command.id)
+      is ExplorerLevel.ClusterDetail -> {
+        val name =
+            clustersMap[level.clusterId] ?: stringResource(R.string.device_explorer_cluster_unknown)
+        formatIdAndName(level.clusterId, name)
+      }
+      is ExplorerLevel.AttributeDetail -> formatIdAndName(level.attribute.id, level.attribute.name)
+      is ExplorerLevel.CommandInvoke -> formatIdAndName(level.command.id, level.command.name)
     }
 
 @Composable
 private fun EndpointListContent(
     infos: List<DeviceMatterInfo>,
+    devicesMap: Map<Long, String>,
     showSearch: Boolean,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
@@ -310,7 +315,7 @@ private fun EndpointListContent(
     } else {
       val endpointText = "ep${info.endpoint}".lowercase()
       val firstType = info.types.firstOrNull()
-      val typeName = MatterConstants.DeviceTypesMap[firstType].orEmpty().lowercase()
+      val typeName = devicesMap[firstType].orEmpty().lowercase()
       endpointText.contains(normalizedQuery) || typeName.contains(normalizedQuery)
     }
   }
@@ -336,21 +341,19 @@ private fun EndpointListContent(
       return@Column
     }
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
       items(filteredInfos, key = { it.endpoint }) { info ->
         val firstType = info.types.firstOrNull()
-        val label =
+        val endpointName =
             if (firstType == null) {
-              stringResource(R.string.device_explorer_endpoint_chip_without_type, info.endpoint)
+              null
             } else {
-              val typeName =
-                  MatterConstants.DeviceTypesMap[firstType]
-                      ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
-              stringResource(R.string.device_explorer_endpoint_chip, info.endpoint, typeName)
+              devicesMap[firstType]
+                  ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
             }
         ExplorerRow(
-            label = label,
-            value =
+            text = formatEndpointLabel(info.endpoint, endpointName),
+            secondaryText =
                 stringResource(
                     R.string.device_explorer_server_clusters_count,
                     info.serverClusters.size,
@@ -366,6 +369,7 @@ private fun EndpointListContent(
 private fun ClusterListContent(
     endpoint: Int,
     infos: List<DeviceMatterInfo>,
+    clustersMap: Map<Long, String>,
     showSearch: Boolean,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
@@ -378,7 +382,7 @@ private fun ClusterListContent(
     if (normalizedQuery.isBlank()) {
       true
     } else {
-      val name = MatterConstants.ClustersMap[clusterId].orEmpty().lowercase()
+      val name = clustersMap[clusterId].orEmpty().lowercase()
       val hex = formatExplorerId(clusterId).lowercase()
       name.contains(normalizedQuery) || hex.contains(normalizedQuery)
     }
@@ -408,10 +412,12 @@ private fun ClusterListContent(
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
       items(filteredClusters, key = { it }) { clusterId ->
         ExplorerRow(
-            label =
-                MatterConstants.ClustersMap[clusterId]
-                    ?: stringResource(R.string.device_explorer_cluster_unknown),
-            value = formatExplorerId(clusterId),
+            text =
+                formatIdAndName(
+                    clusterId,
+                    clustersMap[clusterId]
+                        ?: stringResource(R.string.device_explorer_cluster_unknown),
+                ),
             onClick = { onSelectCluster(clusterId) },
         )
       }
@@ -422,10 +428,15 @@ private fun ClusterListContent(
 @Composable
 private fun ClusterDetailContent(
     tab: ExplorerTab,
+    isLoading: Boolean,
     details: ExplorerClusterDetails?,
     showSearch: Boolean,
     attributeSearchQuery: String,
+    commandSearchQuery: String,
+    eventSearchQuery: String,
     onAttributeSearchQueryChange: (String) -> Unit,
+    onCommandSearchQueryChange: (String) -> Unit,
+    onEventSearchQueryChange: (String) -> Unit,
     onTabSelected: (ExplorerTab) -> Unit,
     onAttributeSelected: (ExplorerAttributeUiItem) -> Unit,
     onCommandSelected: (ExplorerCommandUiItem) -> Unit,
@@ -441,10 +452,8 @@ private fun ClusterDetailContent(
       }
     }
 
-    if (details == null) {
-      Column(modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal))) {
-        Text(stringResource(R.string.device_explorer_loading_cluster))
-      }
+    if (isLoading || details == null) {
+      LoadingIndicator(stringResource(R.string.device_explorer_loading_cluster))
       return@Column
     }
 
@@ -486,10 +495,12 @@ private fun ClusterDetailContent(
             ) {
               items(filtered, key = { it.id }) { attribute ->
                 ExplorerRow(
-                    label =
-                        attribute.name
-                            ?: stringResource(R.string.device_explorer_attribute_unknown),
-                    value = formatExplorerId(attribute.id),
+                    text =
+                        formatIdAndName(
+                            attribute.id,
+                            attribute.name
+                                ?: stringResource(R.string.device_explorer_attribute_unknown),
+                        ),
                     onClick = { onAttributeSelected(attribute) },
                 )
               }
@@ -498,46 +509,95 @@ private fun ClusterDetailContent(
         }
       }
       ExplorerTab.COMMANDS -> {
-        if (details.commands.isEmpty()) {
-          Column(modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal))) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
+        ) {
+          if (showSearch) {
+            OutlinedTextField(
+                value = commandSearchQuery,
+                onValueChange = onCommandSearchQueryChange,
+                label = { Text(stringResource(R.string.device_explorer_command_search)) },
+                modifier = Modifier.fillMaxWidth(),
+            )
+          }
+
+          val normalizedQuery = commandSearchQuery.trim().lowercase()
+          val filteredCommands =
+              details.commands.filter { command ->
+                if (normalizedQuery.isBlank()) {
+                  true
+                } else {
+                  val name = command.name.orEmpty().lowercase()
+                  val hex = formatExplorerId(command.id).lowercase()
+                  name.contains(normalizedQuery) || hex.contains(normalizedQuery)
+                }
+              }
+
+          if (filteredCommands.isEmpty()) {
             Text(
                 text = stringResource(R.string.device_explorer_commands_empty),
                 style = MaterialTheme.typography.bodyMedium,
             )
-          }
-        } else {
-          LazyColumn(
-              contentPadding = PaddingValues(dimensionResource(R.dimen.margin_normal)),
-              verticalArrangement = Arrangement.spacedBy(8.dp),
-          ) {
-            items(details.commands, key = { it.id }) { command ->
-              ExplorerRow(
-                  label = command.name ?: stringResource(R.string.device_explorer_command_unknown),
-                  value = formatExplorerId(command.id),
-                  onClick = { onCommandSelected(command) },
-              )
+          } else {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+              items(filteredCommands, key = { it.id }) { command ->
+                ExplorerRow(
+                    text =
+                        formatIdAndName(
+                            command.id,
+                            command.name
+                                ?: stringResource(R.string.device_explorer_command_unknown),
+                        ),
+                    onClick = { onCommandSelected(command) },
+                )
+              }
             }
           }
         }
       }
       ExplorerTab.EVENTS -> {
-        if (details.events.isEmpty()) {
-          Column(modifier = Modifier.padding(dimensionResource(R.dimen.margin_normal))) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
+        ) {
+          if (showSearch) {
+            OutlinedTextField(
+                value = eventSearchQuery,
+                onValueChange = onEventSearchQueryChange,
+                label = { Text(stringResource(R.string.device_explorer_event_search)) },
+                modifier = Modifier.fillMaxWidth(),
+            )
+          }
+
+          val normalizedQuery = eventSearchQuery.trim().lowercase()
+          val filteredEvents =
+              details.events.filter { event ->
+                if (normalizedQuery.isBlank()) {
+                  true
+                } else {
+                  val name = event.name.orEmpty().lowercase()
+                  val hex = formatExplorerId(event.id).lowercase()
+                  name.contains(normalizedQuery) || hex.contains(normalizedQuery)
+                }
+              }
+
+          if (filteredEvents.isEmpty()) {
             Text(
                 text = stringResource(R.string.device_explorer_events_empty),
                 style = MaterialTheme.typography.bodyMedium,
             )
-          }
-        } else {
-          LazyColumn(
-              contentPadding = PaddingValues(dimensionResource(R.dimen.margin_normal)),
-              verticalArrangement = Arrangement.spacedBy(8.dp),
-          ) {
-            items(details.events, key = { it.id }) { event ->
-              ExplorerRow(
-                  label = event.name ?: stringResource(R.string.device_explorer_event_unknown),
-                  value = formatExplorerId(event.id),
-              )
+          } else {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+              items(filteredEvents, key = { it.id }) { event ->
+                ExplorerRow(
+                    text =
+                        formatIdAndName(
+                            event.id,
+                            event.name ?: stringResource(R.string.device_explorer_event_unknown),
+                        ),
+                )
+              }
             }
           }
         }
@@ -562,7 +622,10 @@ private fun AttributeDetailContent(
   }
 
   Column(
-      modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),
+      modifier =
+          Modifier.fillMaxSize()
+              .verticalScroll(rememberScrollState())
+              .padding(dimensionResource(R.dimen.margin_normal)),
       verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {
     Text(
@@ -580,6 +643,26 @@ private fun AttributeDetailContent(
             stringResource(
                 R.string.device_explorer_current_value,
                 currentValue ?: stringResource(R.string.device_explorer_value_not_read),
+            ),
+        style = MaterialTheme.typography.bodyMedium,
+    )
+
+    Text(
+        text =
+            stringResource(
+                R.string.device_explorer_attribute_read_privilege,
+                attribute.readPrivilegeLabel
+                    ?: stringResource(R.string.device_explorer_privilege_not_available),
+            ),
+        style = MaterialTheme.typography.bodyMedium,
+    )
+
+    Text(
+        text =
+            stringResource(
+                R.string.device_explorer_attribute_write_privilege,
+                attribute.writePrivilegeLabel
+                    ?: stringResource(R.string.device_explorer_privilege_not_available),
             ),
         style = MaterialTheme.typography.bodyMedium,
     )
@@ -667,8 +750,8 @@ private fun CommandInvokeContent(
 
 @Composable
 private fun ExplorerRow(
-    label: String,
-    value: String,
+    text: String,
+    secondaryText: String? = null,
     onClick: (() -> Unit)? = null,
 ) {
   Row(
@@ -679,11 +762,28 @@ private fun ExplorerRow(
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically,
   ) {
-    Column(modifier = Modifier.weight(1f)) {
-      Text(text = label, style = MaterialTheme.typography.bodyLarge)
-      Spacer(modifier = Modifier.height(2.dp))
-      Text(text = value, style = MaterialTheme.typography.bodySmall)
+    Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+      Text(text = text, style = MaterialTheme.typography.bodyLarge)
+      if (!secondaryText.isNullOrBlank()) {
+        Text(text = secondaryText, style = MaterialTheme.typography.bodySmall)
+      }
     }
+  }
+}
+
+private fun formatEndpointLabel(endpoint: Int, name: String?): String =
+    if (name.isNullOrBlank()) {
+      "[EP$endpoint]"
+    } else {
+      "[EP$endpoint] $name"
+    }
+
+private fun formatIdAndName(id: Long, name: String?): String {
+  val idText = formatExplorerId(id)
+  return if (name.isNullOrBlank()) {
+    "[$idText]"
+  } else {
+    "[$idText] $name"
   }
 }
 
