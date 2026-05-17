@@ -21,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import io.aether.android.LocalAetherExtendedColors
 import kotlinx.coroutines.delay
 
+private const val SUCCESS_HIGHLIGHT_DURATION_MS = 2000L
+
 private enum class FieldHighlight {
   STANDARD,
   EDITED,
@@ -92,7 +94,7 @@ fun HighlightedOutlinedTextField(
     if (successTrigger > lastSeen) {
       lastSeen = successTrigger
       highlight = FieldHighlight.SUCCESS
-      delay(2000)
+      delay(SUCCESS_HIGHLIGHT_DURATION_MS)
       if (highlight == FieldHighlight.SUCCESS) highlight = FieldHighlight.STANDARD
     }
   }
