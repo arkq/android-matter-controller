@@ -132,7 +132,7 @@ internal object ExplorerTlvCodec {
           writeAnonymousUnsigned(
               out,
               TLV_ANON_UNSIGNED_8,
-              parseUnsigned(rawValue, Long.MAX_VALUE, invalidNumberMessageRes),
+              parseUnsigned64(rawValue, invalidNumberMessageRes),
               8,
           )
       MatterType.TYPE_INT8 ->
@@ -258,11 +258,7 @@ internal object ExplorerTlvCodec {
               out,
               tag,
               TLV_CONTEXT_UNSIGNED_8,
-              parseUnsigned(
-                  requiredValue,
-                  Long.MAX_VALUE,
-                  R.string.device_explorer_error_invalid_number,
-              ),
+              parseUnsigned64(requiredValue, R.string.device_explorer_error_invalid_number),
               8,
           )
       MatterType.TYPE_INT8 ->
@@ -367,6 +363,28 @@ internal object ExplorerTlvCodec {
 
   private fun writeLittleEndian(out: ByteArrayOutputStream, value: Long, sizeBytes: Int) {
     repeat(sizeBytes) { shiftByte -> out.write(((value ushr (shiftByte * 8)) and 0xFF).toInt()) }
+  }
+
+  private fun parseUnsigned64(
+      value: String,
+      @StringRes invalidNumberMessageRes: Int,
+  ): Long {
+    val normalized = value.trim()
+    if (normalized.isBlank()) {
+      throw ExplorerInputValidationException(invalidNumberMessageRes)
+    }
+    val ulong =
+        when {
+          normalized.startsWith("0x", ignoreCase = true) ->
+              normalized.substring(2).toULongOrNull(16)
+                  ?: throw ExplorerInputValidationException(invalidNumberMessageRes)
+          else ->
+              normalized.toULongOrNull()
+                  ?: throw ExplorerInputValidationException(invalidNumberMessageRes)
+        }
+    // Reinterpret the ULong bits as Long; writeLittleEndian uses ushr which correctly
+    // serialises all 8 bytes regardless of the sign bit.
+    return ulong.toLong()
   }
 
   private fun parseUnsigned(

@@ -15,6 +15,7 @@ import io.aether.android.matter.MatterPrivilege
 import io.aether.android.matter.MatterType
 import io.aether.android.screens.common.DialogInfo
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -136,8 +137,19 @@ constructor(
   val clustersMap: Map<Long, String> = dataModelLoader.clustersMap
   val devicesMap: Map<Long, String> = dataModelLoader.devicesMap
 
-  val knownClustersById: Map<Long, ExplorerClusterDefinition> by lazy {
-    ExplorerSchema.buildKnownClustersById(dataModelLoader.load(), dataModelLoader.genericAttributes)
+  private val _knownClustersById =
+      MutableStateFlow<Map<Long, ExplorerClusterDefinition>>(emptyMap())
+  val knownClustersById: StateFlow<Map<Long, ExplorerClusterDefinition>> =
+      _knownClustersById.asStateFlow()
+
+  init {
+    viewModelScope.launch(Dispatchers.IO) {
+      _knownClustersById.value =
+          ExplorerSchema.buildKnownClustersById(
+              dataModelLoader.load(),
+              dataModelLoader.genericAttributes,
+          )
+    }
   }
 
   fun shortTypeLabel(type: MatterType): String = dataModelLoader.shortTypeLabel(type)
@@ -243,7 +255,7 @@ constructor(
     _loadingClusterKeys.update { it + key }
     viewModelScope.launch {
       try {
-        val knownSchema = knownClustersById[clusterId]
+        val knownSchema = _knownClustersById.value[clusterId]
 
         val attributesFromDevice =
             runCatching { clustersHelper.readClusterAttributeList(nodeId, endpoint, clusterId) }
@@ -365,8 +377,10 @@ constructor(
     viewModelScope.launch {
       try {
         val attributeType =
-            knownClustersById[clusterId]?.attributes?.firstOrNull { it.id == attributeId }?.type
-                ?: MatterType.TYPE_UNKNOWN
+            _knownClustersById.value[clusterId]
+                ?.attributes
+                ?.firstOrNull { it.id == attributeId }
+                ?.type ?: MatterType.TYPE_UNKNOWN
         val payload =
             ExplorerTlvCodec.encodeAnonymousValue(
                 type = attributeType,
@@ -408,7 +422,7 @@ constructor(
     viewModelScope.launch {
       try {
         val arguments =
-            knownClustersById[clusterId]
+            _knownClustersById.value[clusterId]
                 ?.commands
                 ?.firstOrNull { it.id == commandId }
                 ?.arguments

@@ -75,7 +75,11 @@ internal fun ClusterDetailContent(
 
           val filtered =
               details.attributes.filter { attr ->
-                matchesExplorerQuery(attributeSearchQuery, attr.name.orEmpty(), formatExplorerId(attr.id))
+                matchesExplorerQuery(
+                    attributeSearchQuery,
+                    attr.name.orEmpty(),
+                    formatExplorerId(attr.id),
+                )
               }
           val normalizedQuery = attributeSearchQuery.trim().lowercase()
 
@@ -101,16 +105,16 @@ internal fun ClusterDetailContent(
                                 ?: stringResource(R.string.device_explorer_attribute_unknown),
                         ),
                     secondaryText =
-                      explorerSupportStatusText(
-                        baseText =
-                          stringResource(
-                            R.string.device_explorer_attribute_metadata,
-                            stringResource(attribute.readPrivilege.labelRes()),
-                            stringResource(attribute.writePrivilege.labelRes()),
-                            typeLabelFor(attribute.type),
-                          ),
-                        isSupported = attribute.isSupported,
-                      ),
+                        explorerSupportStatusText(
+                            baseText =
+                                stringResource(
+                                    R.string.device_explorer_attribute_metadata,
+                                    stringResource(attribute.readPrivilege.labelRes()),
+                                    stringResource(attribute.writePrivilege.labelRes()),
+                                    typeLabelFor(attribute.type),
+                                ),
+                            isSupported = attribute.isSupported,
+                        ),
                     isDimmed = !attribute.isSupported,
                     onClick = { onAttributeSelected(attribute) },
                 )
@@ -134,7 +138,11 @@ internal fun ClusterDetailContent(
 
           val filteredCommands =
               details.commands.filter { command ->
-                matchesExplorerQuery(commandSearchQuery, command.name.orEmpty(), formatExplorerId(command.id))
+                matchesExplorerQuery(
+                    commandSearchQuery,
+                    command.name.orEmpty(),
+                    formatExplorerId(command.id),
+                )
               }
           val normalizedQuery = commandSearchQuery.trim().lowercase()
 
@@ -160,14 +168,14 @@ internal fun ClusterDetailContent(
                                 ?: stringResource(R.string.device_explorer_command_unknown),
                         ),
                     secondaryText =
-                      explorerSupportStatusText(
-                        baseText =
-                          stringResource(
-                            R.string.device_explorer_command_arguments_count,
-                            command.arguments.size,
-                          ),
-                        isSupported = command.isSupported,
-                      ),
+                        explorerSupportStatusText(
+                            baseText =
+                                stringResource(
+                                    R.string.device_explorer_command_arguments_count,
+                                    command.arguments.size,
+                                ),
+                            isSupported = command.isSupported,
+                        ),
                     isDimmed = !command.isSupported,
                     onClick = { onCommandSelected(command) },
                 )
@@ -191,7 +199,11 @@ internal fun ClusterDetailContent(
 
           val filteredEvents =
               details.events.filter { event ->
-                matchesExplorerQuery(eventSearchQuery, event.name.orEmpty(), formatExplorerId(event.id))
+                matchesExplorerQuery(
+                    eventSearchQuery,
+                    event.name.orEmpty(),
+                    formatExplorerId(event.id),
+                )
               }
           val normalizedQuery = eventSearchQuery.trim().lowercase()
 

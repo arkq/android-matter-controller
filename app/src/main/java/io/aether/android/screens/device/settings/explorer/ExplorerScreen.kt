@@ -53,7 +53,7 @@ fun ExplorerRoute(
   val msgDialogInfo by viewModel.msgDialogInfo.collectAsState()
   val clustersMap = viewModel.clustersMap
   val devicesMap = viewModel.devicesMap
-  val knownClustersById = viewModel.knownClustersById
+  val knownClustersById by viewModel.knownClustersById.collectAsState()
 
   var showSearch by rememberSaveable { mutableStateOf(false) }
 
