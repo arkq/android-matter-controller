@@ -107,12 +107,22 @@ internal fun ClusterDetailContent(
                     secondaryText =
                         explorerSupportStatusText(
                             baseText =
-                                stringResource(
-                                    R.string.device_explorer_attribute_metadata,
-                                    stringResource(attribute.readPrivilege.labelRes()),
-                                    stringResource(attribute.writePrivilege.labelRes()),
-                                    typeLabelFor(attribute.type),
-                                ),
+                                buildString {
+                                  append(
+                                      stringResource(
+                                          R.string.device_explorer_attribute_privileges,
+                                          stringResource(attribute.readPrivilege.labelRes()),
+                                          stringResource(attribute.writePrivilege.labelRes()),
+                                      )
+                                  )
+                                  append("\n")
+                                  append(
+                                      stringResource(
+                                          R.string.device_explorer_attribute_type,
+                                          typeLabelFor(attribute.type),
+                                      )
+                                  )
+                                },
                             isSupported = attribute.isSupported,
                         ),
                     isDimmed = !attribute.isSupported,

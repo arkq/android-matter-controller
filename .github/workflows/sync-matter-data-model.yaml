@@ -37,4 +37,6 @@ jobs:
         with:
           branch: chore/sync-matter-data-model
           commit-message: "chore: Sync Matter data model assets"
-          add-paths: app/src/main/assets/matter/v*.bin
+          add-paths: |
+            app/src/main/assets/matter/v*.bin
+            app/src/main/proto/MatterDataModel.proto

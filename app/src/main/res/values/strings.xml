@@ -150,7 +150,9 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_explorer_clusters_empty">No clusters found for this endpoint.</string>
     <string name="device_explorer_no_results">No results matching your search.</string>
     <string name="device_explorer_endpoint_metadata">Server clusters: %1$d • Client clusters: %2$d</string>
-    <string name="device_explorer_device_types_label">Device types: %1$s</string>
+    <string name="device_explorer_device_type">Device type: %1$s</string>
+    <string name="device_explorer_device_types">Device types:</string>
+    <string name="device_explorer_device_types_item"> • %1$s</string>
     <string name="device_explorer_server_clusters_section">Server clusters</string>
     <string name="device_explorer_client_clusters_section">Client clusters</string>
     <string name="device_explorer_clusters_section_empty">No clusters in this section.</string>
@@ -170,7 +172,8 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_explorer_label_with_type">%1$s :: %2$s</string>
     <string name="device_explorer_command_arguments_count">Arguments: %1$d</string>
     <string name="device_explorer_value">Value</string>
-    <string name="device_explorer_attribute_metadata">Read: %1$s • Write: %2$s • Type: %3$s</string>
+    <string name="device_explorer_attribute_type">Type: %1$s</string>
+    <string name="device_explorer_attribute_privileges">Read: %1$s • Write: %2$s</string>
     <string name="device_explorer_error_action_failed">Explorer action failed.</string>
     <string name="device_explorer_not_supported">Not supported by this device</string>
     <string name="device_explorer_error_unsupported_attribute_write">This attribute cannot be written in Explorer.</string>

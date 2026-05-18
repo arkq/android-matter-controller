@@ -61,29 +61,41 @@ internal fun EndpointListContent(
 
     LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
       items(filteredInfos, key = { it.endpoint }) { info ->
-        val endpointTypeLabels =
-            info.types.map { typeId ->
-              val name =
-                  devicesMap[typeId]
-                      ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
-              formatIdAndName(typeId, name)
-            }
-        val endpointTypeNames =
-            info.types.map { typeId ->
-              devicesMap[typeId] ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
-            }
-        val titleName = endpointTypeNames.joinToString(" & ")
+        val deviceTypes =
+            info.types
+                .map { typeId ->
+                  val typeName =
+                      devicesMap[typeId]
+                          ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
+                  typeId to typeName
+                }
+                .sortedBy { it.first }
+        val titleName = deviceTypes.joinToString(" & ") { it.second }
         ExplorerRow(
             text = formatEndpointLabel(info.endpoint, titleName),
             secondaryText =
                 buildString {
-                  append(
-                      stringResource(
-                          R.string.device_explorer_device_types_label,
-                          endpointTypeLabels.joinToString(", "),
+                  if (deviceTypes.size == 1) {
+                    append(
+                        stringResource(
+                            R.string.device_explorer_device_type,
+                            formatIdAndName(deviceTypes.first().first, deviceTypes.first().second),
+                        )
+                    )
+                    append("\n")
+                  } else if (deviceTypes.isNotEmpty()) {
+                    append(stringResource(R.string.device_explorer_device_types))
+                    append("\n")
+                    deviceTypes.forEach { (typeId, name) ->
+                      append(
+                          stringResource(
+                              R.string.device_explorer_device_types_item,
+                              formatIdAndName(typeId, name),
+                          )
                       )
-                  )
-                  append("\n")
+                      append("\n")
+                    }
+                  }
                   append(
                       stringResource(
                           R.string.device_explorer_endpoint_metadata,
