@@ -443,13 +443,11 @@ internal object ExplorerTlvCodec {
       max: Long,
       @StringRes invalidNumberMessageRes: Int,
   ): Long {
-    val normalized = value.trim()
-    if (normalized.isBlank() || normalized.any { it != '0' && it != '1' }) {
+    if (!isBitmapBinaryValue(value)) {
       throw ExplorerInputValidationException(invalidNumberMessageRes)
     }
     val parsed =
-        normalized.toLongOrNull(2)
-            ?: throw ExplorerInputValidationException(invalidNumberMessageRes)
+        value.toLongOrNull(2) ?: throw ExplorerInputValidationException(invalidNumberMessageRes)
     if (parsed > max) {
       throw ExplorerInputValidationException(invalidNumberMessageRes)
     }

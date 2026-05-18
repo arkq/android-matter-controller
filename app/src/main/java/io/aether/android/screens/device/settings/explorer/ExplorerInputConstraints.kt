@@ -12,6 +12,7 @@ internal enum class ExplorerInputKind {
   BITMAP,
 }
 
+/** Maps Matter value types to the explorer input category used for UI constraints. */
 internal fun MatterType.inputKind(): ExplorerInputKind =
     when (this) {
       MatterType.TYPE_MAP8,
@@ -46,12 +47,13 @@ internal fun MatterType.inputKind(): ExplorerInputKind =
       else -> ExplorerInputKind.TEXT
     }
 
+/** Validates whether [value] is acceptable for [type] while the user is typing. */
 internal fun isValidInputForType(type: MatterType, value: String): Boolean =
     when (type.inputKind()) {
       ExplorerInputKind.TEXT -> true
       ExplorerInputKind.UNSIGNED_INTEGER -> isPartialUnsigned(value)
       ExplorerInputKind.SIGNED_INTEGER -> isPartialSigned(value)
-      ExplorerInputKind.BITMAP -> isPartialBitmap(value)
+      ExplorerInputKind.BITMAP -> isBitmapBinaryValue(value, allowEmpty = true)
     }
 
 private fun isPartialUnsigned(value: String): Boolean {
@@ -81,5 +83,14 @@ private fun isPartialSigned(value: String): Boolean {
   return digits.isNotEmpty() && digits.all(Char::isDigit)
 }
 
-private fun isPartialBitmap(value: String): Boolean =
-    value.isEmpty() || value.all { it == '0' || it == '1' }
+/**
+ * Returns `true` if [value] contains only binary digits (`0` or `1`).
+ *
+ * Use [allowEmpty] for input-in-progress states where an empty field is temporarily valid.
+ */
+internal fun isBitmapBinaryValue(value: String, allowEmpty: Boolean = false): Boolean {
+  if (value.isEmpty()) {
+    return allowEmpty
+  }
+  return value.all { it == '0' || it == '1' }
+}

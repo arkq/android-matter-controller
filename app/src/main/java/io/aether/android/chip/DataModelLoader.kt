@@ -162,6 +162,7 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
     return scalarLabelFor(matterType)
   }
 
+  /** Builds `LIST[...]` labels by resolving the inner Matter type when available. */
   private fun listLabelFor(matterType: MatterType): String? {
     if (!matterType.name.startsWith("TYPE_LIST_")) {
       return null
@@ -172,6 +173,7 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
     return "LIST[$innerLabel]"
   }
 
+  /** Returns labels for scalar (non-list) Matter types, including known ID aliases. */
   private fun scalarLabelFor(matterType: MatterType): String =
       when (matterType) {
         MatterType.TYPE_CLUSTER_ID,
@@ -193,32 +195,47 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
         else -> scalarLabelForName(matterType.name)
       }
 
+  /**
+   * Converts a Matter enum name into a compact label, handling numeric UINT/INT/ENUM/MAP widths and
+   * generic bitmap-like names.
+   */
   private fun scalarLabelForName(typeName: String): String {
     val normalized = typeName.removePrefix("TYPE_")
-    val uintWidth = normalized.removePrefix("UINT").takeIf { normalized.startsWith("UINT") }
-    if (uintWidth?.all(Char::isDigit) == true) {
+    val uintWidth = extractNumericSuffix(normalized, "UINT")
+    if (uintWidth != null) {
       return "U$uintWidth"
     }
-    val intWidth = normalized.removePrefix("INT").takeIf { normalized.startsWith("INT") }
-    if (intWidth?.all(Char::isDigit) == true) {
+    val intWidth = extractNumericSuffix(normalized, "INT")
+    if (intWidth != null) {
       return "I$intWidth"
     }
-    val enumWidth = normalized.removePrefix("ENUM").takeIf { normalized.startsWith("ENUM") }
-    if (enumWidth?.all(Char::isDigit) == true) {
+    val enumWidth = extractNumericSuffix(normalized, "ENUM")
+    if (enumWidth != null) {
       return "U$enumWidth"
     }
-    val mapWidth = normalized.removePrefix("MAP").takeIf { normalized.startsWith("MAP") }
-    if (mapWidth?.all(Char::isDigit) == true) {
+    val mapWidth = extractNumericSuffix(normalized, "MAP")
+    if (mapWidth != null) {
       return "B$mapWidth"
     }
     return when {
       normalized == "BOOL" -> "BOOL"
       normalized == "STRING" || normalized == "OCTSTR" -> "STR"
+      // Some generated Matter types are named as domain-specific bitmaps/maps (without width),
+      // so keep a generic bitmap marker when a width cannot be derived from the enum name.
       normalized.endsWith("_BITMAP") ||
           normalized.endsWith("_MAP") ||
           normalized.endsWith("_BITS") -> "B"
       else -> normalized
     }
+  }
+
+  /** Extracts a numeric suffix from names like `UINT8` using the provided [prefix]. */
+  private fun extractNumericSuffix(typeName: String, prefix: String): String? {
+    if (!typeName.startsWith(prefix)) {
+      return null
+    }
+    val suffix = typeName.removePrefix(prefix)
+    return suffix.takeIf { it.all(Char::isDigit) }
   }
 
   data class GenericAttributeDefinition(
