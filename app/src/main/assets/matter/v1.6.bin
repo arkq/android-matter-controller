@@ -2117,10 +2117,12 @@ SystemModeX
 ScheduleTypeFeaturesé-
 SecurityPolicy
 RotationTime	
-Flags+
+FlagsG
 SemanticTagStruct
-MfgCode	
-ValueV+
+MfgCode
+NamespaceIDÅ
+TagÉ	
+Label+
 SeriesInfoStruct
 
 Season
