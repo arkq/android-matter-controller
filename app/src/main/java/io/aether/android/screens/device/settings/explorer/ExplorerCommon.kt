@@ -14,7 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.aether.android.R
 
 @Composable
 internal fun ExplorerRow(
@@ -70,3 +72,19 @@ internal fun formatExplorerId(id: Long): String =
 
 internal fun formatEndpointId(endpoint: Int): String =
     if (endpoint <= 0xFF) String.format("0x%02X", endpoint) else String.format("0x%04X", endpoint)
+
+internal fun matchesExplorerQuery(query: String, vararg fields: String): Boolean {
+  val normalizedQuery = query.trim().lowercase()
+  if (normalizedQuery.isBlank()) {
+    return true
+  }
+  return fields.any { it.lowercase().contains(normalizedQuery) }
+}
+
+@Composable
+internal fun explorerSupportStatusText(baseText: String, isSupported: Boolean): String =
+    if (isSupported) {
+      baseText
+    } else {
+      "$baseText\n${stringResource(R.string.device_explorer_not_supported)}"
+    }

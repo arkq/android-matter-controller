@@ -73,17 +73,11 @@ internal fun ClusterDetailContent(
             )
           }
 
-          val normalizedQuery = attributeSearchQuery.trim().lowercase()
           val filtered =
               details.attributes.filter { attr ->
-                if (normalizedQuery.isBlank()) {
-                  true
-                } else {
-                  val name = attr.name.orEmpty().lowercase()
-                  val hex = formatExplorerId(attr.id).lowercase()
-                  name.contains(normalizedQuery) || hex.contains(normalizedQuery)
-                }
+                matchesExplorerQuery(attributeSearchQuery, attr.name.orEmpty(), formatExplorerId(attr.id))
               }
+          val normalizedQuery = attributeSearchQuery.trim().lowercase()
 
           if (filtered.isEmpty()) {
             Text(
@@ -107,20 +101,16 @@ internal fun ClusterDetailContent(
                                 ?: stringResource(R.string.device_explorer_attribute_unknown),
                         ),
                     secondaryText =
-                        buildString {
-                          append(
-                              stringResource(
-                                  R.string.device_explorer_attribute_metadata,
-                                  stringResource(attribute.readPrivilege.labelRes()),
-                                  stringResource(attribute.writePrivilege.labelRes()),
-                                  typeLabelFor(attribute.type),
-                              )
-                          )
-                          if (!attribute.isSupported) {
-                            append("\n")
-                            append(stringResource(R.string.device_explorer_not_supported))
-                          }
-                        },
+                      explorerSupportStatusText(
+                        baseText =
+                          stringResource(
+                            R.string.device_explorer_attribute_metadata,
+                            stringResource(attribute.readPrivilege.labelRes()),
+                            stringResource(attribute.writePrivilege.labelRes()),
+                            typeLabelFor(attribute.type),
+                          ),
+                        isSupported = attribute.isSupported,
+                      ),
                     isDimmed = !attribute.isSupported,
                     onClick = { onAttributeSelected(attribute) },
                 )
@@ -142,17 +132,11 @@ internal fun ClusterDetailContent(
             )
           }
 
-          val normalizedQuery = commandSearchQuery.trim().lowercase()
           val filteredCommands =
               details.commands.filter { command ->
-                if (normalizedQuery.isBlank()) {
-                  true
-                } else {
-                  val name = command.name.orEmpty().lowercase()
-                  val hex = formatExplorerId(command.id).lowercase()
-                  name.contains(normalizedQuery) || hex.contains(normalizedQuery)
-                }
+                matchesExplorerQuery(commandSearchQuery, command.name.orEmpty(), formatExplorerId(command.id))
               }
+          val normalizedQuery = commandSearchQuery.trim().lowercase()
 
           if (filteredCommands.isEmpty()) {
             Text(
@@ -176,18 +160,14 @@ internal fun ClusterDetailContent(
                                 ?: stringResource(R.string.device_explorer_command_unknown),
                         ),
                     secondaryText =
-                        buildString {
-                          append(
-                              stringResource(
-                                  R.string.device_explorer_command_arguments_count,
-                                  command.arguments.size,
-                              )
-                          )
-                          if (!command.isSupported) {
-                            append("\n")
-                            append(stringResource(R.string.device_explorer_not_supported))
-                          }
-                        },
+                      explorerSupportStatusText(
+                        baseText =
+                          stringResource(
+                            R.string.device_explorer_command_arguments_count,
+                            command.arguments.size,
+                          ),
+                        isSupported = command.isSupported,
+                      ),
                     isDimmed = !command.isSupported,
                     onClick = { onCommandSelected(command) },
                 )
@@ -209,17 +189,11 @@ internal fun ClusterDetailContent(
             )
           }
 
-          val normalizedQuery = eventSearchQuery.trim().lowercase()
           val filteredEvents =
               details.events.filter { event ->
-                if (normalizedQuery.isBlank()) {
-                  true
-                } else {
-                  val name = event.name.orEmpty().lowercase()
-                  val hex = formatExplorerId(event.id).lowercase()
-                  name.contains(normalizedQuery) || hex.contains(normalizedQuery)
-                }
+                matchesExplorerQuery(eventSearchQuery, event.name.orEmpty(), formatExplorerId(event.id))
               }
+          val normalizedQuery = eventSearchQuery.trim().lowercase()
 
           if (filteredEvents.isEmpty()) {
             Text(

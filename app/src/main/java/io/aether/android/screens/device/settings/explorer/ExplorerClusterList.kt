@@ -34,18 +34,12 @@ internal fun ClusterListContent(
   val endpointInfo = infos.firstOrNull { it.endpoint == endpoint }
   val serverClusters = endpointInfo?.serverClusters.orEmpty().sorted()
   val clientClusters = endpointInfo?.clientClusters.orEmpty().sorted()
-  val normalizedQuery = searchQuery.trim().lowercase()
   val clusterMatchesQuery: (Long) -> Boolean = { clusterId ->
-    if (normalizedQuery.isBlank()) {
-      true
-    } else {
-      val name = clustersMap[clusterId].orEmpty().lowercase()
-      val hex = formatExplorerId(clusterId).lowercase()
-      name.contains(normalizedQuery) || hex.contains(normalizedQuery)
-    }
+    matchesExplorerQuery(searchQuery, clustersMap[clusterId].orEmpty(), formatExplorerId(clusterId))
   }
   val filteredServerClusters = serverClusters.filter(clusterMatchesQuery)
   val filteredClientClusters = clientClusters.filter(clusterMatchesQuery)
+  val normalizedQuery = searchQuery.trim().lowercase()
 
   Column(
       modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),

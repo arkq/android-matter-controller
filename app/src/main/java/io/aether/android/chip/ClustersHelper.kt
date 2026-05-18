@@ -130,23 +130,23 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
       endpoint: Int,
       clusterId: Long,
       attributeId: Long,
-  ): String? {
+  ): String {
     val connectedDevicePtr =
         try {
           chipClient.getConnectedDevicePointer(nodeId)
         } catch (e: IllegalStateException) {
           Timber.e(e, "Can't get connectedDevicePointer for readAttributeValue.")
-          return null
+          throw e
         }
     val attributeState =
         chipClient.readAttribute(
             connectedDevicePtr,
             ChipAttributePath.newInstance(endpoint.toLong(), clusterId, attributeId),
-        ) ?: return null
+        ) ?: throw IllegalStateException("readAttributeValue returned no state")
     return when {
       attributeState.value != null -> attributeState.value.toString()
       attributeState.json != null -> attributeState.json.toString()
-      else -> null
+      else -> throw IllegalStateException("readAttributeValue returned empty state")
     }
   }
 
@@ -162,7 +162,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
           chipClient.getConnectedDevicePointer(nodeId)
         } catch (e: IllegalStateException) {
           Timber.e(e, "Can't get connectedDevicePointer for invokeGenericCommand.")
-          return
+          throw e
         }
 
     chipClient.invoke(
@@ -189,7 +189,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
           chipClient.getConnectedDevicePointer(nodeId)
         } catch (e: IllegalStateException) {
           Timber.e(e, "Can't get connectedDevicePointer for writeGenericAttribute.")
-          return
+          throw e
         }
 
     chipClient.writeAttribute(

@@ -340,8 +340,7 @@ constructor(
   fun readAttribute(nodeId: Long, endpoint: Int, clusterId: Long, attributeId: Long) {
     viewModelScope.launch {
       try {
-        val value =
-            clustersHelper.readAttributeValue(nodeId, endpoint, clusterId, attributeId).orEmpty()
+        val value = clustersHelper.readAttributeValue(nodeId, endpoint, clusterId, attributeId)
         _attributeValueByKey.update {
           it + (attributeKey(endpoint, clusterId, attributeId) to value)
         }

@@ -29,17 +29,12 @@ internal fun EndpointListContent(
     onSearchQueryChange: (String) -> Unit,
     onSelectEndpoint: (Int) -> Unit,
 ) {
-  val normalizedQuery = searchQuery.trim().lowercase()
   val filteredInfos = infos.filter { info ->
-    if (normalizedQuery.isBlank()) {
-      true
-    } else {
-      val endpointText = formatEndpointId(info.endpoint).lowercase()
-      val typeNames =
-          info.types.joinToString(" ") { typeId -> devicesMap[typeId].orEmpty().lowercase() }
-      endpointText.contains(normalizedQuery) || typeNames.contains(normalizedQuery)
-    }
+    val endpointText = formatEndpointId(info.endpoint)
+    val typeNames = info.types.joinToString(" ") { typeId -> devicesMap[typeId].orEmpty() }
+    matchesExplorerQuery(searchQuery, endpointText, typeNames)
   }
+  val normalizedQuery = searchQuery.trim().lowercase()
 
   Column(
       modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),
