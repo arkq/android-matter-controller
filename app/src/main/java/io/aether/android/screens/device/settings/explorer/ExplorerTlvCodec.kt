@@ -87,21 +87,33 @@ internal object ExplorerTlvCodec {
         out.write(bytes)
       }
       MatterType.TYPE_UINT8,
-      MatterType.TYPE_ENUM8,
-      MatterType.TYPE_MAP8 ->
+      MatterType.TYPE_ENUM8 ->
           writeAnonymousUnsigned(
               out,
               TLV_ANON_UNSIGNED_1,
               parseUnsigned(rawValue, 0xFF, invalidNumberMessageRes),
               1,
           )
+      MatterType.TYPE_MAP8 ->
+          writeAnonymousUnsigned(
+              out,
+              TLV_ANON_UNSIGNED_1,
+              parseBitmap(rawValue, 0xFF, invalidNumberMessageRes),
+              1,
+          )
       MatterType.TYPE_UINT16,
-      MatterType.TYPE_ENUM16,
-      MatterType.TYPE_MAP16 ->
+      MatterType.TYPE_ENUM16 ->
           writeAnonymousUnsigned(
               out,
               TLV_ANON_UNSIGNED_2,
               parseUnsigned(rawValue, 0xFFFF, invalidNumberMessageRes),
+              2,
+          )
+      MatterType.TYPE_MAP16 ->
+          writeAnonymousUnsigned(
+              out,
+              TLV_ANON_UNSIGNED_2,
+              parseBitmap(rawValue, 0xFFFF, invalidNumberMessageRes),
               2,
           )
       MatterType.TYPE_UINT24,
@@ -205,8 +217,7 @@ internal object ExplorerTlvCodec {
         out.write(bytes)
       }
       MatterType.TYPE_UINT8,
-      MatterType.TYPE_ENUM8,
-      MatterType.TYPE_MAP8 ->
+      MatterType.TYPE_ENUM8 ->
           writeContextUnsigned(
               out,
               tag,
@@ -214,14 +225,29 @@ internal object ExplorerTlvCodec {
               parseUnsigned(requiredValue, 0xFF, R.string.device_explorer_error_invalid_number),
               1,
           )
+      MatterType.TYPE_MAP8 ->
+          writeContextUnsigned(
+              out,
+              tag,
+              TLV_CONTEXT_UNSIGNED_1,
+              parseBitmap(requiredValue, 0xFF, R.string.device_explorer_error_invalid_number),
+              1,
+          )
       MatterType.TYPE_UINT16,
-      MatterType.TYPE_ENUM16,
-      MatterType.TYPE_MAP16 ->
+      MatterType.TYPE_ENUM16 ->
           writeContextUnsigned(
               out,
               tag,
               TLV_CONTEXT_UNSIGNED_2,
               parseUnsigned(requiredValue, 0xFFFF, R.string.device_explorer_error_invalid_number),
+              2,
+          )
+      MatterType.TYPE_MAP16 ->
+          writeContextUnsigned(
+              out,
+              tag,
+              TLV_CONTEXT_UNSIGNED_2,
+              parseBitmap(requiredValue, 0xFFFF, R.string.device_explorer_error_invalid_number),
               2,
           )
       MatterType.TYPE_UINT24,
@@ -407,6 +433,24 @@ internal object ExplorerTlvCodec {
   ): Long {
     val parsed = parseFlexibleLong(value, invalidNumberMessageRes)
     if (parsed < min || parsed > max) {
+      throw ExplorerInputValidationException(invalidNumberMessageRes)
+    }
+    return parsed
+  }
+
+  private fun parseBitmap(
+      value: String,
+      max: Long,
+      @StringRes invalidNumberMessageRes: Int,
+  ): Long {
+    val normalized = value.trim()
+    if (normalized.isBlank() || normalized.any { it != '0' && it != '1' }) {
+      throw ExplorerInputValidationException(invalidNumberMessageRes)
+    }
+    val parsed =
+        normalized.toLongOrNull(2)
+            ?: throw ExplorerInputValidationException(invalidNumberMessageRes)
+    if (parsed > max) {
       throw ExplorerInputValidationException(invalidNumberMessageRes)
     }
     return parsed

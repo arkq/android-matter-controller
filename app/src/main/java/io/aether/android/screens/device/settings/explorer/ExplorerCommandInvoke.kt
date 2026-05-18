@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import io.aether.android.R
 import io.aether.android.matter.MatterType
 import io.aether.android.screens.common.HighlightedOutlinedTextField
@@ -42,9 +44,21 @@ internal fun CommandInvokeContent(
     val focusManager = LocalFocusManager.current
     if (command.arguments.isNotEmpty()) {
       command.arguments.forEach { argument ->
+        val keyboardOptions =
+            when (argument.type.inputKind()) {
+              ExplorerInputKind.TEXT -> KeyboardOptions.Default
+              ExplorerInputKind.UNSIGNED_INTEGER,
+              ExplorerInputKind.SIGNED_INTEGER -> KeyboardOptions(keyboardType = KeyboardType.Ascii)
+              ExplorerInputKind.BITMAP ->
+                  KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+            }
         HighlightedOutlinedTextField(
             value = commandArguments[argument.key].orEmpty(),
-            onValueChange = { commandArguments[argument.key] = it },
+            onValueChange = {
+              if (isValidInputForType(argument.type, it)) {
+                commandArguments[argument.key] = it
+              }
+            },
             successTrigger = invokeSuccessCount,
             resetKey = command.id,
             label = {
@@ -57,6 +71,7 @@ internal fun CommandInvokeContent(
               )
             },
             modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = keyboardOptions,
         )
       }
     }

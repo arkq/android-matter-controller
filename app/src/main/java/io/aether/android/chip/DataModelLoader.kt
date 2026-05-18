@@ -152,19 +152,28 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
 
   // Return technical and short user-friendly type labels for a given [MatterType].
   // These labels should not be localized as they are meant to be technical.
-  fun shortTypeLabel(matterType: MatterType): String =
+  fun shortTypeLabel(matterType: MatterType): String {
+    if (matterType == MatterType.TYPE_UNKNOWN || matterType == MatterType.UNRECOGNIZED) {
+      return "N/A"
+    }
+    listLabelFor(matterType)?.let {
+      return it
+    }
+    return scalarLabelFor(matterType)
+  }
+
+  private fun listLabelFor(matterType: MatterType): String? {
+    if (!matterType.name.startsWith("TYPE_LIST_")) {
+      return null
+    }
+    val innerTypeName = "TYPE_${matterType.name.removePrefix("TYPE_LIST_")}"
+    val innerType = MatterType.values().firstOrNull { it.name == innerTypeName }
+    val innerLabel = innerType?.let(::scalarLabelFor) ?: scalarLabelForName(innerTypeName)
+    return "LIST[$innerLabel]"
+  }
+
+  private fun scalarLabelFor(matterType: MatterType): String =
       when (matterType) {
-        MatterType.TYPE_BOOL -> "BOOL"
-        MatterType.TYPE_STRING,
-        MatterType.TYPE_OCTSTR -> "STR"
-        MatterType.TYPE_UINT8,
-        MatterType.TYPE_ENUM8,
-        MatterType.TYPE_MAP8 -> "U8"
-        MatterType.TYPE_UINT16,
-        MatterType.TYPE_ENUM16,
-        MatterType.TYPE_MAP16 -> "U16"
-        MatterType.TYPE_UINT24,
-        MatterType.TYPE_UINT32,
         MatterType.TYPE_CLUSTER_ID,
         MatterType.TYPE_ATTRIBUTE_ID,
         MatterType.TYPE_ENDPOINT_NO,
@@ -174,7 +183,6 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
         MatterType.TYPE_MESSAGE_ID,
         MatterType.TYPE_SNAPSHOT_STREAM_ID,
         MatterType.TYPE_TLS_ENDPOINT_ID -> "U32"
-        MatterType.TYPE_UINT64,
         MatterType.TYPE_EPOCH_S,
         MatterType.TYPE_EPOCH_US,
         MatterType.TYPE_FABRIC_IDX,
@@ -182,23 +190,36 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
         MatterType.TYPE_SUBJECT_ID,
         MatterType.TYPE_TLSCAID,
         MatterType.TYPE_TLSCCDID -> "U64"
-        MatterType.TYPE_INT8 -> "I8"
-        MatterType.TYPE_INT16 -> "I16"
-        MatterType.TYPE_INT32 -> "I32"
-        MatterType.TYPE_INT64 -> "I64"
-        MatterType.TYPE_LIST_STRING,
-        MatterType.TYPE_LIST_OCTSTR -> "LIST[STR]"
-        MatterType.TYPE_LIST_UINT8 -> "LIST[U8]"
-        MatterType.TYPE_LIST_UINT16 -> "LIST[U16]"
-        MatterType.TYPE_LIST_UINT32,
-        MatterType.TYPE_LIST_CLUSTER_ID,
-        MatterType.TYPE_LIST_GROUP_ID,
-        MatterType.TYPE_LIST_ENDPOINT_NO -> "LIST[U32]"
-        MatterType.TYPE_LIST_SUBJECT_ID -> "LIST[U64]"
-        MatterType.TYPE_UNKNOWN,
-        MatterType.UNRECOGNIZED -> "N/A"
-        else -> matterType.name
+        else -> scalarLabelForName(matterType.name)
       }
+
+  private fun scalarLabelForName(typeName: String): String {
+    val normalized = typeName.removePrefix("TYPE_")
+    val uintWidth = normalized.removePrefix("UINT").takeIf { normalized.startsWith("UINT") }
+    if (uintWidth?.all(Char::isDigit) == true) {
+      return "U$uintWidth"
+    }
+    val intWidth = normalized.removePrefix("INT").takeIf { normalized.startsWith("INT") }
+    if (intWidth?.all(Char::isDigit) == true) {
+      return "I$intWidth"
+    }
+    val enumWidth = normalized.removePrefix("ENUM").takeIf { normalized.startsWith("ENUM") }
+    if (enumWidth?.all(Char::isDigit) == true) {
+      return "U$enumWidth"
+    }
+    val mapWidth = normalized.removePrefix("MAP").takeIf { normalized.startsWith("MAP") }
+    if (mapWidth?.all(Char::isDigit) == true) {
+      return "B$mapWidth"
+    }
+    return when {
+      normalized == "BOOL" -> "BOOL"
+      normalized == "STRING" || normalized == "OCTSTR" -> "STR"
+      normalized.endsWith("_BITMAP") ||
+          normalized.endsWith("_MAP") ||
+          normalized.endsWith("_BITS") -> "B"
+      else -> normalized
+    }
+  }
 
   data class GenericAttributeDefinition(
       val id: Long,
