@@ -10,6 +10,7 @@ import chip.devicecontroller.ChipStructs
 import chip.devicecontroller.ReportCallback
 import chip.devicecontroller.model.ChipAttributePath
 import chip.devicecontroller.model.ChipEventPath
+import chip.devicecontroller.model.InvokeElement
 import chip.devicecontroller.model.NodeState
 import io.aether.android.CommissioningWindowStatus
 import io.aether.android.formatNodeId
@@ -47,6 +48,10 @@ private const val BASIC_INFORMATION_VENDOR_NAME_ATTRIBUTE_ID = 0x0001L
 private const val BASIC_INFORMATION_VENDOR_ID_ATTRIBUTE_ID = 0x0002L
 private const val BASIC_INFORMATION_HARDWARE_VERSION_STRING_ATTRIBUTE_ID = 0x0008L
 private const val BASIC_INFORMATION_SOFTWARE_VERSION_STRING_ATTRIBUTE_ID = 0x000AL
+private const val GLOBAL_ATTRIBUTE_EVENT_LIST_ID = 0xFFFAL
+private const val GLOBAL_ATTRIBUTE_ACCEPTED_COMMAND_LIST_ID = 0xFFF9L
+private const val GLOBAL_ATTRIBUTE_GENERATED_COMMAND_LIST_ID = 0xFFF8L
+private const val GLOBAL_ATTRIBUTE_ATTRIBUTE_LIST_ID = 0xFFFBL
 
 data class BasicInformationAttributes(
     val vendorName: String? = null,
@@ -74,6 +79,188 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         }
     fetchDeviceMatterInfo(nodeId, connectedDevicePtr, 0, matterDeviceInfoList)
     return matterDeviceInfoList
+  }
+
+  suspend fun readClusterAttributeList(nodeId: Long, endpoint: Int, clusterId: Long): List<Long> {
+    return readGlobalListAttribute(
+        nodeId = nodeId,
+        endpoint = endpoint,
+        clusterId = clusterId,
+        globalAttributeId = GLOBAL_ATTRIBUTE_ATTRIBUTE_LIST_ID,
+    )
+  }
+
+  suspend fun readClusterAcceptedCommandList(
+      nodeId: Long,
+      endpoint: Int,
+      clusterId: Long,
+  ): List<Long> {
+    return readGlobalListAttribute(
+        nodeId = nodeId,
+        endpoint = endpoint,
+        clusterId = clusterId,
+        globalAttributeId = GLOBAL_ATTRIBUTE_ACCEPTED_COMMAND_LIST_ID,
+    )
+  }
+
+  suspend fun readClusterGeneratedCommandList(
+      nodeId: Long,
+      endpoint: Int,
+      clusterId: Long,
+  ): List<Long> {
+    return readGlobalListAttribute(
+        nodeId = nodeId,
+        endpoint = endpoint,
+        clusterId = clusterId,
+        globalAttributeId = GLOBAL_ATTRIBUTE_GENERATED_COMMAND_LIST_ID,
+    )
+  }
+
+  suspend fun readClusterEventList(nodeId: Long, endpoint: Int, clusterId: Long): List<Long> {
+    return readGlobalListAttribute(
+        nodeId = nodeId,
+        endpoint = endpoint,
+        clusterId = clusterId,
+        globalAttributeId = GLOBAL_ATTRIBUTE_EVENT_LIST_ID,
+    )
+  }
+
+  suspend fun readAttributeValue(
+      nodeId: Long,
+      endpoint: Int,
+      clusterId: Long,
+      attributeId: Long,
+  ): String {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e(e, "Can't get connectedDevicePointer for readAttributeValue.")
+          throw e
+        }
+    val attributeState =
+        chipClient.readAttribute(
+            connectedDevicePtr,
+            ChipAttributePath.newInstance(endpoint.toLong(), clusterId, attributeId),
+        ) ?: throw IllegalStateException("readAttributeValue returned no state")
+    return when {
+      attributeState.value != null -> attributeState.value.toString()
+      attributeState.json != null -> attributeState.json.toString()
+      else -> throw IllegalStateException("readAttributeValue returned empty state")
+    }
+  }
+
+  suspend fun invokeGenericCommand(
+      nodeId: Long,
+      endpoint: Int,
+      clusterId: Long,
+      commandId: Long,
+      tlvPayload: ByteArray,
+  ) {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e(e, "Can't get connectedDevicePointer for invokeGenericCommand.")
+          throw e
+        }
+
+    chipClient.invoke(
+        connectedDevicePtr,
+        InvokeElement.newInstance(
+            endpoint.toLong(),
+            clusterId,
+            commandId,
+            tlvPayload,
+            "",
+        ),
+    )
+  }
+
+  suspend fun writeGenericAttribute(
+      nodeId: Long,
+      endpoint: Int,
+      clusterId: Long,
+      attributeId: Long,
+      tlvPayload: ByteArray,
+  ) {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e(e, "Can't get connectedDevicePointer for writeGenericAttribute.")
+          throw e
+        }
+
+    chipClient.writeAttribute(
+        connectedDevicePtr,
+        ChipAttributePath.newInstance(endpoint.toLong(), clusterId, attributeId),
+        tlvPayload,
+    )
+  }
+
+  private suspend fun readGlobalListAttribute(
+      nodeId: Long,
+      endpoint: Int,
+      clusterId: Long,
+      globalAttributeId: Long,
+  ): List<Long> {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e(e, "Can't get connectedDevicePointer for readGlobalListAttribute.")
+          return emptyList()
+        }
+    val attributeState =
+        try {
+          chipClient.readAttribute(
+              connectedDevicePtr,
+              ChipAttributePath.newInstance(endpoint.toLong(), clusterId, globalAttributeId),
+          )
+        } catch (e: IllegalStateException) {
+          if (isUnsupportedAttributeError(e)) {
+            Timber.d(
+                e,
+                "readGlobalListAttribute: unsupported global attribute endpoint=%d cluster=0x%X attribute=0x%X",
+                endpoint,
+                clusterId,
+                globalAttributeId,
+            )
+            return emptyList()
+          }
+          throw e
+        } ?: return emptyList()
+    return readLongList(attributeState.value)
+  }
+
+  private fun isUnsupportedAttributeError(error: Throwable): Boolean {
+    var current: Throwable? = error
+    while (current != null) {
+      val message = current.message.orEmpty()
+      if (message.contains("IM Status: 134") || message.contains("IM Status: 0x86")) {
+        return true
+      }
+      current = current.cause
+    }
+    return false
+  }
+
+  private fun readLongList(value: Any?): List<Long> {
+    return when (value) {
+      is List<*> -> {
+        val numericValues = value.mapNotNull { (it as? Number)?.toLong() }
+        if (numericValues.size != value.size) {
+          throw IllegalStateException(
+              "readLongList: received non-numeric items in global list attribute"
+          )
+        }
+        numericValues
+      }
+      is LongArray -> value.toList()
+      is IntArray -> value.map { it.toLong() }
+      else -> emptyList()
+    }
   }
 
   /** Fetches MatterDeviceInfo for a specific endpoint. */

@@ -4,8 +4,12 @@
 package io.aether.android.chip
 
 import android.content.Context
+import androidx.annotation.StringRes
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.aether.android.R
 import io.aether.android.matter.MatterDataModel
+import io.aether.android.matter.MatterPrivilege
+import io.aether.android.matter.MatterType
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -104,4 +108,113 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
   val clustersMap: Map<Long, String> by lazy {
     latestModel.clustersList.associate { it.id.toLong() to it.name }
   }
+
+  val genericAttributes: List<GenericAttributeDefinition> by lazy {
+    listOf(
+        GenericAttributeDefinition(
+            id = 0xFFF8L,
+            name = "GeneratedCommandList",
+            typeValue = MatterType.TYPE_LIST_UINT32,
+            readPrivilege = MatterPrivilege.PRIVILEGE_VIEW,
+        ),
+        GenericAttributeDefinition(
+            id = 0xFFF9L,
+            name = "AcceptedCommandList",
+            typeValue = MatterType.TYPE_LIST_UINT32,
+            readPrivilege = MatterPrivilege.PRIVILEGE_VIEW,
+        ),
+        GenericAttributeDefinition(
+            id = 0xFFFAL,
+            name = "EventList",
+            typeValue = MatterType.TYPE_LIST_UINT32,
+            readPrivilege = MatterPrivilege.PRIVILEGE_VIEW,
+        ),
+        GenericAttributeDefinition(
+            id = 0xFFFBL,
+            name = "AttributeList",
+            typeValue = MatterType.TYPE_LIST_UINT32,
+            readPrivilege = MatterPrivilege.PRIVILEGE_VIEW,
+        ),
+        GenericAttributeDefinition(
+            id = 0xFFFCL,
+            name = "FeatureMap",
+            typeValue = MatterType.TYPE_UINT32,
+            readPrivilege = MatterPrivilege.PRIVILEGE_VIEW,
+        ),
+        GenericAttributeDefinition(
+            id = 0xFFFDL,
+            name = "ClusterRevision",
+            typeValue = MatterType.TYPE_UINT16,
+            readPrivilege = MatterPrivilege.PRIVILEGE_VIEW,
+        ),
+    )
+  }
+
+  // Return technical and short user-friendly type labels for a given [MatterType].
+  // These labels should not be localized as they are meant to be technical.
+  fun shortTypeLabel(matterType: MatterType): String =
+      when (matterType) {
+        MatterType.TYPE_BOOL -> "BOOL"
+        MatterType.TYPE_STRING,
+        MatterType.TYPE_OCTSTR -> "STR"
+        MatterType.TYPE_UINT8,
+        MatterType.TYPE_ENUM8,
+        MatterType.TYPE_MAP8 -> "U8"
+        MatterType.TYPE_UINT16,
+        MatterType.TYPE_ENUM16,
+        MatterType.TYPE_MAP16 -> "U16"
+        MatterType.TYPE_UINT24,
+        MatterType.TYPE_UINT32,
+        MatterType.TYPE_CLUSTER_ID,
+        MatterType.TYPE_ATTRIBUTE_ID,
+        MatterType.TYPE_ENDPOINT_NO,
+        MatterType.TYPE_DEVTYPE_ID,
+        MatterType.TYPE_GROUP_ID,
+        MatterType.TYPE_VENDOR_ID,
+        MatterType.TYPE_MESSAGE_ID,
+        MatterType.TYPE_SNAPSHOT_STREAM_ID,
+        MatterType.TYPE_TLS_ENDPOINT_ID -> "U32"
+        MatterType.TYPE_UINT64,
+        MatterType.TYPE_EPOCH_S,
+        MatterType.TYPE_EPOCH_US,
+        MatterType.TYPE_FABRIC_IDX,
+        MatterType.TYPE_NODE_ID,
+        MatterType.TYPE_SUBJECT_ID,
+        MatterType.TYPE_TLSCAID,
+        MatterType.TYPE_TLSCCDID -> "U64"
+        MatterType.TYPE_INT8 -> "I8"
+        MatterType.TYPE_INT16 -> "I16"
+        MatterType.TYPE_INT32 -> "I32"
+        MatterType.TYPE_INT64 -> "I64"
+        MatterType.TYPE_LIST_STRING,
+        MatterType.TYPE_LIST_OCTSTR -> "LIST[STR]"
+        MatterType.TYPE_LIST_UINT8 -> "LIST[U8]"
+        MatterType.TYPE_LIST_UINT16 -> "LIST[U16]"
+        MatterType.TYPE_LIST_UINT32,
+        MatterType.TYPE_LIST_CLUSTER_ID,
+        MatterType.TYPE_LIST_GROUP_ID,
+        MatterType.TYPE_LIST_ENDPOINT_NO -> "LIST[U32]"
+        MatterType.TYPE_LIST_SUBJECT_ID -> "LIST[U64]"
+        MatterType.TYPE_UNKNOWN,
+        MatterType.UNRECOGNIZED -> "N/A"
+        else -> matterType.name
+      }
+
+  data class GenericAttributeDefinition(
+      val id: Long,
+      val name: String,
+      val typeValue: MatterType = MatterType.TYPE_UNKNOWN,
+      val readPrivilege: MatterPrivilege = MatterPrivilege.PRIVILEGE_UNKNOWN,
+      val writePrivilege: MatterPrivilege = MatterPrivilege.PRIVILEGE_UNKNOWN,
+  )
 }
+
+@StringRes
+fun MatterPrivilege.labelRes(): Int =
+    when (this) {
+      MatterPrivilege.PRIVILEGE_VIEW -> R.string.attr_access_privilege_view
+      MatterPrivilege.PRIVILEGE_OPERATE -> R.string.attr_access_privilege_operate
+      MatterPrivilege.PRIVILEGE_MANAGE -> R.string.attr_access_privilege_manage
+      MatterPrivilege.PRIVILEGE_ADMIN -> R.string.attr_access_privilege_administer
+      else -> R.string.attr_access_privilege_unknown
+    }

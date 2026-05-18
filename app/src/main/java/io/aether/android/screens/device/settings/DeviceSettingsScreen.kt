@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -63,6 +64,7 @@ import timber.log.Timber
 fun DeviceSettingsRoute(
     navigateToHome: () -> Unit,
     navigateToDeviceDataModel: (nodeId: Long) -> Unit,
+    navigateToDeviceExplorer: (nodeId: Long) -> Unit,
     navigateToDeviceFabrics: (nodeId: Long) -> Unit,
     onBackClick: () -> Unit,
     nodeId: Long,
@@ -170,6 +172,7 @@ fun DeviceSettingsRoute(
           }
         },
         onInspect = { device?.let { navigateToDeviceDataModel(nodeIdFor(it)) } },
+        onExplorer = { navigateToDeviceExplorer(nodeId) },
         onManageControllers = { navigateToDeviceFabrics(nodeId) },
     )
   }
@@ -194,6 +197,7 @@ private fun DeviceSettingsScreen(
     onRemoveDeviceOutcome: (Boolean) -> Unit,
     onConfirmDeviceRemovalOutcome: (Boolean) -> Unit,
     onInspect: () -> Unit,
+    onExplorer: () -> Unit,
     onManageControllers: () -> Unit,
 ) {
   val context = LocalContext.current
@@ -322,6 +326,12 @@ private fun DeviceSettingsScreen(
           label = stringResource(R.string.device_settings_admin_inspect),
           subtitle = stringResource(R.string.device_settings_admin_inspect_subtitle),
           onClick = onInspect,
+      )
+      SettingsActionRow(
+          icon = Icons.Outlined.Search,
+          label = stringResource(R.string.device_settings_admin_explorer),
+          subtitle = stringResource(R.string.device_settings_admin_explorer_subtitle),
+          onClick = onExplorer,
       )
       SettingsActionRow(
           icon = Icons.Outlined.Share,

@@ -11,8 +11,21 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+
+/** Extended theme colors not covered by the Material3 color scheme. */
+data class AetherExtendedColors(
+    /** Color used to indicate a successful operation (e.g. read / write / invoke feedback). */
+    val success: Color,
+)
+
+val LocalAetherExtendedColors = staticCompositionLocalOf {
+  AetherExtendedColors(success = Color(0xFF4CAF50))
+}
 
 @Composable
 fun AetherTheme(
@@ -29,8 +42,13 @@ fun AetherTheme(
           else -> lightColorScheme()
         }
       }
-  MaterialTheme(
-      colorScheme = colorScheme,
-      content = content,
-  )
+  val extendedColors =
+      if (darkTheme) AetherExtendedColors(success = Color(0xFF81C784))
+      else AetherExtendedColors(success = Color(0xFF4CAF50))
+  CompositionLocalProvider(LocalAetherExtendedColors provides extendedColors) {
+    MaterialTheme(
+        colorScheme = colorScheme,
+        content = content,
+    )
+  }
 }

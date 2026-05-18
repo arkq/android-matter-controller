@@ -29,10 +29,14 @@ jobs:
       - name: Install Python dependencies
         run: pip install lxml protobuf
       - name: Sync Matter data model assets
-        run: scripts/matter-data-model-parser.py matter-sdk/data_model
+        run: |
+          scripts/matter-data-model-parser.py matter-sdk/data_model
+          mv MatterDataModel.proto app/src/main/proto
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
         with:
           branch: chore/sync-matter-data-model
           commit-message: "chore: Sync Matter data model assets"
-          add-paths: app/src/main/assets/matter/v*.bin
+          add-paths: |
+            app/src/main/assets/matter/v*.bin
+            app/src/main/proto/MatterDataModel.proto

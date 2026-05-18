@@ -22,3 +22,8 @@ gradle-app.setting
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+
+# Python byte-compiled / optimized / DLL files
+__pycache__/
+*.py[codz]
+*$py.class
