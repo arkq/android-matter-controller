@@ -1,0 +1,252 @@
+// SPDX-FileCopyrightText: 2026 The Authors
+// SPDX-License-Identifier: Apache-2.0
+
+package io.aether.android.screens.device.settings.explorer
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import io.aether.android.R
+import io.aether.android.chip.labelRes
+import io.aether.android.matter.MatterType
+import io.aether.android.screens.common.LoadingIndicator
+import io.aether.android.screens.common.SearchTextField
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun ClusterDetailContent(
+    tab: ExplorerTab,
+    isLoading: Boolean,
+    details: ExplorerClusterDetails?,
+    typeLabelFor: (MatterType) -> String,
+    showSearch: Boolean,
+    attributeSearchQuery: String,
+    commandSearchQuery: String,
+    eventSearchQuery: String,
+    onAttributeSearchQueryChange: (String) -> Unit,
+    onCommandSearchQueryChange: (String) -> Unit,
+    onEventSearchQueryChange: (String) -> Unit,
+    onTabSelected: (ExplorerTab) -> Unit,
+    onAttributeSelected: (ExplorerAttributeUiItem) -> Unit,
+    onCommandSelected: (ExplorerCommandUiItem) -> Unit,
+) {
+  Column(modifier = Modifier.fillMaxSize()) {
+    PrimaryTabRow(selectedTabIndex = tab.ordinal) {
+      ExplorerTab.entries.forEach { t ->
+        Tab(
+            selected = tab == t,
+            onClick = { onTabSelected(t) },
+            text = { Text(stringResource(t.titleRes)) },
+        )
+      }
+    }
+
+    if (isLoading || details == null) {
+      LoadingIndicator(stringResource(R.string.device_explorer_loading_clusters))
+      return@Column
+    }
+
+    when (tab) {
+      ExplorerTab.ATTRIBUTES -> {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
+        ) {
+          if (showSearch) {
+            SearchTextField(
+                value = attributeSearchQuery,
+                onValueChange = onAttributeSearchQueryChange,
+                label = { Text(stringResource(R.string.device_explorer_search_attribute)) },
+            )
+          }
+
+          val normalizedQuery = attributeSearchQuery.trim().lowercase()
+          val filtered =
+              details.attributes.filter { attr ->
+                if (normalizedQuery.isBlank()) {
+                  true
+                } else {
+                  val name = attr.name.orEmpty().lowercase()
+                  val hex = formatExplorerId(attr.id).lowercase()
+                  name.contains(normalizedQuery) || hex.contains(normalizedQuery)
+                }
+              }
+
+          if (filtered.isEmpty()) {
+            Text(
+                text =
+                    if (normalizedQuery.isBlank())
+                        stringResource(R.string.device_explorer_attributes_empty)
+                    else stringResource(R.string.device_explorer_no_results),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+          } else {
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+              items(filtered, key = { it.id }) { attribute ->
+                ExplorerRow(
+                    text =
+                        formatIdAndName(
+                            attribute.id,
+                            attribute.name
+                                ?: stringResource(R.string.device_explorer_attribute_unknown),
+                        ),
+                    secondaryText =
+                        buildString {
+                          append(
+                              stringResource(
+                                  R.string.device_explorer_attribute_metadata,
+                                  stringResource(attribute.readPrivilege.labelRes()),
+                                  stringResource(attribute.writePrivilege.labelRes()),
+                                  typeLabelFor(attribute.type),
+                              )
+                          )
+                          if (!attribute.isSupported) {
+                            append("\n")
+                            append(stringResource(R.string.device_explorer_not_supported))
+                          }
+                        },
+                    isDimmed = !attribute.isSupported,
+                    onClick = { onAttributeSelected(attribute) },
+                )
+              }
+            }
+          }
+        }
+      }
+      ExplorerTab.COMMANDS -> {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
+        ) {
+          if (showSearch) {
+            SearchTextField(
+                value = commandSearchQuery,
+                onValueChange = onCommandSearchQueryChange,
+                label = { Text(stringResource(R.string.device_explorer_search_command)) },
+            )
+          }
+
+          val normalizedQuery = commandSearchQuery.trim().lowercase()
+          val filteredCommands =
+              details.commands.filter { command ->
+                if (normalizedQuery.isBlank()) {
+                  true
+                } else {
+                  val name = command.name.orEmpty().lowercase()
+                  val hex = formatExplorerId(command.id).lowercase()
+                  name.contains(normalizedQuery) || hex.contains(normalizedQuery)
+                }
+              }
+
+          if (filteredCommands.isEmpty()) {
+            Text(
+                text =
+                    if (normalizedQuery.isBlank())
+                        stringResource(R.string.device_explorer_commands_empty)
+                    else stringResource(R.string.device_explorer_no_results),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+          } else {
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+              items(filteredCommands, key = { it.id }) { command ->
+                ExplorerRow(
+                    text =
+                        formatIdAndName(
+                            command.id,
+                            command.name
+                                ?: stringResource(R.string.device_explorer_command_unknown),
+                        ),
+                    secondaryText =
+                        buildString {
+                          append(
+                              stringResource(
+                                  R.string.device_explorer_command_arguments_count,
+                                  command.arguments.size,
+                              )
+                          )
+                          if (!command.isSupported) {
+                            append("\n")
+                            append(stringResource(R.string.device_explorer_not_supported))
+                          }
+                        },
+                    isDimmed = !command.isSupported,
+                    onClick = { onCommandSelected(command) },
+                )
+              }
+            }
+          }
+        }
+      }
+      ExplorerTab.EVENTS -> {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
+        ) {
+          if (showSearch) {
+            SearchTextField(
+                value = eventSearchQuery,
+                onValueChange = onEventSearchQueryChange,
+                label = { Text(stringResource(R.string.device_explorer_search_event)) },
+            )
+          }
+
+          val normalizedQuery = eventSearchQuery.trim().lowercase()
+          val filteredEvents =
+              details.events.filter { event ->
+                if (normalizedQuery.isBlank()) {
+                  true
+                } else {
+                  val name = event.name.orEmpty().lowercase()
+                  val hex = formatExplorerId(event.id).lowercase()
+                  name.contains(normalizedQuery) || hex.contains(normalizedQuery)
+                }
+              }
+
+          if (filteredEvents.isEmpty()) {
+            Text(
+                text =
+                    if (normalizedQuery.isBlank())
+                        stringResource(R.string.device_explorer_events_empty)
+                    else stringResource(R.string.device_explorer_no_results),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+          } else {
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+              items(filteredEvents, key = { it.id }) { event ->
+                ExplorerRow(
+                    text =
+                        formatIdAndName(
+                            event.id,
+                            event.name ?: stringResource(R.string.device_explorer_event_unknown),
+                        ),
+                )
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

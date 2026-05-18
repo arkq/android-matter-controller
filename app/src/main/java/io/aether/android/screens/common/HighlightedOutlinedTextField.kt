@@ -69,7 +69,7 @@ private fun fieldHighlightColors(highlight: FieldHighlight): TextFieldColors {
 
 /**
  * An [OutlinedTextField] that visually signals interaction results via border color transitions:
- * - Turns **red** while the user is editing.
+ * - Turns **red** after the user has made local edits (resets on success or navigation).
  * - Turns **green** (then fades back to the standard color over 500 ms) when [successTrigger]
  *   increments, indicating that the last operation succeeded.
  *
