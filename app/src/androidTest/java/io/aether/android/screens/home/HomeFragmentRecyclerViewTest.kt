@@ -88,24 +88,27 @@ class HomeFragmentRecyclerViewTest {
           else -> Device.DeviceType.TYPE_UNSPECIFIED
         }
     scope.launch {
-      val deviceId = devicesRepository.incrementAndReturnLastDeviceId()
+      val nodeId = testDevice.vendorId.toLongOrNull() ?: System.currentTimeMillis()
       val device =
           Device.newBuilder()
               .setDateCommissioned(timestamp)
               .setVendorId(testDevice.vendorId)
               .setProductId(testDevice.productId)
               .setDeviceType(deviceType)
-              .setDeviceId(deviceId)
-              .setName(testDevice.getName(deviceId))
-              .setRoom(testDevice.getRoom(deviceId))
+              .setNodeId(nodeId)
+              .setName(testDevice.getName(nodeId))
+              .setRoom(testDevice.getRoom(nodeId))
               .build()
       val deviceUiModel = DeviceUiModel(device, testDevice.isOnline, testDevice.isOn)
       // Add the device to the repository.
       devicesRepository.addDevice(deviceUiModel.device)
-      devicesStateRepository.addDeviceState(
-          deviceUiModel.device.deviceId,
+      devicesStateRepository.addEndpointState(
+          deviceUiModel.device.nodeId,
+          endpoint = if (deviceUiModel.device.endpoint != 0) deviceUiModel.device.endpoint else 1,
           deviceUiModel.isOnline,
           deviceUiModel.isOn,
+          level = 0,
+          colorTemperature = 0,
       )
     }
   }

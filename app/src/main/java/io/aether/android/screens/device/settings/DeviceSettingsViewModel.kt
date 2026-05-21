@@ -18,7 +18,6 @@ import io.aether.android.SETUP_PIN_CODE
 import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.data.DevicesRepository
-import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.shared.SetDeviceNameResult
 import io.aether.android.screens.shared.SetDeviceNameUseCase
@@ -123,7 +122,7 @@ constructor(
     viewModelScope.launch {
       val device = devicesRepository.getDeviceByNodeId(nodeId)
       val result =
-          setDeviceNameUseCase.execute(device.deviceId, newName) {
+          setDeviceNameUseCase.execute(nodeId, newName) {
             // Immediately update local state so the UI reflects the new name.
             _device.value = _device.value?.toBuilder()?.setName(newName)?.build()
           }
@@ -140,8 +139,7 @@ constructor(
     Timber.d("changeDeviceType: nodeId [$nodeId] deviceType [$deviceType]")
     viewModelScope.launch {
       try {
-        val device = devicesRepository.getDeviceByNodeId(nodeId)
-        devicesRepository.updateDeviceType(device.deviceId, deviceType)
+        devicesRepository.updateDeviceType(nodeId, deviceType)
         _device.value = _device.value?.toBuilder()?.setDeviceType(deviceType)?.build()
       } catch (e: Exception) {
         Timber.e(e, "changeDeviceType failed")
@@ -288,8 +286,8 @@ constructor(
 
   private suspend fun removeAllLogicalDevicesForNode(nodeId: Long) {
     val devicesForNode =
-        devicesRepository.getAllDevices().devicesList.filter { nodeIdFor(it) == nodeId }
-    devicesForNode.forEach { devicesRepository.removeDevice(it.deviceId) }
+        devicesRepository.getAllDevices().devicesList.filter { it.nodeId == nodeId }
+    devicesForNode.forEach { devicesRepository.removeDevice(it.nodeId) }
   }
 
   // -----------------------------------------------------------------------------------------------

@@ -1,0 +1,41 @@
+// SPDX-FileCopyrightText: 2026 The Authors
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option java_package = "io.aether.android";
+option java_multiple_files = true;
+
+// Dynamic state for a single endpoint on a Matter node.
+message MatterEndpointState {
+    // Matter endpoint ID controlled by this state entry.
+    int32 endpoint_id = 1;
+
+    // Whether the endpoint is on (true) or off (false).
+    bool on = 2;
+
+    // Level of endpoint.
+    int32 level = 3;
+
+    // Color temperature of endpoint.
+    int32 color_temperature = 4;
+}
+
+// Dynamic state for a Matter node (device as a whole).
+message MatterNodeState {
+    // Matter node ID for this commissioned device.
+    int64 node_id = 1;
+    // Timestamp when the node state was captured.
+    google.protobuf.Timestamp date_captured = 2;
+    // Whether the node is online (true) or offline (false).
+    bool online = 3;
+    // Endpoint states for this node.
+    repeated MatterEndpointState endpoints = 4;
+}
+
+// Dynamic state for all commissioned nodes in the app fabric.
+message MatterFabricState {
+  repeated MatterNodeState nodes = 1;
+}

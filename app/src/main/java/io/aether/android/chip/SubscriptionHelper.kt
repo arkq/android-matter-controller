@@ -89,17 +89,17 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
     return null
   }
 
-  open class ReportCallbackForDevice(val deviceId: Long) : ReportCallback {
+  open class ReportCallbackForDevice(val nodeId: Long) : ReportCallback {
     override fun onError(
         attributePath: ChipAttributePath?,
         eventPath: ChipEventPath?,
         ex: Exception,
     ) {
       if (attributePath != null) {
-        Timber.e(ex, "reportCallback: error on device [${deviceId}] for [${attributePath}]")
+        Timber.e(ex, "reportCallback: error on node [${nodeId}] for [${attributePath}]")
       }
       if (eventPath != null) {
-        Timber.e(ex, "reportCallback: error on device [${deviceId}] for [${eventPath}]")
+        Timber.e(ex, "reportCallback: error on node [${nodeId}] for [${eventPath}]")
       }
     }
 
@@ -116,18 +116,18 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
     }
   }
 
-  open class SubscriptionEstablishedCallbackForDevice(val deviceId: Long) :
+  open class SubscriptionEstablishedCallbackForDevice(val nodeId: Long) :
       SubscriptionEstablishedCallback {
     override fun onSubscriptionEstablished(subscriptionId: Long) {
       Timber.d("onSubscriptionEstablished(): subscriptionId [${subscriptionId}]")
     }
   }
 
-  open class ResubscriptionAttemptCallbackForDevice(val deviceId: Long) :
+  open class ResubscriptionAttemptCallbackForDevice(val nodeId: Long) :
       ResubscriptionAttemptCallback {
     override fun onResubscriptionAttempt(terminationCause: Int, nextResubscribeIntervalMsec: Int) {
       Timber.d(
-          "onResubscriptionAttempt(): device [$deviceId] terminationCause [$terminationCause] nextResubscribeIntervalMsec [$nextResubscribeIntervalMsec]"
+          "onResubscriptionAttempt(): node [$nodeId] terminationCause [$terminationCause] nextResubscribeIntervalMsec [$nextResubscribeIntervalMsec]"
       )
     }
   }

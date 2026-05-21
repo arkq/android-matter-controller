@@ -94,7 +94,6 @@ import io.aether.android.TaskStatus
 import io.aether.android.commissioning.AppCommissioningService
 import io.aether.android.getDeviceTypeIconId
 import io.aether.android.isMultiAdminCommissioning
-import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.thread.getActivity
@@ -158,10 +157,10 @@ internal fun HomeRoute(
 
   // Functions invoked when UI controls are clicked on a specific device in the list.
   val onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit = remember {
-    { navigateToDevice(nodeIdFor(it.device)) }
+    { navigateToDevice(it.device.nodeId) }
   }
-  val onOnOffClick: (deviceId: Long, value: Boolean) -> Unit = remember {
-    { deviceId, value -> homeViewModel.updateDeviceStateOn(deviceId, value) }
+  val onOnOffClick: (nodeId: Long, value: Boolean) -> Unit = remember {
+    { nodeId, value -> homeViewModel.updateDeviceStateOn(nodeId, value) }
   }
 
   // The device commissioning flow involves multiple steps as it is based on an Activity
@@ -284,7 +283,7 @@ private fun HomeScreen(
     onCommissionedDeviceNameCaptured: (name: String) -> Unit,
     onCommissionDevice: () -> Unit,
     onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit,
-    onOnOffClick: (deviceId: Long, value: Boolean) -> Unit,
+    onOnOffClick: (nodeId: Long, value: Boolean) -> Unit,
 ) {
 
   val context = LocalContext.current
@@ -342,7 +341,7 @@ private fun HomeScreen(
           this.items(devicesList) { device ->
             val onDeviceItemClick: () -> Unit = { onDeviceClick(device) }
             DeviceItem(
-                device.device.deviceId,
+                device.device.nodeId,
                 device.device.deviceType,
                 device.device.name,
                 device.isOnline,
@@ -393,12 +392,12 @@ fun openPlayServicesInStore(context: Context) {
 
 @Composable
 private fun DeviceItem(
-    deviceId: Long,
+    nodeId: Long,
     deviceType: Device.DeviceType,
     name: String,
     isOnline: Boolean,
     isOn: Boolean,
-    onOnOffClick: (deviceId: Long, value: Boolean) -> Unit,
+    onOnOffClick: (nodeId: Long, value: Boolean) -> Unit,
     onDeviceClick: (() -> Unit),
 ) {
   val bgColor =
@@ -409,7 +408,7 @@ private fun DeviceItem(
       else MaterialTheme.colorScheme.onSurface
   val text = stateDisplayString(isOnline, isOn)
   val iconId = getDeviceTypeIconId(deviceType)
-  val onCheckedChange: (value: Boolean) -> Unit = { onOnOffClick(deviceId, it) }
+  val onCheckedChange: (value: Boolean) -> Unit = { onOnOffClick(nodeId, it) }
 
   Surface(
       modifier = Modifier.padding(top = 12.dp).padding(PaddingValues(horizontal = 12.dp)),
@@ -707,7 +706,7 @@ private fun NewDeviceAlertDialogAttestationFailureIgnoredPreview() {
 }
 
 private fun createDevice(
-    deviceId: Long = 1L,
+    nodeId: Long = 1L,
     deviceType: Device.DeviceType = Device.DeviceType.TYPE_OUTLET,
     dateCommissioned: Timestamp = Timestamp.getDefaultInstance(),
     name: String = "My Matter Device",
@@ -716,7 +715,7 @@ private fun createDevice(
     room: String = "Living Room",
 ): Device {
   return Device.newBuilder()
-      .setDeviceId(deviceId)
+      .setNodeId(nodeId)
       .setDeviceType(deviceType)
       .setDateCommissioned(dateCommissioned)
       .setName(name)

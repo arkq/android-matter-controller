@@ -170,8 +170,8 @@ def generate_proto_file(
             "  uint32 id = 1;\n"
             "  string name = 2;\n"
             "  MatterType type = 3;\n"
-            "  MatterPrivilege readPrivilege = 4;\n"
-            "  MatterPrivilege writePrivilege = 5;\n"
+            "  MatterPrivilege read_privilege = 4;\n"
+            "  MatterPrivilege write_privilege = 5;\n"
             "}\n\n"
             "message Parameter {\n"
             "  string name = 1;\n"
@@ -394,8 +394,8 @@ def populate_binary(
             pb_attr.id = attr.id
             pb_attr.name = attr.name
             pb_attr.type = get_type_enum(attr.type)
-            pb_attr.readPrivilege = get_privilege_enum(attr.read_privilege)
-            pb_attr.writePrivilege = get_privilege_enum(attr.write_privilege)
+            pb_attr.read_privilege = get_privilege_enum(attr.read_privilege)
+            pb_attr.write_privilege = get_privilege_enum(attr.write_privilege)
         for cmd in sorted(cluster.commands, key=lambda x: x.id):
             pb_cmd = pb_cluster.commands.add()
             pb_cmd.id = cmd.id

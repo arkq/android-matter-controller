@@ -9,24 +9,24 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.Serializer
 import androidx.datastore.dataStore
 import com.google.protobuf.InvalidProtocolBufferException
-import io.aether.android.DevicesState
+import io.aether.android.MatterFabricState
 import java.io.InputStream
 import java.io.OutputStream
 
-object DevicesStateSerializer : Serializer<DevicesState> {
+object DevicesStateSerializer : Serializer<MatterFabricState> {
 
-  override val defaultValue: DevicesState = DevicesState.getDefaultInstance()
+  override val defaultValue: MatterFabricState = MatterFabricState.getDefaultInstance()
 
-  override suspend fun readFrom(input: InputStream): DevicesState {
+  override suspend fun readFrom(input: InputStream): MatterFabricState {
     try {
-      return DevicesState.parseFrom(input)
+      return MatterFabricState.parseFrom(input)
     } catch (exception: InvalidProtocolBufferException) {
       throw CorruptionException("Cannot read proto.", exception)
     }
   }
 
-  override suspend fun writeTo(t: DevicesState, output: OutputStream) = t.writeTo(output)
+  override suspend fun writeTo(t: MatterFabricState, output: OutputStream) = t.writeTo(output)
 }
 
-val Context.devicesStateDataStore: DataStore<DevicesState> by
+val Context.devicesStateDataStore: DataStore<MatterFabricState> by
     dataStore(fileName = "devices_state__store.proto", serializer = DevicesStateSerializer)

@@ -18,8 +18,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.protobuf.Timestamp
 import io.aether.android.Device
-import io.aether.android.DeviceState
 import io.aether.android.R
+import io.aether.android.data.DevicesStateRepository
+import io.aether.android.endpointFor
 import io.aether.android.screens.device.cluster.COLOR_TEMPERATURE_MAX
 import io.aether.android.screens.device.cluster.LEVEL_MAX
 import io.aether.android.screens.device.cluster.LevelClusterControl
@@ -42,7 +43,7 @@ import timber.log.Timber
 @Composable
 internal fun ColorTemperatureDeviceControl(
     endpointModel: DeviceUiModel,
-    lastUpdatedDeviceState: DeviceState?,
+    lastUpdatedDeviceState: DevicesStateRepository.EndpointStateSnapshot?,
     onOnOffClick: (Boolean) -> Unit,
     onBrightnessChange: (Int) -> Unit,
     onColorTemperatureChange: (Int) -> Unit,
@@ -57,7 +58,8 @@ internal fun ColorTemperatureDeviceControl(
 
   LaunchedEffect(endpointModel, lastUpdatedDeviceState) {
     when {
-      lastUpdatedDeviceState?.deviceId == endpointModel.device.deviceId -> {
+      lastUpdatedDeviceState?.nodeId == endpointModel.device.nodeId &&
+          lastUpdatedDeviceState.endpointId == endpointFor(endpointModel.device) -> {
         isOnline = lastUpdatedDeviceState.online
         isOn = lastUpdatedDeviceState.on
         brightness = lastUpdatedDeviceState.level / LEVEL_MAX
@@ -112,7 +114,7 @@ private fun ColorTemperatureDeviceControl_Online() {
       DeviceUiModel(
           device =
               Device.newBuilder()
-                  .setDeviceId(1L)
+                  .setNodeId(1L)
                   .setDeviceType(Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT)
                   .setDateCommissioned(Timestamp.getDefaultInstance())
                   .setName("CTLight")

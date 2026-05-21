@@ -32,8 +32,7 @@ message Device {
     }
     DeviceType deviceType = 4;
 
-    // Device ID within the app's fabric.
-    int64 device_id = 5;
+    reserved 5;
 
     // Device name.
     string name = 6;
@@ -61,6 +60,6 @@ message Device {
 }
 
 message Devices {
-    int64 last_device_id = 1;
+    reserved 1;
     repeated Device devices = 2;
 }

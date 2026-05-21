@@ -813,8 +813,8 @@ message Attribute {
   uint32 id = 1;
   string name = 2;
   MatterType type = 3;
-  MatterPrivilege readPrivilege = 4;
-  MatterPrivilege writePrivilege = 5;
+  MatterPrivilege read_privilege = 4;
+  MatterPrivilege write_privilege = 5;
 }
 
 message Parameter {

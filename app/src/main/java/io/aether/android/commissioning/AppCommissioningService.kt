@@ -12,11 +12,8 @@ import com.google.android.gms.home.matter.commissioning.CommissioningService
 import com.google.android.gms.home.matter.commissioning.CommissioningService.CommissioningError
 import dagger.hilt.android.AndroidEntryPoint
 import io.aether.android.APP_NAME
-import io.aether.android.DeviceIdGenerator
 import io.aether.android.R
 import io.aether.android.chip.ChipClient
-import io.aether.android.data.DevicesRepository
-import io.aether.android.data.DevicesStateRepository
 import io.aether.android.generateNextDeviceId
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
@@ -34,8 +31,6 @@ import timber.log.Timber
 @AndroidEntryPoint
 class AppCommissioningService : Service(), CommissioningService.Callback {
 
-  @Inject internal lateinit var devicesRepository: DevicesRepository
-  @Inject internal lateinit var devicesStateRepository: DevicesStateRepository
   @Inject internal lateinit var chipClient: ChipClient
 
   private val serviceJob = Job()
@@ -83,7 +78,7 @@ class AppCommissioningService : Service(), CommissioningService.Callback {
 
     // Perform commissioning on custom fabric for the sample app.
     serviceScope.launch {
-      val deviceId = getNextDeviceId(DeviceIdGenerator.Random)
+      val deviceId = generateNextDeviceId()
       try {
         Timber.d(
             "Commissioning: App fabric -> ChipClient.establishPaseConnection(): deviceId [${deviceId}]"
@@ -134,23 +129,6 @@ class AppCommissioningService : Service(), CommissioningService.Callback {
                 "Commissioning: commissioningServiceDelegate.sendCommissioningComplete() failed",
             )
           }
-    }
-  }
-
-  /**
-   * Generates the device id for the device being commissioned ToDo() move this function into an
-   * appropriate class to make it visible in HomeFragmentRecyclerViewTest
-   *
-   * @param generator the method used to generate the device id
-   */
-  private suspend fun getNextDeviceId(generator: DeviceIdGenerator): Long {
-    return when (generator) {
-      DeviceIdGenerator.Incremental -> {
-        devicesRepository.incrementAndReturnLastDeviceId()
-      }
-      DeviceIdGenerator.Random -> {
-        generateNextDeviceId()
-      }
     }
   }
 }

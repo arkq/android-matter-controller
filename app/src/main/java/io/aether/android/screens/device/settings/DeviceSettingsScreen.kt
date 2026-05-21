@@ -47,7 +47,6 @@ import io.aether.android.formatNodeId
 import io.aether.android.formatProductId
 import io.aether.android.formatTimestamp
 import io.aether.android.getDeviceTypeDisplayStringId
-import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
@@ -171,7 +170,7 @@ fun DeviceSettingsRoute(
             viewModel.removeDeviceWithoutUnlink(nodeId)
           }
         },
-        onInspect = { device?.let { navigateToDeviceDataModel(nodeIdFor(it)) } },
+        onInspect = { device?.let { navigateToDeviceDataModel(it.nodeId) } },
         onExplorer = { navigateToDeviceExplorer(nodeId) },
         onManageControllers = { navigateToDeviceFabrics(nodeId) },
     )
@@ -295,7 +294,7 @@ private fun DeviceSettingsScreen(
       )
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_node_id),
-          value = formatNodeId(nodeIdFor(device)),
+          value = formatNodeId(device.nodeId),
       )
     }
 
