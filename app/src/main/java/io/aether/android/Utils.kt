@@ -134,23 +134,9 @@ fun convertToAppDeviceType(matterDeviceType: Long): DeviceType {
   }
 }
 
-/** Converts the "isOnline" boolean into a proper string for the UI. */
-fun isOnlineDisplayString(isOnline: Boolean): String {
-  return if (isOnline) "Online" else "Offline"
-}
-
 /** Converts the "isOn" boolean into a proper string for the UI. */
 fun isOnDisplayString(isOn: Boolean): String {
   return if (isOn) "ON" else "OFF"
-}
-
-/** Converts the combo of "isOnline" and "isOn" into a proper string for the UI. */
-fun stateDisplayString(isOnline: Boolean, isOn: Boolean): String {
-  return if (!isOnline) {
-    "OFFLINE"
-  } else {
-    if (isOn) "ON" else "OFF"
-  }
 }
 
 fun stringToBoolean(s: String): Boolean {

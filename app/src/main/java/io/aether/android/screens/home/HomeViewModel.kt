@@ -39,8 +39,8 @@ import io.aether.android.chip.DataModelLoader.Companion.LevelAttribute
 import io.aether.android.chip.DataModelLoader.Companion.LevelControlClusterId
 import io.aether.android.chip.DataModelLoader.Companion.OnOffAttribute
 import io.aether.android.chip.DataModelLoader.Companion.OnOffClusterId
-import io.aether.android.chip.isCommunicationTimeoutError
 import io.aether.android.chip.SubscriptionHelper
+import io.aether.android.chip.isCommunicationTimeoutError
 import io.aether.android.commissioning.AppCommissioningService
 import io.aether.android.convertToAppDeviceType
 import io.aether.android.data.DevicesRepository

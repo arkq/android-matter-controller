@@ -45,7 +45,7 @@ class SetDeviceNameUseCase
 @Inject
 constructor(
     private val devicesRepository: DevicesRepository,
-  private val devicesStateRepository: DevicesStateRepository,
+    private val devicesStateRepository: DevicesStateRepository,
     private val clustersHelper: ClustersHelper,
     private val appErrorNotifier: AppErrorNotifier,
 ) {

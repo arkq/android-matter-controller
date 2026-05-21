@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.Device
@@ -74,6 +75,7 @@ fun DeviceSettingsRoute(
   val activity = LocalContext.current.getActivity()
 
   val device by viewModel.device.collectAsState()
+  val isOnline by viewModel.isOnline.collectAsState()
   val hardwareVersion by viewModel.hardwareVersion.collectAsState()
   val softwareVersion by viewModel.softwareVersion.collectAsState()
   val vendorName by viewModel.vendorName.collectAsState()
@@ -146,6 +148,7 @@ fun DeviceSettingsRoute(
     DeviceSettingsScreen(
         innerPadding = innerPadding,
         device = device,
+        isOnline = isOnline,
         vendorName = vendorName,
         vendorId = vendorId,
         hardwareVersion = hardwareVersion,
@@ -181,6 +184,7 @@ fun DeviceSettingsRoute(
 private fun DeviceSettingsScreen(
     innerPadding: PaddingValues,
     device: Device?,
+    isOnline: Boolean,
     vendorName: String?,
     vendorId: Int?,
     hardwareVersion: String?,
@@ -258,6 +262,15 @@ private fun DeviceSettingsScreen(
               .padding(dimensionResource(R.dimen.margin_normal)),
       verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {
+    if (!isOnline) {
+      Text(
+          text = stringResource(R.string.device_offline_label),
+          color = MaterialTheme.colorScheme.error,
+          textAlign = TextAlign.Center,
+          modifier = Modifier.fillMaxWidth(),
+      )
+    }
+
     // Basic section
     SettingsSection(title = stringResource(R.string.device_settings_section_basic)) {
       val displayedVendorName =

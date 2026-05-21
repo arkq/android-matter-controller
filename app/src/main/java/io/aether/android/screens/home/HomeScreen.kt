@@ -63,6 +63,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -94,10 +95,10 @@ import io.aether.android.TaskStatus
 import io.aether.android.commissioning.AppCommissioningService
 import io.aether.android.getDeviceTypeIconId
 import io.aether.android.isMultiAdminCommissioning
+import io.aether.android.isOnDisplayString
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.thread.getActivity
-import io.aether.android.stateDisplayString
 import timber.log.Timber
 
 /**
@@ -406,7 +407,7 @@ private fun DeviceItem(
   val contentColor =
       if (isOnline && isOn) MaterialTheme.colorScheme.onSurfaceVariant
       else MaterialTheme.colorScheme.onSurface
-  val text = stateDisplayString(isOnline, isOn)
+  val text = isOnDisplayString(isOn)
   val iconId = getDeviceTypeIconId(deviceType)
   val onCheckedChange: (value: Boolean) -> Unit = { onOnOffClick(nodeId, it) }
 
@@ -418,21 +419,30 @@ private fun DeviceItem(
       shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
       onClick = onDeviceClick,
   ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content)),
-    ) {
-      Icon(
-          painter = painterResource(id = iconId),
-          contentDescription = null, // decorative element
-      )
-      Column {
-        Text(text = name, style = MaterialTheme.typography.bodyLarge)
-        Text(text = text, style = MaterialTheme.typography.bodyLarge)
+    Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content))) {
+      Row(
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.spacedBy(12.dp),
+      ) {
+        Icon(
+            painter = painterResource(id = iconId),
+            contentDescription = null, // decorative element
+        )
+        Column {
+          Text(text = name, style = MaterialTheme.typography.bodyLarge)
+          Text(text = text, style = MaterialTheme.typography.bodyLarge)
+        }
+        Spacer(Modifier.weight(1f))
+        Switch(enabled = isOnline, checked = isOn, onCheckedChange = onCheckedChange)
       }
-      Spacer(Modifier.weight(1f))
-      Switch(enabled = isOnline, checked = isOn, onCheckedChange = onCheckedChange)
+      if (!isOnline) {
+        Text(
+            text = stringResource(R.string.device_offline_label),
+            color = MaterialTheme.colorScheme.error,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+        )
+      }
     }
   }
 }

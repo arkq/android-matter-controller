@@ -18,6 +18,7 @@ import io.aether.android.SETUP_PIN_CODE
 import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.data.DevicesRepository
+import io.aether.android.data.DevicesStateRepository
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.shared.SetDeviceNameResult
 import io.aether.android.screens.shared.SetDeviceNameUseCase
@@ -35,6 +36,7 @@ class DeviceSettingsViewModel
 @Inject
 constructor(
     private val devicesRepository: DevicesRepository,
+    private val devicesStateRepository: DevicesStateRepository,
     private val chipClient: ChipClient,
     private val clustersHelper: ClustersHelper,
     private val setDeviceNameUseCase: SetDeviceNameUseCase,
@@ -59,6 +61,9 @@ constructor(
   // Vendor ID fetched from the device (null when not yet loaded or unavailable).
   private var _vendorId = MutableStateFlow<Int?>(null)
   val vendorId: StateFlow<Int?> = _vendorId.asStateFlow()
+
+  private var _isOnline = MutableStateFlow(true)
+  val isOnline: StateFlow<Boolean> = _isOnline.asStateFlow()
 
   // Controls whether the "Message" AlertDialog should be shown in the UI.
   private var _msgDialogInfo = MutableStateFlow<DialogInfo?>(null)
@@ -100,6 +105,9 @@ constructor(
             }
 
         _device.value = loadedDevice
+        val persistedState = devicesStateRepository.getAllDevicesState()
+        _isOnline.value =
+            persistedState.nodesList.firstOrNull { it.nodeId == nodeId }?.online ?: false
         _vendorName.value = basicInfo?.vendorName
         _vendorId.value = basicInfo?.vendorId
         _hardwareVersion.value = basicInfo?.hardwareVersion
