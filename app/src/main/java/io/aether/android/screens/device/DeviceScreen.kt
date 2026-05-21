@@ -193,6 +193,7 @@ private fun DeviceScreen(
     if (!deviceUiModel.isOnline) {
       Text(
           text = stringResource(R.string.device_offline_label),
+          style = MaterialTheme.typography.bodySmall,
           color = MaterialTheme.colorScheme.error,
           textAlign = TextAlign.Center,
           modifier = Modifier.fillMaxWidth(),

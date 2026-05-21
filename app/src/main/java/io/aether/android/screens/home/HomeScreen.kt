@@ -412,7 +412,9 @@ private fun DeviceItem(
   val onCheckedChange: (value: Boolean) -> Unit = { onOnOffClick(nodeId, it) }
 
   Surface(
-      modifier = Modifier.padding(top = 12.dp).padding(PaddingValues(horizontal = 12.dp)),
+      modifier =
+          Modifier.padding(top = dimensionResource(R.dimen.margin_small))
+              .padding(PaddingValues(horizontal = dimensionResource(R.dimen.margin_small))),
       border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
       contentColor = contentColor,
       color = bgColor,
@@ -422,7 +424,7 @@ private fun DeviceItem(
     Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content))) {
       Row(
           verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.spacedBy(12.dp),
+          horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_small)),
       ) {
         Icon(
             painter = painterResource(id = iconId),
@@ -438,6 +440,7 @@ private fun DeviceItem(
       if (!isOnline) {
         Text(
             text = stringResource(R.string.device_offline_label),
+            style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.error,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
