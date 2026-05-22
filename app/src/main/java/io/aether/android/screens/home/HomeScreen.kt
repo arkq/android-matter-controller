@@ -443,7 +443,9 @@ private fun DeviceItem(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.error,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+            modifier =
+                Modifier.fillMaxWidth()
+                    .padding(top = dimensionResource(R.dimen.margin_small)),
         )
       }
     }

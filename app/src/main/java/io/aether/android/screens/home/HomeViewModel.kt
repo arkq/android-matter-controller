@@ -193,10 +193,10 @@ constructor(
         if (nodeState?.online != true) return@forEach
       }
       if (nodeState == null || endpointState == null) {
-        Timber.d("    deviceId setting default value for state")
+        Timber.d("    nodeId setting default value for state")
         devicesUiModel.add(DeviceUiModel(device, isOnline = false, isOn = false))
       } else {
-        Timber.d("    deviceId setting its own value for state")
+        Timber.d("    nodeId setting its own value for state")
         devicesUiModel.add(
             DeviceUiModel(
                 device,

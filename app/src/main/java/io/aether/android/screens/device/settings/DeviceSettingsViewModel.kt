@@ -69,11 +69,11 @@ constructor(
 
   init {
     // Keep _isOnline in sync with the repository state as it changes.
-    devicesStateRepository.devicesStateFlow
-        .onEach { state ->
-          val nodeId = _device.value?.nodeId ?: return@onEach
-          _isOnline.value = state.nodesList.firstOrNull { it.nodeId == nodeId }?.online ?: false
-        }
+    kotlinx.coroutines.flow.combine(_device, devicesStateRepository.devicesStateFlow) { device, state ->
+      val nodeId = device?.nodeId ?: return@combine true
+      state.nodesList.firstOrNull { it.nodeId == nodeId }?.online ?: false
+    }
+        .onEach { isOnline -> _isOnline.value = isOnline }
         .launchIn(viewModelScope)
   }
 
