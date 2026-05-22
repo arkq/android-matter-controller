@@ -541,10 +541,10 @@ constructor(
   private fun subscribeToDevicesPeriodicUpdates() {
     Timber.d("subscribeToDevicesPeriodicUpdates()")
     viewModelScope.launch {
-      // Subscribe once per endpoint entry.
+      // Subscribe once per physical node (deduplicated by nodeId).
       val devicesList = devicesRepository.getAllDevices().devicesList
       devicesList
-          .sortedBy { endpointFor(it) }
+          .distinctBy { it.nodeId }
           .forEach { device ->
             val nId = device.nodeId
             val endpoint = endpointFor(device)
@@ -635,10 +635,10 @@ constructor(
   private fun unsubscribeToDevicesPeriodicUpdates() {
     Timber.d("unsubscribeToPeriodicUpdates()")
     viewModelScope.launch {
-      // Unsubscribe per endpoint entry.
+      // Unsubscribe once per physical node (deduplicated by nodeId).
       val devicesList = devicesRepository.getAllDevices().devicesList
       devicesList
-          .sortedBy { endpointFor(it) }
+          .distinctBy { it.nodeId }
           .forEach { device ->
             val nId = device.nodeId
             try {

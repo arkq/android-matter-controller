@@ -27,6 +27,8 @@ import kotlin.random.Random
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -64,6 +66,16 @@ constructor(
 
   private var _isOnline = MutableStateFlow(true)
   val isOnline: StateFlow<Boolean> = _isOnline.asStateFlow()
+
+  init {
+    // Keep _isOnline in sync with the repository state as it changes.
+    devicesStateRepository.devicesStateFlow
+        .onEach { state ->
+          val nodeId = _device.value?.nodeId ?: return@onEach
+          _isOnline.value = state.nodesList.firstOrNull { it.nodeId == nodeId }?.online ?: false
+        }
+        .launchIn(viewModelScope)
+  }
 
   // Controls whether the "Message" AlertDialog should be shown in the UI.
   private var _msgDialogInfo = MutableStateFlow<DialogInfo?>(null)
@@ -105,9 +117,6 @@ constructor(
             }
 
         _device.value = loadedDevice
-        val persistedState = devicesStateRepository.getAllDevicesState()
-        _isOnline.value =
-            persistedState.nodesList.firstOrNull { it.nodeId == nodeId }?.online ?: false
         _vendorName.value = basicInfo?.vendorName
         _vendorId.value = basicInfo?.vendorId
         _hardwareVersion.value = basicInfo?.hardwareVersion

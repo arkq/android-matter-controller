@@ -104,7 +104,7 @@ class HomeFragmentRecyclerViewTest {
       devicesRepository.addDevice(deviceUiModel.device)
       devicesStateRepository.addEndpointState(
           deviceUiModel.device.nodeId,
-          endpoint = if (deviceUiModel.device.endpoint != 0) deviceUiModel.device.endpoint else 1,
+          endpointId = if (deviceUiModel.device.endpoint != 0) deviceUiModel.device.endpoint else 1,
           deviceUiModel.isOnline,
           deviceUiModel.isOn,
           level = 0,

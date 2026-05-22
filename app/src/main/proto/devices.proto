@@ -32,8 +32,6 @@ message Device {
     }
     DeviceType deviceType = 4;
 
-    reserved 5;
-
     // Device name.
     string name = 6;
 
@@ -60,6 +58,5 @@ message Device {
 }
 
 message Devices {
-    reserved 1;
     repeated Device devices = 2;
 }

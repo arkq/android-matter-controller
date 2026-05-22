@@ -88,9 +88,14 @@ internal fun DeviceRoute(
 
   val lastUpdatedEndpointState by
       deviceViewModel.devicesStateRepository.lastUpdatedEndpointState.observeAsState()
-  deviceViewModel.devicesStateRepository.devicesStateFlow.collectAsState(
-      initial = MatterFabricState.getDefaultInstance()
-  )
+  val devicesState by
+      deviceViewModel.devicesStateRepository.devicesStateFlow.collectAsState(
+          initial = MatterFabricState.getDefaultInstance()
+      )
+  val isOnline =
+      devicesState.nodesList.firstOrNull { it.nodeId == nodeId }?.online
+          ?: deviceUiModel?.isOnline
+          ?: true
 
   // Per-endpoint callbacks.
   val onOnOffClick: (endpointModel: DeviceUiModel, value: Boolean) -> Unit = remember {
@@ -148,6 +153,7 @@ internal fun DeviceRoute(
         innerPadding,
         deviceUiModel,
         allEndpointUiModels,
+        isOnline,
         lastUpdatedEndpointState,
         onOnOffClick,
         onBrightnessChange,
@@ -166,6 +172,7 @@ private fun DeviceScreen(
     innerPadding: PaddingValues,
     deviceUiModel: DeviceUiModel?,
     allEndpointUiModels: List<DeviceUiModel>,
+    isOnline: Boolean,
     lastUpdatedEndpointState: DevicesStateRepository.EndpointStateSnapshot?,
     onOnOffClick: (endpointModel: DeviceUiModel, value: Boolean) -> Unit,
     onBrightnessChange: (endpointModel: DeviceUiModel, value: Int) -> Unit,
@@ -190,7 +197,7 @@ private fun DeviceScreen(
               .padding(dimensionResource(R.dimen.margin_normal)),
       verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {
-    if (!deviceUiModel.isOnline) {
+    if (!isOnline) {
       Text(
           text = stringResource(R.string.device_offline_label),
           style = MaterialTheme.typography.bodySmall,
@@ -285,6 +292,7 @@ private fun DeviceScreenOnlineOnPreview() {
         innerPadding = PaddingValues(),
         deviceUiModel = deviceUiModel,
         allEndpointUiModels = listOf(deviceUiModel),
+        isOnline = true,
         lastUpdatedEndpointState = endpointState,
         onOnOffClick = onOnOffClick,
         onBrightnessChange = onBrightnessChange,
