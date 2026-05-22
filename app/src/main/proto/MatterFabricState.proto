@@ -8,34 +8,54 @@ import "google/protobuf/timestamp.proto";
 option java_package = "io.aether.android";
 option java_multiple_files = true;
 
-// Dynamic state for a single endpoint on a Matter node.
-message MatterEndpointState {
-    // Matter endpoint ID controlled by this state entry.
-    int32 endpoint_id = 1;
+// Persisted state for an individual endpoint on the commissioned Matter node.
+message MatterEndpoint {
+  // Endpoint ID for this endpoint.
+  uint32 endpoint_id = 1;
+  // The list of Matter device types supported by this endpoint.
+  repeated uint32 device_types = 2;
 
-    // Whether the endpoint is on (true) or off (false).
-    bool on = 2;
+  // The label for this endpoint (fixed or user defined).
+  string label = 3;
 
-    // Level of endpoint.
-    int32 level = 3;
+  // If endpoint supports on/off, whether the endpoint is currently on or off.
+  bool on = 10;
 
-    // Color temperature of endpoint.
-    int32 color_temperature = 4;
+  // Whether this endpoint exposes Level Control.
+  bool supports_level_control = 12;
+  // Whether this endpoint exposes Color Control color temperature attribute.
+  bool supports_color_temperature = 13;
+  // Level of endpoint.
+  int32 level = 15;
+  // Color temperature of endpoint.
+  int32 color_temperature = 16;
 }
 
-// Dynamic state for a Matter node (device as a whole).
-message MatterNodeState {
-    // Matter node ID for this commissioned device.
-    int64 node_id = 1;
-    // Timestamp when the node state was captured.
-    google.protobuf.Timestamp date_captured = 2;
-    // Whether the node is online (true) or offline (false).
-    bool online = 3;
-    // Endpoint states for this node.
-    repeated MatterEndpointState endpoints = 4;
+// Persisted state for a commissioned Matter node.
+message MatterNode {
+  // Matter node ID for this commissioned device.
+  uint64 node_id = 1;
+
+  // The vendor and product for this node.
+  uint32 vendor_id = 2;
+  string vendor_name = 3;
+  uint32 product_id = 4;
+  string product_name = 5;
+
+  // Timestamp when the node was commissioned.
+  google.protobuf.Timestamp date_commissioned = 10;
+
+  // Endpoints available on this node.
+  repeated MatterEndpoint endpoints = 11;
+
+  // The user-friendly name for this node.
+  string name = 20;
+  // Whether the node is online (true) or offline (false).
+  bool online = 21;
+
 }
 
-// Dynamic state for all commissioned nodes in the app fabric.
+// Persisted state for all commissioned nodes in the app fabric.
 message MatterFabricState {
-  repeated MatterNodeState nodes = 1;
+  repeated MatterNode nodes = 1;
 }
