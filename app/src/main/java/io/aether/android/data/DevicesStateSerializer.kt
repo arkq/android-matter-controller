@@ -29,4 +29,8 @@ object DevicesStateSerializer : Serializer<MatterFabricState> {
 }
 
 val Context.devicesStateDataStore: DataStore<MatterFabricState> by
-    dataStore(fileName = "devices_state__store.proto", serializer = DevicesStateSerializer)
+    dataStore(
+        fileName = "devices_state__store.proto",
+        serializer = DevicesStateSerializer,
+        produceMigrations = { emptyList() },
+    )

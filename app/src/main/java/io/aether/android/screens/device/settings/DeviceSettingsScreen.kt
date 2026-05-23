@@ -41,6 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import com.google.protobuf.Timestamp
 import io.aether.android.Device
 import io.aether.android.R
 import io.aether.android.chip.vendorLabel
@@ -80,6 +81,7 @@ fun DeviceSettingsRoute(
   val softwareVersion by viewModel.softwareVersion.collectAsState()
   val vendorName by viewModel.vendorName.collectAsState()
   val vendorId by viewModel.vendorId.collectAsState()
+  val dateCommissioned by viewModel.dateCommissioned.collectAsState()
   val msgDialogInfo by viewModel.msgDialogInfo.collectAsState()
   val showRemoveDeviceAlertDialog by viewModel.showRemoveDeviceAlertDialog.collectAsState()
   val showConfirmDeviceRemovalAlertDialog by
@@ -151,6 +153,7 @@ fun DeviceSettingsRoute(
         isOnline = isOnline,
         vendorName = vendorName,
         vendorId = vendorId,
+        dateCommissioned = dateCommissioned,
         hardwareVersion = hardwareVersion,
         softwareVersion = softwareVersion,
         msgDialogInfo = msgDialogInfo,
@@ -187,6 +190,7 @@ private fun DeviceSettingsScreen(
     isOnline: Boolean,
     vendorName: String?,
     vendorId: Int?,
+    dateCommissioned: Timestamp?,
     hardwareVersion: String?,
     softwareVersion: String?,
     msgDialogInfo: DialogInfo?,
@@ -194,7 +198,7 @@ private fun DeviceSettingsScreen(
     showConfirmDeviceRemovalAlertDialog: Boolean,
     onDismissMsgDialog: () -> Unit,
     onRenameDevice: (String) -> Unit,
-    onChangeDeviceType: (Device.DeviceType) -> Unit,
+    onChangeDeviceType: (io.aether.android.Device.DeviceType) -> Unit,
     onShareDevice: () -> Unit,
     onRemoveDeviceClick: () -> Unit,
     onRemoveDeviceOutcome: (Boolean) -> Unit,
@@ -304,7 +308,7 @@ private fun DeviceSettingsScreen(
       }
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_added_on),
-          value = formatTimestamp(context, device.dateCommissioned),
+          value = formatTimestamp(context, dateCommissioned ?: Timestamp.getDefaultInstance()),
       )
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_node_id),

@@ -39,9 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.google.protobuf.Timestamp
-import io.aether.android.Device
+import io.aether.android.MatterEndpoint
 import io.aether.android.MatterFabricState
+import io.aether.android.MatterNode
 import io.aether.android.R
+import io.aether.android.chip.DEVICE_TYPE_ON_OFF_PLUGIN_UNIT
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.LoadingIndicator
@@ -77,7 +79,7 @@ internal fun DeviceRoute(
 
   // Observes values needed by the DeviceScreen.
   val deviceUiModel by deviceViewModel.deviceUiModel.collectAsState()
-  Timber.d("DeviceRoute deviceUiModel [${deviceUiModel?.device?.nodeId}]")
+  Timber.d("DeviceRoute deviceUiModel [${deviceUiModel?.nodeId}]")
 
   // All endpoint models for the same physical node.
   val allEndpointUiModels by deviceViewModel.allEndpointUiModels.collectAsState()
@@ -116,7 +118,7 @@ internal fun DeviceRoute(
     onPauseOrDispose { deviceViewModel.stopMonitoringStateChanges() }
   }
 
-  LaunchedEffect(deviceUiModel?.device?.nodeId) {
+  LaunchedEffect(deviceUiModel?.nodeId) {
     if (deviceUiModel != null) {
       deviceViewModel.startMonitoringStateChanges()
     }
@@ -125,9 +127,7 @@ internal fun DeviceRoute(
   Scaffold(
       topBar = {
         TopAppBar(
-            title = {
-              Text(deviceUiModel?.device?.name ?: stringResource(R.string.device_screen_title))
-            },
+            title = { Text(deviceUiModel?.name ?: stringResource(R.string.device_screen_title)) },
             navigationIcon = {
               IconButton(onClick = onBackClick) {
                 Icon(
@@ -239,9 +239,9 @@ private fun EndpointDeviceControl(
     onBrightnessChange: (Int) -> Unit,
     onColorTemperatureChange: (Int) -> Unit,
 ) {
-  val device = endpointModel.device
+  val endpoint = endpointModel.endpoint
   when {
-    supportsColorTemperature(device) ->
+    supportsColorTemperature(endpoint) ->
         ColorTemperatureDeviceControl(
             endpointModel,
             lastUpdatedEndpointState,
@@ -249,7 +249,7 @@ private fun EndpointDeviceControl(
             onBrightnessChange,
             onColorTemperatureChange,
         )
-    supportsLevelControl(device) ->
+    supportsLevelControl(endpoint) ->
         DimmableDeviceControl(
             endpointModel,
             lastUpdatedEndpointState,
@@ -277,7 +277,7 @@ private fun DeviceScreenOnlineOnPreview() {
           colorTemperature = 0,
       )
   val device = DeviceTest
-  val deviceUiModel = DeviceUiModel(device, true, true, level = 127)
+  val deviceUiModel = DeviceUiModel(NodeTest, device, true, true, level = 127)
   val onOnOffClick: (endpointModel: DeviceUiModel, value: Boolean) -> Unit = { _, value ->
     Timber.d("deviceUiModel [$deviceUiModel] value [$value]")
   }
@@ -307,12 +307,19 @@ private fun DeviceScreenOnlineOnPreview() {
 // Constant objects used in Compose Preview
 
 private val DeviceTest =
-    Device.newBuilder()
+    MatterEndpoint.newBuilder()
+        .setEndpointId(1)
+        .addDeviceTypes(DEVICE_TYPE_ON_OFF_PLUGIN_UNIT.toInt())
+        .setLabel("MyOutlet")
+        .setOn(true)
+        .setLevel(127)
+        .setColorTemperature(0)
+        .build()
+
+private val NodeTest =
+    MatterNode.newBuilder()
         .setNodeId(1L)
-        .setDeviceType(Device.DeviceType.TYPE_OUTLET)
-        .setDateCommissioned(Timestamp.getDefaultInstance())
         .setName("MyOutlet")
-        .setProductId("8785")
-        .setVendorId("6006")
-        .setRoom("Office")
+        .setProductId(8785)
+        .setVendorId(6006)
         .build()

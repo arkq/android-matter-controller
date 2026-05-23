@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.R
+import io.aether.android.chip.DEVICE_TYPE_ON_OFF_LIGHT
+import io.aether.android.chip.DEVICE_TYPE_ON_OFF_PLUGIN_UNIT
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.LoadingIndicator
@@ -206,12 +208,18 @@ private fun DataModelScreenOnlineWithClustersPreview() {
             DeviceMatterInfo(0, listOf(22L), listOf(3L), listOf(43L, 48L), listOf(1, 2)),
             DeviceMatterInfo(
                 1,
-                listOf(256L),
+                listOf(DEVICE_TYPE_ON_OFF_LIGHT),
                 listOf(3L, 4L, 5L),
                 listOf(43L, 44L, 45L, 48L),
                 emptyList(),
             ),
-            DeviceMatterInfo(2, listOf(266L), listOf(4L, 6L, 29L), listOf(43L, 44L), emptyList()),
+            DeviceMatterInfo(
+                2,
+                listOf(DEVICE_TYPE_ON_OFF_PLUGIN_UNIT),
+                listOf(4L, 6L, 29L),
+                listOf(43L, 44L),
+                emptyList(),
+            ),
         ),
         emptyMap(),
         emptyMap(),

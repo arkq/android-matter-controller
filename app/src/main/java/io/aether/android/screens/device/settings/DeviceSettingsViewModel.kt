@@ -6,6 +6,7 @@ package io.aether.android.screens.device.settings
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.protobuf.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.aether.android.DISCRIMINATOR
 import io.aether.android.Device
@@ -67,13 +68,21 @@ constructor(
   private var _isOnline = MutableStateFlow(true)
   val isOnline: StateFlow<Boolean> = _isOnline.asStateFlow()
 
+  private var _dateCommissioned = MutableStateFlow<Timestamp?>(null)
+  val dateCommissioned: StateFlow<Timestamp?> = _dateCommissioned.asStateFlow()
+
   init {
     // Keep _isOnline in sync with the repository state as it changes.
-    kotlinx.coroutines.flow.combine(_device, devicesStateRepository.devicesStateFlow) { device, state ->
-      val nodeId = device?.nodeId ?: return@combine true
-      state.nodesList.firstOrNull { it.nodeId == nodeId }?.online ?: false
-    }
-        .onEach { isOnline -> _isOnline.value = isOnline }
+    kotlinx.coroutines.flow
+        .combine(_device, devicesStateRepository.devicesStateFlow) { device, state ->
+          val node =
+              device?.nodeId?.let { nodeId -> state.nodesList.firstOrNull { it.nodeId == nodeId } }
+          (node?.online ?: false) to node?.dateCommissioned
+        }
+        .onEach { (isOnline, dateCommissioned) ->
+          _isOnline.value = isOnline
+          _dateCommissioned.value = dateCommissioned
+        }
         .launchIn(viewModelScope)
   }
 
@@ -152,7 +161,7 @@ constructor(
   // -----------------------------------------------------------------------------------------------
   // Change device type
 
-  fun changeDeviceType(nodeId: Long, deviceType: Device.DeviceType) {
+  fun changeDeviceType(nodeId: Long, deviceType: io.aether.android.Device.DeviceType) {
     Timber.d("changeDeviceType: nodeId [$nodeId] deviceType [$deviceType]")
     viewModelScope.launch {
       try {
@@ -283,7 +292,7 @@ constructor(
       }
       Timber.d("removeDevice succeeded for nodeId [$nodeId]")
       dismissMsgDialog()
-      removeAllLogicalDevicesForNode(nodeId)
+      removePhysicalDevice(nodeId)
       _deviceRemovalCompleted.value = true
     }
   }
@@ -292,7 +301,7 @@ constructor(
     Timber.d("removeDeviceWithoutUnlink: nodeId [$nodeId]")
     viewModelScope.launch {
       try {
-        removeAllLogicalDevicesForNode(nodeId)
+        removePhysicalDevice(nodeId)
         _deviceRemovalCompleted.value = true
       } catch (e: Exception) {
         Timber.e(e, "removeDeviceWithoutUnlink failed")
@@ -301,10 +310,8 @@ constructor(
     }
   }
 
-  private suspend fun removeAllLogicalDevicesForNode(nodeId: Long) {
-    val devicesForNode =
-        devicesRepository.getAllDevices().devicesList.filter { it.nodeId == nodeId }
-    devicesForNode.forEach { devicesRepository.removeDevice(it.nodeId) }
+  private suspend fun removePhysicalDevice(nodeId: Long) {
+    devicesRepository.removeDevice(nodeId)
   }
 
   // -----------------------------------------------------------------------------------------------

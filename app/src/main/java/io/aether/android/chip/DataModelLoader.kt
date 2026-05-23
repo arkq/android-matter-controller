@@ -13,9 +13,6 @@ import io.aether.android.matter.MatterType
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/** A reference to a specific attribute on a specific cluster. */
-data class ClusterAttribute(val clusterId: Long, val attributeId: Long)
-
 /**
  * Loads Matter data-model binary assets and exposes the cluster / device-type maps used throughout
  * the app.
@@ -30,21 +27,7 @@ data class ClusterAttribute(val clusterId: Long, val attributeId: Long)
 @Singleton
 class DataModelLoader @Inject constructor(@ApplicationContext private val context: Context) {
 
-  // ---------------------------------------------------------------------------
-  // Well-known cluster IDs and attribute references kept here for backward
-  // compatibility with the rest of the codebase.
-  // ---------------------------------------------------------------------------
-
   companion object {
-    // Well-known cluster IDs
-    const val OnOffClusterId: Long = 6L
-    const val LevelControlClusterId: Long = 8L
-    const val ColorControlClusterId: Long = 768L
-
-    val OnOffAttribute = ClusterAttribute(OnOffClusterId, 0L)
-    val LevelAttribute = ClusterAttribute(LevelControlClusterId, 0L)
-    val ColorTemperatureAttribute = ClusterAttribute(ColorControlClusterId, 7L)
-
     private const val ASSETS_DIR = "matter"
 
     /** Converts a file name like `v1.0.bin` to a version string `1.0`. */

@@ -16,9 +16,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.google.protobuf.Timestamp
-import io.aether.android.Device
+import io.aether.android.MatterEndpoint
+import io.aether.android.MatterNode
 import io.aether.android.R
+import io.aether.android.chip.DEVICE_TYPE_COLOR_TEMPERATURE_LIGHT
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.endpointFor
 import io.aether.android.screens.device.cluster.COLOR_TEMPERATURE_MAX
@@ -58,8 +59,8 @@ internal fun ColorTemperatureDeviceControl(
 
   LaunchedEffect(endpointModel, lastUpdatedDeviceState) {
     when {
-      lastUpdatedDeviceState?.nodeId == endpointModel.device.nodeId &&
-          lastUpdatedDeviceState.endpointId == endpointFor(endpointModel.device) -> {
+      lastUpdatedDeviceState?.nodeId == endpointModel.node.nodeId &&
+          lastUpdatedDeviceState.endpointId == endpointFor(endpointModel.endpoint) -> {
         isOnline = lastUpdatedDeviceState.online
         isOn = lastUpdatedDeviceState.on
         brightness = lastUpdatedDeviceState.level / LEVEL_MAX
@@ -112,12 +113,11 @@ internal fun ColorTemperatureDeviceControl(
 private fun ColorTemperatureDeviceControl_Online() {
   val model =
       DeviceUiModel(
-          device =
-              Device.newBuilder()
-                  .setNodeId(1L)
-                  .setDeviceType(Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT)
-                  .setDateCommissioned(Timestamp.getDefaultInstance())
-                  .setName("CTLight")
+          node = MatterNode.newBuilder().setNodeId(1L).setName("CTLight").build(),
+          endpoint =
+              MatterEndpoint.newBuilder()
+                  .setEndpointId(1)
+                  .addDeviceTypes(DEVICE_TYPE_COLOR_TEMPERATURE_LIGHT.toInt())
                   .setSupportsLevelControl(true)
                   .setSupportsColorTemperature(true)
                   .build(),

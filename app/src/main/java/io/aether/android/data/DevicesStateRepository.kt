@@ -9,9 +9,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.protobuf.Timestamp
 import dagger.hilt.android.qualifiers.ApplicationContext
-import io.aether.android.MatterEndpointState
+import io.aether.android.MatterEndpoint
 import io.aether.android.MatterFabricState
-import io.aether.android.MatterNodeState
+import io.aether.android.MatterNode
 import io.aether.android.getTimestampForNow
 import java.io.IOException
 import javax.inject.Inject
@@ -76,36 +76,51 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
   ) {
     val normalizedEndpoint = normalizeEndpoint(endpointId)
     val capturedAt = getTimestampForNow()
-    val endpointState =
-        MatterEndpointState.newBuilder()
-            .setEndpointId(normalizedEndpoint)
-            .setOn(isOn)
-            .setLevel(level)
-            .setColorTemperature(colorTemperature)
-            .build()
 
     devicesStateDataStore.updateData { state ->
       val stateBuilder = state.toBuilder()
       val nodeIndex = findNodeIndex(state, nodeId)
       if (nodeIndex == -1) {
+        val endpointState =
+            MatterEndpoint.newBuilder()
+                .setEndpointId(normalizedEndpoint)
+                .setOn(isOn)
+                .setLevel(level)
+                .setColorTemperature(colorTemperature)
+                .build()
         val nodeState =
-            MatterNodeState.newBuilder()
+            MatterNode.newBuilder()
                 .setNodeId(nodeId)
-                .setDateCaptured(capturedAt)
+                .setDateCommissioned(capturedAt)
                 .setOnline(isOnline)
                 .addEndpoints(endpointState)
                 .build()
         stateBuilder.addNodes(nodeState)
       } else {
         val nodeStateBuilder = state.getNodes(nodeIndex).toBuilder()
-        nodeStateBuilder.dateCaptured = capturedAt
         nodeStateBuilder.online = isOnline
 
         val endpointIndex = findEndpointIndex(state.getNodes(nodeIndex), normalizedEndpoint)
         if (endpointIndex == -1) {
+          val endpointState =
+              MatterEndpoint.newBuilder()
+                  .setEndpointId(normalizedEndpoint)
+                  .setOn(isOn)
+                  .setLevel(level)
+                  .setColorTemperature(colorTemperature)
+                  .build()
           nodeStateBuilder.addEndpoints(endpointState)
         } else {
-          nodeStateBuilder.setEndpoints(endpointIndex, endpointState)
+          val existing = state.getNodes(nodeIndex).getEndpoints(endpointIndex)
+          val updated =
+              existing
+                  .toBuilder()
+                  .setEndpointId(normalizedEndpoint)
+                  .setOn(isOn)
+                  .setLevel(level)
+                  .setColorTemperature(colorTemperature)
+                  .build()
+          nodeStateBuilder.setEndpoints(endpointIndex, updated)
         }
         stateBuilder.setNodes(nodeIndex, nodeStateBuilder.build())
       }
@@ -135,7 +150,7 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
     return EndpointStateSnapshot(
         nodeId = nodeState.nodeId,
         endpointId = normalizedEndpoint,
-        dateCaptured = nodeState.dateCaptured,
+        dateCaptured = getTimestampForNow(),
         online = nodeState.online,
         on = endpointState.on,
         level = endpointState.level,
@@ -147,27 +162,13 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
     return devicesStateFlow.first()
   }
 
-  suspend fun removeEndpointState(nodeId: Long, endpointId: Int) {
-    val normalizedEndpoint = normalizeEndpoint(endpointId)
+  suspend fun removeNodeState(nodeId: Long) {
     devicesStateDataStore.updateData { state ->
       val nodeIndex = findNodeIndex(state, nodeId)
       if (nodeIndex == -1) {
         return@updateData state
       }
-
-      val nodeState = state.getNodes(nodeIndex)
-      val endpointIndex = findEndpointIndex(nodeState, normalizedEndpoint)
-      if (endpointIndex == -1) {
-        return@updateData state
-      }
-
-      val nodeBuilder = nodeState.toBuilder().removeEndpoints(endpointIndex)
-      val stateBuilder = state.toBuilder()
-      if (nodeBuilder.endpointsCount == 0) {
-        stateBuilder.removeNodes(nodeIndex)
-      } else {
-        stateBuilder.setNodes(nodeIndex, nodeBuilder.build())
-      }
+      val stateBuilder = state.toBuilder().removeNodes(nodeIndex)
       stateBuilder.build()
     }
   }
@@ -184,7 +185,6 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
         return@updateData state
       }
       val nodeBuilder = state.getNodes(nodeIndex).toBuilder()
-      nodeBuilder.dateCaptured = capturedAt
       nodeBuilder.online = isOnline
       val stateBuilder = state.toBuilder().setNodes(nodeIndex, nodeBuilder.build())
       stateBuilder.build()
@@ -195,7 +195,7 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
     return (0 until state.nodesCount).firstOrNull { state.getNodes(it).nodeId == nodeId } ?: -1
   }
 
-  private fun findEndpointIndex(nodeState: MatterNodeState, endpoint: Int): Int {
+  private fun findEndpointIndex(nodeState: MatterNode, endpoint: Int): Int {
     return (0 until nodeState.endpointsCount).firstOrNull {
       normalizeEndpoint(nodeState.getEndpoints(it).endpointId) == endpoint
     } ?: -1
@@ -206,8 +206,8 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
   }
 
   suspend fun clearAllData() {
-    devicesStateDataStore.updateData { devicesStateList ->
-      devicesStateList.toBuilder().clear().build()
+    devicesStateDataStore.updateData { devicesState ->
+      devicesState.toBuilder().clearNodes().build()
     }
   }
 }

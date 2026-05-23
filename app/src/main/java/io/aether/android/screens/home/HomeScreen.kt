@@ -87,11 +87,12 @@ import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_M
 import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_PRODUCT_ID
 import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_VENDOR_ID
 import com.google.android.material.textview.MaterialTextView
-import com.google.protobuf.Timestamp
-import io.aether.android.Device
 import io.aether.android.MIN_COMMISSIONING_WINDOW_EXPIRATION_SECONDS
+import io.aether.android.MatterEndpoint
+import io.aether.android.MatterNode
 import io.aether.android.R
 import io.aether.android.TaskStatus
+import io.aether.android.chip.DEVICE_TYPE_ON_OFF_PLUGIN_UNIT
 import io.aether.android.commissioning.AppCommissioningService
 import io.aether.android.getDeviceTypeIconId
 import io.aether.android.isMultiAdminCommissioning
@@ -158,7 +159,7 @@ internal fun HomeRoute(
 
   // Functions invoked when UI controls are clicked on a specific device in the list.
   val onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit = remember {
-    { navigateToDevice(it.device.nodeId) }
+    { navigateToDevice(it.nodeId) }
   }
   val onOnOffClick: (nodeId: Long, value: Boolean) -> Unit = remember {
     { nodeId, value -> homeViewModel.updateDeviceStateOn(nodeId, value) }
@@ -342,9 +343,9 @@ private fun HomeScreen(
           this.items(devicesList) { device ->
             val onDeviceItemClick: () -> Unit = { onDeviceClick(device) }
             DeviceItem(
-                device.device.nodeId,
-                device.device.deviceType,
-                device.device.name,
+                device.nodeId,
+                device.deviceTypeId,
+                device.name,
                 device.isOnline,
                 device.isOn,
                 onOnOffClick,
@@ -394,7 +395,7 @@ fun openPlayServicesInStore(context: Context) {
 @Composable
 private fun DeviceItem(
     nodeId: Long,
-    deviceType: Device.DeviceType,
+    deviceTypeId: Long,
     name: String,
     isOnline: Boolean,
     isOn: Boolean,
@@ -408,7 +409,7 @@ private fun DeviceItem(
       if (isOnline && isOn) MaterialTheme.colorScheme.onSurfaceVariant
       else MaterialTheme.colorScheme.onSurface
   val text = isOnDisplayString(isOn)
-  val iconId = getDeviceTypeIconId(deviceType)
+  val iconId = getDeviceTypeIconId(deviceTypeId)
   val onCheckedChange: (value: Boolean) -> Unit = { onOnOffClick(nodeId, it) }
 
   Surface(
@@ -444,8 +445,7 @@ private fun DeviceItem(
             color = MaterialTheme.colorScheme.error,
             textAlign = TextAlign.Center,
             modifier =
-                Modifier.fillMaxWidth()
-                    .padding(top = dimensionResource(R.dimen.margin_small)),
+                Modifier.fillMaxWidth().padding(top = dimensionResource(R.dimen.margin_small)),
         )
       }
     }
@@ -651,91 +651,4 @@ fun multiAdminCommissionDevice(
             msg = error.toString(),
         )
       }
-}
-
-// -----------------------------------------------------------------------------
-// Composable previews
-
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-private fun HomeScreenNoDevicesPreview() {
-  val bogus: (a: Long, b: Boolean) -> Unit = { _, _ -> }
-  MaterialTheme {
-    HomeScreen(
-        PaddingValues(8.dp),
-        emptyList(),
-        null,
-        {},
-        false,
-        false,
-        {},
-        {},
-        {},
-        bogus,
-    )
-  }
-}
-
-@Preview
-@Composable
-private fun HomeScreenWithDevicesPreview() {
-  val bogus: (a: Long, b: Boolean) -> Unit = { _, _ -> }
-  val devicesList =
-      listOf(
-          DeviceUiModel(createDevice(), true, true),
-          DeviceUiModel(createDevice(name = "Smart Outlet"), true, false),
-          DeviceUiModel(createDevice(name = "My living room lamp"), false, true),
-      )
-  MaterialTheme {
-    HomeScreen(
-        PaddingValues(8.dp),
-        devicesList,
-        null,
-        {},
-        false,
-        false,
-        {},
-        {},
-        {},
-        bogus,
-    )
-  }
-}
-
-@Preview
-@Composable
-private fun NoDevicesPreview() {
-  MaterialTheme { NoDevices() }
-}
-
-@Preview
-@Composable
-private fun NewDeviceAlertDialogPreview() {
-  MaterialTheme { NewDeviceAlertDialog(true, {}, false) }
-}
-
-@Preview
-@Composable
-private fun NewDeviceAlertDialogAttestationFailureIgnoredPreview() {
-  MaterialTheme { NewDeviceAlertDialog(true, {}, true) }
-}
-
-private fun createDevice(
-    nodeId: Long = 1L,
-    deviceType: Device.DeviceType = Device.DeviceType.TYPE_OUTLET,
-    dateCommissioned: Timestamp = Timestamp.getDefaultInstance(),
-    name: String = "My Matter Device",
-    productId: String = "8785",
-    vendorId: String = "6006",
-    room: String = "Living Room",
-): Device {
-  return Device.newBuilder()
-      .setNodeId(nodeId)
-      .setDeviceType(deviceType)
-      .setDateCommissioned(dateCommissioned)
-      .setName(name)
-      .setProductId(productId)
-      .setVendorId(vendorId)
-      .setRoom(room)
-      .build()
 }

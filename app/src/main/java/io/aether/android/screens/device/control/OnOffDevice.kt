@@ -14,9 +14,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.google.protobuf.Timestamp
-import io.aether.android.Device
+import io.aether.android.MatterEndpoint
+import io.aether.android.MatterNode
 import io.aether.android.R
+import io.aether.android.chip.DEVICE_TYPE_ON_OFF_PLUGIN_UNIT
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.endpointFor
 import io.aether.android.screens.device.cluster.OnOffClusterControl
@@ -43,8 +44,8 @@ internal fun OnOffDeviceControl(
 
   LaunchedEffect(endpointModel, lastUpdatedDeviceState) {
     when {
-      lastUpdatedDeviceState?.nodeId == endpointModel.device.nodeId &&
-          lastUpdatedDeviceState.endpointId == endpointFor(endpointModel.device) -> {
+      lastUpdatedDeviceState?.nodeId == endpointModel.node.nodeId &&
+          lastUpdatedDeviceState.endpointId == endpointFor(endpointModel.endpoint) -> {
         isOnline = lastUpdatedDeviceState.online
         isOn = lastUpdatedDeviceState.on
       }
@@ -75,12 +76,11 @@ internal fun OnOffDeviceControl(
 private fun OnOffDeviceControl_Online() {
   val model =
       DeviceUiModel(
-          device =
-              Device.newBuilder()
-                  .setNodeId(1L)
-                  .setDeviceType(Device.DeviceType.TYPE_OUTLET)
-                  .setDateCommissioned(Timestamp.getDefaultInstance())
-                  .setName("MyOutlet")
+          node = MatterNode.newBuilder().setNodeId(1L).setName("MyOutlet").build(),
+          endpoint =
+              MatterEndpoint.newBuilder()
+                  .setEndpointId(1)
+                  .addDeviceTypes(DEVICE_TYPE_ON_OFF_PLUGIN_UNIT.toInt())
                   .build(),
           isOnline = true,
           isOn = true,

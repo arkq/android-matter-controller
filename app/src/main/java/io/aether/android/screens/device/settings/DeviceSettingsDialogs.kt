@@ -60,19 +60,19 @@ internal fun RenameDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DeviceTypeDialog(
-    currentType: Device.DeviceType,
-    onConfirm: (Device.DeviceType) -> Unit,
+    currentType: io.aether.android.Device.DeviceType,
+    onConfirm: (io.aether.android.Device.DeviceType) -> Unit,
     onDismiss: () -> Unit,
 ) {
   val types =
       listOf(
-          Device.DeviceType.TYPE_LIGHT,
-          Device.DeviceType.TYPE_DIMMABLE_LIGHT,
-          Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT,
-          Device.DeviceType.TYPE_EXTENDED_COLOR_LIGHT,
-          Device.DeviceType.TYPE_LIGHT_SWITCH,
-          Device.DeviceType.TYPE_OUTLET,
-          Device.DeviceType.TYPE_UNKNOWN,
+          io.aether.android.Device.DeviceType.TYPE_LIGHT,
+          io.aether.android.Device.DeviceType.TYPE_DIMMABLE_LIGHT,
+          io.aether.android.Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT,
+          io.aether.android.Device.DeviceType.TYPE_EXTENDED_COLOR_LIGHT,
+          io.aether.android.Device.DeviceType.TYPE_LIGHT_SWITCH,
+          io.aether.android.Device.DeviceType.TYPE_OUTLET,
+          io.aether.android.Device.DeviceType.TYPE_UNKNOWN,
       )
   var expanded by remember { mutableStateOf(false) }
   var selectedType by remember(currentType) { mutableStateOf(currentType) }

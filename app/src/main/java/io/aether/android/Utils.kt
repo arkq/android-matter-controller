@@ -12,6 +12,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import com.google.protobuf.Timestamp
 import io.aether.android.Device.DeviceType
+import io.aether.android.chip.DEVICE_TYPE_COLOR_TEMPERATURE_LIGHT
+import io.aether.android.chip.DEVICE_TYPE_DIMMABLE_LIGHT
+import io.aether.android.chip.DEVICE_TYPE_EXTENDED_COLOR_LIGHT
+import io.aether.android.chip.DEVICE_TYPE_ON_OFF_LIGHT
+import io.aether.android.chip.DEVICE_TYPE_ON_OFF_LIGHT_SWITCH
+import io.aether.android.chip.DEVICE_TYPE_ON_OFF_PLUGIN_UNIT
 import java.io.File
 import java.lang.Long.max
 import java.security.SecureRandom
@@ -73,17 +79,7 @@ fun lifeCycleEvent(event: String): String {
 /** Set the strings for DeviceType. */
 lateinit var DeviceTypeStrings: MutableMap<DeviceType, String>
 
-fun setDeviceTypeStrings(unspecified: String, light: String, outlet: String, unknown: String) {
-  DeviceTypeStrings =
-      mutableMapOf(
-          DeviceType.TYPE_UNSPECIFIED to unspecified,
-          DeviceType.TYPE_LIGHT to light,
-          DeviceType.TYPE_OUTLET to outlet,
-          DeviceType.TYPE_UNKNOWN to unknown,
-      )
-}
-
-/** Converts the Device.DeviceType enum to a string used in the UI. */
+/** Converts the io.aether.android.MatterEndpoint.DeviceType enum to a string used in the UI. */
 fun DeviceType.displayString(): String {
   return DeviceTypeStrings[this]!!
 }
@@ -102,6 +98,18 @@ fun getDeviceTypeIconId(deviceType: DeviceType): Int {
     DeviceType.TYPE_EXTENDED_COLOR_LIGHT -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
     DeviceType.TYPE_LIGHT_SWITCH -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
     DeviceType.UNRECOGNIZED -> R.drawable.ic_baseline_device_unknown_24
+  }
+}
+
+fun getDeviceTypeIconId(deviceTypeId: Long): Int {
+  return when (deviceTypeId) {
+    DEVICE_TYPE_ON_OFF_LIGHT,
+    DEVICE_TYPE_DIMMABLE_LIGHT,
+    DEVICE_TYPE_COLOR_TEMPERATURE_LIGHT,
+    DEVICE_TYPE_EXTENDED_COLOR_LIGHT,
+    DEVICE_TYPE_ON_OFF_LIGHT_SWITCH -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
+    DEVICE_TYPE_ON_OFF_PLUGIN_UNIT -> R.drawable.ic_baseline_outlet_24
+    else -> R.drawable.ic_baseline_device_unknown_24
   }
 }
 
@@ -131,6 +139,20 @@ fun convertToAppDeviceType(matterDeviceType: Long): DeviceType {
     268L -> DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT // 0x010C Color Temperature Light
     269L -> DeviceType.TYPE_EXTENDED_COLOR_LIGHT // 0x010D Extended Color Light
     else -> DeviceType.TYPE_UNKNOWN
+  }
+}
+
+fun convertToMatterDeviceType(deviceType: DeviceType): Int {
+  return when (deviceType) {
+    DeviceType.TYPE_LIGHT -> 256
+    DeviceType.TYPE_DIMMABLE_LIGHT -> 257
+    DeviceType.TYPE_LIGHT_SWITCH -> 259
+    DeviceType.TYPE_OUTLET -> 266
+    DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT -> 268
+    DeviceType.TYPE_EXTENDED_COLOR_LIGHT -> 269
+    DeviceType.TYPE_UNSPECIFIED,
+    DeviceType.TYPE_UNKNOWN,
+    DeviceType.UNRECOGNIZED -> 0
   }
 }
 

@@ -7,13 +7,20 @@ import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.aether.android.Device
 import io.aether.android.Devices
+import io.aether.android.MatterEndpoint
+import io.aether.android.MatterFabricState
+import io.aether.android.MatterNode
+import io.aether.android.convertToAppDeviceType
+import io.aether.android.convertToMatterDeviceType
 import io.aether.android.formatNodeId
+import io.aether.android.getTimestampForNow
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 
 /**
@@ -22,57 +29,173 @@ import timber.log.Timber
 @Singleton
 class DevicesRepository @Inject constructor(@ApplicationContext context: Context) {
 
-  // The datastore managed by DevicesRepository.
-  private val devicesDataStore = context.devicesDataStore
+  // Devices metadata is persisted in the same Proto DataStore as dynamic fabric state.
+  private val devicesStateDataStore = context.devicesStateDataStore
 
   // The Flow to read data from the DataStore.
   val devicesFlow: Flow<Devices> =
-      devicesDataStore.data.catch { exception ->
-        // dataStore.data throws an IOException when an error is encountered when reading data
-        if (exception is IOException) {
-          Timber.e(exception, "Error reading devices.")
-          emit(Devices.getDefaultInstance())
-        } else {
-          throw exception
-        }
-      }
+      devicesStateDataStore.data
+          .map { state ->
+            val flattenedDevices =
+                state.nodesList.flatMap { node ->
+                  node.endpointsList.map { endpoint -> toDevice(node, endpoint) }
+                }
+            Devices.newBuilder().addAllDevices(flattenedDevices).build()
+          }
+          .catch { exception ->
+            // dataStore.data throws an IOException when an error is encountered when reading data
+            if (exception is IOException) {
+              Timber.e(exception, "Error reading devices.")
+              emit(Devices.getDefaultInstance())
+            } else {
+              throw exception
+            }
+          }
 
   suspend fun addDevice(device: Device) {
     Timber.d("addDevice: device [${device}]")
-    devicesDataStore.updateData { devices -> devices.toBuilder().addDevices(device).build() }
+    val normalizedEndpoint = endpointOf(device)
+    devicesStateDataStore.updateData { state ->
+      val stateBuilder = state.toBuilder()
+      val nodeIndex = findNodeIndex(state, device.nodeId)
+      if (nodeIndex == -1) {
+        val newNodeBuilder =
+            MatterNode.newBuilder()
+                .setNodeId(device.nodeId)
+                .setVendorId(device.vendorId.toIntOrNull() ?: 0)
+                .setVendorName(device.vendorName)
+                .setProductId(device.productId.toIntOrNull() ?: 0)
+                .setProductName(device.productName)
+                .setDateCommissioned(getTimestampForNow())
+                .setName(device.name)
+                .setOnline(false)
+        newNodeBuilder.addEndpoints(toEndpoint(device, normalizedEndpoint))
+        val newNode = newNodeBuilder.build()
+        stateBuilder.addNodes(newNode)
+      } else {
+        val existingNode = state.getNodes(nodeIndex)
+        val nodeBuilder = existingNode.toBuilder()
+        if (device.name.isNotBlank()) {
+          nodeBuilder.name = device.name
+        }
+        if (device.vendorName.isNotBlank()) {
+          nodeBuilder.vendorName = device.vendorName
+        }
+        if (device.productName.isNotBlank()) {
+          nodeBuilder.productName = device.productName
+        }
+        if (device.vendorId.isNotBlank()) {
+          nodeBuilder.vendorId = device.vendorId.toIntOrNull() ?: existingNode.vendorId
+        }
+        if (device.productId.isNotBlank()) {
+          nodeBuilder.productId = device.productId.toIntOrNull() ?: existingNode.productId
+        }
+        val endpointIndex = findEndpointIndex(existingNode, normalizedEndpoint)
+        val updatedEndpoint =
+            toEndpoint(
+                device,
+                normalizedEndpoint,
+                if (endpointIndex == -1) null else existingNode.getEndpoints(endpointIndex),
+            )
+        if (endpointIndex == -1) {
+          nodeBuilder.addEndpoints(updatedEndpoint)
+        } else {
+          nodeBuilder.setEndpoints(endpointIndex, updatedEndpoint)
+        }
+        stateBuilder.setNodes(nodeIndex, nodeBuilder.build())
+      }
+      stateBuilder.build()
+    }
+  }
+
+  suspend fun addOrUpdateEndpoint(
+      nodeId: Long,
+      nodeName: String,
+      vendorId: Int,
+      vendorName: String,
+      productId: Int,
+      productName: String,
+      endpoint: MatterEndpoint,
+  ) {
+    devicesStateDataStore.updateData { state ->
+      val stateBuilder = state.toBuilder()
+      val nodeIndex = findNodeIndex(state, nodeId)
+      if (nodeIndex == -1) {
+        val nodeBuilder =
+            MatterNode.newBuilder()
+                .setNodeId(nodeId)
+                .setName(nodeName)
+                .setVendorId(vendorId)
+                .setVendorName(vendorName)
+                .setProductId(productId)
+                .setProductName(productName)
+                .setDateCommissioned(getTimestampForNow())
+                .setOnline(false)
+        nodeBuilder.addEndpoints(endpoint)
+        stateBuilder.addNodes(nodeBuilder.build())
+      } else {
+        val existingNode = state.getNodes(nodeIndex)
+        val nodeBuilder = existingNode.toBuilder()
+        if (nodeName.isNotBlank()) nodeBuilder.name = nodeName
+        if (vendorName.isNotBlank()) nodeBuilder.vendorName = vendorName
+        if (productName.isNotBlank()) nodeBuilder.productName = productName
+        if (vendorId != 0) nodeBuilder.vendorId = vendorId
+        if (productId != 0) nodeBuilder.productId = productId
+
+        val normalizedEndpoint = endpointOf(endpoint)
+        val endpointIndex = findEndpointIndex(existingNode, normalizedEndpoint)
+        if (endpointIndex == -1) {
+          nodeBuilder.addEndpoints(endpoint)
+        } else {
+          nodeBuilder.setEndpoints(endpointIndex, endpoint)
+        }
+        stateBuilder.setNodes(nodeIndex, nodeBuilder.build())
+      }
+      stateBuilder.build()
+    }
   }
 
   suspend fun updateDevice(device: Device) {
     Timber.d("updateDevice: device [${device}]")
-    val index = getIndex(device.nodeId)
-    devicesDataStore.updateData { devices -> devices.toBuilder().setDevices(index, device).build() }
+    val nodeIndex = findNodeIndex(device.nodeId)
+    if (nodeIndex == -1) {
+      throw Exception("Device not found: ${formatNodeId(device.nodeId)}")
+    }
+    addDevice(device)
   }
 
   suspend fun updateDeviceType(nodeId: Long, deviceType: Device.DeviceType) {
     Timber.d("updateDeviceType: nodeId [${formatNodeId(nodeId)}] deviceType [${deviceType}]")
-    val (index, device) = getIndexAndDevice(nodeId)
-    if (index == null) {
+    val nodeIndex = findNodeIndex(nodeId)
+    if (nodeIndex == -1) {
       Timber.e(
           "Unable to get device information to update its type: nodeId [${formatNodeId(nodeId)}] deviceType [${deviceType}]"
       )
       return
     }
-    val deviceBuilder = Device.newBuilder(device)
-    deviceBuilder.deviceType = deviceType
-    devicesDataStore.updateData { devices ->
-      devices.toBuilder().setDevices(index, deviceBuilder.build()).build()
+    devicesStateDataStore.updateData { state ->
+      val nodeBuilder = state.getNodes(nodeIndex).toBuilder()
+      val endpoints = state.getNodes(nodeIndex).endpointsList
+      for (i in endpoints.indices) {
+        val endpointBuilder = endpoints[i].toBuilder()
+        endpointBuilder.clearDeviceTypes()
+        val matterType = convertToMatterDeviceType(deviceType)
+        if (matterType != 0) {
+          endpointBuilder.addDeviceTypes(matterType)
+        }
+        nodeBuilder.setEndpoints(i, endpointBuilder.build())
+      }
+      state.toBuilder().setNodes(nodeIndex, nodeBuilder.build()).build()
     }
   }
 
   suspend fun removeDevice(nodeId: Long) {
     Timber.d("removeDevice: nodeId [${formatNodeId(nodeId)}]")
-    val index = getIndex(nodeId)
-    if (index == -1) {
+    val nodeIndex = findNodeIndex(nodeId)
+    if (nodeIndex == -1) {
       throw Exception("Device not found: ${formatNodeId(nodeId)}")
     }
-    devicesDataStore.updateData { devicesList ->
-      devicesList.toBuilder().removeDevices(index).build()
-    }
+    devicesStateDataStore.updateData { state -> state.toBuilder().removeNodes(nodeIndex).build() }
   }
 
   suspend fun getDevice(nodeId: Long): Device = getDeviceByNodeId(nodeId)
@@ -91,38 +214,81 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
   }
 
   suspend fun clearAllData() {
-    devicesDataStore.updateData { devicesList -> devicesList.toBuilder().clear().build() }
+    devicesStateDataStore.updateData { state -> state.toBuilder().clearNodes().build() }
   }
 
-  private suspend fun getIndex(nodeId: Long): Int {
-    val devices = devicesFlow.first()
-    return getIndex(devices, nodeId)
+  private suspend fun findNodeIndex(nodeId: Long): Int {
+    val state = devicesStateDataStore.data.first()
+    return findNodeIndex(state, nodeId)
   }
 
-  private fun getIndex(devices: Devices, nodeId: Long): Int {
-    val devicesCount = devices.devicesCount
-    for (index in 0 until devicesCount) {
-      val device = devices.getDevices(index)
-      if (device.nodeId == nodeId) {
+  private fun findNodeIndex(state: MatterFabricState, nodeId: Long): Int {
+    val nodesCount = state.nodesCount
+    for (index in 0 until nodesCount) {
+      if (state.getNodes(index).nodeId == nodeId) {
         return index
       }
     }
     return -1
   }
 
-  private suspend fun getIndexAndDevice(nodeId: Long): Pair<Int?, Device?> {
-    val devices = devicesFlow.first()
-    return getIndexAndDevice(devices, nodeId)
-  }
-
-  private fun getIndexAndDevice(devices: Devices, nodeId: Long): Pair<Int?, Device?> {
-    val devicesCount = devices.devicesCount
-    for (index in 0 until devicesCount) {
-      val device = devices.getDevices(index)
-      if (device.nodeId == nodeId) {
-        return index to device
+  private fun findEndpointIndex(node: MatterNode, endpoint: Int): Int {
+    val endpointsCount = node.endpointsCount
+    for (index in 0 until endpointsCount) {
+      if (endpointOf(node.getEndpoints(index)) == endpoint) {
+        return index
       }
     }
-    return null to null
+    return -1
+  }
+
+  private fun endpointOf(device: Device): Int {
+    return if (device.endpoint != 0) device.endpoint else 1
+  }
+
+  private fun endpointOf(endpoint: MatterEndpoint): Int {
+    return if (endpoint.endpointId != 0) endpoint.endpointId else 1
+  }
+
+  private fun toDevice(node: MatterNode, endpoint: MatterEndpoint): Device {
+    val type =
+        endpoint.deviceTypesList.firstOrNull()?.toLong()?.let { convertToAppDeviceType(it) }
+            ?: Device.DeviceType.TYPE_UNKNOWN
+    return Device.newBuilder()
+        .setNodeId(node.nodeId)
+        .setEndpoint(endpointOf(endpoint))
+        .setName(if (node.name.isNotBlank()) node.name else endpoint.label)
+        .setVendorId(node.vendorId.toString())
+        .setVendorName(node.vendorName)
+        .setProductId(node.productId.toString())
+        .setProductName(node.productName)
+        .setDeviceType(type)
+        .setSupportsLevelControl(endpoint.supportsLevelControl)
+        .setSupportsColorTemperature(endpoint.supportsColorTemperature)
+        .setOn(endpoint.on)
+        .setLevel(endpoint.level)
+        .setColorTemperature(endpoint.colorTemperature)
+        .build()
+  }
+
+  private fun toEndpoint(
+      device: Device,
+      endpointId: Int,
+      existing: MatterEndpoint? = null,
+  ): MatterEndpoint {
+    val builder = (existing ?: MatterEndpoint.getDefaultInstance()).toBuilder()
+    builder.endpointId = endpointId
+    builder.label = device.name
+    builder.supportsLevelControl = device.supportsLevelControl
+    builder.supportsColorTemperature = device.supportsColorTemperature
+    builder.on = device.on
+    builder.level = device.level
+    builder.colorTemperature = device.colorTemperature
+    builder.clearDeviceTypes()
+    val matterType = convertToMatterDeviceType(device.deviceType)
+    if (matterType != 0) {
+      builder.addDeviceTypes(matterType)
+    }
+    return builder.build()
   }
 }

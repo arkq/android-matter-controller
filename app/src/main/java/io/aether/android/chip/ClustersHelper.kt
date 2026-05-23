@@ -39,7 +39,6 @@ data class DeviceMatterInfo(
 /** Singleton to facilitate access to Clusters functionality. */
 // Timed invoke timeout for commands like removeFabric that require a short grace period.
 private const val TIMED_INVOKE_TIMEOUT_MS = 500
-private const val ROOT_ENDPOINT = 0L
 private const val OPERATIONAL_CREDENTIALS_CLUSTER_ID = 0x003EL
 private const val FABRICS_ATTRIBUTE_ID = 0x0001L
 private const val CURRENT_FABRIC_INDEX_ATTRIBUTE_ID = 0x0005L
