@@ -31,14 +31,8 @@ import io.aether.android.STATE_CHANGES_MONITORING_MODE
 import io.aether.android.StateChangesMonitoringMode
 import io.aether.android.TaskStatus
 import io.aether.android.UserPreferences
-import io.aether.android.chip.CLUSTER_COLOR_CONTROL
-import io.aether.android.chip.CLUSTER_LEVEL_CONTROL
-import io.aether.android.chip.CLUSTER_ON_OFF
-import io.aether.android.chip.COLOR_TEMPERATURE_ATTRIBUTE
 import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
-import io.aether.android.chip.LEVEL_ATTRIBUTE
-import io.aether.android.chip.ON_OFF_ATTRIBUTE
 import io.aether.android.chip.SubscriptionHelper
 import io.aether.android.chip.isCommunicationTimeoutError
 import io.aether.android.commissioning.AppCommissioningService
@@ -46,6 +40,7 @@ import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.data.UserPreferencesRepository
 import io.aether.android.endpointFor
+import io.aether.android.matter.Clusters
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.supportsColorTemperature
 import io.aether.android.supportsLevelControl
@@ -337,7 +332,7 @@ constructor(
       try {
         val deviceMatterInfoList = clustersHelper.fetchDeviceMatterInfo(nodeId)
         val appEndpoints = deviceMatterInfoList.filter { info ->
-          info.endpoint != 0 && info.serverClusters.contains(CLUSTER_ON_OFF)
+          info.endpoint != 0 && info.serverClusters.contains(Clusters.OnOff.ID.toLong())
         }
 
         if (appEndpoints.isEmpty()) {
@@ -346,13 +341,18 @@ constructor(
           val fallbackEndpointInfo = deviceMatterInfoList.firstOrNull { info -> info.endpoint != 0 }
           val commissionedDeviceTypes = fallbackEndpointInfo?.types ?: emptyList()
           val supportsLevel =
-              fallbackEndpointInfo?.serverClusters?.contains(CLUSTER_LEVEL_CONTROL) == true
+              fallbackEndpointInfo?.serverClusters?.contains(Clusters.LevelControl.ID.toLong()) ==
+                  true
           val supportsColorTemperature =
-              if (fallbackEndpointInfo?.serverClusters?.contains(CLUSTER_COLOR_CONTROL) == true) {
+              if (
+                  fallbackEndpointInfo
+                      ?.serverClusters
+                      ?.contains(Clusters.ColorControl.ID.toLong()) == true
+              ) {
                 try {
                   clustersHelper
                       .readColorControlClusterAttributeList(nodeId, fallbackEndpointInfo.endpoint)
-                      .contains(COLOR_TEMPERATURE_ATTRIBUTE.attributeId)
+                      .contains(Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID.toLong())
                 } catch (e: Exception) {
                   Timber.w(
                       e,
@@ -391,15 +391,17 @@ constructor(
         } else {
           appEndpoints.forEach { info ->
             val endpointDisplayName = deviceName
-            val supportsLevel = info.serverClusters.contains(CLUSTER_LEVEL_CONTROL)
+            val supportsLevel = info.serverClusters.contains(Clusters.LevelControl.ID.toLong())
             // Check the Color Control cluster's AttributeList to confirm that the optional
             // color temperature attribute (id 7) is actually present, not just the cluster.
             val supportsColorTemperature =
-                if (info.serverClusters.contains(CLUSTER_COLOR_CONTROL)) {
+                if (info.serverClusters.contains(Clusters.ColorControl.ID.toLong())) {
                   try {
                     clustersHelper
                         .readColorControlClusterAttributeList(nodeId, info.endpoint)
-                        .contains(COLOR_TEMPERATURE_ATTRIBUTE.attributeId)
+                        .contains(
+                            Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID.toLong()
+                        )
                   } catch (e: Exception) {
                     Timber.w(
                         e,
@@ -565,16 +567,25 @@ constructor(
               override fun onReport(nodeState: NodeState) {
                 super.onReport(nodeState)
                 val onOffState =
-                    subscriptionHelper.extractAttribute(nodeState, endpoint, ON_OFF_ATTRIBUTE)
-                        as Boolean?
+                    subscriptionHelper.extractAttribute(
+                        nodeState,
+                        endpoint,
+                        Clusters.OnOff.ID.toLong(),
+                        Clusters.OnOff.Attributes.OnOff.ID.toLong(),
+                    ) as Boolean?
                 val levelState =
-                    subscriptionHelper.extractAttribute(nodeState, endpoint, LEVEL_ATTRIBUTE)
-                        as Int?
+                    subscriptionHelper.extractAttribute(
+                        nodeState,
+                        endpoint,
+                        Clusters.LevelControl.ID.toLong(),
+                        Clusters.LevelControl.Attributes.CurrentLevel.ID.toLong(),
+                    ) as Int?
                 val colorTemperatureState =
                     subscriptionHelper.extractAttribute(
                         nodeState,
                         endpoint,
-                        COLOR_TEMPERATURE_ATTRIBUTE,
+                        Clusters.ColorControl.ID.toLong(),
+                        Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID.toLong(),
                     ) as Int?
                 Timber.d("onOffState [${onOffState}]")
                 if (onOffState == null) {

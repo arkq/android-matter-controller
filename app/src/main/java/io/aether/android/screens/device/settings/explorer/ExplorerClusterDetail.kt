@@ -20,8 +20,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
-import io.aether.android.chip.labelRes
-import io.aether.android.matter.MatterType
+import io.aether.android.matter.Privilege
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.SearchTextField
 
@@ -31,7 +30,6 @@ internal fun ClusterDetailContent(
     tab: ExplorerTab,
     isLoading: Boolean,
     details: ExplorerClusterDetails?,
-    typeLabelFor: (MatterType) -> String,
     showSearch: Boolean,
     attributeSearchQuery: String,
     commandSearchQuery: String,
@@ -111,15 +109,16 @@ internal fun ClusterDetailContent(
                                   append(
                                       stringResource(
                                           R.string.device_explorer_attribute_privileges,
-                                          stringResource(attribute.readPrivilege.labelRes()),
-                                          stringResource(attribute.writePrivilege.labelRes()),
+                                          attribute.readPrivilege?.label ?: Privilege.UNKNOWN.label,
+                                          attribute.writePrivilege?.label
+                                              ?: Privilege.UNKNOWN.label,
                                       )
                                   )
                                   append("\n")
                                   append(
                                       stringResource(
                                           R.string.device_explorer_attribute_type,
-                                          typeLabelFor(attribute.type),
+                                          attribute.type.label,
                                       )
                                   )
                                 },

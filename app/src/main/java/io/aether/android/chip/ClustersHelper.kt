@@ -51,6 +51,7 @@ private const val GLOBAL_ATTRIBUTE_EVENT_LIST_ID = 0xFFFAL
 private const val GLOBAL_ATTRIBUTE_ACCEPTED_COMMAND_LIST_ID = 0xFFF9L
 private const val GLOBAL_ATTRIBUTE_GENERATED_COMMAND_LIST_ID = 0xFFF8L
 private const val GLOBAL_ATTRIBUTE_ATTRIBUTE_LIST_ID = 0xFFFBL
+private const val ROOT_ENDPOINT = 0L
 
 data class BasicInformationAttributes(
     val vendorName: String? = null,

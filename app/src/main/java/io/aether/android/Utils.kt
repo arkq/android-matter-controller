@@ -12,12 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import com.google.protobuf.Timestamp
 import io.aether.android.Device.DeviceType
-import io.aether.android.chip.DEVICE_TYPE_COLOR_TEMPERATURE_LIGHT
-import io.aether.android.chip.DEVICE_TYPE_DIMMABLE_LIGHT
-import io.aether.android.chip.DEVICE_TYPE_EXTENDED_COLOR_LIGHT
-import io.aether.android.chip.DEVICE_TYPE_ON_OFF_LIGHT
-import io.aether.android.chip.DEVICE_TYPE_ON_OFF_LIGHT_SWITCH
-import io.aether.android.chip.DEVICE_TYPE_ON_OFF_PLUGIN_UNIT
+import io.aether.android.matter.Devices
 import java.io.File
 import java.lang.Long.max
 import java.security.SecureRandom
@@ -103,12 +98,12 @@ fun getDeviceTypeIconId(deviceType: DeviceType): Int {
 
 fun getDeviceTypeIconId(deviceTypeId: Long): Int {
   return when (deviceTypeId) {
-    DEVICE_TYPE_ON_OFF_LIGHT,
-    DEVICE_TYPE_DIMMABLE_LIGHT,
-    DEVICE_TYPE_COLOR_TEMPERATURE_LIGHT,
-    DEVICE_TYPE_EXTENDED_COLOR_LIGHT,
-    DEVICE_TYPE_ON_OFF_LIGHT_SWITCH -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
-    DEVICE_TYPE_ON_OFF_PLUGIN_UNIT -> R.drawable.ic_baseline_outlet_24
+    Devices.OnOffLight.ID.toLong(),
+    Devices.DimmableLight.ID.toLong(),
+    Devices.ColorTemperatureLight.ID.toLong(),
+    Devices.ExtendedColorLight.ID.toLong(),
+    Devices.OnOffLightSwitch.ID.toLong() -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
+    Devices.OnOffPluginUnit.ID.toLong() -> R.drawable.ic_baseline_outlet_24
     else -> R.drawable.ic_baseline_device_unknown_24
   }
 }

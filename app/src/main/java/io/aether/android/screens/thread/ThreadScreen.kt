@@ -665,3 +665,10 @@ private fun clearGpsPreferredCredsMsg(): String {
       "Clearing all the GPS data might have unforeseen side effects on other Google " +
       "Services. Use cautiously on a phone and on an user dedicated to development purposes."
 }
+
+fun Context.getActivity(): ComponentActivity? =
+    when (this) {
+      is ComponentActivity -> this
+      is ContextWrapper -> baseContext.getActivity()
+      else -> null
+    }

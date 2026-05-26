@@ -20,7 +20,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
 import io.aether.android.isOnDisplayString
-import timber.log.Timber
 
 /** Displays the on/off state of a single OnOff cluster and lets the user toggle it. */
 @Composable

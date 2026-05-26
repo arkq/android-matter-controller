@@ -3,9 +3,7 @@
 
 package io.aether.android
 
-import io.aether.android.chip.DEVICE_TYPE_COLOR_TEMPERATURE_LIGHT
-import io.aether.android.chip.DEVICE_TYPE_DIMMABLE_LIGHT
-import io.aether.android.chip.DEVICE_TYPE_EXTENDED_COLOR_LIGHT
+import io.aether.android.matter.Devices
 
 /** Returns the Matter endpoint number for [device], defaulting to 1 for legacy records. */
 fun endpointFor(device: MatterEndpoint): Int = if (device.endpointId != 0) device.endpointId else 1
@@ -14,9 +12,9 @@ fun endpointFor(device: MatterEndpoint): Int = if (device.endpointId != 0) devic
 fun supportsLevelControl(device: MatterEndpoint): Boolean {
   val primaryType = device.deviceTypesList.firstOrNull()?.toLong() ?: 0L
   return device.supportsLevelControl ||
-      primaryType == DEVICE_TYPE_DIMMABLE_LIGHT ||
-      primaryType == DEVICE_TYPE_COLOR_TEMPERATURE_LIGHT ||
-      primaryType == DEVICE_TYPE_EXTENDED_COLOR_LIGHT
+      primaryType == Devices.DimmableLight.ID.toLong() ||
+      primaryType == Devices.ColorTemperatureLight.ID.toLong() ||
+      primaryType == Devices.ExtendedColorLight.ID.toLong()
 }
 
 /**
@@ -28,6 +26,6 @@ fun supportsLevelControl(device: MatterEndpoint): Boolean {
 fun supportsColorTemperature(device: MatterEndpoint): Boolean {
   val primaryType = device.deviceTypesList.firstOrNull()?.toLong() ?: 0L
   return device.supportsColorTemperature ||
-      primaryType == DEVICE_TYPE_COLOR_TEMPERATURE_LIGHT ||
-      primaryType == DEVICE_TYPE_EXTENDED_COLOR_LIGHT
+      primaryType == Devices.ColorTemperatureLight.ID.toLong() ||
+      primaryType == Devices.ExtendedColorLight.ID.toLong()
 }

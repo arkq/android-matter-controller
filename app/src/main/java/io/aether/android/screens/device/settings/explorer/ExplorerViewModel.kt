@@ -11,8 +11,8 @@ import io.aether.android.R
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.chip.DataModelLoader
 import io.aether.android.chip.DeviceMatterInfo
-import io.aether.android.matter.MatterPrivilege
-import io.aether.android.matter.MatterType
+import io.aether.android.matter.DataType
+import io.aether.android.matter.Privilege
 import io.aether.android.screens.common.DialogInfo
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -34,9 +34,9 @@ data class ExplorerClusterKey(val endpoint: Int, val clusterId: Long)
 data class ExplorerAttributeUiItem(
     val id: Long,
     val name: String? = null,
-    val type: MatterType = MatterType.TYPE_UNKNOWN,
-    val readPrivilege: MatterPrivilege = MatterPrivilege.PRIVILEGE_UNKNOWN,
-    val writePrivilege: MatterPrivilege = MatterPrivilege.PRIVILEGE_UNKNOWN,
+    val type: DataType = DataType.UNKNOWN,
+    val readPrivilege: Privilege? = null,
+    val writePrivilege: Privilege? = null,
     val isSupported: Boolean = true,
 )
 
@@ -144,15 +144,9 @@ constructor(
 
   init {
     viewModelScope.launch(Dispatchers.IO) {
-      _knownClustersById.value =
-          ExplorerSchema.buildKnownClustersById(
-              dataModelLoader.load(),
-              dataModelLoader.genericAttributes,
-          )
+      _knownClustersById.value = ExplorerSchema.buildKnownClustersById()
     }
   }
-
-  fun shortTypeLabel(type: MatterType): String = dataModelLoader.shortTypeLabel(type)
 
   fun loadExplorer(nodeId: Long) {
     viewModelScope.launch {
@@ -318,9 +312,9 @@ constructor(
               ExplorerAttributeUiItem(
                   id = id,
                   name = known?.name,
-                  type = known?.type ?: MatterType.TYPE_UNKNOWN,
-                  readPrivilege = known?.readPrivilege ?: MatterPrivilege.PRIVILEGE_UNKNOWN,
-                  writePrivilege = known?.writePrivilege ?: MatterPrivilege.PRIVILEGE_UNKNOWN,
+                  type = known?.type ?: DataType.UNKNOWN,
+                  readPrivilege = known?.readPrivilege,
+                  writePrivilege = known?.writePrivilege,
                   isSupported = id in supportedAttributeIds,
               )
             }
@@ -380,7 +374,7 @@ constructor(
             _knownClustersById.value[clusterId]
                 ?.attributes
                 ?.firstOrNull { it.id == attributeId }
-                ?.type ?: MatterType.TYPE_UNKNOWN
+                ?.type ?: DataType.UNKNOWN
         val payload =
             ExplorerTlvCodec.encodeAnonymousValue(
                 type = attributeType,

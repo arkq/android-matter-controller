@@ -74,14 +74,15 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
   fun extractAttribute(
       nodeState: NodeState,
       endpointId: Int,
-      clusterAttribute: ClusterAttribute,
+      clusterId: Long,
+      attributeId: Long,
   ): Any? {
     nodeState.endpointStates.forEach { (_endpointId, endpointState) ->
       if (_endpointId != endpointId) return@forEach
-      endpointState.clusterStates.forEach { (clusterId, clusterState) ->
-        if (clusterId != clusterAttribute.clusterId) return@forEach
-        clusterState.attributeStates.forEach { (attributeId, attributeState) ->
-          if (attributeId != clusterAttribute.attributeId) return@forEach
+      endpointState.clusterStates.forEach { (stateClusterId, clusterState) ->
+        if (stateClusterId != clusterId) return@forEach
+        clusterState.attributeStates.forEach { (stateAttributeId, attributeState) ->
+          if (stateAttributeId != attributeId) return@forEach
           return attributeState.value
         }
       }

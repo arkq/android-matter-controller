@@ -20,16 +20,14 @@ import io.aether.android.R
 import io.aether.android.SETUP_PIN_CODE
 import io.aether.android.STATE_CHANGES_MONITORING_MODE
 import io.aether.android.StateChangesMonitoringMode
-import io.aether.android.chip.COLOR_TEMPERATURE_ATTRIBUTE
 import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
-import io.aether.android.chip.LEVEL_ATTRIBUTE
-import io.aether.android.chip.ON_OFF_ATTRIBUTE
 import io.aether.android.chip.SubscriptionHelper
 import io.aether.android.chip.isCommunicationTimeoutError
 import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.endpointFor
+import io.aether.android.matter.Clusters
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.home.DeviceUiModel
 import io.aether.android.screens.shared.SetDeviceNameResult
@@ -610,16 +608,25 @@ constructor(
               devicesToUpdate.forEach { endpointModel ->
                 val endpoint = endpointFor(endpointModel.endpoint)
                 val onOffState =
-                    subscriptionHelper.extractAttribute(nodeState, endpoint, ON_OFF_ATTRIBUTE)
-                        as Boolean?
+                    subscriptionHelper.extractAttribute(
+                        nodeState,
+                        endpoint,
+                        Clusters.OnOff.ID.toLong(),
+                        Clusters.OnOff.Attributes.OnOff.ID.toLong(),
+                    ) as Boolean?
                 val levelState =
-                    subscriptionHelper.extractAttribute(nodeState, endpoint, LEVEL_ATTRIBUTE)
-                        as Int?
+                    subscriptionHelper.extractAttribute(
+                        nodeState,
+                        endpoint,
+                        Clusters.LevelControl.ID.toLong(),
+                        Clusters.LevelControl.Attributes.CurrentLevel.ID.toLong(),
+                    ) as Int?
                 val colorTemperatureState =
                     subscriptionHelper.extractAttribute(
                         nodeState,
                         endpoint,
-                        COLOR_TEMPERATURE_ATTRIBUTE,
+                        Clusters.ColorControl.ID.toLong(),
+                        Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID.toLong(),
                     ) as Int?
                 Timber.d("onOffState [${onOffState}] for endpoint $endpoint")
                 if (onOffState == null) {

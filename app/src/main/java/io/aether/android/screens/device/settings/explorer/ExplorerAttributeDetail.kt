@@ -25,15 +25,13 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import io.aether.android.R
-import io.aether.android.chip.labelRes
-import io.aether.android.matter.MatterType
+import io.aether.android.matter.Privilege
 import io.aether.android.screens.common.HighlightedOutlinedTextField
 
 @Composable
 internal fun AttributeDetailContent(
     attribute: ExplorerAttributeUiItem,
     currentValue: String?,
-    typeLabelFor: (MatterType) -> String,
     readSuccessCount: Int,
     writeSuccessCount: Int,
     onRead: () -> Unit,
@@ -64,7 +62,7 @@ internal fun AttributeDetailContent(
               stringResource(
                   R.string.device_explorer_label_with_type,
                   stringResource(R.string.device_explorer_value),
-                  typeLabelFor(attribute.type),
+                  attribute.type.label,
               )
           )
         },
@@ -75,7 +73,7 @@ internal fun AttributeDetailContent(
         text =
             stringResource(
                 R.string.device_explorer_attribute_read_privilege,
-                stringResource(attribute.readPrivilege.labelRes()),
+                attribute.readPrivilege?.label ?: Privilege.UNKNOWN.label,
             ),
         style = MaterialTheme.typography.bodyMedium,
     )
@@ -84,7 +82,7 @@ internal fun AttributeDetailContent(
         text =
             stringResource(
                 R.string.device_explorer_attribute_write_privilege,
-                stringResource(attribute.writePrivilege.labelRes()),
+                attribute.writePrivilege?.label ?: Privilege.UNKNOWN.label,
             ),
         style = MaterialTheme.typography.bodyMedium,
     )

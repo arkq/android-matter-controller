@@ -133,7 +133,6 @@ fun ExplorerRoute(
               tab = level.tab,
               isLoading = loadingClusterKeys.contains(key),
               details = clusterDetailsByKey[key],
-              typeLabelFor = viewModel::shortTypeLabel,
               showSearch = showSearch,
               attributeSearchQuery = attributeSearchQuery,
               commandSearchQuery = commandSearchQuery,
@@ -163,7 +162,6 @@ fun ExplorerRoute(
           AttributeDetailContent(
               attribute = level.attribute,
               currentValue = currentValue,
-              typeLabelFor = viewModel::shortTypeLabel,
               readSuccessCount = attributeReadSuccessCount,
               writeSuccessCount = attributeWriteSuccessCount,
               onRead = {
@@ -188,7 +186,6 @@ fun ExplorerRoute(
         is ExplorerLevel.CommandInvoke ->
             CommandInvokeContent(
                 command = level.command,
-                typeLabelFor = viewModel::shortTypeLabel,
                 invokeSuccessCount = commandInvokeSuccessCount,
                 onInvoke = { argumentValues ->
                   viewModel.invokeCommand(
