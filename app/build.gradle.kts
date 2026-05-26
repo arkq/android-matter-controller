@@ -25,7 +25,7 @@ plugins {
  * affect which JDK is used to run the Gradle build itself, and does not need to take into account
  * the JDK version required by Gradle plugins (such as the Android Gradle Plugin)
  */
-kotlin { jvmToolchain(21) }
+kotlin { jvmToolchain(25) }
 
 /** The android block is where you configure all your Android-specific build options. */
 android {
