@@ -4,433 +4,347 @@
 
 # Usage:
 #   scripts/matter-data-model-parser.py \
-#       --out-proto MatterDataModel.proto \
-#       --out-bin-dir app/src/main/assets/matter \
+#       --out-dir app/src/main/java/io/aether/android/matter
 #       matter-sdk/data_model
 #
 # The script scans every version sub-directory inside Matter SDK data model
-# dir (e.g. 1.0, 1.1, 1.2, ...) and collects ALL unique attribute/argument
-# types across ALL versions so that the generated MatterType enum stays
-# compatible between versions, then writes:
-#   - one shared .proto file
-#   - one binary file per version
+# dir (e.g. 1.0, 1.1, 1.2, ...) and collects ALL unique attributes, arguments,
+# data types, etc. across ALL versions.
 #
-# Dependencies:  pip install lxml protobuf
+# Dependencies: pip install lxml
 
 import re
 import argparse
-import importlib
-import subprocess
+import dataclasses
 import sys
-from collections import defaultdict
-from dataclasses import dataclass
 from pathlib import Path
 
 import lxml.etree as ET
 
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
+def _to_camel(s: str) -> str:
+    """Convert a string to CamelCase."""
+    return re.sub(r"\W", "", s)
 
 
-def _clean_name(t: str) -> str:
-    """Return the UPPER_SNAKE_CASE variant used in the proto enum."""
+def _to_upper_snake(t: str) -> str:
+    """Convert a string to UPPER_SNAKE_CASE."""
     # Insert an underscore before any capital letter preceded by a lowercase
     # letter or digit e.g., 'camelCase' -> 'camel_Case'
     s1 = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", t)
     # Handle consecutive capitals e.g., 'HTTPResponse' -> 'HTTP_Response'
     s2 = re.sub(r"([A-Z])([A-Z][a-z])", r"\1_\2", s1)
-    # Replace other delimiters, capitalize, and clean up multiple/trailing underscores.
-    cleaned = s2.replace("-", "_").replace(" ", "_").replace(".", "_").upper()
+    # Replace all non-alphanumeric characters with underscores.
+    cleaned = re.sub(r"[^A-Za-z0-9]+", "_", s2).upper()
     return re.sub(r"_+", "_", cleaned).strip("_")
 
 
 def _get_type(element: ET._Element) -> str:
     """Extract the type from an XML element, handling any special cases."""
-    type = _clean_name(element.get("type", "").strip())
+    type = element.get("type", "")
     if (
-        type == "LIST"
+        type.lower() == "list"
         # For list types, we need to get the element type from the "entry" element.
         and (entry := element.find("./entry")) is not None
         and (entry_type := _get_type(entry))
     ):
-        return f"{type}_{entry_type}"
+        return f"List<{entry_type}>"
     return type
 
 
+def _get_type_name(type: str) -> str:
+    if type:
+        return _to_upper_snake(type)
+    return "UNKNOWN"
+
+
 def _xml_files_for_version(data_model_dir: Path, version: str) -> list[Path]:
+    """Return a list of all XML files for the given spec version."""
     return sorted(data_model_dir.joinpath(version).rglob("**/*.xml"))
 
 
-# ---------------------------------------------------------------------------
-# Pass 1 – collect ALL unique types across ALL versions
-# ---------------------------------------------------------------------------
+@dataclasses.dataclass
+class Field:
+    id: int
+    name: str
+    type: str
+
+    # Keep track of any name changes across versions for diagnostics.
+    diagnostics: list[str] = dataclasses.field(default_factory=list)
+
+    def has_diagnostics(self) -> bool:
+        return bool(self.diagnostics)
 
 
-def collect_all_types(data_model_dir: Path, versions: list[str]) -> list[str]:
-    """Collect all unique attribute/argument types across ALL versions."""
-    # Keep track of how many times each type is used across all versions to
-    # compact the generated proto (most common types get lower enum values).
-    types: dict[str, int] = defaultdict(int)
-    for version in versions:
-        for xml_file in _xml_files_for_version(data_model_dir, version):
+@dataclasses.dataclass
+class Attribute:
+    id: int
+    name: str
+    type: str
+    read_privilege: str = ""
+    write_privilege: str = ""
+
+    # Keep track of any name changes across versions for diagnostics.
+    diagnostics: list[str] = dataclasses.field(default_factory=list)
+
+    def has_diagnostics(self) -> bool:
+        return bool(self.diagnostics)
+
+
+@dataclasses.dataclass
+class Command:
+    id: int
+    name: str
+    parameters: dict[int, Field]
+    privilege: str = ""
+
+    # Keep track of any name changes across versions for diagnostics.
+    diagnostics: list[str] = dataclasses.field(default_factory=list)
+
+    def has_diagnostics(self) -> bool:
+        if any(x.has_diagnostics() for x in self.parameters.values()):
+            return True
+        return bool(self.diagnostics)
+
+
+@dataclasses.dataclass
+class Event:
+    id: int
+    name: str
+    parameters: dict[int, Field]
+
+    # Keep track of any name changes across versions for diagnostics.
+    diagnostics: list[str] = dataclasses.field(default_factory=list)
+
+    def has_diagnostics(self) -> bool:
+        if any(x.has_diagnostics() for x in self.parameters.values()):
+            return True
+        return bool(self.diagnostics)
+
+
+@dataclasses.dataclass
+class Cluster:
+    id: int
+    name: str
+    attributes: dict[int, Attribute]
+    commands_in: dict[int, Command]
+    commands_out: dict[int, Command]
+    events: dict[int, Event]
+
+    # Keep track of any name changes across versions for diagnostics.
+    diagnostics: list[str] = dataclasses.field(default_factory=list)
+    # Keep track of spec versions where this cluster appears.
+    versions: list[str] = dataclasses.field(default_factory=list)
+
+    def has_diagnostics(self) -> bool:
+        if any(x.has_diagnostics() for x in self.attributes.values()):
+            return True
+        if any(x.has_diagnostics() for x in self.commands_in.values()):
+            return True
+        if any(x.has_diagnostics() for x in self.commands_out.values()):
+            return True
+        if any(x.has_diagnostics() for x in self.events.values()):
+            return True
+        return bool(self.diagnostics)
+
+
+@dataclasses.dataclass
+class Struct:
+    name: str
+    fields: list[Field]
+
+    # Keep track of any name changes across versions for diagnostics.
+    diagnostics: list[str] = dataclasses.field(default_factory=list)
+
+    def has_diagnostics(self) -> bool:
+        if any(x.has_diagnostics() for x in self.fields):
+            return True
+        return bool(self.diagnostics)
+
+
+@dataclasses.dataclass
+class Device:
+    id: int
+    name: str
+    clusters: set[int]
+
+    # Keep track of any name changes across versions for diagnostics.
+    diagnostics: list[str] = dataclasses.field(default_factory=list)
+
+    def has_diagnostics(self) -> bool:
+        return bool(self.diagnostics)
+
+
+def collect_clusters(data_model_dir: Path, versions: list[str]):
+    """Collect clusters with attributes/commands/events across ALL versions."""
+    clusters: dict[int, Cluster] = {}
+    for ver in versions:
+        for xml_file in _xml_files_for_version(data_model_dir, ver):
             tree = ET.parse(xml_file)
-            # Iterate over all elements with a "type" attribute.
-            for elem in tree.xpath("//*[@type]"):
-                if t := _get_type(elem):
-                    types[t] += 1
-    # Sort by usage count (descending) and then alphabetically
-    # for deterministic output, and return just the type names.
-    return sorted(types.keys(), key=lambda t: (-types[t], t))
-
-
-def collect_all_privileges(data_model_dir: Path, versions: list[str]) -> list[str]:
-    """Collect all unique privileges across ALL versions."""
-    privileges: set[str] = set()
-    for version in versions:
-        for xml_file in _xml_files_for_version(data_model_dir, version):
-            tree = ET.parse(xml_file)
-            for p in tree.xpath(
-                "|".join(
-                    [
-                        "//access/@readPrivilege",
-                        "//access/@writePrivilege",
-                        "//access/@invokePrivilege",
-                    ]
+            # Find all cluster ID entries within the clusterIds container.
+            for cluster_elem in tree.xpath("./clusterIds/clusterId[@id]"):
+                id = int(cluster_elem.get("id"), 0)
+                name = cluster_elem.get("name", "")
+                cluster_new = Cluster(
+                    id=id, name=name, attributes={}, commands_in={}, commands_out={}, events={}
                 )
-            ):
-                if p := _clean_name(p.strip()):
-                    privileges.add(p)
-    return sorted(filter(None, privileges))
-
-
-# ---------------------------------------------------------------------------
-# Pass 2 – write the shared .proto file
-# ---------------------------------------------------------------------------
-
-
-def generate_proto_file(
-    types: list[str],
-    privileges: list[str],
-    output_proto: str,
-    java_package: str = "io.aether.android.matter",
-) -> None:
-    with open(output_proto, "w") as f:
-        # Header with license and note about auto-generation.
-        spdx = "SPDX"  # Hide code generator from REUSE tool.
-        f.write(
-            f"// {spdx}-FileCopyrightText: 2026 The Authors\n"
-            f"// {spdx}-License-Identifier: Apache-2.0\n"
-            "\n"
-            "// Auto-generated by matter-data-model-parser.py - do not edit.\n"
-            "//\n"
-            "// Binary assets under app/src/main/assets/matter/ are generated by\n"
-            "// scripts/matter-data-model-parser.py and include various mappings,\n"
-            "// command signatures, types and structure definitions. Keep field\n"
-            "// numbers in sync with the parser output.\n"
-            "\n"
-        )
-
-        # Proto syntax and package declaration.
-        f.write(
-            'syntax = "proto3";\n'
-            "package matter.data_model;\n\n"
-            f'option java_package = "{java_package}";\n'
-            "option java_multiple_files = true;\n\n",
-        )
-
-        # MatterType enum (union of all types across all versions)
-        f.write("enum MatterType {\n  TYPE_UNKNOWN = 0;\n")
-        for i, t in enumerate(types, 1):
-            f.write(f"  TYPE_{t} = {i};\n")
-        f.write("}\n\n")
-
-        # MatterPrivilege enum (union of all privileges across all versions)
-        f.write("enum MatterPrivilege {\n  PRIVILEGE_UNKNOWN = 0;\n")
-        for i, p in enumerate(privileges, 1):
-            f.write(f"  PRIVILEGE_{p} = {i};\n")
-        f.write("}\n\n")
-
-        # Struct support
-        f.write(
-            "message StructField {\n"
-            "  string name = 1;\n"
-            "  MatterType type = 2;\n"
-            "}\n\n"
-            "message StructDef {\n"
-            "  string name = 1;\n"
-            "  repeated StructField fields = 2;\n"
-            "}\n\n",
-        )
-
-        # Core data model messages
-        f.write(
-            "message Attribute {\n"
-            "  uint32 id = 1;\n"
-            "  string name = 2;\n"
-            "  MatterType type = 3;\n"
-            "  MatterPrivilege read_privilege = 4;\n"
-            "  MatterPrivilege write_privilege = 5;\n"
-            "}\n\n"
-            "message Parameter {\n"
-            "  string name = 1;\n"
-            "  MatterType type = 2;\n"
-            "}\n\n"
-            "message Command {\n"
-            "  uint32 id = 1;\n"
-            "  string name = 2;\n"
-            "  repeated Parameter parameters = 3;\n"
-            "}\n\n"
-            "message Cluster {\n"
-            "  uint32 id = 1;\n"
-            "  string name = 2;\n"
-            "  repeated Attribute attributes = 3;\n"
-            "  repeated Command commands = 4;\n"
-            "}\n\n"
-            "message Device {\n"
-            "  uint32 id = 1;\n"
-            "  string name = 2;\n"
-            "  repeated uint32 clusters = 3;\n"
-            "}\n\n",
-        )
-
-        # Root universe
-        f.write(
-            "message MatterDataModel {\n"
-            "  repeated Device devices = 1;\n"
-            "  repeated Cluster clusters = 2;\n"
-            "  repeated StructDef structs = 3;\n"
-            "}\n",
-        )
-
-
-# ---------------------------------------------------------------------------
-# Pass 3 – compile the proto and load the generated Python module
-# ---------------------------------------------------------------------------
-
-
-def compile_proto(proto_file: str):
-    subprocess.run(["protoc", "--python_out=.", proto_file], check=True)
-    module_name = Path(proto_file).stem.replace("-", "_") + "_pb2"
-    sys.path.insert(0, str(Path(proto_file).parent.resolve()))
-    return importlib.import_module(module_name)
-
-
-# ---------------------------------------------------------------------------
-# Pass 4 – populate + serialize one binary file per version
-# ---------------------------------------------------------------------------
-
-
-def populate_binary(
-    data_model_dir: Path,
-    version: str,
-    pb2,
-    output_bin: Path,
-) -> None:
-
-    @dataclass
-    class DeviceDef:
-        id: int
-        name: str
-        clusters: set[int]
-
-    @dataclass
-    class FieldDef:
-        id: int
-        name: str
-        type: str
-
-    @dataclass
-    class StructDef:
-        name: str
-        fields: list[FieldDef]
-
-    @dataclass
-    class AttributeDef:
-        id: int
-        name: str
-        type: str
-        read_privilege: str = ""
-        write_privilege: str = ""
-
-    @dataclass
-    class CommandDef:
-        id: int
-        name: str
-        parameters: list[FieldDef]
-
-    @dataclass
-    class ClusterDef:
-        id: int
-        name: str
-        attributes: list[AttributeDef]
-        commands: list[CommandDef]
-
-    base_device_clusters: set[int] = set()
-    devices: dict[int, DeviceDef] = {}
-    structs: dict[str, StructDef] = {}
-    clusters: dict[int, ClusterDef] = {}
-
-    for xml_file in _xml_files_for_version(data_model_dir, version):
-        tree = ET.parse(xml_file)
-        root = tree.getroot()
-
-        # Devices
-        if root.tag == "deviceType":
-            if root.get("name") == "Base Device Type":
-                for cl in root.xpath("./clusters/cluster"):
-                    base_device_clusters.add(int(cl.get("id"), 0))
-                continue
-            d = DeviceDef(
-                id=int(root.get("id"), 0),
-                name=root.get("name"),
-                clusters=set(),
-            )
-            for cl in root.xpath("./clusters/cluster"):
-                d.clusters.add(int(cl.get("id"), 0))
-            devices[d.id] = d
-
-        # Structs
-        for struct in tree.xpath("//struct"):
-            s = StructDef(
-                name=struct.get("name"),
-                fields=[],
-            )
-            for field in struct.xpath("./field"):
-                s.fields.append(
-                    FieldDef(
-                        id=int(field.get("id"), 0),
-                        name=field.get("name"),
-                        type=_get_type(field),
-                    )
-                )
-            structs[s.name] = s
-
-        # Clusters
-        if root.tag == "cluster":
-            # Find all cluster ID entries within the clusterIds container
-            for cluster in root.xpath("./clusterIds/clusterId"):
-                if not cluster.get("id"):
-                    # Skip entries without an ID
-                    continue
-                c = ClusterDef(
-                    id=int(cluster.get("id"), 0),
-                    name=cluster.get("name"),
-                    attributes=[],
-                    commands=[],
-                )
-                for attr in root.xpath("./attributes/attribute"):
-                    c.attributes.append(
-                        a := AttributeDef(
-                            id=int(attr.get("id"), 0),
-                            name=attr.get("name"),
-                            type=_get_type(attr),
-                        )
-                    )
-                    if access := attr.xpath("./access"):
-                        a.read_privilege = _clean_name(access[0].get("readPrivilege", ""))
-                        a.write_privilege = _clean_name(access[0].get("writePrivilege", ""))
-                for cmd in root.xpath("./commands/command"):
-                    fields = []
-                    for field in cmd.xpath("./field"):
-                        fields.append(
-                            FieldDef(
-                                id=int(field.get("id", "0"), 0),
-                                name=field.get("name"),
-                                type=_get_type(field),
-                            )
-                        )
-                    c.commands.append(
-                        CommandDef(
-                            id=int(cmd.get("id"), 0),
-                            name=cmd.get("name"),
-                            parameters=fields,
-                        )
-                    )
-                clusters[c.id] = c
-
-    def get_type_enum(type: str):
-        if not type:
-            return pb2.TYPE_UNKNOWN
-        return getattr(pb2, "TYPE_" + type, pb2.TYPE_UNKNOWN)
-
-    def get_privilege_enum(privilege: str):
-        if not privilege:
-            return pb2.PRIVILEGE_UNKNOWN
-        return getattr(pb2, "PRIVILEGE_" + privilege, pb2.PRIVILEGE_UNKNOWN)
-
-    universe = pb2.MatterDataModel()
-
-    # Add base device clusters to all devices that don't explicitly list them
-    for dev in devices.values():
-        if not dev.clusters:
-            dev.clusters.update(base_device_clusters)
-
-    # Sort devices by ID and clusters by ID for deterministic output
-    for dev in sorted(devices.values(), key=lambda x: x.id):
-        pb_dev = universe.devices.add()
-        pb_dev.id = dev.id
-        pb_dev.name = dev.name
-        for cluster in sorted(dev.clusters):
-            pb_dev.clusters.append(cluster)
-
-    # Sort structs by name for deterministic output
-    for struct in sorted(structs.values(), key=lambda x: x.name):
-        pb_struct = universe.structs.add()
-        pb_struct.name = struct.name
-        for field in sorted(struct.fields, key=lambda x: x.id):
-            pb_field = pb_struct.fields.add()
-            pb_field.type = get_type_enum(field.type)
-            pb_field.name = field.name
-
-    # Sort clusters by ID for deterministic output
+                cluster = clusters.setdefault(id, cluster_new)
+                cluster.versions.append(ver)
+                if cluster.name != name:
+                    cluster.diagnostics.append(f"v{ver}: '{cluster.name}' -> '{name}'")
+                    # Update to the latest name.
+                    cluster.name = name
+                # Collect cluster's attributes.
+                for attr_elem in cluster_elem.xpath("../../attributes/attribute[@id]"):
+                    id = int(attr_elem.get("id"), 0)
+                    name = attr_elem.get("name", "")
+                    attr_new = Attribute(id=id, name=name, type=_get_type(attr_elem))
+                    attr = cluster.attributes.setdefault(id, attr_new)
+                    if attr.name != name:
+                        attr.diagnostics.append(f"v{ver}: '{attr.name}' -> '{name}'")
+                        # Update to the latest name.
+                        attr.name = name
+                    if priv := attr_elem.xpath("./access/@readPrivilege"):
+                        attr.read_privilege = priv[0]
+                    if priv := attr_elem.xpath("./access/@writePrivilege"):
+                        attr.write_privilege = priv[0]
+                # Collect cluster's commands.
+                for cmd_elem in cluster_elem.xpath("../../commands/command[@id]"):
+                    id = int(cmd_elem.get("id"), 0)
+                    name = cmd_elem.get("name", "")
+                    cmd_new = Command(id=id, name=name, parameters={})
+                    if cmd_elem.get("direction") == "commandToServer":
+                        cmd = cluster.commands_in.setdefault(id, cmd_new)
+                    else:
+                        cmd = cluster.commands_out.setdefault(id, cmd_new)
+                    if cmd.name != name:
+                        cmd.diagnostics.append(f"v{ver}: '{cmd.name}' -> '{name}'")
+                        # Update to the latest name.
+                        cmd.name = name
+                    if priv := cmd_elem.xpath("./access/@invokePrivilege"):
+                        cmd.privilege = priv[0]
+                    # Collect command's parameters.
+                    for field in cmd_elem.xpath("./field"):
+                        id = int(field.get("id", "0"), 0)
+                        name = field.get("name", "")
+                        param_new = Field(id=id, name=name, type=_get_type(field))
+                        param = cmd.parameters.setdefault(id, param_new)
+                        if param.name != name:
+                            param.diagnostics.append(f"v{ver}: '{param.name}' -> '{name}'")
+                            # Update to the latest name.
+                            param.name = name
+                # Collect cluster's events.
+                for event_elem in cluster_elem.xpath("../../events/event[@id]"):
+                    id = int(event_elem.get("id"), 0)
+                    name = event_elem.get("name", "")
+                    event_new = Event(id=id, name=name, parameters={})
+                    event = cluster.events.setdefault(id, event_new)
+                    if event.name != name:
+                        event.diagnostics.append(f"v{ver}: '{event.name}' -> '{name}'")
+                        # Update to the latest name.
+                        event.name = name
+                    # Collect event's parameters.
+                    for field in event_elem.xpath("./field"):
+                        id = int(field.get("id", "0"), 0)
+                        name = field.get("name", "")
+                        param_new = Field(id=id, name=name, type=_get_type(field))
+                        param = event.parameters.setdefault(id, param_new)
+                        if param.name != name:
+                            param.diagnostics.append(f"v{ver}: '{param.name}' -> '{name}'")
+                            # Update to the latest name.
+                            param.name = name
+    # Print diagnostics for any name changes across versions.
     for cluster in sorted(clusters.values(), key=lambda x: x.id):
-        pb_cluster = universe.clusters.add()
-        pb_cluster.id = cluster.id
-        pb_cluster.name = cluster.name
-        for attr in sorted(cluster.attributes, key=lambda x: x.id):
-            pb_attr = pb_cluster.attributes.add()
-            pb_attr.id = attr.id
-            pb_attr.name = attr.name
-            pb_attr.type = get_type_enum(attr.type)
-            pb_attr.read_privilege = get_privilege_enum(attr.read_privilege)
-            pb_attr.write_privilege = get_privilege_enum(attr.write_privilege)
-        for cmd in sorted(cluster.commands, key=lambda x: x.id):
-            pb_cmd = pb_cluster.commands.add()
-            pb_cmd.id = cmd.id
-            pb_cmd.name = cmd.name
-            for param in sorted(cmd.parameters, key=lambda x: x.id):
-                pb_param = pb_cmd.parameters.add()
-                pb_param.type = get_type_enum(param.type)
-                pb_param.name = param.name
+        if not cluster.has_diagnostics():
+            continue
+        print(f"Cluster 0x{cluster.id:04X}:")
+        for diag in cluster.diagnostics:
+            print(f"  Name changed in spec {diag}")
+        for attr in sorted(cluster.attributes.values(), key=lambda x: x.id):
+            if not attr.has_diagnostics():
+                continue
+            print(f"  Attribute 0x{attr.id:04X}:")
+            for diag in attr.diagnostics:
+                print(f"    Name changed in spec {diag}")
+        for cmd in sorted(cluster.commands_in.values(), key=lambda x: x.id):
+            if not cmd.has_diagnostics():
+                continue
+            print(f"  Command (to server) 0x{cmd.id:04X}:")
+            for diag in cmd.diagnostics:
+                print(f"    Name changed in spec {diag}")
+            for param in sorted(cmd.parameters.values(), key=lambda x: x.id):
+                if not param.has_diagnostics():
+                    continue
+                print(f"    Parameter 0x{param.id:04X}:")
+                for diag in param.diagnostics:
+                    print(f"      Name changed in spec {diag}")
+        for cmd in sorted(cluster.commands_out.values(), key=lambda x: x.id):
+            if not cmd.has_diagnostics():
+                continue
+            print(f"  Command (to client) 0x{cmd.id:04X}:")
+            for diag in cmd.diagnostics:
+                print(f"    Name changed in spec {diag}")
+            for param in sorted(cmd.parameters.values(), key=lambda x: x.id):
+                if not param.has_diagnostics():
+                    continue
+                print(f"    Parameter 0x{param.id:04X}:")
+                for diag in param.diagnostics:
+                    print(f"      Name changed in spec {diag}")
+        for event in sorted(cluster.events.values(), key=lambda x: x.id):
+            if not event.has_diagnostics():
+                continue
+            print(f"  Event 0x{event.id:04X}:")
+            for diag in event.diagnostics:
+                print(f"    Name changed in spec {diag}")
+            for param in sorted(event.parameters.values(), key=lambda x: x.id):
+                if not param.has_diagnostics():
+                    continue
+                print(f"    Parameter 0x{param.id:04X}:")
+                for diag in param.diagnostics:
+                    print(f"      Name changed in spec {diag}")
+    return clusters
 
-    with open(output_bin, "wb") as f:
-        f.write(universe.SerializeToString())
+
+def collect_devices(data_model_dir: Path, versions: list[str]):
+    """Collect devices across ALL versions."""
+    devices: dict[int, Device] = {}
+    for ver in versions:
+        for xml_file in _xml_files_for_version(data_model_dir, ver):
+            tree = ET.parse(xml_file)
+            for elem in tree.xpath("//deviceType[@id]"):
+                id = int(elem.get("id"), 0)
+                name = elem.get("name", "")
+                device_new = Device(id=id, name=name, clusters=set())
+                device = devices.setdefault(id, device_new)
+                if device.name != name:
+                    device.diagnostics.append(f"v{ver}: '{device.name}' -> '{name}'")
+                    # Update to the latest name.
+                    device.name = name
+                device.clusters.update(int(id, 0) for id in elem.xpath("./clusters/cluster/@id"))
+    # Print diagnostics for any name changes across versions.
+    for device in sorted(devices.values(), key=lambda x: x.id):
+        if not device.has_diagnostics():
+            continue
+        print(f"Device 0x{device.id:04X}:")
+        for diag in device.diagnostics:
+            print(f"  Name changed in spec {diag}")
+    return devices
 
 
 parser = argparse.ArgumentParser(
     description=(
-        "Parse Matter data-model XML files and emit a shared .proto plus "
-        "one binary (.bin) file per spec version."
+        "Parse Matter data-model XML files and emit Kotlin code with Matter "
+        "registry classes - device types, clusters, attributes, commands, data "
+        "types, privileges, etc. The generated code is used at runtime to map "
+        "between numeric IDs and human-readable names."
     ),
 )
 parser.add_argument(
-    "--out-proto",
-    metavar="FILE",
-    type=Path,
-    default="MatterDataModel.proto",
-    help="path to write the generated .proto file; default: %(default)s",
-)
-parser.add_argument(
-    "--out-bin-dir",
+    "--out-dir",
     metavar="DIR",
     type=Path,
-    default="app/src/main/assets/matter",
-    help=(
-        "directory to write the per-version binary files; "
-        "each file is named v<version>.bin; default: %(default)s"
-    ),
+    default="app/src/main/java/io/aether/android/matter",
+    help="directory to write Matter registry Kotlin files; default: %(default)s",
 )
 parser.add_argument(
     "DATA_MODEL_DIR",
@@ -456,23 +370,229 @@ if not versions:
 versions.sort(key=lambda v: [int(x) for x in v.split(".")])
 print(f"Found {len(versions)} version(s): {', '.join(versions)}")
 
-# Pass 1 – collect types from ALL versions
-print("Collecting unique types across all versions...")
-types = collect_all_types(args.DATA_MODEL_DIR, versions)
-print("Collecting unique privileges across all versions...")
-privileges = collect_all_privileges(args.DATA_MODEL_DIR, versions)
+print("Collecting clusters across all versions...")
+clusters = collect_clusters(args.DATA_MODEL_DIR, versions)
+print("Collecting device types across all versions...")
+devices = collect_devices(args.DATA_MODEL_DIR, versions)
 
-# Pass 2 – write proto
-print(f"Writing {args.out_proto}...")
-generate_proto_file(types, privileges, args.out_proto)
+types: set[str] = set()
+for cluster in clusters.values():
+    for attr in cluster.attributes.values():
+        types.add(attr.type)
+    for cmd in cluster.commands_in.values():
+        for param in cmd.parameters.values():
+            types.add(param.type)
+    for cmd in cluster.commands_out.values():
+        for param in cmd.parameters.values():
+            types.add(param.type)
+    for event in cluster.events.values():
+        for param in event.parameters.values():
+            types.add(param.type)
 
-# Pass 3 – compile proto
-print("Compiling proto...")
-pb2 = compile_proto(args.out_proto)
+privileges: set[str] = set()
+for cluster in clusters.values():
+    for attr in cluster.attributes.values():
+        privileges.add(attr.read_privilege)
+        privileges.add(attr.write_privilege)
+    for cmd in cluster.commands_in.values():
+        privileges.add(cmd.privilege)
+    for cmd in cluster.commands_out.values():
+        privileges.add(cmd.privilege)
 
-# Pass 4 – write one binary per version
-args.out_bin_dir.mkdir(parents=True, exist_ok=True)
-for version in versions:
-    output_bin = args.out_bin_dir / f"v{version}.bin"
-    print(f"Writing {output_bin}...")
-    populate_binary(args.DATA_MODEL_DIR, version, pb2, output_bin)
+spdx = "SPDX"  # Hide code generator from REUSE tool.
+HEADER = f"""
+// {spdx}-FileCopyrightText: 2026 The Authors
+// {spdx}-License-Identifier: Apache-2.0
+//
+// Auto-generated by matter-data-model-parser.py - do not edit.
+
+package io.aether.android.matter
+
+""".lstrip()
+
+print("Writing clusters...")
+with open(args.out_dir / "Clusters.kt", "w") as f:
+    f.write(HEADER)
+    f.write("object Clusters {\n")
+    for cluster in sorted(clusters.values(), key=lambda x: x.id):
+        f.write(f"  object {_to_camel(cluster.name)} {{\n")
+        f.write(f"    const val ID = 0x{cluster.id:04X}\n")
+        f.write("    object Attributes {\n")
+        for attr in sorted(cluster.attributes.values(), key=lambda x: x.id):
+            f.write(f"      object {_to_camel(attr.name)} {{\n")
+            f.write(f"        const val ID = 0x{attr.id:04X}\n")
+            f.write("      }\n")
+        f.write("    }\n")
+        f.write("    object CommandsIncoming {\n")
+        for cmd in sorted(cluster.commands_in.values(), key=lambda x: x.id):
+            f.write(f"      object {_to_camel(cmd.name)} {{\n")
+            f.write(f"        const val ID = 0x{cmd.id:04X}\n")
+            f.write("      }\n")
+        f.write("    }\n")
+        f.write("    object CommandsOutgoing {\n")
+        for cmd in sorted(cluster.commands_out.values(), key=lambda x: x.id):
+            f.write(f"      object {_to_camel(cmd.name)} {{\n")
+            f.write(f"        const val ID = 0x{cmd.id:04X}\n")
+            f.write("      }\n")
+        f.write("    }\n")
+        f.write("    object Events {\n")
+        for event in sorted(cluster.events.values(), key=lambda x: x.id):
+            f.write(f"      object {_to_camel(event.name)} {{\n")
+            f.write(f"        const val ID = 0x{event.id:04X}\n")
+            f.write("      }\n")
+        f.write("    }\n")
+        f.write("  }\n")
+    f.write("}\n")
+
+
+print("Writing data types and privileges...")
+with open(args.out_dir / "Types.kt", "w") as f:
+    f.write(HEADER)
+    f.write("data class ClusterInfo(\n")
+    f.write("    val name: String,\n")
+    f.write("    val attributes: Map<Int, AttributeInfo>,\n")
+    f.write("    val commandsIncoming: Map<Int, CommandInfo>,\n")
+    f.write("    val commandsOutgoing: Map<Int, CommandInfo>,\n")
+    f.write("    val events: Map<Int, EventInfo>,\n")
+    f.write(")\n")
+    f.write("\n")
+    f.write("data class AttributeInfo(\n")
+    f.write("    val name: String,\n")
+    f.write("    val type: DataType,\n")
+    f.write("    val readPrivilege: Privilege? = null,\n")
+    f.write("    val writePrivilege: Privilege? = null,\n")
+    f.write(")\n")
+    f.write("\n")
+    f.write("data class ParameterInfo(\n")
+    f.write("    val name: String,\n")
+    f.write("    val type: DataType,\n")
+    f.write(")\n")
+    f.write("\n")
+    f.write("data class CommandInfo(\n")
+    f.write("    val name: String,\n")
+    f.write("    val parameters: Map<Int, ParameterInfo>,\n")
+    f.write("    val privilege: Privilege? = null,\n")
+    f.write(")\n")
+    f.write("\n")
+    f.write("data class EventInfo(\n")
+    f.write("    val name: String,\n")
+    f.write(")\n")
+    f.write("\n")
+    f.write("enum class DataType(val label: String) {\n")
+    f.write('  UNKNOWN("UNKNOWN"),\n')
+    for type in sorted(filter(None, types)):
+        f.write(f'  {_to_upper_snake(type)}("{type}"),\n')
+    f.write("}\n")
+    f.write("\n")
+    f.write("enum class Privilege(val label: String) {\n")
+    f.write('  UNKNOWN("UNKNOWN"),\n')
+    for priv in sorted(filter(None, privileges)):
+        f.write(f'  {_to_upper_snake(priv)}("{priv}"),\n')
+    f.write("}\n")
+
+
+print("Writing devices...")
+with open(args.out_dir / "Devices.kt", "w") as f:
+    f.write(HEADER)
+    f.write("object Devices {\n")
+    for id, device in sorted(devices.items()):
+        f.write(f"  object {_to_camel(device.name)} {{\n")
+        f.write(f"    const val ID = 0x{id:04X}\n")
+        f.write("  }\n")
+    f.write("}\n")
+    f.write("\n")
+    f.write("val DEVICES =\n")
+    f.write("    mapOf<Int, String>(\n")
+    for id, device in sorted(devices.items()):
+        f.write(f'        Devices.{_to_camel(device.name)}.ID to "{device.name}",\n')
+    f.write("    )\n")
+
+
+def write_cluster_registry(clusters: dict[int, Cluster], path: Path, version: str):
+    """Write data model registry with given clusters."""
+    with open(path, "w") as f:
+        f.write(HEADER)
+        f.write(f"val CLUSTERS_{version.replace('.', '_')} =\n")
+        f.write("    mapOf<Int, ClusterInfo>(\n")
+        for cluster in sorted(clusters.values(), key=lambda x: x.id):
+            cluster_namespace = f"Clusters.{_to_camel(cluster.name)}"
+            f.write(f"    {cluster_namespace}.ID to ClusterInfo(\n")
+            f.write(f'      name = "{cluster.name}",\n')
+            f.write("      attributes = mapOf<Int, AttributeInfo>(\n")
+            for attr in sorted(cluster.attributes.values(), key=lambda x: x.id):
+                attr_namespace = f"{cluster_namespace}.Attributes.{_to_camel(attr.name)}"
+                f.write(f"        {attr_namespace}.ID to AttributeInfo(\n")
+                f.write(f'          name = "{attr.name}",\n')
+                f.write(f"          type = DataType.{_get_type_name(attr.type)},\n")
+                if attr.read_privilege:
+                    priv = f"Privilege.{_to_upper_snake(attr.read_privilege)}"
+                    f.write(f"          readPrivilege = {priv},\n")
+                if attr.write_privilege:
+                    priv = f"Privilege.{_to_upper_snake(attr.write_privilege)}"
+                    f.write(f"          writePrivilege = {priv},\n")
+                f.write("        ),\n")
+            f.write("      ),\n")
+            f.write("      commandsIncoming = mapOf<Int, CommandInfo>(\n")
+            for cmd in sorted(cluster.commands_in.values(), key=lambda x: x.id):
+                cmd_namespace = f"{cluster_namespace}.CommandsIncoming.{_to_camel(cmd.name)}"
+                f.write(f"        {cmd_namespace}.ID to CommandInfo(\n")
+                f.write(f'          name = "{cmd.name}",\n')
+                if cmd.privilege:
+                    priv = f"Privilege.{_to_upper_snake(cmd.privilege)}"
+                    f.write(f"          privilege = {priv},\n")
+                f.write("          parameters = mapOf<Int, ParameterInfo>(\n")
+                for param in sorted(cmd.parameters.values(), key=lambda x: x.id):
+                    f.write(f"            {param.id} to ParameterInfo(\n")
+                    f.write(f'              name = "{param.name}",\n')
+                    f.write(f"              type = DataType.{_get_type_name(param.type)},\n")
+                    f.write("            ),\n")
+                f.write("          ),\n")
+                f.write("        ),\n")
+            f.write("      ),\n")
+            f.write("      commandsOutgoing = mapOf<Int, CommandInfo>(\n")
+            for cmd in sorted(cluster.commands_out.values(), key=lambda x: x.id):
+                cmd_namespace = f"{cluster_namespace}.CommandsOutgoing.{_to_camel(cmd.name)}"
+                f.write(f"        {cmd_namespace}.ID to CommandInfo(\n")
+                f.write(f'          name = "{cmd.name}",\n')
+                if cmd.privilege:
+                    priv = f"Privilege.{_to_upper_snake(cmd.privilege)}"
+                    f.write(f"          privilege = {priv},\n")
+                f.write("          parameters = mapOf<Int, ParameterInfo>(\n")
+                for param in sorted(cmd.parameters.values(), key=lambda x: x.id):
+                    f.write(f"            {param.id} to ParameterInfo(\n")
+                    f.write(f'              name = "{param.name}",\n')
+                    f.write(f"              type = DataType.{_get_type_name(param.type)},\n")
+                    f.write("            ),\n")
+                f.write("          ),\n")
+                f.write("        ),\n")
+            f.write("      ),\n")
+            f.write("      events = mapOf<Int, EventInfo>(\n")
+            for event in sorted(cluster.events.values(), key=lambda x: x.id):
+                event_namespace = f"{cluster_namespace}.Events.{_to_camel(event.name)}"
+                f.write(f"        {event_namespace}.ID to EventInfo(\n")
+                f.write(f'          name = "{event.name}",\n')
+                f.write("        ),\n")
+            f.write("      ),\n")
+            f.write("    ),\n")
+        f.write(")\n")
+
+
+written = []
+for ver in versions:
+    subset = {}
+    for cluster in tuple(clusters.values()):
+        if ver in cluster.versions:
+            subset[cluster.id] = clusters.pop(cluster.id)
+    if not subset:
+        continue
+    print(f"Writing data model registry for version {ver}...")
+    path = args.out_dir / f"ClusterRegistryV{ver}.kt"
+    write_cluster_registry(subset, path, ver)
+    written.append(ver)
+
+print("Writing global data model registry...")
+with open(args.out_dir / "ClusterRegistry.kt", "w") as f:
+    f.write(HEADER)
+    f.write("val CLUSTERS =\n")
+    f.write("    " + " + ".join([f"CLUSTERS_{ver.replace('.', '_')}" for ver in written]))
+    f.write("\n")
