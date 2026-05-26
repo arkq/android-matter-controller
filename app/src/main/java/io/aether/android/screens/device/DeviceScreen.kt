@@ -34,16 +34,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
-import com.google.protobuf.Timestamp
-import io.aether.android.MatterEndpoint
 import io.aether.android.MatterFabricState
-import io.aether.android.MatterNode
 import io.aether.android.R
-import io.aether.android.chip.DEVICE_TYPE_ON_OFF_PLUGIN_UNIT
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.LoadingIndicator
@@ -259,67 +254,3 @@ private fun EndpointDeviceControl(
     else -> OnOffDeviceControl(endpointModel, lastUpdatedEndpointState, onOnOffClick)
   }
 }
-
-// -----------------------------------------------------------------------------------------------
-// Compose Previews
-
-@Preview(widthDp = 300)
-@Composable
-private fun DeviceScreenOnlineOnPreview() {
-  val endpointState =
-      DevicesStateRepository.EndpointStateSnapshot(
-          nodeId = 1L,
-          endpointId = 1,
-          dateCaptured = Timestamp.getDefaultInstance(),
-          online = true,
-          on = true,
-          level = 127,
-          colorTemperature = 0,
-      )
-  val device = DeviceTest
-  val deviceUiModel = DeviceUiModel(NodeTest, device, true, true, level = 127)
-  val onOnOffClick: (endpointModel: DeviceUiModel, value: Boolean) -> Unit = { _, value ->
-    Timber.d("deviceUiModel [$deviceUiModel] value [$value]")
-  }
-  val onBrightnessChange: (endpointModel: DeviceUiModel, value: Int) -> Unit = { _, value ->
-    Timber.d("deviceUiModel [$deviceUiModel] value [$value]")
-  }
-  val onColorTemperatureChange: (endpointModel: DeviceUiModel, value: Int) -> Unit = { _, value ->
-    Timber.d("deviceUiModel [$deviceUiModel] value [$value]")
-  }
-  MaterialTheme {
-    DeviceScreen(
-        innerPadding = PaddingValues(),
-        deviceUiModel = deviceUiModel,
-        allEndpointUiModels = listOf(deviceUiModel),
-        isOnline = true,
-        lastUpdatedEndpointState = endpointState,
-        onOnOffClick = onOnOffClick,
-        onBrightnessChange = onBrightnessChange,
-        onColorTemperatureChange = onColorTemperatureChange,
-        msgDialogInfo = null,
-        onDismissMsgDialog = {},
-    )
-  }
-}
-
-// -----------------------------------------------------------------------------------------------
-// Constant objects used in Compose Preview
-
-private val DeviceTest =
-    MatterEndpoint.newBuilder()
-        .setEndpointId(1)
-        .addDeviceTypes(DEVICE_TYPE_ON_OFF_PLUGIN_UNIT.toInt())
-        .setLabel("MyOutlet")
-        .setOn(true)
-        .setLevel(127)
-        .setColorTemperature(0)
-        .build()
-
-private val NodeTest =
-    MatterNode.newBuilder()
-        .setNodeId(1L)
-        .setName("MyOutlet")
-        .setProductId(8785)
-        .setVendorId(6006)
-        .build()

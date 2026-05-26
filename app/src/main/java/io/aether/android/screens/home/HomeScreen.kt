@@ -64,7 +64,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.pm.PackageInfoCompat
@@ -88,11 +87,8 @@ import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_P
 import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_VENDOR_ID
 import com.google.android.material.textview.MaterialTextView
 import io.aether.android.MIN_COMMISSIONING_WINDOW_EXPIRATION_SECONDS
-import io.aether.android.MatterEndpoint
-import io.aether.android.MatterNode
 import io.aether.android.R
 import io.aether.android.TaskStatus
-import io.aether.android.chip.DEVICE_TYPE_ON_OFF_PLUGIN_UNIT
 import io.aether.android.commissioning.AppCommissioningService
 import io.aether.android.getDeviceTypeIconId
 import io.aether.android.isMultiAdminCommissioning

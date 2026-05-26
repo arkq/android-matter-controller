@@ -5,7 +5,6 @@ package io.aether.android.screens.device.control
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -15,18 +14,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import io.aether.android.MatterEndpoint
-import io.aether.android.MatterNode
 import io.aether.android.R
-import io.aether.android.chip.DEVICE_TYPE_DIMMABLE_LIGHT
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.endpointFor
 import io.aether.android.screens.device.cluster.LEVEL_MAX
 import io.aether.android.screens.device.cluster.LevelClusterControl
 import io.aether.android.screens.device.cluster.OnOffClusterControl
 import io.aether.android.screens.home.DeviceUiModel
-import timber.log.Timber
 
 /**
  * Device-type control for endpoints that expose the **OnOff** and **Level Control** clusters (e.g.
@@ -82,34 +76,6 @@ internal fun DimmableDeviceControl(
         level = brightness,
         onLevelChange = { brightness = it },
         onLevelChangeFinished = { onBrightnessChange((brightness * LEVEL_MAX).toInt()) },
-    )
-  }
-}
-
-// -----------------------------------------------------------------------------------------------
-// Compose Previews
-
-@Preview(widthDp = 300)
-@Composable
-private fun DimmableDeviceControl_Online() {
-  val model =
-      DeviceUiModel(
-          node = MatterNode.newBuilder().setNodeId(1L).setName("DimmableLight").build(),
-          endpoint =
-              MatterEndpoint.newBuilder()
-                  .setEndpointId(1)
-                  .addDeviceTypes(DEVICE_TYPE_DIMMABLE_LIGHT.toInt())
-                  .build(),
-          isOnline = true,
-          isOn = true,
-          level = 127,
-      )
-  MaterialTheme {
-    DimmableDeviceControl(
-        endpointModel = model,
-        lastUpdatedDeviceState = null,
-        onOnOffClick = { Timber.d("onOff: $it") },
-        onBrightnessChange = { Timber.d("brightness: $it") },
     )
   }
 }
