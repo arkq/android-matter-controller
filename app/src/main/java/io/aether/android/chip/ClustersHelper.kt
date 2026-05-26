@@ -14,6 +14,8 @@ import chip.devicecontroller.model.InvokeElement
 import chip.devicecontroller.model.NodeState
 import io.aether.android.CommissioningWindowStatus
 import io.aether.android.formatNodeId
+import io.aether.android.matter.Clusters
+import io.aether.android.matter.GenericAttributes
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,22 +38,9 @@ data class DeviceMatterInfo(
     val parts: List<Int>,
 )
 
-/** Singleton to facilitate access to Clusters functionality. */
 // Timed invoke timeout for commands like removeFabric that require a short grace period.
 private const val TIMED_INVOKE_TIMEOUT_MS = 500
-private const val OPERATIONAL_CREDENTIALS_CLUSTER_ID = 0x003EL
-private const val FABRICS_ATTRIBUTE_ID = 0x0001L
-private const val CURRENT_FABRIC_INDEX_ATTRIBUTE_ID = 0x0005L
-private const val BASIC_INFORMATION_CLUSTER_ID = 0x0028L
-private const val BASIC_INFORMATION_VENDOR_NAME_ATTRIBUTE_ID = 0x0001L
-private const val BASIC_INFORMATION_VENDOR_ID_ATTRIBUTE_ID = 0x0002L
-private const val BASIC_INFORMATION_HARDWARE_VERSION_STRING_ATTRIBUTE_ID = 0x0008L
-private const val BASIC_INFORMATION_SOFTWARE_VERSION_STRING_ATTRIBUTE_ID = 0x000AL
-private const val GLOBAL_ATTRIBUTE_EVENT_LIST_ID = 0xFFFAL
-private const val GLOBAL_ATTRIBUTE_ACCEPTED_COMMAND_LIST_ID = 0xFFF9L
-private const val GLOBAL_ATTRIBUTE_GENERATED_COMMAND_LIST_ID = 0xFFF8L
-private const val GLOBAL_ATTRIBUTE_ATTRIBUTE_LIST_ID = 0xFFFBL
-private const val ROOT_ENDPOINT = 0L
+private const val ROOT_ENDPOINT = 0
 
 data class BasicInformationAttributes(
     val vendorName: String? = null,
@@ -81,55 +70,55 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     return matterDeviceInfoList
   }
 
-  suspend fun readClusterAttributeList(nodeId: Long, endpoint: Int, clusterId: Long): List<Long> {
+  suspend fun readClusterAttributeList(nodeId: Long, endpoint: Int, clusterId: Int): List<Int> {
     return readGlobalListAttribute(
         nodeId = nodeId,
         endpoint = endpoint,
         clusterId = clusterId,
-        globalAttributeId = GLOBAL_ATTRIBUTE_ATTRIBUTE_LIST_ID,
+        globalAttributeId = GenericAttributes.AttributeList.ID,
     )
   }
 
   suspend fun readClusterAcceptedCommandList(
       nodeId: Long,
       endpoint: Int,
-      clusterId: Long,
-  ): List<Long> {
+      clusterId: Int,
+  ): List<Int> {
     return readGlobalListAttribute(
         nodeId = nodeId,
         endpoint = endpoint,
         clusterId = clusterId,
-        globalAttributeId = GLOBAL_ATTRIBUTE_ACCEPTED_COMMAND_LIST_ID,
+        globalAttributeId = GenericAttributes.AcceptedCommandList.ID,
     )
   }
 
   suspend fun readClusterGeneratedCommandList(
       nodeId: Long,
       endpoint: Int,
-      clusterId: Long,
-  ): List<Long> {
+      clusterId: Int,
+  ): List<Int> {
     return readGlobalListAttribute(
         nodeId = nodeId,
         endpoint = endpoint,
         clusterId = clusterId,
-        globalAttributeId = GLOBAL_ATTRIBUTE_GENERATED_COMMAND_LIST_ID,
+        globalAttributeId = GenericAttributes.GeneratedCommandList.ID,
     )
   }
 
-  suspend fun readClusterEventList(nodeId: Long, endpoint: Int, clusterId: Long): List<Long> {
+  suspend fun readClusterEventList(nodeId: Long, endpoint: Int, clusterId: Int): List<Int> {
     return readGlobalListAttribute(
         nodeId = nodeId,
         endpoint = endpoint,
         clusterId = clusterId,
-        globalAttributeId = GLOBAL_ATTRIBUTE_EVENT_LIST_ID,
+        globalAttributeId = GenericAttributes.EventList.ID,
     )
   }
 
   suspend fun readAttributeValue(
       nodeId: Long,
       endpoint: Int,
-      clusterId: Long,
-      attributeId: Long,
+      clusterId: Int,
+      attributeId: Int,
   ): String {
     val connectedDevicePtr =
         try {
@@ -141,7 +130,11 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     val attributeState =
         chipClient.readAttribute(
             connectedDevicePtr,
-            ChipAttributePath.newInstance(endpoint.toLong(), clusterId, attributeId),
+            ChipAttributePath.newInstance(
+                endpoint.toLong(),
+                clusterId.toLong(),
+                attributeId.toLong(),
+            ),
         ) ?: throw IllegalStateException("readAttributeValue returned no state")
     return when {
       attributeState.value != null -> attributeState.value.toString()
@@ -153,8 +146,8 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   suspend fun invokeGenericCommand(
       nodeId: Long,
       endpoint: Int,
-      clusterId: Long,
-      commandId: Long,
+      clusterId: Int,
+      commandId: Int,
       tlvPayload: ByteArray,
   ) {
     val connectedDevicePtr =
@@ -169,8 +162,8 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         connectedDevicePtr,
         InvokeElement.newInstance(
             endpoint.toLong(),
-            clusterId,
-            commandId,
+            clusterId.toLong(),
+            commandId.toLong(),
             tlvPayload,
             "",
         ),
@@ -180,8 +173,8 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   suspend fun writeGenericAttribute(
       nodeId: Long,
       endpoint: Int,
-      clusterId: Long,
-      attributeId: Long,
+      clusterId: Int,
+      attributeId: Int,
       tlvPayload: ByteArray,
   ) {
     val connectedDevicePtr =
@@ -194,7 +187,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
     chipClient.writeAttribute(
         connectedDevicePtr,
-        ChipAttributePath.newInstance(endpoint.toLong(), clusterId, attributeId),
+        ChipAttributePath.newInstance(endpoint.toLong(), clusterId.toLong(), attributeId.toLong()),
         tlvPayload,
     )
   }
@@ -202,9 +195,9 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   private suspend fun readGlobalListAttribute(
       nodeId: Long,
       endpoint: Int,
-      clusterId: Long,
-      globalAttributeId: Long,
-  ): List<Long> {
+      clusterId: Int,
+      globalAttributeId: Int,
+  ): List<Int> {
     val connectedDevicePtr =
         try {
           chipClient.getConnectedDevicePointer(nodeId)
@@ -216,7 +209,11 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         try {
           chipClient.readAttribute(
               connectedDevicePtr,
-              ChipAttributePath.newInstance(endpoint.toLong(), clusterId, globalAttributeId),
+              ChipAttributePath.newInstance(
+                  endpoint.toLong(),
+                  clusterId.toLong(),
+                  globalAttributeId.toLong(),
+              ),
           )
         } catch (e: IllegalStateException) {
           if (isUnsupportedAttributeError(e)) {
@@ -231,7 +228,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
           }
           throw e
         } ?: return emptyList()
-    return readLongList(attributeState.value)
+    return readIntList(attributeState.value)
   }
 
   private fun isUnsupportedAttributeError(error: Throwable): Boolean {
@@ -246,19 +243,19 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     return false
   }
 
-  private fun readLongList(value: Any?): List<Long> {
+  private fun readIntList(value: Any?): List<Int> {
     return when (value) {
       is List<*> -> {
-        val numericValues = value.mapNotNull { (it as? Number)?.toLong() }
+        val numericValues = value.mapNotNull { (it as? Number)?.toInt() }
         if (numericValues.size != value.size) {
           throw IllegalStateException(
-              "readLongList: received non-numeric items in global list attribute"
+              "readIntList: received non-numeric items in global list attribute"
           )
         }
         numericValues
       }
-      is LongArray -> value.toList()
-      is IntArray -> value.map { it.toLong() }
+      is LongArray -> value.map { it.toInt() }
+      is IntArray -> value.toList()
       else -> emptyList()
     }
   }
@@ -1070,24 +1067,24 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         val basicInfoPaths =
             listOf(
                 ChipAttributePath.newInstance(
-                    ROOT_ENDPOINT,
-                    BASIC_INFORMATION_CLUSTER_ID,
-                    BASIC_INFORMATION_VENDOR_NAME_ATTRIBUTE_ID,
+                    ROOT_ENDPOINT.toLong(),
+                    Clusters.BasicInformation.ID.toLong(),
+                    Clusters.BasicInformation.Attributes.VendorName.ID.toLong(),
                 ),
                 ChipAttributePath.newInstance(
-                    ROOT_ENDPOINT,
-                    BASIC_INFORMATION_CLUSTER_ID,
-                    BASIC_INFORMATION_VENDOR_ID_ATTRIBUTE_ID,
+                    ROOT_ENDPOINT.toLong(),
+                    Clusters.BasicInformation.ID.toLong(),
+                    Clusters.BasicInformation.Attributes.VendorID.ID.toLong(),
                 ),
                 ChipAttributePath.newInstance(
-                    ROOT_ENDPOINT,
-                    BASIC_INFORMATION_CLUSTER_ID,
-                    BASIC_INFORMATION_HARDWARE_VERSION_STRING_ATTRIBUTE_ID,
+                    ROOT_ENDPOINT.toLong(),
+                    Clusters.BasicInformation.ID.toLong(),
+                    Clusters.BasicInformation.Attributes.HardwareVersion.ID.toLong(),
                 ),
                 ChipAttributePath.newInstance(
-                    ROOT_ENDPOINT,
-                    BASIC_INFORMATION_CLUSTER_ID,
-                    BASIC_INFORMATION_SOFTWARE_VERSION_STRING_ATTRIBUTE_ID,
+                    ROOT_ENDPOINT.toLong(),
+                    Clusters.BasicInformation.ID.toLong(),
+                    Clusters.BasicInformation.Attributes.SoftwareVersion.ID.toLong(),
                 ),
             )
 
@@ -1124,21 +1121,28 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   private fun extractBasicInformationAttributes(nodeState: NodeState): BasicInformationAttributes {
     val clusterState =
         nodeState
-            .getEndpointState(ROOT_ENDPOINT.toInt())
-            ?.getClusterState(BASIC_INFORMATION_CLUSTER_ID) ?: return BasicInformationAttributes()
+            .getEndpointState(ROOT_ENDPOINT)
+            ?.getClusterState(Clusters.BasicInformation.ID.toLong())
+            ?: return BasicInformationAttributes()
 
     val vendorName =
-        clusterState.getAttributeState(BASIC_INFORMATION_VENDOR_NAME_ATTRIBUTE_ID)?.value.asString()
+        clusterState
+            .getAttributeState(Clusters.BasicInformation.Attributes.VendorName.ID.toLong())
+            ?.value
+            .asString()
     val vendorId =
-        clusterState.getAttributeState(BASIC_INFORMATION_VENDOR_ID_ATTRIBUTE_ID)?.value.asInt()
+        clusterState
+            .getAttributeState(Clusters.BasicInformation.Attributes.VendorID.ID.toLong())
+            ?.value
+            .asInt()
     val hardwareVersion =
         clusterState
-            .getAttributeState(BASIC_INFORMATION_HARDWARE_VERSION_STRING_ATTRIBUTE_ID)
+            .getAttributeState(Clusters.BasicInformation.Attributes.HardwareVersion.ID.toLong())
             ?.value
             .asString()
     val softwareVersion =
         clusterState
-            .getAttributeState(BASIC_INFORMATION_SOFTWARE_VERSION_STRING_ATTRIBUTE_ID)
+            .getAttributeState(Clusters.BasicInformation.Attributes.SoftwareVersion.ID.toLong())
             ?.value
             .asString()
 
@@ -1190,9 +1194,9 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
             connectedDevicePtr,
             listOf(
                 ChipAttributePath.newInstance(
-                    ROOT_ENDPOINT,
-                    OPERATIONAL_CREDENTIALS_CLUSTER_ID,
-                    FABRICS_ATTRIBUTE_ID,
+                    ROOT_ENDPOINT.toLong(),
+                    Clusters.OperationalCredentials.ID.toLong(),
+                    Clusters.OperationalCredentials.Attributes.Fabrics.ID.toLong(),
                 )
             ),
             emptyList(),
@@ -1238,9 +1242,12 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
                 if (completed.compareAndSet(false, true)) {
                   val currentFabricIndex =
                       nodeState
-                          .getEndpointState(ROOT_ENDPOINT.toInt())
-                          ?.getClusterState(OPERATIONAL_CREDENTIALS_CLUSTER_ID)
-                          ?.getAttributeState(CURRENT_FABRIC_INDEX_ATTRIBUTE_ID)
+                          .getEndpointState(ROOT_ENDPOINT)
+                          ?.getClusterState(Clusters.OperationalCredentials.ID.toLong())
+                          ?.getAttributeState(
+                              Clusters.OperationalCredentials.Attributes.CurrentFabricIndex.ID
+                                  .toLong()
+                          )
                           ?.value
                           .asInt()
                   continuation.resume(currentFabricIndex)
@@ -1250,9 +1257,9 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
             connectedDevicePtr,
             listOf(
                 ChipAttributePath.newInstance(
-                    ROOT_ENDPOINT,
-                    OPERATIONAL_CREDENTIALS_CLUSTER_ID,
-                    CURRENT_FABRIC_INDEX_ATTRIBUTE_ID,
+                    ROOT_ENDPOINT.toLong(),
+                    Clusters.OperationalCredentials.ID.toLong(),
+                    Clusters.OperationalCredentials.Attributes.CurrentFabricIndex.ID.toLong(),
                 )
             ),
             emptyList(),
@@ -1270,9 +1277,10 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   ): List<ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct> {
     val attributeState =
         nodeState
-            .getEndpointState(ROOT_ENDPOINT.toInt())
-            ?.getClusterState(OPERATIONAL_CREDENTIALS_CLUSTER_ID)
-            ?.getAttributeState(FABRICS_ATTRIBUTE_ID) ?: return emptyList()
+            .getEndpointState(ROOT_ENDPOINT)
+            ?.getClusterState(Clusters.OperationalCredentials.ID.toLong())
+            ?.getAttributeState(Clusters.OperationalCredentials.Attributes.Fabrics.ID.toLong())
+            ?: return emptyList()
 
     val value = attributeState.value
     if (value is List<*>) {

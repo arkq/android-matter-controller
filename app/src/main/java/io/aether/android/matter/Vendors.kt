@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.chip
+package io.aether.android.matter
 
 import io.aether.android.formatVendorId
 
@@ -10,8 +10,8 @@ import io.aether.android.formatVendorId
  *
  * Source: https://webui.dcl.csa-iot.org/vendors
  */
-val MATTER_VENDORS: Map<Int, String> =
-    mapOf(
+val VENDORS =
+    mapOf<Int, String>(
         0x0000 to "Unspecified",
         0x1011 to "Google",
         0x1135 to "Amazon",
@@ -37,7 +37,7 @@ val MATTER_VENDORS: Map<Int, String> =
 
 /** Returns a human-readable vendor label for a Matter VID, including the hex code. */
 fun vendorLabel(vendorID: Int, providedLabel: String? = null): String {
-  val name = providedLabel?.takeIf { it.isNotBlank() } ?: MATTER_VENDORS[vendorID]
+  val name = providedLabel?.takeIf { it.isNotBlank() } ?: VENDORS[vendorID]
   val hex = formatVendorId(vendorID)
   return if (name != null) "$name ($hex)" else hex
 }

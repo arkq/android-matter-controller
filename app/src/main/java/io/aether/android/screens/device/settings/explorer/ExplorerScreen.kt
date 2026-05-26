@@ -51,8 +51,6 @@ fun ExplorerRoute(
   val attributeWriteSuccessCount by viewModel.attributeWriteSuccessCount.collectAsState()
   val commandInvokeSuccessCount by viewModel.commandInvokeSuccessCount.collectAsState()
   val msgDialogInfo by viewModel.msgDialogInfo.collectAsState()
-  val clustersMap = viewModel.clustersMap
-  val devicesMap = viewModel.devicesMap
   val knownClustersById by viewModel.knownClustersById.collectAsState()
 
   var showSearch by rememberSaveable { mutableStateOf(false) }
@@ -99,8 +97,6 @@ fun ExplorerRoute(
       BreadcrumbBar(
           navStack = navStack,
           deviceMatterInfoList = infos,
-          clustersMap = clustersMap,
-          devicesMap = devicesMap,
           onPopToIndex = viewModel::popToIndex,
       )
 
@@ -108,7 +104,6 @@ fun ExplorerRoute(
         ExplorerLevel.EndpointList ->
             EndpointListContent(
                 infos = infos,
-                devicesMap = devicesMap,
                 showSearch = showSearch,
                 searchQuery = endpointSearchQuery,
                 onSearchQueryChange = viewModel::onEndpointSearchQueryChange,
@@ -118,7 +113,6 @@ fun ExplorerRoute(
             ClusterListContent(
                 endpoint = level.endpoint,
                 infos = infos,
-                clustersMap = clustersMap,
                 knownClustersById = knownClustersById,
                 showSearch = showSearch,
                 searchQuery = clusterSearchQuery,

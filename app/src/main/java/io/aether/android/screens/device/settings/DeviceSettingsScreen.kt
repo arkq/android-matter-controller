@@ -44,11 +44,11 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.google.protobuf.Timestamp
 import io.aether.android.Device
 import io.aether.android.R
-import io.aether.android.chip.vendorLabel
 import io.aether.android.formatNodeId
 import io.aether.android.formatProductId
 import io.aether.android.formatTimestamp
 import io.aether.android.getDeviceTypeDisplayStringId
+import io.aether.android.matter.vendorLabel
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog

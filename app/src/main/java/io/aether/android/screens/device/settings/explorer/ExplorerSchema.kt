@@ -9,7 +9,7 @@ import io.aether.android.matter.GENERIC_ATTRIBUTES
 import io.aether.android.matter.Privilege
 
 data class ExplorerAttributeDefinition(
-    val id: Long,
+    val id: Int,
     val type: DataType = DataType.UNKNOWN,
     val name: String,
     val readPrivilege: Privilege? = null,
@@ -23,33 +23,33 @@ data class ExplorerCommandArgumentDefinition(
 )
 
 data class ExplorerCommandDefinition(
-    val id: Long,
+    val id: Int,
     val name: String,
     val arguments: List<ExplorerCommandArgumentDefinition> = emptyList(),
 )
 
 data class ExplorerEventDefinition(
-    val id: Long,
+    val id: Int,
     val name: String,
 )
 
 data class ExplorerClusterDefinition(
-    val clusterId: Long,
+    val clusterId: Int,
     val attributes: List<ExplorerAttributeDefinition> = emptyList(),
     val commands: List<ExplorerCommandDefinition> = emptyList(),
     val events: List<ExplorerEventDefinition> = emptyList(),
 )
 
 object ExplorerSchema {
-  fun buildKnownClustersById(): Map<Long, ExplorerClusterDefinition> =
+  fun buildKnownClustersById(): Map<Int, ExplorerClusterDefinition> =
       CLUSTERS.entries.associate { (clusterId, clusterInfo) ->
-        clusterId.toLong() to
+        clusterId to
             ExplorerClusterDefinition(
-                clusterId = clusterId.toLong(),
+                clusterId = clusterId,
                 attributes =
                     (clusterInfo.attributes.map { (attributeId, attributeInfo) ->
                           ExplorerAttributeDefinition(
-                              id = attributeId.toLong(),
+                              id = attributeId,
                               type = attributeInfo.type,
                               name = attributeInfo.name,
                               readPrivilege = attributeInfo.readPrivilege,
@@ -58,7 +58,7 @@ object ExplorerSchema {
                         } +
                             GENERIC_ATTRIBUTES.map { (attributeId, attributeInfo) ->
                               ExplorerAttributeDefinition(
-                                  id = attributeId.toLong(),
+                                  id = attributeId,
                                   type = attributeInfo.type,
                                   name = attributeInfo.name,
                                   readPrivilege = attributeInfo.readPrivilege,
@@ -72,7 +72,7 @@ object ExplorerSchema {
                     (clusterInfo.commandsIncoming + clusterInfo.commandsOutgoing)
                         .map { (commandId, commandInfo) ->
                           ExplorerCommandDefinition(
-                              id = commandId.toLong(),
+                              id = commandId,
                               name = commandInfo.name,
                               arguments =
                                   commandInfo.parameters.values.map { arg ->
@@ -88,7 +88,7 @@ object ExplorerSchema {
                 events =
                     clusterInfo.events
                         .map { (eventId, eventInfo) ->
-                          ExplorerEventDefinition(id = eventId.toLong(), name = eventInfo.name)
+                          ExplorerEventDefinition(id = eventId, name = eventInfo.name)
                         }
                         .sortedBy { it.id },
             )
