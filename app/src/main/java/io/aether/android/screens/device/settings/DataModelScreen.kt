@@ -28,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -163,60 +162,5 @@ private fun DataModelScreen(
         }
       }
     }
-  }
-}
-
-// -----------------------------------------------------------------------------------------------
-// Composable Previews
-
-@Preview(widthDp = 300)
-@Composable
-private fun DataModelScreenLoadingPreview() {
-  MaterialTheme { DataModelScreen(PaddingValues(), null, emptyMap(), emptyMap(), null, {}) }
-}
-
-@Preview(widthDp = 300)
-@Composable
-private fun DataModelScreenOfflinePreview() {
-  MaterialTheme { DataModelScreen(PaddingValues(), emptyList(), emptyMap(), emptyMap(), null, {}) }
-}
-
-@Preview(widthDp = 300)
-@Composable
-private fun DataModelScreenOnlineNoClustersPreview() {
-  MaterialTheme {
-    DataModelScreen(
-        PaddingValues(),
-        listOf(DeviceMatterInfo(1, listOf(15L, 22L), emptyList(), emptyList(), emptyList())),
-        emptyMap(),
-        emptyMap(),
-        null,
-        {},
-    )
-  }
-}
-
-@Preview(widthDp = 300)
-@Composable
-private fun DataModelScreenOnlineWithClustersPreview() {
-  MaterialTheme {
-    DataModelScreen(
-        PaddingValues(),
-        listOf(
-            DeviceMatterInfo(0, listOf(22L), listOf(3L), listOf(43L, 48L), listOf(1, 2)),
-            DeviceMatterInfo(
-                1,
-                listOf(256L),
-                listOf(3L, 4L, 5L),
-                listOf(43L, 44L, 45L, 48L),
-                emptyList(),
-            ),
-            DeviceMatterInfo(2, listOf(266L), listOf(4L, 6L, 29L), listOf(43L, 44L), emptyList()),
-        ),
-        emptyMap(),
-        emptyMap(),
-        null,
-        {},
-    )
   }
 }

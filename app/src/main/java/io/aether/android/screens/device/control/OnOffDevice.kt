@@ -5,7 +5,6 @@ package io.aether.android.screens.device.control
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -13,14 +12,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.tooling.preview.Preview
-import com.google.protobuf.Timestamp
-import io.aether.android.Device
 import io.aether.android.DeviceState
 import io.aether.android.R
 import io.aether.android.screens.device.cluster.OnOffClusterControl
 import io.aether.android.screens.home.DeviceUiModel
-import timber.log.Timber
 
 /**
  * Device-type control for endpoints that expose only the **OnOff** cluster (e.g. smart outlets,
@@ -61,33 +56,6 @@ internal fun OnOffDeviceControl(
           isOn = value
           onOnOffClick(value)
         },
-    )
-  }
-}
-
-// -----------------------------------------------------------------------------------------------
-// Compose Previews
-
-@Preview(widthDp = 300)
-@Composable
-private fun OnOffDeviceControl_Online() {
-  val model =
-      DeviceUiModel(
-          device =
-              Device.newBuilder()
-                  .setDeviceId(1L)
-                  .setDeviceType(Device.DeviceType.TYPE_OUTLET)
-                  .setDateCommissioned(Timestamp.getDefaultInstance())
-                  .setName("MyOutlet")
-                  .build(),
-          isOnline = true,
-          isOn = true,
-      )
-  MaterialTheme {
-    OnOffDeviceControl(
-        endpointModel = model,
-        lastUpdatedDeviceState = null,
-        onOnOffClick = { Timber.d("onOff: $it") },
     )
   }
 }

@@ -33,12 +33,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
-import com.google.protobuf.Timestamp
-import io.aether.android.Device
 import io.aether.android.DeviceState
 import io.aether.android.DevicesState
 import io.aether.android.R
@@ -249,59 +246,3 @@ private fun EndpointDeviceControl(
     else -> OnOffDeviceControl(endpointModel, lastUpdatedDeviceState, onOnOffClick)
   }
 }
-
-// -----------------------------------------------------------------------------------------------
-// Compose Previews
-
-@Preview(widthDp = 300)
-@Composable
-private fun DeviceScreenOnlineOnPreview() {
-  val deviceState = DeviceState_OnlineOn
-  val device = DeviceTest
-  val deviceUiModel = DeviceUiModel(device, true, true, level = 127)
-  val onOnOffClick: (endpointModel: DeviceUiModel, value: Boolean) -> Unit = { _, value ->
-    Timber.d("deviceUiModel [$deviceUiModel] value [$value]")
-  }
-  val onBrightnessChange: (endpointModel: DeviceUiModel, value: Int) -> Unit = { _, value ->
-    Timber.d("deviceUiModel [$deviceUiModel] value [$value]")
-  }
-  val onColorTemperatureChange: (endpointModel: DeviceUiModel, value: Int) -> Unit = { _, value ->
-    Timber.d("deviceUiModel [$deviceUiModel] value [$value]")
-  }
-  MaterialTheme {
-    DeviceScreen(
-        innerPadding = PaddingValues(),
-        deviceUiModel = deviceUiModel,
-        allEndpointUiModels = listOf(deviceUiModel),
-        lastUpdatedDeviceState = deviceState,
-        endpointOnlineByDeviceId = mapOf(deviceUiModel.device.deviceId to true),
-        onOnOffClick = onOnOffClick,
-        onBrightnessChange = onBrightnessChange,
-        onColorTemperatureChange = onColorTemperatureChange,
-        msgDialogInfo = null,
-        onDismissMsgDialog = {},
-    )
-  }
-}
-
-// -----------------------------------------------------------------------------------------------
-// Constant objects used in Compose Preview
-
-private val DeviceState_OnlineOn =
-    DeviceState.newBuilder()
-        .setDateCaptured(Timestamp.getDefaultInstance())
-        .setDeviceId(1L)
-        .setOn(true)
-        .setOnline(true)
-        .build()
-
-private val DeviceTest =
-    Device.newBuilder()
-        .setDeviceId(1L)
-        .setDeviceType(Device.DeviceType.TYPE_OUTLET)
-        .setDateCommissioned(Timestamp.getDefaultInstance())
-        .setName("MyOutlet")
-        .setProductId("8785")
-        .setVendorId("6006")
-        .setRoom("Office")
-        .build()

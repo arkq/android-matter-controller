@@ -59,8 +59,6 @@ android {
     // Defines a user-friendly version name for your app.
     versionName = "1.0.0"
 
-    // Test Runner.
-    testInstrumentationRunner = "io.aether.android.CustomTestRunner"
   }
 
   signingConfigs {
@@ -138,14 +136,12 @@ dependencies {
   // automatically updated to their new versions.
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.lifecycle.runtime.compose)
-  androidTestImplementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.foundation.layout)
   implementation(libs.androidx.compose.material3)
   implementation(libs.androidx.compose.material.icons.core)
   implementation(libs.androidx.compose.runtime)
   implementation(libs.androidx.compose.runtime.livedata)
-  implementation(libs.androidx.compose.ui.tooling.preview)
   debugImplementation(libs.androidx.compose.ui.tooling)
   implementation(libs.androidx.activity.compose)
 
@@ -168,10 +164,6 @@ dependencies {
   ksp(libs.hilt.compiler)
   implementation(libs.hilt.navigation.compose)
 
-  // Hilt For instrumentation tests
-  androidTestImplementation(libs.hilt.android.testing)
-  kspAndroidTest(libs.hilt.compiler)
-
   // Task.await()
   implementation(libs.kotlinx.coroutines.play.services)
 
@@ -184,15 +176,6 @@ dependencies {
   // Needed for using BaseEncoding class
   implementation(libs.guava)
 
-  // Test
-  testImplementation(libs.junit)
-  androidTestImplementation(libs.ext.junit)
-  androidTestImplementation(libs.espresso.core)
-  androidTestImplementation(libs.espresso.intents)
-  androidTestImplementation(libs.espresso.contrib)
-  androidTestImplementation(libs.runner)
-  androidTestImplementation(libs.rules)
-  androidTestImplementation(libs.uiautomator)
 }
 
 // Issue with androidx.test.espresso:espresso-contrib
