@@ -85,6 +85,7 @@ import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_M
 import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_PRODUCT_ID
 import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_VENDOR_ID
 import com.google.android.material.textview.MaterialTextView
+import io.aether.android.Device
 import io.aether.android.MIN_COMMISSIONING_WINDOW_EXPIRATION_SECONDS
 import io.aether.android.R
 import io.aether.android.TaskStatus

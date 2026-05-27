@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.aether.android.R
 
 /**
  * Displays a labeled slider that controls a single Level-type cluster attribute (brightness or

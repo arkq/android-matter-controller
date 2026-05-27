@@ -58,7 +58,6 @@ android {
 
     // Defines a user-friendly version name for your app.
     versionName = "1.0.0"
-
   }
 
   signingConfigs {
@@ -175,7 +174,6 @@ dependencies {
   implementation(libs.timber)
   // Needed for using BaseEncoding class
   implementation(libs.guava)
-
 }
 
 // Issue with androidx.test.espresso:espresso-contrib
