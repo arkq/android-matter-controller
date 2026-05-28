@@ -2,9 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 package io.aether.android.chip
-
-import io.aether.android.formatVendorId
-
 /**
  * Known Matter Vendor IDs from the CSA Distributed Compliance Ledger (DCL).
  *
@@ -36,8 +33,12 @@ val MATTER_VENDORS: Map<Int, String> =
     )
 
 /** Returns a human-readable vendor label for a Matter VID, including the hex code. */
-fun vendorLabel(vendorID: Int, providedLabel: String? = null): String {
-  val name = providedLabel?.takeIf { it.isNotBlank() } ?: MATTER_VENDORS[vendorID]
-  val hex = formatVendorId(vendorID)
+fun vendorLabel(vendorId: VendorId, providedLabel: String? = null): String {
+  val name = providedLabel?.takeIf { it.isNotBlank() } ?: MATTER_VENDORS[vendorId.value.toInt()]
+  val hex = vendorId.toString()
   return if (name != null) "$name ($hex)" else hex
 }
+
+/** Overload for callers that still have an Int vendor ID (e.g. from proto). */
+fun vendorLabel(vendorId: Int, providedLabel: String? = null): String =
+    vendorLabel(vendorId.toVendorId(), providedLabel)

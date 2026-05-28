@@ -17,6 +17,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
+import io.aether.android.chip.ClusterId
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.screens.common.SearchTextField
 
@@ -24,18 +25,18 @@ import io.aether.android.screens.common.SearchTextField
 internal fun ClusterListContent(
     endpoint: Int,
     infos: List<DeviceMatterInfo>,
-    clustersMap: Map<Long, String>,
-    knownClustersById: Map<Long, ExplorerClusterDefinition>,
+    clustersMap: Map<ClusterId, String>,
+    knownClustersById: Map<ClusterId, ExplorerClusterDefinition>,
     showSearch: Boolean,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
-    onSelectCluster: (Long) -> Unit,
+    onSelectCluster: (ClusterId) -> Unit,
 ) {
   val endpointInfo = infos.firstOrNull { it.endpoint == endpoint }
   val serverClusters = endpointInfo?.serverClusters.orEmpty().sorted()
   val clientClusters = endpointInfo?.clientClusters.orEmpty().sorted()
-  val clusterMatchesQuery: (Long) -> Boolean = { clusterId ->
-    matchesExplorerQuery(searchQuery, clustersMap[clusterId].orEmpty(), formatExplorerId(clusterId))
+  val clusterMatchesQuery: (ClusterId) -> Boolean = { clusterId ->
+    matchesExplorerQuery(searchQuery, clustersMap[clusterId].orEmpty(), formatExplorerId(clusterId.value))
   }
   val filteredServerClusters = serverClusters.filter(clusterMatchesQuery)
   val filteredClientClusters = clientClusters.filter(clusterMatchesQuery)
@@ -79,12 +80,12 @@ internal fun ClusterListContent(
           )
         }
       } else {
-        items(filteredServerClusters, key = { "s-$it" }) { clusterId ->
+        items(filteredServerClusters, key = { "s-${it.value}" }) { clusterId ->
           val name =
               clustersMap[clusterId] ?: stringResource(R.string.device_explorer_cluster_unknown)
           val known = knownClustersById[clusterId]
           ExplorerRow(
-              text = formatIdAndName(clusterId, name),
+              text = formatIdAndName(clusterId.value, name),
               secondaryText =
                   stringResource(
                       R.string.device_explorer_cluster_counts,
@@ -112,12 +113,12 @@ internal fun ClusterListContent(
           )
         }
       } else {
-        items(filteredClientClusters, key = { "c-$it" }) { clusterId ->
+        items(filteredClientClusters, key = { "c-${it.value}" }) { clusterId ->
           val name =
               clustersMap[clusterId] ?: stringResource(R.string.device_explorer_cluster_unknown)
           val known = knownClustersById[clusterId]
           ExplorerRow(
-              text = formatIdAndName(clusterId, name),
+              text = formatIdAndName(clusterId.value, name),
               secondaryText =
                   stringResource(
                       R.string.device_explorer_cluster_counts,

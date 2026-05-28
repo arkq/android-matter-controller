@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import com.google.protobuf.Timestamp
 import io.aether.android.Device.DeviceType
+import io.aether.android.chip.DeviceTypeId
 import java.io.File
 import java.lang.Long.max
 import java.security.SecureRandom
@@ -122,14 +123,14 @@ fun getDeviceTypeDisplayStringId(deviceType: DeviceType): Int {
 // -----------------------------------------------------------------------------
 // Misc
 
-fun convertToAppDeviceType(matterDeviceType: Long): DeviceType {
-  return when (matterDeviceType) {
-    256L -> DeviceType.TYPE_LIGHT // 0x0100 On/Off Light
-    257L -> DeviceType.TYPE_DIMMABLE_LIGHT // 0x0101 Dimmable Light
-    259L -> DeviceType.TYPE_LIGHT_SWITCH // 0x0103 On/Off Light Switch
-    266L -> DeviceType.TYPE_OUTLET // 0x010A (On/Off Plug-in Unit)
-    268L -> DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT // 0x010C Color Temperature Light
-    269L -> DeviceType.TYPE_EXTENDED_COLOR_LIGHT // 0x010D Extended Color Light
+fun convertToAppDeviceType(matterDeviceType: DeviceTypeId): DeviceType {
+  return when (matterDeviceType.value) {
+    256u -> DeviceType.TYPE_LIGHT // 0x0100 On/Off Light
+    257u -> DeviceType.TYPE_DIMMABLE_LIGHT // 0x0101 Dimmable Light
+    259u -> DeviceType.TYPE_LIGHT_SWITCH // 0x0103 On/Off Light Switch
+    266u -> DeviceType.TYPE_OUTLET // 0x010A (On/Off Plug-in Unit)
+    268u -> DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT // 0x010C Color Temperature Light
+    269u -> DeviceType.TYPE_EXTENDED_COLOR_LIGHT // 0x010D Extended Color Light
     else -> DeviceType.TYPE_UNKNOWN
   }
 }

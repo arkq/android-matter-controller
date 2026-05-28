@@ -78,7 +78,7 @@ internal fun ClusterDetailContent(
                 matchesExplorerQuery(
                     attributeSearchQuery,
                     attr.name.orEmpty(),
-                    formatExplorerId(attr.id),
+                    formatExplorerId(attr.id.value),
                 )
               }
           val normalizedQuery = attributeSearchQuery.trim().lowercase()
@@ -96,11 +96,11 @@ internal fun ClusterDetailContent(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              items(filtered, key = { it.id }) { attribute ->
+              items(filtered, key = { it.id.value }) { attribute ->
                 ExplorerRow(
                     text =
                         formatIdAndName(
-                            attribute.id,
+                            attribute.id.value,
                             attribute.name
                                 ?: stringResource(R.string.device_explorer_attribute_unknown),
                         ),
@@ -151,7 +151,7 @@ internal fun ClusterDetailContent(
                 matchesExplorerQuery(
                     commandSearchQuery,
                     command.name.orEmpty(),
-                    formatExplorerId(command.id),
+                    formatExplorerId(command.id.value),
                 )
               }
           val normalizedQuery = commandSearchQuery.trim().lowercase()
@@ -169,11 +169,11 @@ internal fun ClusterDetailContent(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              items(filteredCommands, key = { it.id }) { command ->
+              items(filteredCommands, key = { it.id.value }) { command ->
                 ExplorerRow(
                     text =
                         formatIdAndName(
-                            command.id,
+                            command.id.value,
                             command.name
                                 ?: stringResource(R.string.device_explorer_command_unknown),
                         ),
@@ -212,7 +212,7 @@ internal fun ClusterDetailContent(
                 matchesExplorerQuery(
                     eventSearchQuery,
                     event.name.orEmpty(),
-                    formatExplorerId(event.id),
+                    formatExplorerId(event.id.value),
                 )
               }
           val normalizedQuery = eventSearchQuery.trim().lowercase()
@@ -230,11 +230,11 @@ internal fun ClusterDetailContent(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              items(filteredEvents, key = { it.id }) { event ->
+              items(filteredEvents, key = { it.id.value }) { event ->
                 ExplorerRow(
                     text =
                         formatIdAndName(
-                            event.id,
+                            event.id.value,
                             event.name ?: stringResource(R.string.device_explorer_event_unknown),
                         ),
                 )

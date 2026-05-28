@@ -42,9 +42,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.Device
 import io.aether.android.R
+import io.aether.android.chip.ProductId
+import io.aether.android.chip.toProductId
+import io.aether.android.chip.toNodeId
 import io.aether.android.chip.vendorLabel
-import io.aether.android.formatNodeId
-import io.aether.android.formatProductId
 import io.aether.android.formatTimestamp
 import io.aether.android.getDeviceTypeDisplayStringId
 import io.aether.android.nodeIdFor
@@ -274,7 +275,7 @@ private fun DeviceSettingsScreen(
               stringResource(
                   R.string.device_settings_basic_product_value,
                   device.productName,
-                  formatProductId(device.productId.toInt()),
+                  ProductId(device.productId.toInt().toUInt()).toString(),
               ),
       )
       if (!hardwareVersion.isNullOrBlank()) {
@@ -295,7 +296,7 @@ private fun DeviceSettingsScreen(
       )
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_node_id),
-          value = formatNodeId(nodeIdFor(device)),
+          value = nodeIdFor(device).toNodeId().toString(),
       )
     }
 

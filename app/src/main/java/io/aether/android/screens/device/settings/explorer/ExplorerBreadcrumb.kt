@@ -24,14 +24,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
+import io.aether.android.chip.ClusterId
 import io.aether.android.chip.DeviceMatterInfo
+import io.aether.android.chip.DeviceTypeId
 
 @Composable
 internal fun BreadcrumbBar(
     navStack: List<ExplorerLevel>,
     deviceMatterInfoList: List<DeviceMatterInfo>,
-    clustersMap: Map<Long, String>,
-    devicesMap: Map<Long, String>,
+    clustersMap: Map<ClusterId, String>,
+    devicesMap: Map<DeviceTypeId, String>,
     onPopToIndex: (Int) -> Unit,
 ) {
   val scrollState = androidx.compose.foundation.rememberScrollState()
@@ -82,8 +84,8 @@ internal fun BreadcrumbBar(
 private fun breadcrumbLabelFor(
     level: ExplorerLevel,
     deviceMatterInfoList: List<DeviceMatterInfo>,
-    clustersMap: Map<Long, String>,
-    devicesMap: Map<Long, String>,
+    clustersMap: Map<ClusterId, String>,
+    devicesMap: Map<DeviceTypeId, String>,
 ): String =
     when (level) {
       ExplorerLevel.EndpointList -> stringResource(R.string.device_explorer_root)
@@ -103,8 +105,8 @@ private fun breadcrumbLabelFor(
       is ExplorerLevel.ClusterDetail -> {
         val name =
             clustersMap[level.clusterId] ?: stringResource(R.string.device_explorer_cluster_unknown)
-        formatIdAndName(level.clusterId, name)
+        formatIdAndName(level.clusterId.value, name)
       }
-      is ExplorerLevel.AttributeDetail -> formatIdAndName(level.attribute.id, level.attribute.name)
-      is ExplorerLevel.CommandInvoke -> formatIdAndName(level.command.id, level.command.name)
+      is ExplorerLevel.AttributeDetail -> formatIdAndName(level.attribute.id.value, level.attribute.name)
+      is ExplorerLevel.CommandInvoke -> formatIdAndName(level.command.id.value, level.command.name)
     }

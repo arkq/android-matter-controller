@@ -9,6 +9,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.aether.android.R
 import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
+import io.aether.android.chip.FabricId
+import io.aether.android.chip.NodeId
+import io.aether.android.chip.toFabricId
+import io.aether.android.chip.toNodeId
 import io.aether.android.data.DevicesRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,8 +25,8 @@ data class ManagedFabric(
     val fabricIndex: Int,
     val rootPublicKey: ByteArray?,
     val vendorId: Int?,
-    val fabricId: Long?,
-    val nodeId: Long?,
+    val fabricId: FabricId?,
+    val nodeId: NodeId?,
     val label: String?,
     val isCurrentFabric: Boolean,
 )
@@ -108,8 +112,8 @@ constructor(
                       fabricIndex = fabricIndex,
                       rootPublicKey = fabric?.rootPublicKey,
                       vendorId = fabric?.vendorID,
-                      fabricId = fabric?.fabricID,
-                      nodeId = fabric?.nodeID,
+                      fabricId = fabric?.fabricID?.toFabricId(),
+                      nodeId = fabric?.nodeID?.toNodeId(),
                       label = fabric?.label,
                       isCurrentFabric = isCurrentFabric,
                   )

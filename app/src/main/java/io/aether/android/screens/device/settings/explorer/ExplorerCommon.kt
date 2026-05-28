@@ -58,7 +58,7 @@ internal fun formatEndpointLabel(endpoint: Int, name: String?): String =
       "[${formatEndpointId(endpoint)}] $name"
     }
 
-internal fun formatIdAndName(id: Long, name: String?): String {
+internal fun formatIdAndName(id: UInt, name: String?): String {
   val idText = formatExplorerId(id)
   return if (name.isNullOrBlank()) {
     "[$idText]"
@@ -67,8 +67,8 @@ internal fun formatIdAndName(id: Long, name: String?): String {
   }
 }
 
-internal fun formatExplorerId(id: Long): String =
-    if (id <= 0xFFFF) String.format("0x%04X", id) else String.format("0x%08X", id)
+internal fun formatExplorerId(id: UInt): String =
+    if (id <= 0xFFFFu) String.format("0x%04X", id.toInt()) else String.format("0x%08X", id.toInt())
 
 internal fun formatEndpointId(endpoint: Int): String =
     if (endpoint <= 0xFF) String.format("0x%02X", endpoint) else String.format("0x%04X", endpoint)
