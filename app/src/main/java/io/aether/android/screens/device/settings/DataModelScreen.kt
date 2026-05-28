@@ -32,7 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.R
+import io.aether.android.chip.ClusterId
 import io.aether.android.chip.DeviceMatterInfo
+import io.aether.android.chip.DeviceTypeId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
@@ -100,8 +102,8 @@ fun DataModelRoute(
 private fun DataModelScreen(
     innerPadding: PaddingValues,
     deviceMatterInfoList: List<DeviceMatterInfo>?,
-    clustersMap: Map<Long, String>,
-    devicesMap: Map<Long, String>,
+    clustersMap: Map<ClusterId, String>,
+    devicesMap: Map<DeviceTypeId, String>,
     msgDialogInfo: DialogInfo?,
     onDismissMsgDialog: () -> Unit,
 ) {

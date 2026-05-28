@@ -287,13 +287,13 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     val serverListAttribute =
         readDescriptorClusterServerListAttribute(connectedDevicePtr, endpointInt)
     val serverClusters = arrayListOf<ClusterId>()
-    serverListAttribute.forEach { serverClusters.add(it.toClusterId()) }
+    serverListAttribute.forEach { serverClusters.add(it) }
 
     // ClientListAttribute
     val clientListAttribute =
         readDescriptorClusterClientListAttribute(connectedDevicePtr, endpointInt)
     val clientClusters = arrayListOf<ClusterId>()
-    clientListAttribute.forEach { clientClusters.add(it.toClusterId()) }
+    clientListAttribute.forEach { clientClusters.add(it) }
 
     // Build the DeviceMatterInfo
     val deviceMatterInfo =
