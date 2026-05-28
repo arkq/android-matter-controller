@@ -68,7 +68,7 @@ internal fun formatIdAndName(id: UInt, name: String?): String {
 }
 
 internal fun formatExplorerId(id: UInt): String =
-    if (id <= 0xFFFFu) String.format("0x%04X", id.toInt()) else String.format("0x%08X", id.toInt())
+    if (id <= 0xFFFFu) String.format("0x%04X", id.toLong()) else String.format("0x%08X", id.toLong())
 
 internal fun formatEndpointId(endpoint: Int): String =
     if (endpoint <= 0xFF) String.format("0x%02X", endpoint) else String.format("0x%04X", endpoint)

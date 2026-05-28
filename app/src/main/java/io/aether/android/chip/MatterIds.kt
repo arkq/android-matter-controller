@@ -8,7 +8,8 @@ import java.util.Locale
 /** A Matter Node ID (uint64 per spec). Formats as 16-digit uppercase hex, e.g. 0x0000000000000001. */
 @JvmInline
 value class NodeId(val value: ULong) : Comparable<NodeId> {
-  override fun toString(): String = String.format(Locale.ROOT, "0x%016X", value.toLong())
+  override fun toString(): String =
+      String.format(Locale.ROOT, "0x%08X%08X", (value shr 32).toLong(), (value and 0xFFFFFFFFUL).toLong())
 
   override fun compareTo(other: NodeId): Int = value.compareTo(other.value)
 }
@@ -16,7 +17,7 @@ value class NodeId(val value: ULong) : Comparable<NodeId> {
 /** A Matter Vendor ID (uint16 per spec). Formats as 4-digit uppercase hex, e.g. 0x1011. */
 @JvmInline
 value class VendorId(val value: UInt) : Comparable<VendorId> {
-  override fun toString(): String = String.format(Locale.ROOT, "0x%04X", value.toInt())
+  override fun toString(): String = String.format(Locale.ROOT, "0x%04X", value.toLong())
 
   override fun compareTo(other: VendorId): Int = value.compareTo(other.value)
 }
@@ -24,7 +25,7 @@ value class VendorId(val value: UInt) : Comparable<VendorId> {
 /** A Matter Product ID (uint16 per spec). Formats as 4-digit uppercase hex, e.g. 0x8001. */
 @JvmInline
 value class ProductId(val value: UInt) : Comparable<ProductId> {
-  override fun toString(): String = String.format(Locale.ROOT, "0x%04X", value.toInt())
+  override fun toString(): String = String.format(Locale.ROOT, "0x%04X", value.toLong())
 
   override fun compareTo(other: ProductId): Int = value.compareTo(other.value)
 }
@@ -33,8 +34,8 @@ value class ProductId(val value: UInt) : Comparable<ProductId> {
 @JvmInline
 value class ClusterId(val value: UInt) : Comparable<ClusterId> {
   override fun toString(): String =
-      if (value <= 0xFFFFu) String.format(Locale.ROOT, "0x%04X", value.toInt())
-      else String.format(Locale.ROOT, "0x%08X", value.toInt())
+      if (value <= 0xFFFFu) String.format(Locale.ROOT, "0x%04X", value.toLong())
+      else String.format(Locale.ROOT, "0x%08X", value.toLong())
 
   override fun compareTo(other: ClusterId): Int = value.compareTo(other.value)
 }
@@ -43,8 +44,8 @@ value class ClusterId(val value: UInt) : Comparable<ClusterId> {
 @JvmInline
 value class AttributeId(val value: UInt) : Comparable<AttributeId> {
   override fun toString(): String =
-      if (value <= 0xFFFFu) String.format(Locale.ROOT, "0x%04X", value.toInt())
-      else String.format(Locale.ROOT, "0x%08X", value.toInt())
+      if (value <= 0xFFFFu) String.format(Locale.ROOT, "0x%04X", value.toLong())
+      else String.format(Locale.ROOT, "0x%08X", value.toLong())
 
   override fun compareTo(other: AttributeId): Int = value.compareTo(other.value)
 }
@@ -53,8 +54,8 @@ value class AttributeId(val value: UInt) : Comparable<AttributeId> {
 @JvmInline
 value class CommandId(val value: UInt) : Comparable<CommandId> {
   override fun toString(): String =
-      if (value <= 0xFFFFu) String.format(Locale.ROOT, "0x%04X", value.toInt())
-      else String.format(Locale.ROOT, "0x%08X", value.toInt())
+      if (value <= 0xFFFFu) String.format(Locale.ROOT, "0x%04X", value.toLong())
+      else String.format(Locale.ROOT, "0x%08X", value.toLong())
 
   override fun compareTo(other: CommandId): Int = value.compareTo(other.value)
 }
@@ -63,8 +64,8 @@ value class CommandId(val value: UInt) : Comparable<CommandId> {
 @JvmInline
 value class EventId(val value: UInt) : Comparable<EventId> {
   override fun toString(): String =
-      if (value <= 0xFFFFu) String.format(Locale.ROOT, "0x%04X", value.toInt())
-      else String.format(Locale.ROOT, "0x%08X", value.toInt())
+      if (value <= 0xFFFFu) String.format(Locale.ROOT, "0x%04X", value.toLong())
+      else String.format(Locale.ROOT, "0x%08X", value.toLong())
 
   override fun compareTo(other: EventId): Int = value.compareTo(other.value)
 }
@@ -73,8 +74,8 @@ value class EventId(val value: UInt) : Comparable<EventId> {
 @JvmInline
 value class DeviceTypeId(val value: UInt) : Comparable<DeviceTypeId> {
   override fun toString(): String =
-      if (value <= 0xFFFFu) String.format(Locale.ROOT, "0x%04X", value.toInt())
-      else String.format(Locale.ROOT, "0x%08X", value.toInt())
+      if (value <= 0xFFFFu) String.format(Locale.ROOT, "0x%04X", value.toLong())
+      else String.format(Locale.ROOT, "0x%08X", value.toLong())
 
   override fun compareTo(other: DeviceTypeId): Int = value.compareTo(other.value)
 }
@@ -82,7 +83,8 @@ value class DeviceTypeId(val value: UInt) : Comparable<DeviceTypeId> {
 /** A Matter Fabric ID (uint64 per spec). Formats as 16-digit uppercase hex, e.g. 0x0000000000000001. */
 @JvmInline
 value class FabricId(val value: ULong) : Comparable<FabricId> {
-  override fun toString(): String = String.format(Locale.ROOT, "0x%016X", value.toLong())
+  override fun toString(): String =
+      String.format(Locale.ROOT, "0x%08X%08X", (value shr 32).toLong(), (value and 0xFFFFFFFFUL).toLong())
 
   override fun compareTo(other: FabricId): Int = value.compareTo(other.value)
 }
