@@ -17,8 +17,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
-import io.aether.android.chip.ClusterId
 import io.aether.android.chip.DeviceMatterInfo
+import io.aether.android.matter.ClusterId
 import io.aether.android.screens.common.SearchTextField
 
 @Composable
@@ -36,7 +36,11 @@ internal fun ClusterListContent(
   val serverClusters = endpointInfo?.serverClusters.orEmpty().sorted()
   val clientClusters = endpointInfo?.clientClusters.orEmpty().sorted()
   val clusterMatchesQuery: (ClusterId) -> Boolean = { clusterId ->
-    matchesExplorerQuery(searchQuery, clustersMap[clusterId].orEmpty(), formatExplorerId(clusterId.value))
+    matchesExplorerQuery(
+        searchQuery,
+        clustersMap[clusterId].orEmpty(),
+        formatExplorerId(clusterId.value),
+    )
   }
   val filteredServerClusters = serverClusters.filter(clusterMatchesQuery)
   val filteredClientClusters = clientClusters.filter(clusterMatchesQuery)

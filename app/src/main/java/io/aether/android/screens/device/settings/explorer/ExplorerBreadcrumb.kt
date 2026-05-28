@@ -24,9 +24,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
-import io.aether.android.chip.ClusterId
 import io.aether.android.chip.DeviceMatterInfo
-import io.aether.android.chip.DeviceTypeId
+import io.aether.android.matter.ClusterId
+import io.aether.android.matter.DeviceTypeId
 
 @Composable
 internal fun BreadcrumbBar(
@@ -107,6 +107,7 @@ private fun breadcrumbLabelFor(
             clustersMap[level.clusterId] ?: stringResource(R.string.device_explorer_cluster_unknown)
         formatIdAndName(level.clusterId.value, name)
       }
-      is ExplorerLevel.AttributeDetail -> formatIdAndName(level.attribute.id.value, level.attribute.name)
+      is ExplorerLevel.AttributeDetail ->
+          formatIdAndName(level.attribute.id.value, level.attribute.name)
       is ExplorerLevel.CommandInvoke -> formatIdAndName(level.command.id.value, level.command.name)
     }

@@ -9,11 +9,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.aether.android.R
 import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
-import io.aether.android.chip.FabricId
-import io.aether.android.chip.NodeId
-import io.aether.android.chip.toFabricId
-import io.aether.android.chip.toNodeId
 import io.aether.android.data.DevicesRepository
+import io.aether.android.matter.FabricId
+import io.aether.android.matter.NodeId
+import io.aether.android.matter.toFabricId
+import io.aether.android.matter.toNodeId
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

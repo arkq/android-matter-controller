@@ -3,17 +3,17 @@
 
 package io.aether.android.screens.device.settings.explorer
 
-import io.aether.android.chip.AttributeId
-import io.aether.android.chip.ClusterId
-import io.aether.android.chip.CommandId
 import io.aether.android.chip.DataModelLoader
-import io.aether.android.chip.EventId
-import io.aether.android.chip.toAttributeId
-import io.aether.android.chip.toClusterId
-import io.aether.android.chip.toCommandId
+import io.aether.android.matter.AttributeId
+import io.aether.android.matter.ClusterId
+import io.aether.android.matter.CommandId
+import io.aether.android.matter.EventId
 import io.aether.android.matter.MatterDataModel
 import io.aether.android.matter.MatterPrivilege
 import io.aether.android.matter.MatterType
+import io.aether.android.matter.toAttributeId
+import io.aether.android.matter.toClusterId
+import io.aether.android.matter.toCommandId
 
 data class ExplorerAttributeDefinition(
     val id: AttributeId,

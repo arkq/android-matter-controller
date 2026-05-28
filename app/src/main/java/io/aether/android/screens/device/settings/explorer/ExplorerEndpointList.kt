@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
-import io.aether.android.chip.DeviceTypeId
+import io.aether.android.matter.DeviceTypeId
 import io.aether.android.screens.common.SearchTextField
 
 @Composable
@@ -80,7 +80,10 @@ internal fun EndpointListContent(
                     append(
                         stringResource(
                             R.string.device_explorer_device_type,
-                            formatIdAndName(deviceTypes.first().first.value, deviceTypes.first().second),
+                            formatIdAndName(
+                                deviceTypes.first().first.value,
+                                deviceTypes.first().second,
+                            ),
                         )
                     )
                     append("\n")

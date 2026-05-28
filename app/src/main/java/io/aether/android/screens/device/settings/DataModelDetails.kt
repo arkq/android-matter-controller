@@ -10,9 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.aether.android.R
-import io.aether.android.chip.ClusterId
 import io.aether.android.chip.DeviceMatterInfo
-import io.aether.android.chip.DeviceTypeId
+import io.aether.android.matter.ClusterId
+import io.aether.android.matter.DeviceTypeId
 
 @Composable
 fun EndpointDetails(

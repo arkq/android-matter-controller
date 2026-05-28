@@ -14,6 +14,17 @@ import chip.devicecontroller.model.InvokeElement
 import chip.devicecontroller.model.NodeState
 import io.aether.android.CommissioningWindowStatus
 import io.aether.android.formatNodeId
+import io.aether.android.matter.AttributeId
+import io.aether.android.matter.ClusterId
+import io.aether.android.matter.CommandId
+import io.aether.android.matter.DeviceTypeId
+import io.aether.android.matter.EventId
+import io.aether.android.matter.toAttributeId
+import io.aether.android.matter.toClusterId
+import io.aether.android.matter.toCommandId
+import io.aether.android.matter.toDeviceTypeId
+import io.aether.android.matter.toEventId
+import io.aether.android.matter.toLong
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -81,13 +92,18 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     return matterDeviceInfoList
   }
 
-  suspend fun readClusterAttributeList(nodeId: Long, endpoint: Int, clusterId: ClusterId): List<AttributeId> {
+  suspend fun readClusterAttributeList(
+      nodeId: Long,
+      endpoint: Int,
+      clusterId: ClusterId,
+  ): List<AttributeId> {
     return readGlobalListAttribute(
-        nodeId = nodeId,
-        endpoint = endpoint,
-        clusterId = clusterId.toLong(),
-        globalAttributeId = GLOBAL_ATTRIBUTE_ATTRIBUTE_LIST_ID,
-    ).map { it.toAttributeId() }
+            nodeId = nodeId,
+            endpoint = endpoint,
+            clusterId = clusterId.toLong(),
+            globalAttributeId = GLOBAL_ATTRIBUTE_ATTRIBUTE_LIST_ID,
+        )
+        .map { it.toAttributeId() }
   }
 
   suspend fun readClusterAcceptedCommandList(
@@ -96,11 +112,12 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
       clusterId: ClusterId,
   ): List<CommandId> {
     return readGlobalListAttribute(
-        nodeId = nodeId,
-        endpoint = endpoint,
-        clusterId = clusterId.toLong(),
-        globalAttributeId = GLOBAL_ATTRIBUTE_ACCEPTED_COMMAND_LIST_ID,
-    ).map { it.toCommandId() }
+            nodeId = nodeId,
+            endpoint = endpoint,
+            clusterId = clusterId.toLong(),
+            globalAttributeId = GLOBAL_ATTRIBUTE_ACCEPTED_COMMAND_LIST_ID,
+        )
+        .map { it.toCommandId() }
   }
 
   suspend fun readClusterGeneratedCommandList(
@@ -109,20 +126,26 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
       clusterId: ClusterId,
   ): List<CommandId> {
     return readGlobalListAttribute(
-        nodeId = nodeId,
-        endpoint = endpoint,
-        clusterId = clusterId.toLong(),
-        globalAttributeId = GLOBAL_ATTRIBUTE_GENERATED_COMMAND_LIST_ID,
-    ).map { it.toCommandId() }
+            nodeId = nodeId,
+            endpoint = endpoint,
+            clusterId = clusterId.toLong(),
+            globalAttributeId = GLOBAL_ATTRIBUTE_GENERATED_COMMAND_LIST_ID,
+        )
+        .map { it.toCommandId() }
   }
 
-  suspend fun readClusterEventList(nodeId: Long, endpoint: Int, clusterId: ClusterId): List<EventId> {
+  suspend fun readClusterEventList(
+      nodeId: Long,
+      endpoint: Int,
+      clusterId: ClusterId,
+  ): List<EventId> {
     return readGlobalListAttribute(
-        nodeId = nodeId,
-        endpoint = endpoint,
-        clusterId = clusterId.toLong(),
-        globalAttributeId = GLOBAL_ATTRIBUTE_EVENT_LIST_ID,
-    ).map { it.toEventId() }
+            nodeId = nodeId,
+            endpoint = endpoint,
+            clusterId = clusterId.toLong(),
+            globalAttributeId = GLOBAL_ATTRIBUTE_EVENT_LIST_ID,
+        )
+        .map { it.toEventId() }
   }
 
   suspend fun readAttributeValue(
@@ -141,7 +164,11 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     val attributeState =
         chipClient.readAttribute(
             connectedDevicePtr,
-            ChipAttributePath.newInstance(endpoint.toLong(), clusterId.toLong(), attributeId.toLong()),
+            ChipAttributePath.newInstance(
+                endpoint.toLong(),
+                clusterId.toLong(),
+                attributeId.toLong(),
+            ),
         ) ?: throw IllegalStateException("readAttributeValue returned no state")
     return when {
       attributeState.value != null -> attributeState.value.toString()
@@ -400,7 +427,10 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
    *     namespace OccupancySensing = 0x00000406 (1030)
    * ```
    */
-  suspend fun readDescriptorClusterServerListAttribute(devicePtr: Long, endpoint: Int): List<ClusterId> {
+  suspend fun readDescriptorClusterServerListAttribute(
+      devicePtr: Long,
+      endpoint: Int,
+  ): List<ClusterId> {
     return suspendCoroutine { continuation ->
       getDescriptorClusterForDevice(devicePtr, endpoint)
           .readServerListAttribute(
@@ -418,7 +448,10 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   }
 
   /** ClientListAttribute */
-  suspend fun readDescriptorClusterClientListAttribute(devicePtr: Long, endpoint: Int): List<ClusterId> {
+  suspend fun readDescriptorClusterClientListAttribute(
+      devicePtr: Long,
+      endpoint: Int,
+  ): List<ClusterId> {
     return suspendCoroutine { continuation ->
       getDescriptorClusterForDevice(devicePtr, endpoint)
           .readClientListAttribute(
@@ -445,7 +478,10 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   // -----------------------------------------------------------------------------------------------
   // ApplicationCluster functions
 
-  suspend fun readApplicationBasicClusterAttributeList(deviceId: Long, endpoint: Int): List<AttributeId> {
+  suspend fun readApplicationBasicClusterAttributeList(
+      deviceId: Long,
+      endpoint: Int,
+  ): List<AttributeId> {
     val connectedDevicePtr =
         try {
           chipClient.getConnectedDevicePointer(deviceId)

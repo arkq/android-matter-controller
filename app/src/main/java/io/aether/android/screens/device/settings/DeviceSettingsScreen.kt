@@ -42,12 +42,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.Device
 import io.aether.android.R
-import io.aether.android.chip.ProductId
-import io.aether.android.chip.toProductId
-import io.aether.android.chip.toNodeId
-import io.aether.android.chip.vendorLabel
 import io.aether.android.formatTimestamp
 import io.aether.android.getDeviceTypeDisplayStringId
+import io.aether.android.matter.ProductId
+import io.aether.android.matter.toNodeId
+import io.aether.android.matter.vendorLabel
 import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.LoadingIndicator

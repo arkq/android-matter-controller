@@ -7,9 +7,15 @@ import android.content.Context
 import androidx.annotation.StringRes
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.aether.android.R
+import io.aether.android.matter.AttributeId
+import io.aether.android.matter.ClusterId
+import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.MatterDataModel
 import io.aether.android.matter.MatterPrivilege
 import io.aether.android.matter.MatterType
+import io.aether.android.matter.toClusterId
+import io.aether.android.matter.toDeviceTypeId
+import io.aether.android.matter.toLong
 import javax.inject.Inject
 import javax.inject.Singleton
 

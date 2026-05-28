@@ -1,33 +1,40 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.chip
+package io.aether.android.matter
 
 import java.util.Locale
 
-/** A Matter Node ID (uint64 per spec). Formats as 16-digit uppercase hex, e.g. 0x0000000000000001. */
+/**
+ * A Matter Fabric ID (uint64 per spec). Formats as 16-digit uppercase hex, e.g. 0x0000000000000001.
+ */
+@JvmInline
+value class FabricId(val value: ULong) : Comparable<FabricId> {
+  override fun toString(): String =
+      String.format(
+          Locale.ROOT,
+          "0x%08X%08X",
+          (value shr 32).toLong(),
+          (value and 0xFFFFFFFFUL).toLong(),
+      )
+
+  override fun compareTo(other: FabricId): Int = value.compareTo(other.value)
+}
+
+/**
+ * A Matter Node ID (uint64 per spec). Formats as 16-digit uppercase hex, e.g. 0x0000000000000001.
+ */
 @JvmInline
 value class NodeId(val value: ULong) : Comparable<NodeId> {
   override fun toString(): String =
-      String.format(Locale.ROOT, "0x%08X%08X", (value shr 32).toLong(), (value and 0xFFFFFFFFUL).toLong())
+      String.format(
+          Locale.ROOT,
+          "0x%08X%08X",
+          (value shr 32).toLong(),
+          (value and 0xFFFFFFFFUL).toLong(),
+      )
 
   override fun compareTo(other: NodeId): Int = value.compareTo(other.value)
-}
-
-/** A Matter Vendor ID (uint16 per spec). Formats as 4-digit uppercase hex, e.g. 0x1011. */
-@JvmInline
-value class VendorId(val value: UInt) : Comparable<VendorId> {
-  override fun toString(): String = String.format(Locale.ROOT, "0x%04X", value.toLong())
-
-  override fun compareTo(other: VendorId): Int = value.compareTo(other.value)
-}
-
-/** A Matter Product ID (uint16 per spec). Formats as 4-digit uppercase hex, e.g. 0x8001. */
-@JvmInline
-value class ProductId(val value: UInt) : Comparable<ProductId> {
-  override fun toString(): String = String.format(Locale.ROOT, "0x%04X", value.toLong())
-
-  override fun compareTo(other: ProductId): Int = value.compareTo(other.value)
 }
 
 /** A Matter Cluster ID (uint32 per spec). Formats as 4-digit (≤0xFFFF) or 8-digit hex. */
@@ -80,18 +87,27 @@ value class DeviceTypeId(val value: UInt) : Comparable<DeviceTypeId> {
   override fun compareTo(other: DeviceTypeId): Int = value.compareTo(other.value)
 }
 
-/** A Matter Fabric ID (uint64 per spec). Formats as 16-digit uppercase hex, e.g. 0x0000000000000001. */
+/** A Matter Vendor ID (uint16 per spec). Formats as 4-digit uppercase hex, e.g. 0x1011. */
 @JvmInline
-value class FabricId(val value: ULong) : Comparable<FabricId> {
-  override fun toString(): String =
-      String.format(Locale.ROOT, "0x%08X%08X", (value shr 32).toLong(), (value and 0xFFFFFFFFUL).toLong())
+value class VendorId(val value: UInt) : Comparable<VendorId> {
+  override fun toString(): String = String.format(Locale.ROOT, "0x%04X", value.toLong())
 
-  override fun compareTo(other: FabricId): Int = value.compareTo(other.value)
+  override fun compareTo(other: VendorId): Int = value.compareTo(other.value)
+}
+
+/** A Matter Product ID (uint16 per spec). Formats as 4-digit uppercase hex, e.g. 0x8001. */
+@JvmInline
+value class ProductId(val value: UInt) : Comparable<ProductId> {
+  override fun toString(): String = String.format(Locale.ROOT, "0x%04X", value.toLong())
+
+  override fun compareTo(other: ProductId): Int = value.compareTo(other.value)
 }
 
 // ---------------------------------------------------------------------------
 // Conversion extensions from Long/Int (used at Chip SDK and navigation boundaries)
 // ---------------------------------------------------------------------------
+
+fun Long.toFabricId(): FabricId = FabricId(toULong())
 
 fun Long.toNodeId(): NodeId = NodeId(toULong())
 
@@ -105,8 +121,6 @@ fun Long.toEventId(): EventId = EventId(toUInt())
 
 fun Long.toDeviceTypeId(): DeviceTypeId = DeviceTypeId(toUInt())
 
-fun Long.toFabricId(): FabricId = FabricId(toULong())
-
 fun Int.toVendorId(): VendorId = VendorId(toUInt())
 
 fun Int.toProductId(): ProductId = ProductId(toUInt())
@@ -114,6 +128,8 @@ fun Int.toProductId(): ProductId = ProductId(toUInt())
 // ---------------------------------------------------------------------------
 // Conversion extensions back to Long/Int (used at Chip SDK boundary)
 // ---------------------------------------------------------------------------
+
+fun FabricId.toLong(): Long = value.toLong()
 
 fun NodeId.toLong(): Long = value.toLong()
 
@@ -126,8 +142,6 @@ fun CommandId.toLong(): Long = value.toLong()
 fun EventId.toLong(): Long = value.toLong()
 
 fun DeviceTypeId.toLong(): Long = value.toLong()
-
-fun FabricId.toLong(): Long = value.toLong()
 
 fun VendorId.toInt(): Int = value.toInt()
 

@@ -8,11 +8,11 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.aether.android.R
-import io.aether.android.chip.ClusterId
 import io.aether.android.chip.ClustersHelper
-import io.aether.android.chip.DeviceTypeId
 import io.aether.android.chip.DataModelLoader
 import io.aether.android.chip.DeviceMatterInfo
+import io.aether.android.matter.ClusterId
+import io.aether.android.matter.DeviceTypeId
 import io.aether.android.screens.common.DialogInfo
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
