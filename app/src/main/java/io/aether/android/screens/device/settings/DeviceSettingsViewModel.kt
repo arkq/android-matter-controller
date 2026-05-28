@@ -16,6 +16,7 @@ import io.aether.android.OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS
 import io.aether.android.OpenCommissioningWindowApi
 import io.aether.android.R
 import io.aether.android.SETUP_PIN_CODE
+import io.aether.android.chip.BasicInformationAttributes
 import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.data.DevicesRepository
@@ -49,21 +50,9 @@ constructor(
   private var _device = MutableStateFlow<Device?>(null)
   val device: StateFlow<Device?> = _device.asStateFlow()
 
-  // Hardware version string fetched from the device (null when not yet loaded or unavailable).
-  private var _hardwareVersion = MutableStateFlow<String?>(null)
-  val hardwareVersion: StateFlow<String?> = _hardwareVersion.asStateFlow()
-
-  // Software version string fetched from the device (null when not yet loaded or unavailable).
-  private var _softwareVersion = MutableStateFlow<String?>(null)
-  val softwareVersion: StateFlow<String?> = _softwareVersion.asStateFlow()
-
-  // Vendor name fetched from the device (null when not yet loaded or unavailable).
-  private var _vendorName = MutableStateFlow<String?>(null)
-  val vendorName: StateFlow<String?> = _vendorName.asStateFlow()
-
-  // Vendor ID fetched from the device (null when not yet loaded or unavailable).
-  private var _vendorId = MutableStateFlow<Int?>(null)
-  val vendorId: StateFlow<Int?> = _vendorId.asStateFlow()
+  // Attributes fetched live from Basic Information cluster.
+  private var _basicInformation = MutableStateFlow<BasicInformationAttributes?>(null)
+  val basicInformation: StateFlow<BasicInformationAttributes?> = _basicInformation.asStateFlow()
 
   private var _isOnline = MutableStateFlow(true)
   val isOnline: StateFlow<Boolean> = _isOnline.asStateFlow()
@@ -81,7 +70,7 @@ constructor(
         }
         .onEach { (isOnline, dateCommissioned) ->
           _isOnline.value = isOnline
-          _dateCommissioned.value = dateCommissioned
+          _dateCommissioned.value = dateCommissioned?.takeUnless { isDefaultTimestamp(it) }
         }
         .launchIn(viewModelScope)
   }
@@ -116,7 +105,9 @@ constructor(
     viewModelScope.launch {
       val shouldBlockUiUntilLoaded = _device.value == null
       try {
-        val loadedDevice = devicesRepository.getDeviceByNodeId(nodeId)
+        val devicesForNode = devicesRepository.getDevicesByNodeId(nodeId)
+        val loadedDevice =
+            chooseBestDevice(devicesForNode) ?: devicesRepository.getDeviceByNodeId(nodeId)
         val basicInfo =
             try {
               clustersHelper.readBasicInformationAttributes(nodeId)
@@ -126,18 +117,31 @@ constructor(
             }
 
         _device.value = loadedDevice
-        _vendorName.value = basicInfo?.vendorName
-        _vendorId.value = basicInfo?.vendorId
-        _hardwareVersion.value = basicInfo?.hardwareVersion
-        _softwareVersion.value = basicInfo?.softwareVersion
+        _basicInformation.value = basicInfo
       } catch (e: Exception) {
         Timber.e(e, "loadDevice failed")
         if (shouldBlockUiUntilLoaded) {
           _device.value = null
         }
+        _basicInformation.value = null
         showMsgDialog(R.string.device_settings, R.string.device_settings_load_failed)
       }
     }
+  }
+
+  private fun chooseBestDevice(candidates: List<Device>): Device? {
+    return candidates.maxByOrNull { candidate ->
+      var score = 0
+      if (candidate.deviceType != Device.DeviceType.TYPE_UNKNOWN) score += 4
+      if (candidate.name.isNotBlank()) score += 2
+      if (candidate.productName.isNotBlank()) score += 2
+      if (candidate.productId.toIntOrNull()?.let { it != 0 } == true) score += 1
+      score
+    }
+  }
+
+  private fun isDefaultTimestamp(timestamp: Timestamp): Boolean {
+    return timestamp.seconds == 0L && timestamp.nanos == 0
   }
 
   // -----------------------------------------------------------------------------------------------

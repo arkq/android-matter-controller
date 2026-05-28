@@ -45,8 +45,11 @@ private const val ROOT_ENDPOINT = 0
 data class BasicInformationAttributes(
     val vendorName: String? = null,
     val vendorId: Int? = null,
+    val productName: String? = null,
+    val productId: Int? = null,
     val hardwareVersion: String? = null,
     val softwareVersion: String? = null,
+    val nodeLabel: String? = null,
 )
 
 @Singleton
@@ -1079,12 +1082,27 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
                 ChipAttributePath.newInstance(
                     ROOT_ENDPOINT.toLong(),
                     Clusters.BasicInformation.ID.toLong(),
-                    Clusters.BasicInformation.Attributes.HardwareVersion.ID.toLong(),
+                    Clusters.BasicInformation.Attributes.ProductName.ID.toLong(),
                 ),
                 ChipAttributePath.newInstance(
                     ROOT_ENDPOINT.toLong(),
                     Clusters.BasicInformation.ID.toLong(),
-                    Clusters.BasicInformation.Attributes.SoftwareVersion.ID.toLong(),
+                    Clusters.BasicInformation.Attributes.ProductID.ID.toLong(),
+                ),
+                ChipAttributePath.newInstance(
+                    ROOT_ENDPOINT.toLong(),
+                    Clusters.BasicInformation.ID.toLong(),
+                    Clusters.BasicInformation.Attributes.NodeLabel.ID.toLong(),
+                ),
+                ChipAttributePath.newInstance(
+                    ROOT_ENDPOINT.toLong(),
+                    Clusters.BasicInformation.ID.toLong(),
+                    Clusters.BasicInformation.Attributes.HardwareVersionString.ID.toLong(),
+                ),
+                ChipAttributePath.newInstance(
+                    ROOT_ENDPOINT.toLong(),
+                    Clusters.BasicInformation.ID.toLong(),
+                    Clusters.BasicInformation.Attributes.SoftwareVersionString.ID.toLong(),
                 ),
             )
 
@@ -1135,22 +1153,40 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
             .getAttributeState(Clusters.BasicInformation.Attributes.VendorID.ID.toLong())
             ?.value
             .asInt()
+    val productName =
+        clusterState
+            .getAttributeState(Clusters.BasicInformation.Attributes.ProductName.ID.toLong())
+            ?.value
+            .asString()
+    val productId =
+        clusterState
+            .getAttributeState(Clusters.BasicInformation.Attributes.ProductID.ID.toLong())
+            ?.value
+            .asInt()
+    val nodeLabel =
+        clusterState
+            .getAttributeState(Clusters.BasicInformation.Attributes.NodeLabel.ID.toLong())
+            ?.value
+            .asString()
     val hardwareVersion =
         clusterState
-            .getAttributeState(Clusters.BasicInformation.Attributes.HardwareVersion.ID.toLong())
+            .getAttributeState(Clusters.BasicInformation.Attributes.HardwareVersionString.ID.toLong())
             ?.value
             .asString()
     val softwareVersion =
         clusterState
-            .getAttributeState(Clusters.BasicInformation.Attributes.SoftwareVersion.ID.toLong())
+            .getAttributeState(Clusters.BasicInformation.Attributes.SoftwareVersionString.ID.toLong())
             ?.value
             .asString()
 
     return BasicInformationAttributes(
         vendorName = vendorName,
         vendorId = vendorId,
+        productName = productName,
+        productId = productId,
         hardwareVersion = hardwareVersion,
         softwareVersion = softwareVersion,
+        nodeLabel = nodeLabel,
     )
   }
 
@@ -1389,6 +1425,13 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   private fun Any?.asString(): String? =
       when (this) {
         is String -> this
+        else -> null
+      }
+
+  private fun Any?.asDisplayString(): String? =
+      when (this) {
+        is String -> this
+        is Number -> toString()
         else -> null
       }
 

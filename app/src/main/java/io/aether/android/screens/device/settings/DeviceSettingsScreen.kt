@@ -44,6 +44,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.google.protobuf.Timestamp
 import io.aether.android.Device
 import io.aether.android.R
+import io.aether.android.chip.BasicInformationAttributes
 import io.aether.android.formatNodeId
 import io.aether.android.formatProductId
 import io.aether.android.formatTimestamp
@@ -76,11 +77,8 @@ fun DeviceSettingsRoute(
   val activity = LocalContext.current.getActivity()
 
   val device by viewModel.device.collectAsState()
+  val basicInformation by viewModel.basicInformation.collectAsState()
   val isOnline by viewModel.isOnline.collectAsState()
-  val hardwareVersion by viewModel.hardwareVersion.collectAsState()
-  val softwareVersion by viewModel.softwareVersion.collectAsState()
-  val vendorName by viewModel.vendorName.collectAsState()
-  val vendorId by viewModel.vendorId.collectAsState()
   val dateCommissioned by viewModel.dateCommissioned.collectAsState()
   val msgDialogInfo by viewModel.msgDialogInfo.collectAsState()
   val showRemoveDeviceAlertDialog by viewModel.showRemoveDeviceAlertDialog.collectAsState()
@@ -150,12 +148,9 @@ fun DeviceSettingsRoute(
     DeviceSettingsScreen(
         innerPadding = innerPadding,
         device = device,
+        basicInformation = basicInformation,
         isOnline = isOnline,
-        vendorName = vendorName,
-        vendorId = vendorId,
         dateCommissioned = dateCommissioned,
-        hardwareVersion = hardwareVersion,
-        softwareVersion = softwareVersion,
         msgDialogInfo = msgDialogInfo,
         showRemoveDeviceAlertDialog = showRemoveDeviceAlertDialog,
         showConfirmDeviceRemovalAlertDialog = showConfirmDeviceRemovalAlertDialog,
@@ -187,12 +182,9 @@ fun DeviceSettingsRoute(
 private fun DeviceSettingsScreen(
     innerPadding: PaddingValues,
     device: Device?,
+    basicInformation: BasicInformationAttributes?,
     isOnline: Boolean,
-    vendorName: String?,
-    vendorId: Int?,
     dateCommissioned: Timestamp?,
-    hardwareVersion: String?,
-    softwareVersion: String?,
     msgDialogInfo: DialogInfo?,
     showRemoveDeviceAlertDialog: Boolean,
     showConfirmDeviceRemovalAlertDialog: Boolean,
@@ -278,37 +270,43 @@ private fun DeviceSettingsScreen(
 
     // Basic section
     SettingsSection(title = stringResource(R.string.device_settings_section_basic)) {
-      val displayedVendorName =
-          vendorName?.takeIf { it.isNotBlank() } ?: device.vendorName.takeIf { it.isNotBlank() }
-      val displayedVendorId = vendorId ?: device.vendorId.toInt()
+      val unknown = stringResource(R.string.device_data_model_unknown)
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_vendor),
-          value = vendorLabel(displayedVendorId, displayedVendorName),
+          value =
+              vendorLabel(
+                  basicInformation?.vendorId ?: device.vendorId.toIntOrNull() ?: 0,
+                  basicInformation?.vendorName?.takeIf { it.isNotBlank() }
+                      ?: device.vendorName.takeIf { it.isNotBlank() },
+              ),
       )
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_product),
           value =
               stringResource(
                   R.string.device_settings_basic_product_value,
-                  device.productName,
-                  formatProductId(device.productId.toInt()),
+                  basicInformation?.productName?.takeIf { it.isNotBlank() }
+                      ?: device.productName.takeIf { it.isNotBlank() }
+                      ?: unknown,
+                  (basicInformation?.productId ?: device.productId.toIntOrNull())
+                      ?.takeIf { it != 0 }
+                      ?.let { formatProductId(it) } ?: unknown,
               ),
       )
-      if (!hardwareVersion.isNullOrBlank()) {
-        SettingsInfoRow(
-            label = stringResource(R.string.device_settings_basic_hardware_version),
-            value = hardwareVersion,
-        )
-      }
-      if (!softwareVersion.isNullOrBlank()) {
-        SettingsInfoRow(
-            label = stringResource(R.string.device_settings_basic_software_version),
-            value = softwareVersion,
-        )
-      }
+      SettingsInfoRow(
+          label = stringResource(R.string.device_settings_basic_hardware_version),
+          value = basicInformation?.hardwareVersion?.takeIf { it.isNotBlank() } ?: unknown,
+      )
+      SettingsInfoRow(
+          label = stringResource(R.string.device_settings_basic_software_version),
+          value = basicInformation?.softwareVersion?.takeIf { it.isNotBlank() } ?: unknown,
+      )
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_added_on),
-          value = formatTimestamp(context, dateCommissioned ?: Timestamp.getDefaultInstance()),
+          value =
+              dateCommissioned
+                  ?.takeUnless { it.seconds == 0L && it.nanos == 0 }
+                  ?.let { formatTimestamp(context, it) } ?: unknown,
       )
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_node_id),
@@ -318,9 +316,13 @@ private fun DeviceSettingsScreen(
 
     // General section
     SettingsSection(title = stringResource(R.string.device_settings_section_general)) {
+      val unknown = stringResource(R.string.device_data_model_unknown)
       SettingsClickableRow(
           label = stringResource(R.string.device_settings_general_name),
-          value = device.name,
+          value =
+              device.name.takeIf { it.isNotBlank() }
+                  ?: basicInformation?.nodeLabel?.takeIf { it.isNotBlank() }
+                  ?: unknown,
           onClick = { showRenameDialog = true },
       )
       SettingsClickableRow(
