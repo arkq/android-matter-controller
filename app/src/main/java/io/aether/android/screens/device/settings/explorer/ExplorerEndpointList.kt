@@ -27,11 +27,11 @@ internal fun EndpointListContent(
     showSearch: Boolean,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
-    onSelectEndpoint: (Int) -> Unit,
+    onSelectEndpoint: (UInt) -> Unit,
 ) {
   val filteredInfos = infos.filter { info ->
     val endpointText = formatEndpointId(info.endpoint)
-    val typeNames = info.types.joinToString(" ") { typeId -> DEVICES[typeId.toInt()].orEmpty() }
+    val typeNames = info.types.joinToString(" ") { typeId -> DEVICES[typeId.toUInt()].orEmpty() }
     matchesExplorerQuery(searchQuery, endpointText, typeNames)
   }
   val normalizedQuery = searchQuery.trim().lowercase()
@@ -60,14 +60,14 @@ internal fun EndpointListContent(
     }
 
     LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-      items(filteredInfos, key = { it.endpoint }) { info ->
+      items(filteredInfos, key = { "e-${it.endpoint}" }) { info ->
         val deviceTypes =
             info.types
                 .map { typeId ->
                   val typeName =
-                      DEVICES[typeId.toInt()]
+                      DEVICES[typeId.toUInt()]
                           ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
-                  typeId.toInt() to typeName
+                  typeId.toUInt() to typeName
                 }
                 .sortedBy { it.first }
         val titleName = deviceTypes.joinToString(" & ") { it.second }

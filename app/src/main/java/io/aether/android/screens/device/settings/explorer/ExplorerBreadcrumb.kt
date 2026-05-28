@@ -92,7 +92,7 @@ private fun breadcrumbLabelFor(
                 ?.types
                 .orEmpty()
                 .map { typeId ->
-                  DEVICES[typeId.toInt()]
+                  DEVICES[typeId.toUInt()]
                       ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
                 }
                 .joinToString(" & ")

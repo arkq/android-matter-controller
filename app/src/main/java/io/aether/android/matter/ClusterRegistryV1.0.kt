@@ -6,12 +6,12 @@
 package io.aether.android.matter
 
 val CLUSTERS_1_0 =
-    mapOf<Int, ClusterInfo>(
+    mapOf<UInt, ClusterInfo>(
         Clusters.Identify.ID to
             ClusterInfo(
                 name = "Identify",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.Identify.Attributes.IdentifyTime.ID to
                             AttributeInfo(
                                 name = "IdentifyTime",
@@ -27,14 +27,14 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.Identify.CommandsIncoming.Identify.ID to
                             CommandInfo(
                                 name = "Identify",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "IdentifyTime",
                                                 type = DataType.UINT16,
@@ -45,20 +45,20 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "IdentifyQuery",
                                 privilege = Privilege.MANAGE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.Identify.CommandsIncoming.TriggerEffect.ID to
                             CommandInfo(
                                 name = "TriggerEffect",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "EffectIdentifier",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "EffectVariant",
                                                 type = DataType.ENUM8,
@@ -67,13 +67,13 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.Identify.CommandsOutgoing.IdentifyQueryResponse.ID to
                             CommandInfo(
                                 name = "IdentifyQueryResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Timeout",
                                                 type = DataType.UINT16,
@@ -81,13 +81,13 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.Groups.ID to
             ClusterInfo(
                 name = "Groups",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.Groups.Attributes.NameSupport.ID to
                             AttributeInfo(
                                 name = "NameSupport",
@@ -96,19 +96,19 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.Groups.CommandsIncoming.AddGroup.ID to
                             CommandInfo(
                                 name = "AddGroup",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "GroupName",
                                                 type = DataType.STRING,
@@ -120,8 +120,8 @@ val CLUSTERS_1_0 =
                                 name = "ViewGroup",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
@@ -133,8 +133,8 @@ val CLUSTERS_1_0 =
                                 name = "GetGroupMembership",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupList",
                                                 type = DataType.LIST_GROUP_ID,
@@ -146,8 +146,8 @@ val CLUSTERS_1_0 =
                                 name = "RemoveGroup",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
@@ -158,20 +158,20 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "RemoveAllGroups",
                                 privilege = Privilege.MANAGE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.Groups.CommandsIncoming.AddGroupIfIdentifying.ID to
                             CommandInfo(
                                 name = "AddGroupIfIdentifying",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "GroupName",
                                                 type = DataType.STRING,
@@ -180,18 +180,18 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.Groups.CommandsOutgoing.AddGroupResponse.ID to
                             CommandInfo(
                                 name = "AddGroupResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
@@ -202,18 +202,18 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "ViewGroupResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "GroupName",
                                                 type = DataType.STRING,
@@ -224,13 +224,13 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "GetGroupMembershipResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Capacity",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "GroupList",
                                                 type = DataType.LIST_GROUP_ID,
@@ -241,13 +241,13 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "RemoveGroupResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
@@ -255,13 +255,13 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.Scenes.ID to
             ClusterInfo(
                 name = "Scenes",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.Scenes.Attributes.SceneCount.ID to
                             AttributeInfo(
                                 name = "SceneCount",
@@ -312,34 +312,34 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.Scenes.CommandsIncoming.AddScene.ID to
                             CommandInfo(
                                 name = "AddScene",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "SceneID",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "SceneName",
                                                 type = DataType.STRING,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "ExtensionFieldSetStructs",
                                                 type = DataType.LIST_EXTENSION_FIELD_SET,
@@ -351,13 +351,13 @@ val CLUSTERS_1_0 =
                                 name = "ViewScene",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "SceneID",
                                                 type = DataType.UINT8,
@@ -369,13 +369,13 @@ val CLUSTERS_1_0 =
                                 name = "RemoveScene",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "SceneID",
                                                 type = DataType.UINT8,
@@ -387,8 +387,8 @@ val CLUSTERS_1_0 =
                                 name = "RemoveAllScenes",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
@@ -400,13 +400,13 @@ val CLUSTERS_1_0 =
                                 name = "StoreScene",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "SceneID",
                                                 type = DataType.UINT8,
@@ -418,18 +418,18 @@ val CLUSTERS_1_0 =
                                 name = "RecallScene",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "SceneID",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
@@ -441,8 +441,8 @@ val CLUSTERS_1_0 =
                                 name = "GetSceneMembership",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
@@ -454,28 +454,28 @@ val CLUSTERS_1_0 =
                                 name = "EnhancedAddScene",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "SceneID",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "SceneName",
                                                 type = DataType.STRING,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "ExtensionFieldSetStructs",
                                                 type = DataType.LIST_EXTENSION_FIELD_SET_STRUCT,
@@ -486,35 +486,35 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "EnhancedViewScene",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.Scenes.CommandsIncoming.CopyScene.ID to
                             CommandInfo(
                                 name = "CopyScene",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Mode",
                                                 type = DataType.MAP8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "GroupIdentifierFrom",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "SceneIdentifierFrom",
                                                 type = DataType.UINT8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "GroupIdentifierTo",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "SceneIdentifierTo",
                                                 type = DataType.UINT8,
@@ -523,23 +523,23 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.Scenes.CommandsOutgoing.AddSceneResponse.ID to
                             CommandInfo(
                                 name = "AddSceneResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "SceneID",
                                                 type = DataType.UINT8,
@@ -550,33 +550,33 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "ViewSceneResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "SceneID",
                                                 type = DataType.UINT8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "SceneName",
                                                 type = DataType.STRING,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "ExtensionFieldSetStructs",
                                                 type = DataType.LIST_EXTENSION_FIELD_SET,
@@ -587,18 +587,18 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "RemoveSceneResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "SceneID",
                                                 type = DataType.UINT8,
@@ -609,13 +609,13 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "RemoveAllScenesResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
@@ -626,18 +626,18 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "StoreSceneResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "SceneID",
                                                 type = DataType.UINT8,
@@ -648,23 +648,23 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "GetSceneMembershipResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Capacity",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "SceneList",
                                                 type = DataType.LIST_UINT8,
@@ -674,39 +674,39 @@ val CLUSTERS_1_0 =
                         Clusters.Scenes.CommandsOutgoing.EnhancedAddSceneResponse.ID to
                             CommandInfo(
                                 name = "EnhancedAddSceneResponse",
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.Scenes.CommandsOutgoing.EnhancedViewSceneResponse.ID to
                             CommandInfo(
                                 name = "EnhancedViewSceneResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.STATUS,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "SceneID",
                                                 type = DataType.UINT8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "SceneName",
                                                 type = DataType.STRING,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "ExtensionFieldSetStructs",
                                                 type = DataType.LIST_EXTENSION_FIELD_SET_STRUCT,
@@ -717,18 +717,18 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "CopySceneResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "GroupIdentifierFrom",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "SceneIdentifierFrom",
                                                 type = DataType.UINT8,
@@ -736,13 +736,13 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.OnOff.ID to
             ClusterInfo(
                 name = "On/Off",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.OnOff.Attributes.OnOff.ID to
                             AttributeInfo(
                                 name = "OnOff",
@@ -778,37 +778,37 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.OnOff.CommandsIncoming.Off.ID to
                             CommandInfo(
                                 name = "Off",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.OnOff.CommandsIncoming.On.ID to
                             CommandInfo(
                                 name = "On",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.OnOff.CommandsIncoming.Toggle.ID to
                             CommandInfo(
                                 name = "Toggle",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.OnOff.CommandsIncoming.OffWithEffect.ID to
                             CommandInfo(
                                 name = "OffWithEffect",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "EffectIdentifier",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "EffectVariant",
                                                 type = DataType.UINT8,
@@ -819,25 +819,25 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "OnWithRecallGlobalScene",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.OnOff.CommandsIncoming.OnWithTimedOff.ID to
                             CommandInfo(
                                 name = "OnWithTimedOff",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "OnOffControl",
                                                 type = DataType.MAP8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "OnTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "OffWaitTime",
                                                 type = DataType.UINT16,
@@ -845,14 +845,14 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.LevelControl.ID to
             ClusterInfo(
                 name = "Level Control",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.LevelControl.Attributes.CurrentLevel.ID to
                             AttributeInfo(
                                 name = "CurrentLevel",
@@ -946,29 +946,29 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.LevelControl.CommandsIncoming.MoveToLevel.ID to
                             CommandInfo(
                                 name = "MoveToLevel",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Level",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -980,23 +980,23 @@ val CLUSTERS_1_0 =
                                 name = "Move",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "MoveMode",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Rate",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -1008,28 +1008,28 @@ val CLUSTERS_1_0 =
                                 name = "Step",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "StepMode",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "StepSize",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -1041,13 +1041,13 @@ val CLUSTERS_1_0 =
                                 name = "Stop",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -1058,33 +1058,33 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "MoveToLevelWithOnOff",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.LevelControl.CommandsIncoming.MoveWithOnOff.ID to
                             CommandInfo(
                                 name = "MoveWithOnOff",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.LevelControl.CommandsIncoming.StepWithOnOff.ID to
                             CommandInfo(
                                 name = "StepWithOnOff",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.LevelControl.CommandsIncoming.StopWithOnOff.ID to
                             CommandInfo(
                                 name = "StopWithOnOff",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.LevelControl.CommandsIncoming.MoveToClosestFrequency.ID to
                             CommandInfo(
                                 name = "MoveToClosestFrequency",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Frequency",
                                                 type = DataType.UINT16,
@@ -1092,14 +1092,14 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.PulseWidthModulation.ID to
             ClusterInfo(
                 name = "Pulse Width Modulation",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.PulseWidthModulation.Attributes.CurrentLevel.ID to
                             AttributeInfo(
                                 name = "CurrentLevel",
@@ -1193,29 +1193,29 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.PulseWidthModulation.CommandsIncoming.MoveToLevel.ID to
                             CommandInfo(
                                 name = "MoveToLevel",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Level",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -1227,23 +1227,23 @@ val CLUSTERS_1_0 =
                                 name = "Move",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "MoveMode",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Rate",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -1255,28 +1255,28 @@ val CLUSTERS_1_0 =
                                 name = "Step",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "StepMode",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "StepSize",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -1288,13 +1288,13 @@ val CLUSTERS_1_0 =
                                 name = "Stop",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -1305,33 +1305,33 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "MoveToLevelWithOnOff",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.PulseWidthModulation.CommandsIncoming.MoveWithOnOff.ID to
                             CommandInfo(
                                 name = "MoveWithOnOff",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.PulseWidthModulation.CommandsIncoming.StepWithOnOff.ID to
                             CommandInfo(
                                 name = "StepWithOnOff",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.PulseWidthModulation.CommandsIncoming.StopWithOnOff.ID to
                             CommandInfo(
                                 name = "StopWithOnOff",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.PulseWidthModulation.CommandsIncoming.MoveToClosestFrequency.ID to
                             CommandInfo(
                                 name = "MoveToClosestFrequency",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Frequency",
                                                 type = DataType.UINT16,
@@ -1339,14 +1339,14 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.Descriptor.ID to
             ClusterInfo(
                 name = "Descriptor",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.Descriptor.Attributes.DeviceTypeList.ID to
                             AttributeInfo(
                                 name = "DeviceTypeList",
@@ -1384,15 +1384,15 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.Binding.ID to
             ClusterInfo(
                 name = "Binding",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.Binding.Attributes.Binding.ID to
                             AttributeInfo(
                                 name = "Binding",
@@ -1401,28 +1401,28 @@ val CLUSTERS_1_0 =
                                 writePrivilege = Privilege.MANAGE,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.AccessControl.ID to
             ClusterInfo(
                 name = "Access Control",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.AccessControl.Attributes.ACL.ID to
                             AttributeInfo(
                                 name = "ACL",
                                 type = DataType.LIST_ACCESS_CONTROL_ENTRY_STRUCT,
-                                readPrivilege = Privilege.ADMIN,
-                                writePrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.AccessControl.Attributes.Extension.ID to
                             AttributeInfo(
                                 name = "Extension",
                                 type = DataType.LIST_ACCESS_CONTROL_EXTENSION_STRUCT,
-                                readPrivilege = Privilege.ADMIN,
-                                writePrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.AccessControl.Attributes.SubjectsPerAccessControlEntry.ID to
                             AttributeInfo(
@@ -1458,18 +1458,18 @@ val CLUSTERS_1_0 =
                             AttributeInfo(
                                 name = "AuxiliaryACL",
                                 type = DataType.LIST_ACCESS_CONTROL_ENTRY_STRUCT,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.AccessControl.CommandsIncoming.ReviewFabricRestrictions.ID to
                             CommandInfo(
                                 name = "ReviewFabricRestrictions",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ARL",
                                                 type =
@@ -1480,14 +1480,14 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.AccessControl.CommandsOutgoing.ReviewFabricRestrictionsResponse
                             .ID to
                             CommandInfo(
                                 name = "ReviewFabricRestrictionsResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Token",
                                                 type = DataType.UINT64,
@@ -1496,7 +1496,7 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.AccessControl.Events.AccessControlEntryChanged.ID to
                             EventInfo(
                                 name = "AccessControlEntryChanged",
@@ -1519,7 +1519,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Actions",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.Actions.Attributes.ActionList.ID to
                             AttributeInfo(
                                 name = "ActionList",
@@ -1540,19 +1540,19 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.Actions.CommandsIncoming.InstantAction.ID to
                             CommandInfo(
                                 name = "InstantAction",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ActionID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "InvokeID",
                                                 type = DataType.UINT32,
@@ -1564,18 +1564,18 @@ val CLUSTERS_1_0 =
                                 name = "InstantActionWithTransition",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ActionID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "InvokeID",
                                                 type = DataType.UINT32,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
@@ -1587,13 +1587,13 @@ val CLUSTERS_1_0 =
                                 name = "StartAction",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ActionID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "InvokeID",
                                                 type = DataType.UINT32,
@@ -1605,18 +1605,18 @@ val CLUSTERS_1_0 =
                                 name = "StartActionWithDuration",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ActionID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "InvokeID",
                                                 type = DataType.UINT32,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Duration",
                                                 type = DataType.UINT32,
@@ -1628,13 +1628,13 @@ val CLUSTERS_1_0 =
                                 name = "StopAction",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ActionID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "InvokeID",
                                                 type = DataType.UINT32,
@@ -1646,13 +1646,13 @@ val CLUSTERS_1_0 =
                                 name = "PauseAction",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ActionID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "InvokeID",
                                                 type = DataType.UINT32,
@@ -1664,18 +1664,18 @@ val CLUSTERS_1_0 =
                                 name = "PauseActionWithDuration",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ActionID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "InvokeID",
                                                 type = DataType.UINT32,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Duration",
                                                 type = DataType.UINT32,
@@ -1687,13 +1687,13 @@ val CLUSTERS_1_0 =
                                 name = "ResumeAction",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ActionID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "InvokeID",
                                                 type = DataType.UINT32,
@@ -1705,13 +1705,13 @@ val CLUSTERS_1_0 =
                                 name = "EnableAction",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ActionID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "InvokeID",
                                                 type = DataType.UINT32,
@@ -1723,18 +1723,18 @@ val CLUSTERS_1_0 =
                                 name = "EnableActionWithDuration",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ActionID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "InvokeID",
                                                 type = DataType.UINT32,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Duration",
                                                 type = DataType.UINT32,
@@ -1746,13 +1746,13 @@ val CLUSTERS_1_0 =
                                 name = "DisableAction",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ActionID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "InvokeID",
                                                 type = DataType.UINT32,
@@ -1764,18 +1764,18 @@ val CLUSTERS_1_0 =
                                 name = "DisableActionWithDuration",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ActionID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "InvokeID",
                                                 type = DataType.UINT32,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Duration",
                                                 type = DataType.UINT32,
@@ -1783,9 +1783,9 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.Actions.Events.StateChanged.ID to
                             EventInfo(
                                 name = "StateChanged",
@@ -1800,7 +1800,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Basic Information",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.BasicInformation.Attributes.DataModelRevision.ID to
                             AttributeInfo(
                                 name = "DataModelRevision",
@@ -1843,7 +1843,7 @@ val CLUSTERS_1_0 =
                                 name = "Location",
                                 type = DataType.STRING,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.BasicInformation.Attributes.HardwareVersion.ID to
                             AttributeInfo(
@@ -1949,10 +1949,10 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.BasicInformation.Events.StartUp.ID to
                             EventInfo(
                                 name = "StartUp",
@@ -1974,51 +1974,51 @@ val CLUSTERS_1_0 =
         Clusters.OTASoftwareUpdateProvider.ID to
             ClusterInfo(
                 name = "OTA Software Update Provider",
-                attributes = mapOf<Int, AttributeInfo>(),
+                attributes = mapOf<UInt, AttributeInfo>(),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.OTASoftwareUpdateProvider.CommandsIncoming.QueryImage.ID to
                             CommandInfo(
                                 name = "QueryImage",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "VendorID",
                                                 type = DataType.VENDOR_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "ProductID",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "SoftwareVersion",
                                                 type = DataType.UINT32,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "ProtocolsSupported",
                                                 type = DataType.LIST_DOWNLOAD_PROTOCOL_ENUM,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "HardwareVersion",
                                                 type = DataType.UINT16,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "Location",
                                                 type = DataType.STRING,
                                             ),
-                                        6 to
+                                        6u to
                                             ParameterInfo(
                                                 name = "RequestorCanConsent",
                                                 type = DataType.BOOL,
                                             ),
-                                        7 to
+                                        7u to
                                             ParameterInfo(
                                                 name = "MetadataForProvider",
                                                 type = DataType.OCTSTR,
@@ -2030,13 +2030,13 @@ val CLUSTERS_1_0 =
                                 name = "ApplyUpdateRequest",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UpdateToken",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "NewVersion",
                                                 type = DataType.UINT32,
@@ -2049,13 +2049,13 @@ val CLUSTERS_1_0 =
                                 name = "NotifyUpdateApplied",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UpdateToken",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "SoftwareVersion",
                                                 type = DataType.UINT32,
@@ -2064,48 +2064,48 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.OTASoftwareUpdateProvider.CommandsOutgoing.QueryImageResponse.ID to
                             CommandInfo(
                                 name = "QueryImageResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.STATUS_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "DelayedActionTime",
                                                 type = DataType.UINT32,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "ImageURI",
                                                 type = DataType.STRING,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "SoftwareVersion",
                                                 type = DataType.UINT32,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "SoftwareVersionString",
                                                 type = DataType.STRING,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "UpdateToken",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        6 to
+                                        6u to
                                             ParameterInfo(
                                                 name = "UserConsentNeeded",
                                                 type = DataType.BOOL,
                                             ),
-                                        7 to
+                                        7u to
                                             ParameterInfo(
                                                 name = "MetadataForRequestor",
                                                 type = DataType.OCTSTR,
@@ -2117,13 +2117,13 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "ApplyUpdateResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Action",
                                                 type = DataType.APPLY_UPDATE_ACTION_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "DelayedActionTime",
                                                 type = DataType.UINT32,
@@ -2131,19 +2131,19 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.OTASoftwareUpdateRequestor.ID to
             ClusterInfo(
                 name = "OTA Software Update Requestor",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.OTASoftwareUpdateRequestor.Attributes.DefaultOTAProviders.ID to
                             AttributeInfo(
                                 name = "DefaultOTAProviders",
                                 type = DataType.LIST_PROVIDER_LOCATION_STRUCT,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.OTASoftwareUpdateRequestor.Attributes.UpdatePossible.ID to
                             AttributeInfo(
@@ -2165,35 +2165,35 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.OTASoftwareUpdateRequestor.CommandsIncoming.AnnounceOTAProvider
                             .ID to
                             CommandInfo(
                                 name = "AnnounceOTAProvider",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ProviderNodeID",
                                                 type = DataType.NODE_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "VendorID",
                                                 type = DataType.VENDOR_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "AnnouncementReason",
                                                 type = DataType.ANNOUNCEMENT_REASON_ENUM,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "MetadataForNode",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "Endpoint",
                                                 type = DataType.ENDPOINT_NO,
@@ -2201,9 +2201,9 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.OTASoftwareUpdateRequestor.Events.StateTransition.ID to
                             EventInfo(
                                 name = "StateTransition",
@@ -2222,7 +2222,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Localization Configuration",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.LocalizationConfiguration.Attributes.ActiveLocale.ID to
                             AttributeInfo(
                                 name = "ActiveLocale",
@@ -2237,15 +2237,15 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.TimeFormatLocalization.ID to
             ClusterInfo(
                 name = "Time Format Localization",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.TimeFormatLocalization.Attributes.HourFormat.ID to
                             AttributeInfo(
                                 name = "HourFormat",
@@ -2267,15 +2267,15 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.UnitLocalization.ID to
             ClusterInfo(
                 name = "Unit Localization",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.UnitLocalization.Attributes.TemperatureUnit.ID to
                             AttributeInfo(
                                 name = "TemperatureUnit",
@@ -2290,15 +2290,15 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.PowerSourceConfiguration.ID to
             ClusterInfo(
                 name = "Power Source Configuration",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.PowerSourceConfiguration.Attributes.Sources.ID to
                             AttributeInfo(
                                 name = "Sources",
@@ -2306,15 +2306,15 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.PowerSource.ID to
             ClusterInfo(
                 name = "Power Source",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.PowerSource.Attributes.Status.ID to
                             AttributeInfo(
                                 name = "Status",
@@ -2508,10 +2508,10 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.PowerSource.Events.WiredFaultChange.ID to
                             EventInfo(
                                 name = "WiredFaultChange",
@@ -2530,13 +2530,13 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "General Commissioning",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.GeneralCommissioning.Attributes.Breadcrumb.ID to
                             AttributeInfo(
                                 name = "Breadcrumb",
                                 type = DataType.UINT64,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.GeneralCommissioning.Attributes.BasicCommissioningInfo.ID to
                             AttributeInfo(
@@ -2566,31 +2566,31 @@ val CLUSTERS_1_0 =
                             AttributeInfo(
                                 name = "TCAcceptedVersion",
                                 type = DataType.UINT16,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.GeneralCommissioning.Attributes.TCMinRequiredVersion.ID to
                             AttributeInfo(
                                 name = "TCMinRequiredVersion",
                                 type = DataType.UINT16,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.GeneralCommissioning.Attributes.TCAcknowledgements.ID to
                             AttributeInfo(
                                 name = "TCAcknowledgements",
                                 type = DataType.MAP16,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.GeneralCommissioning.Attributes.TCAcknowledgementsRequired.ID to
                             AttributeInfo(
                                 name = "TCAcknowledgementsRequired",
                                 type = DataType.BOOL,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.GeneralCommissioning.Attributes.TCUpdateDeadline.ID to
                             AttributeInfo(
                                 name = "TCUpdateDeadline",
                                 type = DataType.UINT32,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.GeneralCommissioning.Attributes.RecoveryIdentifier.ID to
                             AttributeInfo(
@@ -2612,19 +2612,19 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.GeneralCommissioning.CommandsIncoming.ArmFailSafe.ID to
                             CommandInfo(
                                 name = "ArmFailSafe",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ExpiryLengthSeconds",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Breadcrumb",
                                                 type = DataType.UINT64,
@@ -2634,20 +2634,20 @@ val CLUSTERS_1_0 =
                         Clusters.GeneralCommissioning.CommandsIncoming.SetRegulatoryConfig.ID to
                             CommandInfo(
                                 name = "SetRegulatoryConfig",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NewRegulatoryConfig",
                                                 type = DataType.REGULATORY_LOCATION_TYPE_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "CountryCode",
                                                 type = DataType.STRING,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Breadcrumb",
                                                 type = DataType.UINT64,
@@ -2657,21 +2657,21 @@ val CLUSTERS_1_0 =
                         Clusters.GeneralCommissioning.CommandsIncoming.CommissioningComplete.ID to
                             CommandInfo(
                                 name = "CommissioningComplete",
-                                privilege = Privilege.ADMIN,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                privilege = Privilege.ADMINISTER,
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.GeneralCommissioning.CommandsIncoming.SetTCAcknowledgements.ID to
                             CommandInfo(
                                 name = "SetTCAcknowledgements",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "TCVersion",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "TCUserResponse",
                                                 type = DataType.MAP16,
@@ -2680,18 +2680,18 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.GeneralCommissioning.CommandsOutgoing.ArmFailSafeResponse.ID to
                             CommandInfo(
                                 name = "ArmFailSafeResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ErrorCode",
                                                 type = DataType.COMMISSIONING_ERROR_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "DebugText",
                                                 type = DataType.STRING,
@@ -2703,13 +2703,13 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "SetRegulatoryConfigResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ErrorCode",
                                                 type = DataType.COMMISSIONING_ERROR_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "DebugText",
                                                 type = DataType.STRING,
@@ -2721,13 +2721,13 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "CommissioningCompleteResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ErrorCode",
                                                 type = DataType.COMMISSIONING_ERROR_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "DebugText",
                                                 type = DataType.STRING,
@@ -2739,8 +2739,8 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "SetTCAcknowledgementsResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ErrorCode",
                                                 type = DataType.COMMISSIONING_ERROR_ENUM,
@@ -2748,24 +2748,24 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.NetworkCommissioning.ID to
             ClusterInfo(
                 name = "Network Commissioning",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.NetworkCommissioning.Attributes.MaxNetworks.ID to
                             AttributeInfo(
                                 name = "MaxNetworks",
                                 type = DataType.UINT8,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.NetworkCommissioning.Attributes.Networks.ID to
                             AttributeInfo(
                                 name = "Networks",
                                 type = DataType.LIST_NETWORK_INFO_STRUCTURE,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.NetworkCommissioning.Attributes.ScanMaxTimeSeconds.ID to
                             AttributeInfo(
@@ -2784,25 +2784,25 @@ val CLUSTERS_1_0 =
                                 name = "InterfaceEnabled",
                                 type = DataType.BOOL,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.NetworkCommissioning.Attributes.LastNetworkingStatus.ID to
                             AttributeInfo(
                                 name = "LastNetworkingStatus",
                                 type = DataType.NETWORK_COMMISSIONING_STATUS_ENUM,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.NetworkCommissioning.Attributes.LastNetworkID.ID to
                             AttributeInfo(
                                 name = "LastNetworkID",
                                 type = DataType.OCTSTR,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.NetworkCommissioning.Attributes.LastConnectErrorValue.ID to
                             AttributeInfo(
                                 name = "LastConnectErrorValue",
                                 type = DataType.INT32,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.NetworkCommissioning.Attributes.SupportedWiFiBands.ID to
                             AttributeInfo(
@@ -2824,19 +2824,19 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.NetworkCommissioning.CommandsIncoming.ScanNetworks.ID to
                             CommandInfo(
                                 name = "ScanNetworks",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "SSID",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Breadcrumb",
                                                 type = DataType.UINT64,
@@ -2846,20 +2846,20 @@ val CLUSTERS_1_0 =
                         Clusters.NetworkCommissioning.CommandsIncoming.AddOrUpdateWiFiNetwork.ID to
                             CommandInfo(
                                 name = "AddOrUpdateWiFiNetwork",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "SSID",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Credentials",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Breadcrumb",
                                                 type = DataType.UINT64,
@@ -2870,15 +2870,15 @@ val CLUSTERS_1_0 =
                             .ID to
                             CommandInfo(
                                 name = "AddOrUpdateThreadNetwork",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "OperationalDataset",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Breadcrumb",
                                                 type = DataType.UINT64,
@@ -2888,15 +2888,15 @@ val CLUSTERS_1_0 =
                         Clusters.NetworkCommissioning.CommandsIncoming.RemoveNetwork.ID to
                             CommandInfo(
                                 name = "RemoveNetwork",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NetworkID",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Breadcrumb",
                                                 type = DataType.UINT64,
@@ -2906,15 +2906,15 @@ val CLUSTERS_1_0 =
                         Clusters.NetworkCommissioning.CommandsIncoming.ConnectNetwork.ID to
                             CommandInfo(
                                 name = "ConnectNetwork",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NetworkID",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Breadcrumb",
                                                 type = DataType.UINT64,
@@ -2924,20 +2924,20 @@ val CLUSTERS_1_0 =
                         Clusters.NetworkCommissioning.CommandsIncoming.ReorderNetwork.ID to
                             CommandInfo(
                                 name = "ReorderNetwork",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NetworkID",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "NetworkIndex",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Breadcrumb",
                                                 type = DataType.UINT64,
@@ -2946,30 +2946,30 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.NetworkCommissioning.CommandsOutgoing.ScanNetworksResponse.ID to
                             CommandInfo(
                                 name = "ScanNetworksResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NetworkingStatus",
                                                 type = DataType.NETWORK_COMMISSIONING_STATUS_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "DebugText",
                                                 type = DataType.STRING,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "WiFiScanResults",
                                                 type =
                                                     DataType
                                                         .LIST_WI_FI_INTERFACE_SCAN_RESULT_STRUCTURE,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "ThreadScanResults",
                                                 type =
@@ -2982,18 +2982,18 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "NetworkConfigResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NetworkingStatus",
                                                 type = DataType.NETWORK_COMMISSIONING_STATUS_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "DebugText",
                                                 type = DataType.STRING,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "NetworkIndex",
                                                 type = DataType.UINT8,
@@ -3004,18 +3004,18 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "ConnectNetworkResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NetworkingStatus",
                                                 type = DataType.NETWORK_COMMISSIONING_STATUS_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "DebugText",
                                                 type = DataType.STRING,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "ErrorValue",
                                                 type = DataType.INT32,
@@ -3023,31 +3023,31 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.DiagnosticLogs.ID to
             ClusterInfo(
                 name = "Diagnostic Logs",
-                attributes = mapOf<Int, AttributeInfo>(),
+                attributes = mapOf<UInt, AttributeInfo>(),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.DiagnosticLogs.CommandsIncoming.RetrieveLogsRequest.ID to
                             CommandInfo(
                                 name = "RetrieveLogsRequest",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Intent",
                                                 type = DataType.INTENT_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "RequestedProtocol",
                                                 type = DataType.TRANSFER_PROTOCOL_ENUM,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransferFileDesignator",
                                                 type = DataType.STRING,
@@ -3056,28 +3056,28 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.DiagnosticLogs.CommandsOutgoing.RetrieveLogsResponse.ID to
                             CommandInfo(
                                 name = "RetrieveLogsResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.STATUS,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "LogContent",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "UTCTimeStamp",
                                                 type = DataType.EPOCH_US,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "TimeSinceBoot",
                                                 type = DataType.SYSTEMTIME_US,
@@ -3085,13 +3085,13 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.GeneralDiagnostics.ID to
             ClusterInfo(
                 name = "General Diagnostics",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.GeneralDiagnostics.Attributes.NetworkInterfaces.ID to
                             AttributeInfo(
                                 name = "NetworkInterfaces",
@@ -3159,19 +3159,19 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.GeneralDiagnostics.CommandsIncoming.TestEventTrigger.ID to
                             CommandInfo(
                                 name = "TestEventTrigger",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "EnableKey",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "EventTrigger",
                                                 type = DataType.UINT64,
@@ -3182,25 +3182,25 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "TimeSnapshot",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.GeneralDiagnostics.CommandsIncoming.PayloadTestRequest.ID to
                             CommandInfo(
                                 name = "PayloadTestRequest",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "EnableKey",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Value",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Count",
                                                 type = DataType.UINT16,
@@ -3209,18 +3209,18 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.GeneralDiagnostics.CommandsOutgoing.TimeSnapshotResponse.ID to
                             CommandInfo(
                                 name = "TimeSnapshotResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "SystemTimeMs",
                                                 type = DataType.SYSTIME_MS,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "PosixTimeMs",
                                                 type = DataType.POSIX_MS,
@@ -3231,8 +3231,8 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "PayloadTestResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Payload",
                                                 type = DataType.OCTSTR,
@@ -3241,7 +3241,7 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.GeneralDiagnostics.Events.HardwareFaultChange.ID to
                             EventInfo(
                                 name = "HardwareFaultChange",
@@ -3264,7 +3264,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Software Diagnostics",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.SoftwareDiagnostics.Attributes.ThreadMetrics.ID to
                             AttributeInfo(
                                 name = "ThreadMetrics",
@@ -3291,17 +3291,17 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.SoftwareDiagnostics.CommandsIncoming.ResetWatermarks.ID to
                             CommandInfo(
                                 name = "ResetWatermarks",
                                 privilege = Privilege.MANAGE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.SoftwareDiagnostics.Events.SoftwareFault.ID to
                             EventInfo(
                                 name = "SoftwareFault",
@@ -3312,7 +3312,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Thread Network Diagnostics",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.ThreadNetworkDiagnostics.Attributes.Channel.ID to
                             AttributeInfo(
                                 name = "Channel",
@@ -3710,17 +3710,17 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ThreadNetworkDiagnostics.CommandsIncoming.ResetCounts.ID to
                             CommandInfo(
                                 name = "ResetCounts",
                                 privilege = Privilege.MANAGE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.ThreadNetworkDiagnostics.Events.ConnectionStatus.ID to
                             EventInfo(
                                 name = "ConnectionStatus",
@@ -3735,7 +3735,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Wi-Fi Network Diagnostics",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.WiFiNetworkDiagnostics.Attributes.BSSID.ID to
                             AttributeInfo(
                                 name = "BSSID",
@@ -3816,17 +3816,17 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.WiFiNetworkDiagnostics.CommandsIncoming.ResetCounts.ID to
                             CommandInfo(
                                 name = "ResetCounts",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.WiFiNetworkDiagnostics.Events.Disconnection.ID to
                             EventInfo(
                                 name = "Disconnection",
@@ -3845,7 +3845,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Ethernet Network Diagnostics",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.EthernetNetworkDiagnostics.Attributes.PHYRate.ID to
                             AttributeInfo(
                                 name = "PHYRate",
@@ -3902,22 +3902,22 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.EthernetNetworkDiagnostics.CommandsIncoming.ResetCounts.ID to
                             CommandInfo(
                                 name = "ResetCounts",
                                 privilege = Privilege.MANAGE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.TimeSynchronization.ID to
             ClusterInfo(
                 name = "Time Synchronization",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.TimeSynchronization.Attributes.UTCTime.ID to
                             AttributeInfo(
                                 name = "UTCTime",
@@ -3941,14 +3941,14 @@ val CLUSTERS_1_0 =
                                 name = "TrustedTimeSource",
                                 type = DataType.NODE_ID,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.TimeSynchronization.Attributes.DefaultNTP.ID to
                             AttributeInfo(
                                 name = "DefaultNTP",
                                 type = DataType.STRING,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.TimeSynchronization.Attributes.TimeZone.ID to
                             AttributeInfo(
@@ -4002,24 +4002,24 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.TimeSynchronization.CommandsIncoming.SetUTCTime.ID to
                             CommandInfo(
                                 name = "SetUTCTime",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UTCTime",
                                                 type = DataType.EPOCH_US,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Granularity",
                                                 type = DataType.GRANULARITY_ENUM,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TimeSource",
                                                 type = DataType.TIME_SOURCE_ENUM,
@@ -4029,10 +4029,10 @@ val CLUSTERS_1_0 =
                         Clusters.TimeSynchronization.CommandsIncoming.SetTrustedTimeSource.ID to
                             CommandInfo(
                                 name = "SetTrustedTimeSource",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "TrustedTimeSource",
                                                 type =
@@ -4046,8 +4046,8 @@ val CLUSTERS_1_0 =
                                 name = "SetTimeZone",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "TimeZone",
                                                 type = DataType.LIST_TIME_ZONE_STRUCT,
@@ -4059,8 +4059,8 @@ val CLUSTERS_1_0 =
                                 name = "SetDSTOffset",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "DSTOffset",
                                                 type = DataType.LIST_DST_OFFSET_STRUCT,
@@ -4070,10 +4070,10 @@ val CLUSTERS_1_0 =
                         Clusters.TimeSynchronization.CommandsIncoming.SetDefaultNTP.ID to
                             CommandInfo(
                                 name = "SetDefaultNTP",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "DefaultNTP",
                                                 type = DataType.STRING,
@@ -4082,13 +4082,13 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.TimeSynchronization.CommandsOutgoing.SetTimeZoneResponse.ID to
                             CommandInfo(
                                 name = "SetTimeZoneResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "DSTOffsetRequired",
                                                 type = DataType.BOOL,
@@ -4097,7 +4097,7 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.TimeSynchronization.Events.DSTTableEmpty.ID to
                             EventInfo(
                                 name = "DSTTableEmpty",
@@ -4124,7 +4124,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Bridged Device Basic Information",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.BridgedDeviceBasicInformation.Attributes.DataModelRevision.ID to
                             AttributeInfo(
                                 name = "DataModelRevision",
@@ -4167,7 +4167,7 @@ val CLUSTERS_1_0 =
                                 name = "Location",
                                 type = DataType.STRING,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.BridgedDeviceBasicInformation.Attributes.HardwareVersion.ID to
                             AttributeInfo(
@@ -4276,19 +4276,19 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.BridgedDeviceBasicInformation.CommandsIncoming.KeepActive.ID to
                             CommandInfo(
                                 name = "KeepActive",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "StayActiveDuration",
                                                 type = DataType.UINT32,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "TimeoutMs",
                                                 type = DataType.UINT32,
@@ -4296,9 +4296,9 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.BridgedDeviceBasicInformation.Events.StartUp.ID to
                             EventInfo(
                                 name = "StartUp",
@@ -4325,7 +4325,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Switch",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.Switch.Attributes.NumberOfPositions.ID to
                             AttributeInfo(
                                 name = "NumberOfPositions",
@@ -4345,10 +4345,10 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.Switch.Events.SwitchLatched.ID to
                             EventInfo(
                                 name = "SwitchLatched",
@@ -4383,7 +4383,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Administrator Commissioning",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.AdministratorCommissioning.Attributes.WindowStatus.ID to
                             AttributeInfo(
                                 name = "WindowStatus",
@@ -4404,35 +4404,35 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.AdministratorCommissioning.CommandsIncoming.OpenCommissioningWindow
                             .ID to
                             CommandInfo(
                                 name = "OpenCommissioningWindow",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "CommissioningTimeout",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "PAKEPasscodeVerifier",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Discriminator",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "Iterations",
                                                 type = DataType.UINT32,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "Salt",
                                                 type = DataType.OCTSTR,
@@ -4444,10 +4444,10 @@ val CLUSTERS_1_0 =
                             .ID to
                             CommandInfo(
                                 name = "OpenBasicCommissioningWindow",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "CommissioningTimeout",
                                                 type = DataType.UINT16,
@@ -4458,23 +4458,23 @@ val CLUSTERS_1_0 =
                             .ID to
                             CommandInfo(
                                 name = "RevokeCommissioning",
-                                privilege = Privilege.ADMIN,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                privilege = Privilege.ADMINISTER,
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.OperationalCredentials.ID to
             ClusterInfo(
                 name = "Operational Credentials",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.OperationalCredentials.Attributes.NOCs.ID to
                             AttributeInfo(
                                 name = "NOCs",
                                 type = DataType.LIST_NOC_STRUCT,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.OperationalCredentials.Attributes.Fabrics.ID to
                             AttributeInfo(
@@ -4508,14 +4508,14 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.OperationalCredentials.CommandsIncoming.AttestationRequest.ID to
                             CommandInfo(
                                 name = "AttestationRequest",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "AttestationNonce",
                                                 type = DataType.OCTSTR,
@@ -4526,10 +4526,10 @@ val CLUSTERS_1_0 =
                             .ID to
                             CommandInfo(
                                 name = "CertificateChainRequest",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "CertificateType",
                                                 type = DataType.CERTIFICATE_CHAIN_TYPE_ENUM,
@@ -4539,15 +4539,15 @@ val CLUSTERS_1_0 =
                         Clusters.OperationalCredentials.CommandsIncoming.CSRRequest.ID to
                             CommandInfo(
                                 name = "CSRRequest",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "CSRNonce",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "IsForUpdateNOC",
                                                 type = DataType.BOOL,
@@ -4557,30 +4557,30 @@ val CLUSTERS_1_0 =
                         Clusters.OperationalCredentials.CommandsIncoming.AddNOC.ID to
                             CommandInfo(
                                 name = "AddNOC",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NOCValue",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "ICACValue",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "IPKValue",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "CaseAdminSubject",
                                                 type = DataType.SUBJECT_ID,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "AdminVendorId",
                                                 type = DataType.VENDOR_ID,
@@ -4590,15 +4590,15 @@ val CLUSTERS_1_0 =
                         Clusters.OperationalCredentials.CommandsIncoming.UpdateNOC.ID to
                             CommandInfo(
                                 name = "UpdateNOC",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NOCValue",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "ICACValue",
                                                 type = DataType.OCTSTR,
@@ -4608,10 +4608,10 @@ val CLUSTERS_1_0 =
                         Clusters.OperationalCredentials.CommandsIncoming.UpdateFabricLabel.ID to
                             CommandInfo(
                                 name = "UpdateFabricLabel",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Label",
                                                 type = DataType.STRING,
@@ -4621,10 +4621,10 @@ val CLUSTERS_1_0 =
                         Clusters.OperationalCredentials.CommandsIncoming.RemoveFabric.ID to
                             CommandInfo(
                                 name = "RemoveFabric",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "FabricIndex",
                                                 type = DataType.FABRIC_IDX,
@@ -4635,10 +4635,10 @@ val CLUSTERS_1_0 =
                             .ID to
                             CommandInfo(
                                 name = "AddTrustedRootCertificate",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "RootCACertificate",
                                                 type = DataType.OCTSTR,
@@ -4649,20 +4649,20 @@ val CLUSTERS_1_0 =
                             .ID to
                             CommandInfo(
                                 name = "SetVIDVerificationStatement",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "VendorID",
                                                 type = DataType.VENDOR_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "VIDVerificationStatement",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "VVSC",
                                                 type = DataType.OCTSTR,
@@ -4673,15 +4673,15 @@ val CLUSTERS_1_0 =
                             .ID to
                             CommandInfo(
                                 name = "SignVIDVerificationRequest",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "FabricIndex",
                                                 type = DataType.FABRIC_IDX,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "ClientChallenge",
                                                 type = DataType.OCTSTR,
@@ -4690,18 +4690,18 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.OperationalCredentials.CommandsOutgoing.AttestationResponse.ID to
                             CommandInfo(
                                 name = "AttestationResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "AttestationElements",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "AttestationSignature",
                                                 type = DataType.OCTSTR,
@@ -4713,8 +4713,8 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "CertificateChainResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Certificate",
                                                 type = DataType.OCTSTR,
@@ -4725,13 +4725,13 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "CSRResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NOCSRElements",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "AttestationSignature",
                                                 type = DataType.OCTSTR,
@@ -4742,18 +4742,18 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "NOCResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "StatusCode",
                                                 type = DataType.NODE_OPERATIONAL_CERT_STATUS_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "FabricIndex",
                                                 type = DataType.FABRIC_IDX,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "DebugText",
                                                 type = DataType.STRING,
@@ -4765,18 +4765,18 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "SignVIDVerificationResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "FabricIndex",
                                                 type = DataType.FABRIC_IDX,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "FabricBindingVersion",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Signature",
                                                 type = DataType.OCTSTR,
@@ -4784,13 +4784,13 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.GroupKeyManagement.ID to
             ClusterInfo(
                 name = "Group Key Management",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.GroupKeyManagement.Attributes.GroupKeyMap.ID to
                             AttributeInfo(
                                 name = "GroupKeyMap",
@@ -4820,19 +4820,19 @@ val CLUSTERS_1_0 =
                             AttributeInfo(
                                 name = "GroupcastAdoption",
                                 type = DataType.LIST_GROUPCAST_ADOPTION_STRUCT,
-                                readPrivilege = Privilege.ADMIN,
-                                writePrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.GroupKeyManagement.CommandsIncoming.KeySetWrite.ID to
                             CommandInfo(
                                 name = "KeySetWrite",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupKeySet",
                                                 type = DataType.GROUP_KEY_SET_STRUCT,
@@ -4842,10 +4842,10 @@ val CLUSTERS_1_0 =
                         Clusters.GroupKeyManagement.CommandsIncoming.KeySetRead.ID to
                             CommandInfo(
                                 name = "KeySetRead",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupKeySetID",
                                                 type = DataType.UINT16,
@@ -4855,10 +4855,10 @@ val CLUSTERS_1_0 =
                         Clusters.GroupKeyManagement.CommandsIncoming.KeySetRemove.ID to
                             CommandInfo(
                                 name = "KeySetRemove",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupKeySetID",
                                                 type = DataType.UINT16,
@@ -4868,10 +4868,10 @@ val CLUSTERS_1_0 =
                         Clusters.GroupKeyManagement.CommandsIncoming.KeySetReadAllIndices.ID to
                             CommandInfo(
                                 name = "KeySetReadAllIndices",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "DoNotUse",
                                                 type = DataType.UNKNOWN,
@@ -4880,13 +4880,13 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.GroupKeyManagement.CommandsOutgoing.KeySetReadResponse.ID to
                             CommandInfo(
                                 name = "KeySetReadResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupKeySet",
                                                 type = DataType.GROUP_KEY_SET_STRUCT,
@@ -4898,8 +4898,8 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "KeySetReadAllIndicesResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupKeySetIDs",
                                                 type = DataType.LIST_UINT16,
@@ -4907,13 +4907,13 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.FixedLabel.ID to
             ClusterInfo(
                 name = "Fixed Label",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.FixedLabel.Attributes.LabelList.ID to
                             AttributeInfo(
                                 name = "LabelList",
@@ -4921,15 +4921,15 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.UserLabel.ID to
             ClusterInfo(
                 name = "User Label",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.UserLabel.Attributes.LabelList.ID to
                             AttributeInfo(
                                 name = "LabelList",
@@ -4938,15 +4938,15 @@ val CLUSTERS_1_0 =
                                 writePrivilege = Privilege.MANAGE,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.ProxyConfiguration.ID to
             ClusterInfo(
                 name = "Proxy Configuration",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.ProxyConfiguration.Attributes.ConfigurationList.ID to
                             AttributeInfo(
                                 name = "ConfigurationList",
@@ -4955,33 +4955,33 @@ val CLUSTERS_1_0 =
                                 writePrivilege = Privilege.OPERATE,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.ProxyDiscovery.ID to
             ClusterInfo(
                 name = "Proxy Discovery",
-                attributes = mapOf<Int, AttributeInfo>(),
+                attributes = mapOf<UInt, AttributeInfo>(),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ProxyDiscovery.CommandsIncoming.ProxyDiscoverRequest.ID to
                             CommandInfo(
                                 name = "ProxyDiscoverRequest",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "SourceNodeId",
                                                 type = DataType.NODE_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "NumAttributePaths",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "NumEventPaths",
                                                 type = DataType.UINT16,
@@ -4990,23 +4990,23 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ProxyDiscovery.CommandsOutgoing.ProxyDiscoverResponse.ID to
                             CommandInfo(
                                 name = "ProxyDiscoverResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "SourceNodeId",
                                                 type = DataType.NODE_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "NumHopsToSource",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "AvailableCapacity",
                                                 type = DataType.UINT16,
@@ -5014,13 +5014,13 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.ValidProxies.ID to
             ClusterInfo(
                 name = "Valid Proxies",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.ValidProxies.Attributes.ValidProxyList.ID to
                             AttributeInfo(
                                 name = "ValidProxyList",
@@ -5030,22 +5030,22 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ValidProxies.CommandsIncoming.GetValidProxiesRequest.ID to
                             CommandInfo(
                                 name = "GetValidProxiesRequest",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ValidProxies.CommandsOutgoing.GetValidProxiesResponse.ID to
                             CommandInfo(
                                 name = "GetValidProxiesResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ProxyNodeIdList",
                                                 type = DataType.LIST_NODE_ID,
@@ -5053,13 +5053,13 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.BooleanState.ID to
             ClusterInfo(
                 name = "Boolean State",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.BooleanState.Attributes.StateValue.ID to
                             AttributeInfo(
                                 name = "StateValue",
@@ -5067,10 +5067,10 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.BooleanState.Events.StateChange.ID to
                             EventInfo(
                                 name = "StateChange",
@@ -5081,7 +5081,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Mode Select",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.ModeSelect.Attributes.Description.ID to
                             AttributeInfo(
                                 name = "Description",
@@ -5122,14 +5122,14 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ModeSelect.CommandsIncoming.ChangeToMode.ID to
                             CommandInfo(
                                 name = "ChangeToMode",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NewMode",
                                                 type = DataType.UINT8,
@@ -5141,8 +5141,8 @@ val CLUSTERS_1_0 =
                                 name = "ChangeToModeWithStatus",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NewMode",
                                                 type = DataType.UINT8,
@@ -5151,18 +5151,18 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ModeSelect.CommandsOutgoing.ChangeToModeResponse.ID to
                             CommandInfo(
                                 name = "ChangeToModeResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.CHANGE_TO_MODE_STATUS_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "StatusText",
                                                 type = DataType.STRING,
@@ -5170,13 +5170,13 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.DoorLock.ID to
             ClusterInfo(
                 name = "Door Lock",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.DoorLock.Attributes.LockState.ID to
                             AttributeInfo(
                                 name = "LockState",
@@ -5305,7 +5305,7 @@ val CLUSTERS_1_0 =
                                 name = "EnableLogging",
                                 type = DataType.BOOL,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.Language.ID to
                             AttributeInfo(
@@ -5359,7 +5359,7 @@ val CLUSTERS_1_0 =
                                 name = "EnableLocalProgramming",
                                 type = DataType.BOOL,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.EnableOneTouchLocking.ID to
                             AttributeInfo(
@@ -5387,35 +5387,35 @@ val CLUSTERS_1_0 =
                                 name = "LocalProgrammingFeatures",
                                 type = DataType.MAP8,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.WrongCodeEntryLimit.ID to
                             AttributeInfo(
                                 name = "WrongCodeEntryLimit",
                                 type = DataType.UINT8,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.UserCodeTemporaryDisableTime.ID to
                             AttributeInfo(
                                 name = "UserCodeTemporaryDisableTime",
                                 type = DataType.UINT8,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.SendPINOverTheAir.ID to
                             AttributeInfo(
                                 name = "SendPINOverTheAir",
                                 type = DataType.BOOL,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.RequirePINforRemoteOperation.ID to
                             AttributeInfo(
                                 name = "RequirePINforRemoteOperation",
                                 type = DataType.BOOL,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.SecurityLevel.ID to
                             AttributeInfo(
@@ -5428,81 +5428,81 @@ val CLUSTERS_1_0 =
                                 name = "ExpiringUserTimeout",
                                 type = DataType.UINT16,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.AlarmMask.ID to
                             AttributeInfo(
                                 name = "AlarmMask",
                                 type = DataType.MAP16,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.KeypadOperationEventMask.ID to
                             AttributeInfo(
                                 name = "KeypadOperationEventMask",
                                 type = DataType.MAP16,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.RemoteOperationEventMask.ID to
                             AttributeInfo(
                                 name = "RemoteOperationEventMask",
                                 type = DataType.MAP16,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.ManualOperationEventMask.ID to
                             AttributeInfo(
                                 name = "ManualOperationEventMask",
                                 type = DataType.MAP16,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.RFIDOperationEventMask.ID to
                             AttributeInfo(
                                 name = "RFIDOperationEventMask",
                                 type = DataType.MAP16,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.KeypadProgrammingEventMask.ID to
                             AttributeInfo(
                                 name = "KeypadProgrammingEventMask",
                                 type = DataType.MAP16,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.RemoteProgrammingEventMask.ID to
                             AttributeInfo(
                                 name = "RemoteProgrammingEventMask",
                                 type = DataType.MAP16,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.RFIDProgrammingEventMask.ID to
                             AttributeInfo(
                                 name = "RFIDProgrammingEventMask",
                                 type = DataType.MAP16,
                                 readPrivilege = Privilege.VIEW,
-                                writePrivilege = Privilege.ADMIN,
+                                writePrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.AliroReaderVerificationKey.ID to
                             AttributeInfo(
                                 name = "AliroReaderVerificationKey",
                                 type = DataType.OCTSTR,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.AliroReaderGroupIdentifier.ID to
                             AttributeInfo(
                                 name = "AliroReaderGroupIdentifier",
                                 type = DataType.OCTSTR,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.AliroReaderGroupSubIdentifier.ID to
                             AttributeInfo(
                                 name = "AliroReaderGroupSubIdentifier",
                                 type = DataType.OCTSTR,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes
                             .AliroExpeditedTransactionSupportedProtocolVersions
@@ -5510,25 +5510,25 @@ val CLUSTERS_1_0 =
                             AttributeInfo(
                                 name = "AliroExpeditedTransactionSupportedProtocolVersions",
                                 type = DataType.LIST_OCTSTR,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.AliroGroupResolvingKey.ID to
                             AttributeInfo(
                                 name = "AliroGroupResolvingKey",
                                 type = DataType.OCTSTR,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.AliroSupportedBLEUWBProtocolVersions.ID to
                             AttributeInfo(
                                 name = "AliroSupportedBLEUWBProtocolVersions",
                                 type = DataType.LIST_OCTSTR,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.AliroBLEAdvertisingVersion.ID to
                             AttributeInfo(
                                 name = "AliroBLEAdvertisingVersion",
                                 type = DataType.UINT8,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.DoorLock.Attributes.NumberOfAliroCredentialIssuerKeysSupported
                             .ID to
@@ -5545,14 +5545,14 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.DoorLock.CommandsIncoming.LockDoor.ID to
                             CommandInfo(
                                 name = "LockDoor",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "PINCode",
                                                 type = DataType.OCTSTR,
@@ -5564,8 +5564,8 @@ val CLUSTERS_1_0 =
                                 name = "UnlockDoor",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "PINCode",
                                                 type = DataType.OCTSTR,
@@ -5576,20 +5576,20 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "Toggle",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.DoorLock.CommandsIncoming.UnlockWithTimeout.ID to
                             CommandInfo(
                                 name = "UnlockWithTimeout",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Timeout",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "PINCode",
                                                 type = DataType.OCTSTR,
@@ -5601,8 +5601,8 @@ val CLUSTERS_1_0 =
                                 name = "GetLogRecord",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "LogIndex",
                                                 type = DataType.UINT16,
@@ -5612,25 +5612,25 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.SetPINCode.ID to
                             CommandInfo(
                                 name = "SetPINCode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UserID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserStatus",
                                                 type = DataType.USER_STATUS_ENUM,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "UserType",
                                                 type = DataType.USER_TYPE_ENUM,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "PIN",
                                                 type = DataType.OCTSTR,
@@ -5640,10 +5640,10 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.GetPINCode.ID to
                             CommandInfo(
                                 name = "GetPINCode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UserID",
                                                 type = DataType.UINT16,
@@ -5653,10 +5653,10 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.ClearPINCode.ID to
                             CommandInfo(
                                 name = "ClearPINCode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "PINSlotIndex",
                                                 type = DataType.UINT16,
@@ -5666,21 +5666,21 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.ClearAllPINCodes.ID to
                             CommandInfo(
                                 name = "ClearAllPINCodes",
-                                privilege = Privilege.ADMIN,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                privilege = Privilege.ADMINISTER,
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.DoorLock.CommandsIncoming.SetUserStatus.ID to
                             CommandInfo(
                                 name = "SetUserStatus",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UserID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserStatus",
                                                 type = DataType.UINT8,
@@ -5690,10 +5690,10 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.GetUserStatus.ID to
                             CommandInfo(
                                 name = "GetUserStatus",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UserID",
                                                 type = DataType.UINT16,
@@ -5703,40 +5703,40 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.SetWeekDaySchedule.ID to
                             CommandInfo(
                                 name = "SetWeekDaySchedule",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "WeekDayIndex",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserIndex",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "DaysMask",
                                                 type = DataType.DAYS_MASK_MAP,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "StartHour",
                                                 type = DataType.UINT8,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "StartMinute",
                                                 type = DataType.UINT8,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "EndHour",
                                                 type = DataType.UINT8,
                                             ),
-                                        6 to
+                                        6u to
                                             ParameterInfo(
                                                 name = "EndMinute",
                                                 type = DataType.UINT8,
@@ -5746,15 +5746,15 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.GetWeekDaySchedule.ID to
                             CommandInfo(
                                 name = "GetWeekDaySchedule",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "WeekDayIndex",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserIndex",
                                                 type = DataType.UINT16,
@@ -5764,15 +5764,15 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.ClearWeekDaySchedule.ID to
                             CommandInfo(
                                 name = "ClearWeekDaySchedule",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "WeekDayIndex",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserIndex",
                                                 type = DataType.UINT16,
@@ -5782,25 +5782,25 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.SetYearDaySchedule.ID to
                             CommandInfo(
                                 name = "SetYearDaySchedule",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "YearDayIndex",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserIndex",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "LocalStartTime",
                                                 type = DataType.EPOCH_S,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "LocalEndTime",
                                                 type = DataType.EPOCH_S,
@@ -5810,15 +5810,15 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.GetYearDaySchedule.ID to
                             CommandInfo(
                                 name = "GetYearDaySchedule",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "YearDayIndex",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserIndex",
                                                 type = DataType.UINT16,
@@ -5828,15 +5828,15 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.ClearYearDaySchedule.ID to
                             CommandInfo(
                                 name = "ClearYearDaySchedule",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "YearDayIndex",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserIndex",
                                                 type = DataType.UINT16,
@@ -5846,25 +5846,25 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.SetHolidaySchedule.ID to
                             CommandInfo(
                                 name = "SetHolidaySchedule",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "HolidayIndex",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "LocalStartTime",
                                                 type = DataType.EPOCH_S,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "LocalEndTime",
                                                 type = DataType.EPOCH_S,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OperatingMode",
                                                 type = DataType.OPERATING_MODE_ENUM,
@@ -5874,10 +5874,10 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.GetHolidaySchedule.ID to
                             CommandInfo(
                                 name = "GetHolidaySchedule",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "HolidayIndex",
                                                 type = DataType.UINT8,
@@ -5887,10 +5887,10 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.ClearHolidaySchedule.ID to
                             CommandInfo(
                                 name = "ClearHolidaySchedule",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "HolidayIndex",
                                                 type = DataType.UINT8,
@@ -5900,15 +5900,15 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.SetUserType.ID to
                             CommandInfo(
                                 name = "SetUserType",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UserID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserType",
                                                 type = DataType.ENUM8,
@@ -5918,10 +5918,10 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.GetUserType.ID to
                             CommandInfo(
                                 name = "GetUserType",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UserID",
                                                 type = DataType.UINT16,
@@ -5931,25 +5931,25 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.SetRFIDCode.ID to
                             CommandInfo(
                                 name = "SetRFIDCode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UserID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserStatus",
                                                 type = DataType.USER_STATUS_ENUM,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "UserType",
                                                 type = DataType.USER_TYPE_ENUM,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "RFIDCode",
                                                 type = DataType.OCTSTR,
@@ -5959,10 +5959,10 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.GetRFIDCode.ID to
                             CommandInfo(
                                 name = "GetRFIDCode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UserID",
                                                 type = DataType.UINT16,
@@ -5972,10 +5972,10 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.ClearRFIDCode.ID to
                             CommandInfo(
                                 name = "ClearRFIDCode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "RFIDSlotIndex",
                                                 type = DataType.UINT16,
@@ -5985,46 +5985,46 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.ClearAllRFIDCodes.ID to
                             CommandInfo(
                                 name = "ClearAllRFIDCodes",
-                                privilege = Privilege.ADMIN,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                privilege = Privilege.ADMINISTER,
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.DoorLock.CommandsIncoming.SetUser.ID to
                             CommandInfo(
                                 name = "SetUser",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "OperationType",
                                                 type = DataType.DATA_OPERATION_TYPE_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserIndex",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "UserName",
                                                 type = DataType.STRING,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "UserUniqueID",
                                                 type = DataType.UINT32,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "UserStatus",
                                                 type = DataType.USER_STATUS_ENUM,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "UserType",
                                                 type = DataType.USER_TYPE_ENUM,
                                             ),
-                                        6 to
+                                        6u to
                                             ParameterInfo(
                                                 name = "CredentialRule",
                                                 type = DataType.CREDENTIAL_RULE_ENUM,
@@ -6034,10 +6034,10 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.GetUser.ID to
                             CommandInfo(
                                 name = "GetUser",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UserIndex",
                                                 type = DataType.UINT16,
@@ -6047,10 +6047,10 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.ClearUser.ID to
                             CommandInfo(
                                 name = "ClearUser",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UserIndex",
                                                 type = DataType.UINT16,
@@ -6060,35 +6060,35 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.SetCredential.ID to
                             CommandInfo(
                                 name = "SetCredential",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "OperationType",
                                                 type = DataType.DATA_OPERATION_TYPE_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Credential",
                                                 type = DataType.CREDENTIAL_STRUCT,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "CredentialData",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "UserIndex",
                                                 type = DataType.UINT16,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "UserStatus",
                                                 type = DataType.USER_STATUS_ENUM,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "UserType",
                                                 type = DataType.USER_TYPE_ENUM,
@@ -6098,10 +6098,10 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.GetCredentialStatus.ID to
                             CommandInfo(
                                 name = "GetCredentialStatus",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Credential",
                                                 type = DataType.CREDENTIAL_STRUCT,
@@ -6111,10 +6111,10 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.ClearCredential.ID to
                             CommandInfo(
                                 name = "ClearCredential",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Credential",
                                                 type = DataType.CREDENTIAL_STRUCT,
@@ -6126,8 +6126,8 @@ val CLUSTERS_1_0 =
                                 name = "UnboltDoor",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "PINCode",
                                                 type = DataType.OCTSTR,
@@ -6137,25 +6137,25 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.SetAliroReaderConfig.ID to
                             CommandInfo(
                                 name = "SetAliroReaderConfig",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "SigningKey",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "VerificationKey",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "GroupIdentifier",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "GroupResolvingKey",
                                                 type = DataType.OCTSTR,
@@ -6165,48 +6165,48 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsIncoming.ClearAliroReaderConfig.ID to
                             CommandInfo(
                                 name = "ClearAliroReaderConfig",
-                                privilege = Privilege.ADMIN,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                privilege = Privilege.ADMINISTER,
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.DoorLock.CommandsOutgoing.GetLogRecordResponse.ID to
                             CommandInfo(
                                 name = "GetLogRecordResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "LogEntryID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Timestamp",
                                                 type = DataType.EPOCH_S,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "EventType",
                                                 type = DataType.ENUM8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "Source",
                                                 type = DataType.UINT8,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "EventID",
                                                 type = DataType.UINT8,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "UserID",
                                                 type = DataType.UINT16,
                                             ),
-                                        6 to
+                                        6u to
                                             ParameterInfo(
                                                 name = "PIN",
                                                 type = DataType.OCTSTR,
@@ -6217,23 +6217,23 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "GetPINCodeResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UserID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserStatus",
                                                 type = DataType.USER_STATUS_ENUM,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "UserType",
                                                 type = DataType.USER_TYPE_ENUM,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "PINCode",
                                                 type = DataType.OCTSTR,
@@ -6244,13 +6244,13 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "GetUserStatusResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UserID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserStatus",
                                                 type = DataType.ENUM8,
@@ -6261,43 +6261,43 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "GetWeekDayScheduleResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "WeekDayIndex",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserIndex",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.ENUM8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "DaysMask",
                                                 type = DataType.DAYS_MASK_MAP,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "StartHour",
                                                 type = DataType.UINT8,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "StartMinute",
                                                 type = DataType.UINT8,
                                             ),
-                                        6 to
+                                        6u to
                                             ParameterInfo(
                                                 name = "EndHour",
                                                 type = DataType.UINT8,
                                             ),
-                                        7 to
+                                        7u to
                                             ParameterInfo(
                                                 name = "EndMinute",
                                                 type = DataType.UINT8,
@@ -6308,28 +6308,28 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "GetYearDayScheduleResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "YearDayIndex",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserIndex",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.ENUM8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "LocalStartTime",
                                                 type = DataType.EPOCH_S,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "LocalEndTime",
                                                 type = DataType.EPOCH_S,
@@ -6340,28 +6340,28 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "GetHolidayScheduleResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "HolidayIndex",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.ENUM8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "LocalStartTime",
                                                 type = DataType.EPOCH_S,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "LocalEndTime",
                                                 type = DataType.EPOCH_S,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "OperatingMode",
                                                 type = DataType.OPERATING_MODE_ENUM,
@@ -6372,13 +6372,13 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "GetUserTypeResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UserID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserType",
                                                 type = DataType.USER_TYPE_ENUM,
@@ -6389,23 +6389,23 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "GetRFIDCodeResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UserID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserStatus",
                                                 type = DataType.USER_STATUS_ENUM,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "UserType",
                                                 type = DataType.USER_TYPE_ENUM,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "RFIDCode",
                                                 type = DataType.OCTSTR,
@@ -6416,53 +6416,53 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "GetUserResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UserIndex",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserName",
                                                 type = DataType.STRING,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "UserUniqueID",
                                                 type = DataType.UINT32,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "UserStatus",
                                                 type = DataType.USER_STATUS_ENUM,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "UserType",
                                                 type = DataType.USER_TYPE_ENUM,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "CredentialRule",
                                                 type = DataType.CREDENTIAL_RULE_ENUM,
                                             ),
-                                        6 to
+                                        6u to
                                             ParameterInfo(
                                                 name = "Credentials",
                                                 type = DataType.LIST_CREDENTIAL_STRUCT,
                                             ),
-                                        7 to
+                                        7u to
                                             ParameterInfo(
                                                 name = "CreatorFabricIndex",
                                                 type = DataType.FABRIC_IDX,
                                             ),
-                                        8 to
+                                        8u to
                                             ParameterInfo(
                                                 name = "LastModifiedFabricIndex",
                                                 type = DataType.FABRIC_IDX,
                                             ),
-                                        9 to
+                                        9u to
                                             ParameterInfo(
                                                 name = "NextUserIndex",
                                                 type = DataType.UINT16,
@@ -6472,49 +6472,49 @@ val CLUSTERS_1_0 =
                         Clusters.DoorLock.CommandsOutgoing.OperatingEventNotification.ID to
                             CommandInfo(
                                 name = "OperatingEventNotification",
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.DoorLock.CommandsOutgoing.ProgrammingEventNotification.ID to
                             CommandInfo(
                                 name = "ProgrammingEventNotification",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ProgramEventSource",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "ProgramEventCode",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "UserID",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "PIN",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "UserType",
                                                 type = DataType.ENUM8,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "UserStatus",
                                                 type = DataType.ENUM8,
                                             ),
-                                        6 to
+                                        6u to
                                             ParameterInfo(
                                                 name = "LocalTime",
                                                 type = DataType.EPOCH_S,
                                             ),
-                                        7 to
+                                        7u to
                                             ParameterInfo(
                                                 name = "Data",
                                                 type = DataType.STRING,
@@ -6525,18 +6525,18 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "SetCredentialResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.STATUS,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserIndex",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "NextCredentialIndex",
                                                 type = DataType.UINT16,
@@ -6547,33 +6547,33 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "GetCredentialStatusResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "CredentialExists",
                                                 type = DataType.BOOL,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UserIndex",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "CreatorFabricIndex",
                                                 type = DataType.FABRIC_IDX,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "LastModifiedFabricIndex",
                                                 type = DataType.FABRIC_IDX,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "NextCredentialIndex",
                                                 type = DataType.UINT16,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "CredentialData",
                                                 type = DataType.OCTSTR,
@@ -6582,7 +6582,7 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.DoorLock.Events.DoorLockAlarm.ID to
                             EventInfo(
                                 name = "DoorLockAlarm",
@@ -6609,7 +6609,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Window Covering",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.WindowCovering.Attributes.Type.ID to
                             AttributeInfo(
                                 name = "Type",
@@ -6770,32 +6770,32 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.WindowCovering.CommandsIncoming.UpOrOpen.ID to
                             CommandInfo(
                                 name = "UpOrOpen",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.WindowCovering.CommandsIncoming.DownOrClose.ID to
                             CommandInfo(
                                 name = "DownOrClose",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.WindowCovering.CommandsIncoming.StopMotion.ID to
                             CommandInfo(
                                 name = "StopMotion",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.WindowCovering.CommandsIncoming.GoToLiftValue.ID to
                             CommandInfo(
                                 name = "GoToLiftValue",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "LiftValue",
                                                 type = DataType.UINT16,
@@ -6807,13 +6807,13 @@ val CLUSTERS_1_0 =
                                 name = "GoToLiftPercentage",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "LiftPercent100thsValue",
                                                 type = DataType.PERCENT,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "LiftPercent100thsValue",
                                                 type = DataType.PERCENT100THS,
@@ -6825,8 +6825,8 @@ val CLUSTERS_1_0 =
                                 name = "GoToTiltValue",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "TiltValue",
                                                 type = DataType.UINT16,
@@ -6838,13 +6838,13 @@ val CLUSTERS_1_0 =
                                 name = "GoToTiltPercentage",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "TiltPercent100thsValue",
                                                 type = DataType.PERCENT,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "TiltPercent100thsValue",
                                                 type = DataType.PERCENT100THS,
@@ -6852,14 +6852,14 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.PumpConfigurationandControl.ID to
             ClusterInfo(
                 name = "Pump Configuration and Control",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.PumpConfigurationandControl.Attributes.MaxPressure.ID to
                             AttributeInfo(
                                 name = "MaxPressure",
@@ -7009,10 +7009,10 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.PumpConfigurationandControl.Events.SupplyVoltageLow.ID to
                             EventInfo(
                                 name = "SupplyVoltageLow",
@@ -7087,7 +7087,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Thermostat",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.Thermostat.Attributes.LocalTemperature.ID to
                             AttributeInfo(
                                 name = "LocalTemperature",
@@ -7509,19 +7509,19 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.Thermostat.CommandsIncoming.SetpointRaiseLower.ID to
                             CommandInfo(
                                 name = "SetpointRaiseLower",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Mode",
                                                 type = DataType.SETPOINT_ADJUST_MODE,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Amount",
                                                 type = DataType.INT8,
@@ -7533,23 +7533,23 @@ val CLUSTERS_1_0 =
                                 name = "SetWeeklySchedule",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NumberOfTransitionsForSequence",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "DayOfWeekForSequence",
                                                 type = DataType.DAY_OF_WEEK,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "ModeForSequence",
                                                 type = DataType.MODE_FOR_SEQUENCE,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "Transitions",
                                                 type = DataType.LIST_THERMOSTAT_SCHEDULE_TRANSITION,
@@ -7561,13 +7561,13 @@ val CLUSTERS_1_0 =
                                 name = "GetWeeklySchedule",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "DaysToReturn",
                                                 type = DataType.DAY_OF_WEEK,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "ModeToReturn",
                                                 type = DataType.MODE_FOR_SEQUENCE,
@@ -7578,21 +7578,21 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "ClearWeeklySchedule",
                                 privilege = Privilege.MANAGE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.Thermostat.CommandsIncoming.GetRelayStatusLog.ID to
                             CommandInfo(
                                 name = "GetRelayStatusLog",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.Thermostat.CommandsIncoming.SetActiveScheduleRequest.ID to
                             CommandInfo(
                                 name = "SetActiveScheduleRequest",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ScheduleHandle",
                                                 type = DataType.OCTSTR,
@@ -7604,8 +7604,8 @@ val CLUSTERS_1_0 =
                                 name = "SetActivePresetRequest",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "PresetHandle",
                                                 type = DataType.OCTSTR,
@@ -7617,18 +7617,18 @@ val CLUSTERS_1_0 =
                                 name = "AddThermostatSuggestion",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "PresetHandle",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "EffectiveTime",
                                                 type = DataType.EPOCH_S,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "ExpirationInMinutes",
                                                 type = DataType.UINT16,
@@ -7640,8 +7640,8 @@ val CLUSTERS_1_0 =
                                 name = "RemoveThermostatSuggestion",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UniqueID",
                                                 type = DataType.UINT8,
@@ -7650,28 +7650,28 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.Thermostat.CommandsOutgoing.GetWeeklyScheduleResponse.ID to
                             CommandInfo(
                                 name = "GetWeeklyScheduleResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NumberOfTransitionsForSequence",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "DayOfWeekForSequence",
                                                 type = DataType.SCHEDULE_DAY_OF_WEEK_BITMAP,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "ModeForSequence",
                                                 type = DataType.SCHEDULE_MODE_BITMAP,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "Transitions",
                                                 type =
@@ -7683,33 +7683,33 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "GetRelayStatusLogResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "TimeOfDay",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "RelayStatus",
                                                 type = DataType.RELAY_STATE_BITMAP,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "LocalTemperature",
                                                 type = DataType.TEMPERATURE,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "HumidityInPercentage",
                                                 type = DataType.UINT8,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "SetPoint",
                                                 type = DataType.TEMPERATURE,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "UnreadEntries",
                                                 type = DataType.UINT16,
@@ -7720,8 +7720,8 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "AddThermostatSuggestionResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UniqueID",
                                                 type = DataType.UINT8,
@@ -7730,7 +7730,7 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.Thermostat.Events.SystemModeChange.ID to
                             EventInfo(
                                 name = "SystemModeChange",
@@ -7769,7 +7769,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Fan Control",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.FanControl.Attributes.FanMode.ID to
                             AttributeInfo(
                                 name = "FanMode",
@@ -7851,24 +7851,24 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.FanControl.CommandsIncoming.Step.ID to
                             CommandInfo(
                                 name = "Step",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Direction",
                                                 type = DataType.STEP_DIRECTION_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Wrap",
                                                 type = DataType.BOOL,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "LowestOff",
                                                 type = DataType.BOOL,
@@ -7876,14 +7876,14 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.ThermostatUserInterfaceConfiguration.ID to
             ClusterInfo(
                 name = "Thermostat User Interface Configuration",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.ThermostatUserInterfaceConfiguration.Attributes
                             .TemperatureDisplayMode
                             .ID to
@@ -7910,15 +7910,15 @@ val CLUSTERS_1_0 =
                                 writePrivilege = Privilege.MANAGE,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.ColorControl.ID to
             ClusterInfo(
                 name = "Color Control",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.ColorControl.Attributes.CurrentHue.ID to
                             AttributeInfo(
                                 name = "CurrentHue",
@@ -8246,34 +8246,34 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ColorControl.CommandsIncoming.MoveToHue.ID to
                             CommandInfo(
                                 name = "MoveToHue",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Hue",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Direction",
                                                 type = DataType.ENUM8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8285,23 +8285,23 @@ val CLUSTERS_1_0 =
                                 name = "MoveHue",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "MoveMode",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Rate",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8313,28 +8313,28 @@ val CLUSTERS_1_0 =
                                 name = "StepHue",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "StepMode",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "StepSize",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8346,23 +8346,23 @@ val CLUSTERS_1_0 =
                                 name = "MoveToSaturation",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Saturation",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8374,23 +8374,23 @@ val CLUSTERS_1_0 =
                                 name = "MoveSaturation",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "MoveMode",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Rate",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8402,28 +8402,28 @@ val CLUSTERS_1_0 =
                                 name = "StepSaturation",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "StepMode",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "StepSize",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8435,28 +8435,28 @@ val CLUSTERS_1_0 =
                                 name = "MoveToHueAndSaturation",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Hue",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Saturation",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8468,28 +8468,28 @@ val CLUSTERS_1_0 =
                                 name = "MoveToColor",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ColorX",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "ColorY",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8501,23 +8501,23 @@ val CLUSTERS_1_0 =
                                 name = "MoveColor",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "RateX",
                                                 type = DataType.INT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "RateY",
                                                 type = DataType.INT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8529,28 +8529,28 @@ val CLUSTERS_1_0 =
                                 name = "StepColor",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "StepX",
                                                 type = DataType.INT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "StepY",
                                                 type = DataType.INT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8562,23 +8562,23 @@ val CLUSTERS_1_0 =
                                 name = "MoveToColorTemperature",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ColorTemperatureMireds",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8590,28 +8590,28 @@ val CLUSTERS_1_0 =
                                 name = "EnhancedMoveToHue",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "EnhancedHue",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Direction",
                                                 type = DataType.ENUM8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8623,23 +8623,23 @@ val CLUSTERS_1_0 =
                                 name = "EnhancedMoveHue",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "MoveMode",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Rate",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8651,28 +8651,28 @@ val CLUSTERS_1_0 =
                                 name = "EnhancedStepHue",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "StepMode",
                                                 type = DataType.ENUM8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "StepSize",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8684,28 +8684,28 @@ val CLUSTERS_1_0 =
                                 name = "EnhancedMoveToHueAndSaturation",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "EnhancedHue",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Saturation",
                                                 type = DataType.UINT8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8717,38 +8717,38 @@ val CLUSTERS_1_0 =
                                 name = "ColorLoopSet",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "UpdateFlags",
                                                 type = DataType.MAP8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Action",
                                                 type = DataType.ENUM8,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Direction",
                                                 type = DataType.ENUM8,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "Time",
                                                 type = DataType.UINT16,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "StartHue",
                                                 type = DataType.UINT16,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        6 to
+                                        6u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8760,13 +8760,13 @@ val CLUSTERS_1_0 =
                                 name = "StopMoveStep",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8778,33 +8778,33 @@ val CLUSTERS_1_0 =
                                 name = "MoveColorTemperature",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "MoveMode",
                                                 type = DataType.MAP8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Rate",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "ColorTemperatureMinimumMireds",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "ColorTemperatureMaximumMireds",
                                                 type = DataType.UINT16,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8816,38 +8816,38 @@ val CLUSTERS_1_0 =
                                 name = "StepColorTemperature",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "StepMode",
                                                 type = DataType.MAP8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "StepSize",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "ColorTemperatureMinimumMireds",
                                                 type = DataType.UINT16,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "ColorTemperatureMaximumMireds",
                                                 type = DataType.UINT16,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "OptionsMask",
                                                 type = DataType.MAP8,
                                             ),
-                                        6 to
+                                        6u to
                                             ParameterInfo(
                                                 name = "OptionsOverride",
                                                 type = DataType.MAP8,
@@ -8855,14 +8855,14 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.BallastConfiguration.ID to
             ClusterInfo(
                 name = "Ballast Configuration",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.BallastConfiguration.Attributes.PhysicalMinLevel.ID to
                             AttributeInfo(
                                 name = "PhysicalMinLevel",
@@ -8972,15 +8972,15 @@ val CLUSTERS_1_0 =
                                 writePrivilege = Privilege.MANAGE,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.IlluminanceMeasurement.ID to
             ClusterInfo(
                 name = "Illuminance Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.IlluminanceMeasurement.Attributes.MeasuredValue.ID to
                             AttributeInfo(
                                 name = "MeasuredValue",
@@ -9012,15 +9012,15 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.TemperatureMeasurement.ID to
             ClusterInfo(
                 name = "Temperature Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.TemperatureMeasurement.Attributes.MeasuredValue.ID to
                             AttributeInfo(
                                 name = "MeasuredValue",
@@ -9046,15 +9046,15 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.PressureMeasurement.ID to
             ClusterInfo(
                 name = "Pressure Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.PressureMeasurement.Attributes.MeasuredValue.ID to
                             AttributeInfo(
                                 name = "MeasuredValue",
@@ -9110,15 +9110,15 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.FlowMeasurement.ID to
             ClusterInfo(
                 name = "Flow Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.FlowMeasurement.Attributes.MeasuredValue.ID to
                             AttributeInfo(
                                 name = "MeasuredValue",
@@ -9144,15 +9144,15 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.RelativeHumidityMeasurement.ID to
             ClusterInfo(
                 name = "Relative Humidity Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.RelativeHumidityMeasurement.Attributes.MeasuredValue.ID to
                             AttributeInfo(
                                 name = "MeasuredValue",
@@ -9178,15 +9178,15 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.OccupancySensing.ID to
             ClusterInfo(
                 name = "Occupancy Sensing",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.OccupancySensing.Attributes.Occupancy.ID to
                             AttributeInfo(
                                 name = "Occupancy",
@@ -9291,10 +9291,10 @@ val CLUSTERS_1_0 =
                                 writePrivilege = Privilege.MANAGE,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.OccupancySensing.Events.OccupancyChanged.ID to
                             EventInfo(
                                 name = "OccupancyChanged",
@@ -9305,7 +9305,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Leaf Wetness Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.LeafWetnessMeasurement.Attributes.MeasuredValue.ID to
                             AttributeInfo(
                                 name = "MeasuredValue",
@@ -9331,15 +9331,15 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.SoilMoistureMeasurement.ID to
             ClusterInfo(
                 name = "Soil Moisture Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.SoilMoistureMeasurement.Attributes.MeasuredValue.ID to
                             AttributeInfo(
                                 name = "MeasuredValue",
@@ -9365,15 +9365,15 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.WakeOnLAN.ID to
             ClusterInfo(
                 name = "Wake On LAN",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.WakeOnLAN.Attributes.MACAddress.ID to
                             AttributeInfo(
                                 name = "MACAddress",
@@ -9387,15 +9387,15 @@ val CLUSTERS_1_0 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.Channel.ID to
             ClusterInfo(
                 name = "Channel",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.Channel.Attributes.ChannelList.ID to
                             AttributeInfo(
                                 name = "ChannelList",
@@ -9416,14 +9416,14 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.Channel.CommandsIncoming.ChangeChannel.ID to
                             CommandInfo(
                                 name = "ChangeChannel",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Match",
                                                 type = DataType.STRING,
@@ -9435,13 +9435,13 @@ val CLUSTERS_1_0 =
                                 name = "ChangeChannelByNumber",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "MajorNumber",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "MinorNumber",
                                                 type = DataType.UINT16,
@@ -9453,8 +9453,8 @@ val CLUSTERS_1_0 =
                                 name = "SkipChannel",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Count",
                                                 type = DataType.INT16,
@@ -9466,38 +9466,38 @@ val CLUSTERS_1_0 =
                                 name = "GetProgramGuide",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "StartTime",
                                                 type = DataType.EPOCH_S,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "EndTime",
                                                 type = DataType.EPOCH_S,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "ChannelList",
                                                 type = DataType.LIST_CHANNEL_INFO_STRUCT,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "PageToken",
                                                 type = DataType.PAGE_TOKEN_STRUCT,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "RecordingFlag",
                                                 type = DataType.RECORDING_FLAG_BITMAP,
                                             ),
-                                        6 to
+                                        6u to
                                             ParameterInfo(
                                                 name = "ExternalIDList",
                                                 type = DataType.LIST_ADDITIONAL_INFO_STRUCT,
                                             ),
-                                        7 to
+                                        7u to
                                             ParameterInfo(
                                                 name = "Data",
                                                 type = DataType.OCTSTR,
@@ -9509,23 +9509,23 @@ val CLUSTERS_1_0 =
                                 name = "RecordProgram",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ProgramIdentifier",
                                                 type = DataType.STRING,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "ShouldRecordSeries",
                                                 type = DataType.BOOL,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "ExternalIDList",
                                                 type = DataType.LIST_ADDITIONAL_INFO_STRUCT,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "Data",
                                                 type = DataType.OCTSTR,
@@ -9537,23 +9537,23 @@ val CLUSTERS_1_0 =
                                 name = "CancelRecordProgram",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ProgramIdentifier",
                                                 type = DataType.STRING,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "ShouldRecordSeries",
                                                 type = DataType.BOOL,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "ExternalIDList",
                                                 type = DataType.LIST_ADDITIONAL_INFO_STRUCT,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "Data",
                                                 type = DataType.OCTSTR,
@@ -9562,18 +9562,18 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.Channel.CommandsOutgoing.ChangeChannelResponse.ID to
                             CommandInfo(
                                 name = "ChangeChannelResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.STATUS_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Data",
                                                 type = DataType.OCTSTR,
@@ -9584,13 +9584,13 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "ProgramGuideResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Paging",
                                                 type = DataType.CHANNEL_PAGING_STRUCT,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "ProgramList",
                                                 type = DataType.LIST_PROGRAM_STRUCT,
@@ -9598,13 +9598,13 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.TargetNavigator.ID to
             ClusterInfo(
                 name = "Target Navigator",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.TargetNavigator.Attributes.TargetList.ID to
                             AttributeInfo(
                                 name = "TargetList",
@@ -9619,19 +9619,19 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.TargetNavigator.CommandsIncoming.NavigateTarget.ID to
                             CommandInfo(
                                 name = "NavigateTarget",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Target",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Data",
                                                 type = DataType.STRING,
@@ -9640,18 +9640,18 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.TargetNavigator.CommandsOutgoing.NavigateTargetResponse.ID to
                             CommandInfo(
                                 name = "NavigateTargetResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.STATUS_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Data",
                                                 type = DataType.STRING,
@@ -9660,7 +9660,7 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.TargetNavigator.Events.TargetUpdated.ID to
                             EventInfo(
                                 name = "TargetUpdated",
@@ -9671,7 +9671,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Media Playback",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.MediaPlayback.Attributes.CurrentState.ID to
                             AttributeInfo(
                                 name = "CurrentState",
@@ -9740,50 +9740,50 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.MediaPlayback.CommandsIncoming.Play.ID to
                             CommandInfo(
                                 name = "Play",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.MediaPlayback.CommandsIncoming.Pause.ID to
                             CommandInfo(
                                 name = "Pause",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.MediaPlayback.CommandsIncoming.Stop.ID to
                             CommandInfo(
                                 name = "Stop",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.MediaPlayback.CommandsIncoming.StartOver.ID to
                             CommandInfo(
                                 name = "StartOver",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.MediaPlayback.CommandsIncoming.Previous.ID to
                             CommandInfo(
                                 name = "Previous",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.MediaPlayback.CommandsIncoming.Next.ID to
                             CommandInfo(
                                 name = "Next",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.MediaPlayback.CommandsIncoming.Rewind.ID to
                             CommandInfo(
                                 name = "Rewind",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "AudioAdvanceUnmuted",
                                                 type = DataType.BOOL,
@@ -9795,8 +9795,8 @@ val CLUSTERS_1_0 =
                                 name = "FastForward",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "AudioAdvanceUnmuted",
                                                 type = DataType.BOOL,
@@ -9808,8 +9808,8 @@ val CLUSTERS_1_0 =
                                 name = "SkipForward",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "DeltaPositionMilliseconds",
                                                 type = DataType.UINT64,
@@ -9821,8 +9821,8 @@ val CLUSTERS_1_0 =
                                 name = "SkipBackward",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "DeltaPositionMilliseconds",
                                                 type = DataType.UINT64,
@@ -9834,8 +9834,8 @@ val CLUSTERS_1_0 =
                                 name = "Seek",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Position",
                                                 type = DataType.UINT64,
@@ -9847,13 +9847,13 @@ val CLUSTERS_1_0 =
                                 name = "ActivateAudioTrack",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "TrackID",
                                                 type = DataType.STRING,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "AudioOutputIndex",
                                                 type = DataType.UINT8,
@@ -9865,8 +9865,8 @@ val CLUSTERS_1_0 =
                                 name = "ActivateTextTrack",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "TrackID",
                                                 type = DataType.STRING,
@@ -9877,22 +9877,22 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "DeactivateTextTrack",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.MediaPlayback.CommandsOutgoing.PlaybackResponse.ID to
                             CommandInfo(
                                 name = "PlaybackResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.STATUS_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Data",
                                                 type = DataType.OCTSTR,
@@ -9901,7 +9901,7 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.MediaPlayback.Events.StateChanged.ID to
                             EventInfo(
                                 name = "StateChanged",
@@ -9912,7 +9912,7 @@ val CLUSTERS_1_0 =
             ClusterInfo(
                 name = "Media Input",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.MediaInput.Attributes.InputList.ID to
                             AttributeInfo(
                                 name = "InputList",
@@ -9927,14 +9927,14 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.MediaInput.CommandsIncoming.SelectInput.ID to
                             CommandInfo(
                                 name = "SelectInput",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Index",
                                                 type = DataType.UINT8,
@@ -9945,26 +9945,26 @@ val CLUSTERS_1_0 =
                             CommandInfo(
                                 name = "ShowInputStatus",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.MediaInput.CommandsIncoming.HideInputStatus.ID to
                             CommandInfo(
                                 name = "HideInputStatus",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.MediaInput.CommandsIncoming.RenameInput.ID to
                             CommandInfo(
                                 name = "RenameInput",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Index",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Name",
                                                 type = DataType.STRING,
@@ -9972,38 +9972,38 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.LowPower.ID to
             ClusterInfo(
                 name = "Low Power",
-                attributes = mapOf<Int, AttributeInfo>(),
+                attributes = mapOf<UInt, AttributeInfo>(),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.LowPower.CommandsIncoming.Sleep.ID to
                             CommandInfo(
                                 name = "Sleep",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.KeypadInput.ID to
             ClusterInfo(
                 name = "Keypad Input",
-                attributes = mapOf<Int, AttributeInfo>(),
+                attributes = mapOf<UInt, AttributeInfo>(),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.KeypadInput.CommandsIncoming.SendKey.ID to
                             CommandInfo(
                                 name = "SendKey",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "KeyCode",
                                                 type = DataType.UINT8,
@@ -10012,13 +10012,13 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.KeypadInput.CommandsOutgoing.SendKeyResponse.ID to
                             CommandInfo(
                                 name = "SendKeyResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.STATUS_ENUM,
@@ -10026,13 +10026,13 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.ContentLauncher.ID to
             ClusterInfo(
                 name = "Content Launcher",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.ContentLauncher.Attributes.AcceptHeader.ID to
                             AttributeInfo(
                                 name = "AcceptHeader",
@@ -10047,34 +10047,34 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ContentLauncher.CommandsIncoming.LaunchContent.ID to
                             CommandInfo(
                                 name = "LaunchContent",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Search",
                                                 type = DataType.CONTENT_SEARCH,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "AutoPlay",
                                                 type = DataType.BOOL,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Data",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "PlaybackPreferences",
                                                 type = DataType.PLAYBACK_PREFERENCES_STRUCT,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "UseCurrentContext",
                                                 type = DataType.BOOL,
@@ -10086,23 +10086,23 @@ val CLUSTERS_1_0 =
                                 name = "LaunchURL",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ContentURL",
                                                 type = DataType.STRING,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "DisplayString",
                                                 type = DataType.STRING,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "BrandingInformation",
                                                 type = DataType.BRANDING_INFORMATION,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "PlaybackPreferences",
                                                 type = DataType.PLAYBACK_PREFERENCES_STRUCT,
@@ -10111,18 +10111,18 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ContentLauncher.CommandsOutgoing.LauncherResponse.ID to
                             CommandInfo(
                                 name = "LauncherResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.STATUS_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Data",
                                                 type = DataType.OCTSTR,
@@ -10130,13 +10130,13 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.AudioOutput.ID to
             ClusterInfo(
                 name = "Audio Output",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.AudioOutput.Attributes.OutputList.ID to
                             AttributeInfo(
                                 name = "OutputList",
@@ -10151,14 +10151,14 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.AudioOutput.CommandsIncoming.SelectOutput.ID to
                             CommandInfo(
                                 name = "SelectOutput",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Index",
                                                 type = DataType.UINT8,
@@ -10170,13 +10170,13 @@ val CLUSTERS_1_0 =
                                 name = "RenameOutput",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Index",
                                                 type = DataType.UINT8,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Name",
                                                 type = DataType.STRING,
@@ -10184,14 +10184,14 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.ApplicationLauncher.ID to
             ClusterInfo(
                 name = "Application Launcher",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.ApplicationLauncher.Attributes.CatalogList.ID to
                             AttributeInfo(
                                 name = "CatalogList",
@@ -10206,19 +10206,19 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ApplicationLauncher.CommandsIncoming.LaunchApp.ID to
                             CommandInfo(
                                 name = "LaunchApp",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Application",
                                                 type = DataType.APPLICATION,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Data",
                                                 type = DataType.OCTSTR,
@@ -10230,8 +10230,8 @@ val CLUSTERS_1_0 =
                                 name = "StopApp",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Application",
                                                 type = DataType.APPLICATION,
@@ -10243,8 +10243,8 @@ val CLUSTERS_1_0 =
                                 name = "HideApp",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Application",
                                                 type = DataType.APPLICATION,
@@ -10253,18 +10253,18 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ApplicationLauncher.CommandsOutgoing.LauncherResponse.ID to
                             CommandInfo(
                                 name = "LauncherResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.STATUS_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Data",
                                                 type = DataType.OCTSTR,
@@ -10272,13 +10272,13 @@ val CLUSTERS_1_0 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.ApplicationBasic.ID to
             ClusterInfo(
                 name = "Application Basic",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.ApplicationBasic.Attributes.VendorName.ID to
                             AttributeInfo(
                                 name = "VendorName",
@@ -10325,26 +10325,26 @@ val CLUSTERS_1_0 =
                             AttributeInfo(
                                 name = "AllowedVendorList",
                                 type = DataType.LIST_VENDOR_ID,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.AccountLogin.ID to
             ClusterInfo(
                 name = "Account Login",
-                attributes = mapOf<Int, AttributeInfo>(),
+                attributes = mapOf<UInt, AttributeInfo>(),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.AccountLogin.CommandsIncoming.GetSetupPIN.ID to
                             CommandInfo(
                                 name = "GetSetupPIN",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "TempAccountIdentifier",
                                                 type = DataType.STRING,
@@ -10354,20 +10354,20 @@ val CLUSTERS_1_0 =
                         Clusters.AccountLogin.CommandsIncoming.Login.ID to
                             CommandInfo(
                                 name = "Login",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "TempAccountIdentifier",
                                                 type = DataType.STRING,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "SetupPIN",
                                                 type = DataType.STRING,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Node",
                                                 type = DataType.NODE_ID,
@@ -10379,8 +10379,8 @@ val CLUSTERS_1_0 =
                                 name = "Logout",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Node",
                                                 type = DataType.NODE_ID,
@@ -10389,13 +10389,13 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.AccountLogin.CommandsOutgoing.GetSetupPINResponse.ID to
                             CommandInfo(
                                 name = "GetSetupPINResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "SetupPIN",
                                                 type = DataType.STRING,
@@ -10404,7 +10404,7 @@ val CLUSTERS_1_0 =
                             ),
                     ),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.AccountLogin.Events.LoggedOut.ID to
                             EventInfo(
                                 name = "LoggedOut",

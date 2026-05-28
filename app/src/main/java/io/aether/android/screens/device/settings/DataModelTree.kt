@@ -24,13 +24,13 @@ import io.aether.android.chip.DeviceMatterInfo
 
 @Composable
 fun EndpointTree(
-    endpoint: Int,
-    infosByEndpoint: Map<Int, DeviceMatterInfo>,
-    expandedEndpoints: MutableMap<Int, Boolean>,
+    endpoint: UInt,
+    infosByEndpoint: Map<UInt, DeviceMatterInfo>,
+    expandedEndpoints: MutableMap<UInt, Boolean>,
     clustersMap: Map<Long, String>,
     devicesMap: Map<Long, String>,
     depth: Int,
-    visited: Set<Int>,
+    visited: Set<UInt>,
 ) {
   if (endpoint in visited) return
   val endpointInfo = infosByEndpoint[endpoint] ?: return

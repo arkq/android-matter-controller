@@ -129,7 +129,7 @@ private fun DataModelScreen(
               style = MaterialTheme.typography.bodyMedium,
           )
         } else {
-          val expandedEndpoints = remember { mutableStateMapOf<Int, Boolean>() }
+          val expandedEndpoints = remember { mutableStateMapOf<UInt, Boolean>() }
           val infosByEndpoint =
               remember(deviceMatterInfoList) { deviceMatterInfoList.associateBy { it.endpoint } }
           val childEndpoints =

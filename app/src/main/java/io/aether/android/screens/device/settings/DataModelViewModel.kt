@@ -63,7 +63,7 @@ constructor(
   fun inspectApplicationBasicCluster(nodeId: Long) {
     Timber.d("inspectApplicationBasicCluster: nodeId [${nodeId}]")
     viewModelScope.launch {
-      val attributeList = clustersHelper.readApplicationBasicClusterAttributeList(nodeId, 1)
+      val attributeList = clustersHelper.readApplicationBasicClusterAttributeList(nodeId, 1u)
       attributeList.forEach { Timber.d("inspectDevice attribute: [$it]") }
     }
   }
@@ -72,10 +72,10 @@ constructor(
   fun inspectBasicCluster(nodeId: Long) {
     Timber.d("inspectBasicCluster: nodeId [${nodeId}]")
     viewModelScope.launch {
-      val vendorId = clustersHelper.readBasicClusterVendorIDAttribute(nodeId, 0)
+      val vendorId = clustersHelper.readBasicClusterVendorIDAttribute(nodeId, 0u)
       Timber.d("vendorId [${vendorId}]")
 
-      val attributeList = clustersHelper.readBasicClusterAttributeList(nodeId, 0)
+      val attributeList = clustersHelper.readBasicClusterAttributeList(nodeId, 0u)
       Timber.d("attributeList [${attributeList}]")
     }
   }

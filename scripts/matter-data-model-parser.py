@@ -52,10 +52,18 @@ def _get_type(element: ET._Element) -> str:
     return type
 
 
-def _get_type_name(type: str) -> str:
+def _get_type_enum(type: str) -> str:
     if type:
-        return _to_upper_snake(type)
-    return "UNKNOWN"
+        return f"DataType.{_to_upper_snake(type)}"
+    return "DataType.UNKNOWN"
+
+
+def _get_privilege_enum(priv: str) -> str:
+    if priv:
+        if priv.lower() == "admin":
+            priv = "ADMINISTER"
+        return f"Privilege.{_to_upper_snake(priv)}"
+    return "Privilege.NONE"
 
 
 def _xml_files_for_version(data_model_dir: Path, version: str) -> list[Path]:
@@ -389,16 +397,6 @@ for cluster in clusters.values():
         for param in event.parameters.values():
             types.add(param.type)
 
-privileges: set[str] = set()
-for cluster in clusters.values():
-    for attr in cluster.attributes.values():
-        privileges.add(attr.read_privilege)
-        privileges.add(attr.write_privilege)
-    for cmd in cluster.commands_in.values():
-        privileges.add(cmd.privilege)
-    for cmd in cluster.commands_out.values():
-        privileges.add(cmd.privilege)
-
 spdx = "SPDX"  # Hide code generator from REUSE tool.
 HEADER = f"""
 // {spdx}-FileCopyrightText: 2026 The Authors
@@ -416,29 +414,29 @@ with open(args.out_dir / "Clusters.kt", "w") as f:
     f.write("object Clusters {\n")
     for cluster in sorted(clusters.values(), key=lambda x: x.id):
         f.write(f"  object {_to_camel(cluster.name)} {{\n")
-        f.write(f"    const val ID = 0x{cluster.id:04X}\n")
+        f.write(f"    const val ID = 0x{cluster.id:04X}u\n")
         f.write("    object Attributes {\n")
         for attr in sorted(cluster.attributes.values(), key=lambda x: x.id):
             f.write(f"      object {_to_camel(attr.name)} {{\n")
-            f.write(f"        const val ID = 0x{attr.id:04X}\n")
+            f.write(f"        const val ID = 0x{attr.id:04X}u\n")
             f.write("      }\n")
         f.write("    }\n")
         f.write("    object CommandsIncoming {\n")
         for cmd in sorted(cluster.commands_in.values(), key=lambda x: x.id):
             f.write(f"      object {_to_camel(cmd.name)} {{\n")
-            f.write(f"        const val ID = 0x{cmd.id:04X}\n")
+            f.write(f"        const val ID = 0x{cmd.id:04X}u\n")
             f.write("      }\n")
         f.write("    }\n")
         f.write("    object CommandsOutgoing {\n")
         for cmd in sorted(cluster.commands_out.values(), key=lambda x: x.id):
             f.write(f"      object {_to_camel(cmd.name)} {{\n")
-            f.write(f"        const val ID = 0x{cmd.id:04X}\n")
+            f.write(f"        const val ID = 0x{cmd.id:04X}u\n")
             f.write("      }\n")
         f.write("    }\n")
         f.write("    object Events {\n")
         for event in sorted(cluster.events.values(), key=lambda x: x.id):
             f.write(f"      object {_to_camel(event.name)} {{\n")
-            f.write(f"        const val ID = 0x{event.id:04X}\n")
+            f.write(f"        const val ID = 0x{event.id:04X}u\n")
             f.write("      }\n")
         f.write("    }\n")
         f.write("  }\n")
@@ -446,48 +444,12 @@ with open(args.out_dir / "Clusters.kt", "w") as f:
 
 
 print("Writing data types and privileges...")
-with open(args.out_dir / "Types.kt", "w") as f:
+with open(args.out_dir / "DataTypes.kt", "w") as f:
     f.write(HEADER)
-    f.write("data class ClusterInfo(\n")
-    f.write("    val name: String,\n")
-    f.write("    val attributes: Map<Int, AttributeInfo>,\n")
-    f.write("    val commandsIncoming: Map<Int, CommandInfo>,\n")
-    f.write("    val commandsOutgoing: Map<Int, CommandInfo>,\n")
-    f.write("    val events: Map<Int, EventInfo>,\n")
-    f.write(")\n")
-    f.write("\n")
-    f.write("data class AttributeInfo(\n")
-    f.write("    val name: String,\n")
-    f.write("    val type: DataType,\n")
-    f.write("    val readPrivilege: Privilege? = null,\n")
-    f.write("    val writePrivilege: Privilege? = null,\n")
-    f.write(")\n")
-    f.write("\n")
-    f.write("data class ParameterInfo(\n")
-    f.write("    val name: String,\n")
-    f.write("    val type: DataType,\n")
-    f.write(")\n")
-    f.write("\n")
-    f.write("data class CommandInfo(\n")
-    f.write("    val name: String,\n")
-    f.write("    val parameters: Map<Int, ParameterInfo>,\n")
-    f.write("    val privilege: Privilege? = null,\n")
-    f.write(")\n")
-    f.write("\n")
-    f.write("data class EventInfo(\n")
-    f.write("    val name: String,\n")
-    f.write(")\n")
-    f.write("\n")
     f.write("enum class DataType(val label: String) {\n")
     f.write('  UNKNOWN("UNKNOWN"),\n')
     for type in sorted(filter(None, types)):
         f.write(f'  {_to_upper_snake(type)}("{type}"),\n')
-    f.write("}\n")
-    f.write("\n")
-    f.write("enum class Privilege(val label: String) {\n")
-    f.write('  UNKNOWN("UNKNOWN"),\n')
-    for priv in sorted(filter(None, privileges)):
-        f.write(f'  {_to_upper_snake(priv)}("{priv}"),\n')
     f.write("}\n")
 
 
@@ -497,12 +459,12 @@ with open(args.out_dir / "Devices.kt", "w") as f:
     f.write("object Devices {\n")
     for id, device in sorted(devices.items()):
         f.write(f"  object {_to_camel(device.name)} {{\n")
-        f.write(f"    const val ID = 0x{id:04X}\n")
+        f.write(f"    const val ID = 0x{id:04X}u\n")
         f.write("  }\n")
     f.write("}\n")
     f.write("\n")
     f.write("val DEVICES =\n")
-    f.write("    mapOf<Int, String>(\n")
+    f.write("    mapOf<UInt, String>(\n")
     for id, device in sorted(devices.items()):
         f.write(f'        Devices.{_to_camel(device.name)}.ID to "{device.name}",\n')
     f.write("    )\n")
@@ -513,60 +475,58 @@ def write_cluster_registry(clusters: dict[int, Cluster], path: Path, version: st
     with open(path, "w") as f:
         f.write(HEADER)
         f.write(f"val CLUSTERS_{version.replace('.', '_')} =\n")
-        f.write("    mapOf<Int, ClusterInfo>(\n")
+        f.write("    mapOf<UInt, ClusterInfo>(\n")
         for cluster in sorted(clusters.values(), key=lambda x: x.id):
             cluster_namespace = f"Clusters.{_to_camel(cluster.name)}"
             f.write(f"    {cluster_namespace}.ID to ClusterInfo(\n")
             f.write(f'      name = "{cluster.name}",\n')
-            f.write("      attributes = mapOf<Int, AttributeInfo>(\n")
+            f.write("      attributes = mapOf<UInt, AttributeInfo>(\n")
             for attr in sorted(cluster.attributes.values(), key=lambda x: x.id):
                 attr_namespace = f"{cluster_namespace}.Attributes.{_to_camel(attr.name)}"
                 f.write(f"        {attr_namespace}.ID to AttributeInfo(\n")
                 f.write(f'          name = "{attr.name}",\n')
-                f.write(f"          type = DataType.{_get_type_name(attr.type)},\n")
+                f.write(f"          type = {_get_type_enum(attr.type)},\n")
                 if attr.read_privilege:
-                    priv = f"Privilege.{_to_upper_snake(attr.read_privilege)}"
+                    priv = _get_privilege_enum(attr.read_privilege)
                     f.write(f"          readPrivilege = {priv},\n")
                 if attr.write_privilege:
-                    priv = f"Privilege.{_to_upper_snake(attr.write_privilege)}"
+                    priv = _get_privilege_enum(attr.write_privilege)
                     f.write(f"          writePrivilege = {priv},\n")
                 f.write("        ),\n")
             f.write("      ),\n")
-            f.write("      commandsIncoming = mapOf<Int, CommandInfo>(\n")
+            f.write("      commandsIncoming = mapOf<UInt, CommandInfo>(\n")
             for cmd in sorted(cluster.commands_in.values(), key=lambda x: x.id):
                 cmd_namespace = f"{cluster_namespace}.CommandsIncoming.{_to_camel(cmd.name)}"
                 f.write(f"        {cmd_namespace}.ID to CommandInfo(\n")
                 f.write(f'          name = "{cmd.name}",\n')
                 if cmd.privilege:
-                    priv = f"Privilege.{_to_upper_snake(cmd.privilege)}"
-                    f.write(f"          privilege = {priv},\n")
-                f.write("          parameters = mapOf<Int, ParameterInfo>(\n")
+                    f.write(f"          privilege = {_get_privilege_enum(cmd.privilege)},\n")
+                f.write("          parameters = mapOf<UInt, ParameterInfo>(\n")
                 for param in sorted(cmd.parameters.values(), key=lambda x: x.id):
-                    f.write(f"            {param.id} to ParameterInfo(\n")
+                    f.write(f"            {param.id}u to ParameterInfo(\n")
                     f.write(f'              name = "{param.name}",\n')
-                    f.write(f"              type = DataType.{_get_type_name(param.type)},\n")
+                    f.write(f"              type = {_get_type_enum(param.type)},\n")
                     f.write("            ),\n")
                 f.write("          ),\n")
                 f.write("        ),\n")
             f.write("      ),\n")
-            f.write("      commandsOutgoing = mapOf<Int, CommandInfo>(\n")
+            f.write("      commandsOutgoing = mapOf<UInt, CommandInfo>(\n")
             for cmd in sorted(cluster.commands_out.values(), key=lambda x: x.id):
                 cmd_namespace = f"{cluster_namespace}.CommandsOutgoing.{_to_camel(cmd.name)}"
                 f.write(f"        {cmd_namespace}.ID to CommandInfo(\n")
                 f.write(f'          name = "{cmd.name}",\n')
                 if cmd.privilege:
-                    priv = f"Privilege.{_to_upper_snake(cmd.privilege)}"
-                    f.write(f"          privilege = {priv},\n")
-                f.write("          parameters = mapOf<Int, ParameterInfo>(\n")
+                    f.write(f"          privilege = {_get_privilege_enum(cmd.privilege)},\n")
+                f.write("          parameters = mapOf<UInt, ParameterInfo>(\n")
                 for param in sorted(cmd.parameters.values(), key=lambda x: x.id):
-                    f.write(f"            {param.id} to ParameterInfo(\n")
+                    f.write(f"            {param.id}u to ParameterInfo(\n")
                     f.write(f'              name = "{param.name}",\n')
-                    f.write(f"              type = DataType.{_get_type_name(param.type)},\n")
+                    f.write(f"              type = {_get_type_enum(param.type)},\n")
                     f.write("            ),\n")
                 f.write("          ),\n")
                 f.write("        ),\n")
             f.write("      ),\n")
-            f.write("      events = mapOf<Int, EventInfo>(\n")
+            f.write("      events = mapOf<UInt, EventInfo>(\n")
             for event in sorted(cluster.events.values(), key=lambda x: x.id):
                 event_namespace = f"{cluster_namespace}.Events.{_to_camel(event.name)}"
                 f.write(f"        {event_namespace}.ID to EventInfo(\n")

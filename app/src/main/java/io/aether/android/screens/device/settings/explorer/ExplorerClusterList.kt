@@ -23,18 +23,18 @@ import io.aether.android.screens.common.SearchTextField
 
 @Composable
 internal fun ClusterListContent(
-    endpoint: Int,
+    endpoint: UInt,
     infos: List<DeviceMatterInfo>,
-    knownClustersById: Map<Int, ExplorerClusterDefinition>,
+    knownClustersById: Map<UInt, ExplorerClusterDefinition>,
     showSearch: Boolean,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
-    onSelectCluster: (Int) -> Unit,
+    onSelectCluster: (UInt) -> Unit,
 ) {
   val endpointInfo = infos.firstOrNull { it.endpoint == endpoint }
-  val serverClusters = endpointInfo?.serverClusters.orEmpty().map { it.toInt() }.sorted()
-  val clientClusters = endpointInfo?.clientClusters.orEmpty().map { it.toInt() }.sorted()
-  val clusterMatchesQuery: (Int) -> Boolean = { clusterId ->
+  val serverClusters = endpointInfo?.serverClusters.orEmpty().map { it.toUInt() }.sorted()
+  val clientClusters = endpointInfo?.clientClusters.orEmpty().map { it.toUInt() }.sorted()
+  val clusterMatchesQuery: (UInt) -> Boolean = { clusterId ->
     matchesExplorerQuery(
         searchQuery,
         CLUSTERS[clusterId]?.name.orEmpty(),

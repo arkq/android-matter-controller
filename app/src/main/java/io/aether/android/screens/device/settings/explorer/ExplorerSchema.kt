@@ -9,11 +9,11 @@ import io.aether.android.matter.GENERIC_ATTRIBUTES
 import io.aether.android.matter.Privilege
 
 data class ExplorerAttributeDefinition(
-    val id: Int,
+    val id: UInt,
     val type: DataType = DataType.UNKNOWN,
     val name: String,
-    val readPrivilege: Privilege? = null,
-    val writePrivilege: Privilege? = null,
+    val readPrivilege: Privilege = Privilege.NONE,
+    val writePrivilege: Privilege = Privilege.NONE,
 )
 
 data class ExplorerCommandArgumentDefinition(
@@ -23,25 +23,25 @@ data class ExplorerCommandArgumentDefinition(
 )
 
 data class ExplorerCommandDefinition(
-    val id: Int,
+    val id: UInt,
     val name: String,
     val arguments: List<ExplorerCommandArgumentDefinition> = emptyList(),
 )
 
 data class ExplorerEventDefinition(
-    val id: Int,
+    val id: UInt,
     val name: String,
 )
 
 data class ExplorerClusterDefinition(
-    val clusterId: Int,
+    val clusterId: UInt,
     val attributes: List<ExplorerAttributeDefinition> = emptyList(),
     val commands: List<ExplorerCommandDefinition> = emptyList(),
     val events: List<ExplorerEventDefinition> = emptyList(),
 )
 
 object ExplorerSchema {
-  fun buildKnownClustersById(): Map<Int, ExplorerClusterDefinition> =
+  fun buildKnownClustersById(): Map<UInt, ExplorerClusterDefinition> =
       CLUSTERS.entries.associate { (clusterId, clusterInfo) ->
         clusterId to
             ExplorerClusterDefinition(
@@ -58,7 +58,7 @@ object ExplorerSchema {
                         } +
                             GENERIC_ATTRIBUTES.map { (attributeId, attributeInfo) ->
                               ExplorerAttributeDefinition(
-                                  id = attributeId,
+                                  id = attributeId.toUInt(),
                                   type = attributeInfo.type,
                                   name = attributeInfo.name,
                                   readPrivilege = attributeInfo.readPrivilege,

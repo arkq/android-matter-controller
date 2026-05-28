@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import io.aether.android.R
-import io.aether.android.matter.Privilege
 import io.aether.android.screens.common.HighlightedOutlinedTextField
 
 @Composable
@@ -73,7 +72,7 @@ internal fun AttributeDetailContent(
         text =
             stringResource(
                 R.string.device_explorer_attribute_read_privilege,
-                attribute.readPrivilege?.label ?: Privilege.UNKNOWN.label,
+                attribute.readPrivilege.toLabel(),
             ),
         style = MaterialTheme.typography.bodyMedium,
     )
@@ -82,7 +81,7 @@ internal fun AttributeDetailContent(
         text =
             stringResource(
                 R.string.device_explorer_attribute_write_privilege,
-                attribute.writePrivilege?.label ?: Privilege.UNKNOWN.label,
+                attribute.writePrivilege.toLabel(),
             ),
         style = MaterialTheme.typography.bodyMedium,
     )

@@ -6,12 +6,12 @@
 package io.aether.android.matter
 
 val CLUSTERS_1_4 =
-    mapOf<Int, ClusterInfo>(
+    mapOf<UInt, ClusterInfo>(
         Clusters.WaterTankLevelMonitoring.ID to
             ClusterInfo(
                 name = "Water Tank Level Monitoring",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.WaterTankLevelMonitoring.Attributes.Condition.ID to
                             AttributeInfo(
                                 name = "Condition",
@@ -51,22 +51,22 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.WaterTankLevelMonitoring.CommandsIncoming.ResetCondition.ID to
                             CommandInfo(
                                 name = "ResetCondition",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.WaterHeaterManagement.ID to
             ClusterInfo(
                 name = "Water Heater Management",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.WaterHeaterManagement.Attributes.HeaterTypes.ID to
                             AttributeInfo(
                                 name = "HeaterTypes",
@@ -105,14 +105,14 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.WaterHeaterManagement.CommandsIncoming.Boost.ID to
                             CommandInfo(
                                 name = "Boost",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "BoostInfo",
                                                 type = DataType.WATER_HEATER_BOOST_INFO_STRUCT,
@@ -123,12 +123,12 @@ val CLUSTERS_1_4 =
                             CommandInfo(
                                 name = "CancelBoost",
                                 privilege = Privilege.MANAGE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.WaterHeaterManagement.Events.BoostStarted.ID to
                             EventInfo(
                                 name = "BoostStarted",
@@ -143,7 +143,7 @@ val CLUSTERS_1_4 =
             ClusterInfo(
                 name = "Water Heater Mode",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.WaterHeaterMode.Attributes.SupportedModes.ID to
                             AttributeInfo(
                                 name = "SupportedModes",
@@ -165,15 +165,15 @@ val CLUSTERS_1_4 =
                                 type = DataType.UNKNOWN,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.ServiceArea.ID to
             ClusterInfo(
                 name = "Service Area",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.ServiceArea.Attributes.SupportedAreas.ID to
                             AttributeInfo(
                                 name = "SupportedAreas",
@@ -212,14 +212,14 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ServiceArea.CommandsIncoming.SelectAreas.ID to
                             CommandInfo(
                                 name = "SelectAreas",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NewAreas",
                                                 type = DataType.LIST_UINT32,
@@ -231,8 +231,8 @@ val CLUSTERS_1_4 =
                                 name = "SkipArea",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "SkippedArea",
                                                 type = DataType.UINT32,
@@ -241,18 +241,18 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ServiceArea.CommandsOutgoing.SelectAreasResponse.ID to
                             CommandInfo(
                                 name = "SelectAreasResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.SELECT_AREAS_STATUS,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "StatusText",
                                                 type = DataType.STRING,
@@ -263,13 +263,13 @@ val CLUSTERS_1_4 =
                             CommandInfo(
                                 name = "SkipAreaResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Status",
                                                 type = DataType.SKIP_AREA_STATUS,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "StatusText",
                                                 type = DataType.STRING,
@@ -277,13 +277,13 @@ val CLUSTERS_1_4 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.WiFiNetworkManagement.ID to
             ClusterInfo(
                 name = "Wi-Fi Network Management",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.WiFiNetworkManagement.Attributes.SSID.ID to
                             AttributeInfo(
                                 name = "SSID",
@@ -298,24 +298,24 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.WiFiNetworkManagement.CommandsIncoming.NetworkPassphraseRequest
                             .ID to
                             CommandInfo(
                                 name = "NetworkPassphraseRequest",
                                 privilege = Privilege.MANAGE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.WiFiNetworkManagement.CommandsOutgoing.NetworkPassphraseResponse
                             .ID to
                             CommandInfo(
                                 name = "NetworkPassphraseResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Passphrase",
                                                 type = DataType.OCTSTR,
@@ -323,13 +323,13 @@ val CLUSTERS_1_4 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.ThreadBorderRouterManagement.ID to
             ClusterInfo(
                 name = "Thread Border Router Management",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.ThreadBorderRouterManagement.Attributes.BorderRouterName.ID to
                             AttributeInfo(
                                 name = "BorderRouterName",
@@ -370,14 +370,14 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ThreadBorderRouterManagement.CommandsIncoming
                             .GetActiveDatasetRequest
                             .ID to
                             CommandInfo(
                                 name = "GetActiveDatasetRequest",
                                 privilege = Privilege.MANAGE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.ThreadBorderRouterManagement.CommandsIncoming
                             .GetPendingDatasetRequest
@@ -385,7 +385,7 @@ val CLUSTERS_1_4 =
                             CommandInfo(
                                 name = "GetPendingDatasetRequest",
                                 privilege = Privilege.MANAGE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.ThreadBorderRouterManagement.CommandsIncoming
                             .SetActiveDatasetRequest
@@ -394,13 +394,13 @@ val CLUSTERS_1_4 =
                                 name = "SetActiveDatasetRequest",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ActiveDataset",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Breadcrumb",
                                                 type = DataType.UINT64,
@@ -414,8 +414,8 @@ val CLUSTERS_1_4 =
                                 name = "SetPendingDatasetRequest",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "PendingDataset",
                                                 type = DataType.OCTSTR,
@@ -424,13 +424,13 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ThreadBorderRouterManagement.CommandsOutgoing.DatasetResponse.ID to
                             CommandInfo(
                                 name = "DatasetResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "Dataset",
                                                 type = DataType.OCTSTR,
@@ -438,13 +438,13 @@ val CLUSTERS_1_4 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.ThreadNetworkDirectory.ID to
             ClusterInfo(
                 name = "Thread Network Directory",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.ThreadNetworkDirectory.Attributes.PreferredExtendedPanID.ID to
                             AttributeInfo(
                                 name = "PreferredExtendedPanID",
@@ -466,14 +466,14 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ThreadNetworkDirectory.CommandsIncoming.AddNetwork.ID to
                             CommandInfo(
                                 name = "AddNetwork",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "OperationalDataset",
                                                 type = DataType.OCTSTR,
@@ -485,8 +485,8 @@ val CLUSTERS_1_4 =
                                 name = "RemoveNetwork",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ExtendedPanID",
                                                 type = DataType.OCTSTR,
@@ -498,8 +498,8 @@ val CLUSTERS_1_4 =
                                 name = "GetOperationalDataset",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ExtendedPanID",
                                                 type = DataType.OCTSTR,
@@ -508,14 +508,14 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ThreadNetworkDirectory.CommandsOutgoing.OperationalDatasetResponse
                             .ID to
                             CommandInfo(
                                 name = "OperationalDatasetResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "OperationalDataset",
                                                 type = DataType.OCTSTR,
@@ -523,13 +523,13 @@ val CLUSTERS_1_4 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.EcosystemInformation.ID to
             ClusterInfo(
                 name = "Ecosystem Information",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.EcosystemInformation.Attributes.DeviceDirectory.ID to
                             AttributeInfo(
                                 name = "DeviceDirectory",
@@ -543,15 +543,15 @@ val CLUSTERS_1_4 =
                                 readPrivilege = Privilege.MANAGE,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.CommissionerControl.ID to
             ClusterInfo(
                 name = "Commissioner Control",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.CommissionerControl.Attributes.SupportedDeviceCategories.ID to
                             AttributeInfo(
                                 name = "SupportedDeviceCategories",
@@ -560,30 +560,30 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.CommissionerControl.CommandsIncoming.RequestCommissioningApproval
                             .ID to
                             CommandInfo(
                                 name = "RequestCommissioningApproval",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "RequestID",
                                                 type = DataType.UINT64,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "VendorID",
                                                 type = DataType.VENDOR_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "ProductID",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "Label",
                                                 type = DataType.STRING,
@@ -595,13 +595,13 @@ val CLUSTERS_1_4 =
                                 name = "CommissionNode",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "RequestID",
                                                 type = DataType.UINT64,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "ResponseTimeoutSeconds",
                                                 type = DataType.UINT16,
@@ -610,34 +610,34 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.CommissionerControl.CommandsOutgoing.ReverseOpenCommissioningWindow
                             .ID to
                             CommandInfo(
                                 name = "ReverseOpenCommissioningWindow",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "CommissioningTimeout",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "PAKEPasscodeVerifier",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Discriminator",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "Iterations",
                                                 type = DataType.UINT32,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "Salt",
                                                 type = DataType.OCTSTR,
@@ -646,7 +646,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.CommissionerControl.Events.CommissioningRequestResult.ID to
                             EventInfo(
                                 name = "CommissioningRequestResult",
@@ -657,101 +657,101 @@ val CLUSTERS_1_4 =
             ClusterInfo(
                 name = "Joint Fabric Datastore",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.JointFabricDatastore.Attributes.AnchorRootCA.ID to
                             AttributeInfo(
                                 name = "AnchorRootCA",
                                 type = DataType.OCTSTR,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.JointFabricDatastore.Attributes.AnchorNodeID.ID to
                             AttributeInfo(
                                 name = "AnchorNodeID",
                                 type = DataType.NODE_ID,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.JointFabricDatastore.Attributes.AnchorVendorID.ID to
                             AttributeInfo(
                                 name = "AnchorVendorID",
                                 type = DataType.VENDOR_ID,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.JointFabricDatastore.Attributes.FriendlyName.ID to
                             AttributeInfo(
                                 name = "FriendlyName",
                                 type = DataType.STRING,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.JointFabricDatastore.Attributes.GroupKeySetList.ID to
                             AttributeInfo(
                                 name = "GroupKeySetList",
                                 type = DataType.LIST_GROUP_KEY_SET_STRUCT,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.JointFabricDatastore.Attributes.GroupList.ID to
                             AttributeInfo(
                                 name = "GroupList",
                                 type = DataType.LIST_DATASTORE_GROUP_INFORMATION_ENTRY,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.JointFabricDatastore.Attributes.NodeList.ID to
                             AttributeInfo(
                                 name = "NodeList",
                                 type = DataType.LIST_DATASTORE_NODE_INFORMATION_ENTRY,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.JointFabricDatastore.Attributes.AdminList.ID to
                             AttributeInfo(
                                 name = "AdminList",
                                 type = DataType.LIST_DATASTORE_ADMINISTRATOR_INFORMATION_ENTRY,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.JointFabricDatastore.Attributes.Status.ID to
                             AttributeInfo(
                                 name = "Status",
                                 type = DataType.DATASTORE_ADMINISTRATOR_INFORMATION_ENTRY,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.JointFabricDatastore.Attributes.EndpointGroupIDList.ID to
                             AttributeInfo(
                                 name = "EndpointGroupIDList",
                                 type = DataType.LIST_DATASTORE_ENDPOINT_GROUP_ID_ENTRY_STRUCT,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.JointFabricDatastore.Attributes.EndpointBindingList.ID to
                             AttributeInfo(
                                 name = "EndpointBindingList",
                                 type = DataType.LIST_DATASTORE_ENDPOINT_BINDING_ENTRY_STRUCT,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.JointFabricDatastore.Attributes.NodeKeySetList.ID to
                             AttributeInfo(
                                 name = "NodeKeySetList",
                                 type = DataType.LIST_DATASTORE_NODE_KEY_SET_ENTRY_STRUCT,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.JointFabricDatastore.Attributes.NodeACLList.ID to
                             AttributeInfo(
                                 name = "NodeACLList",
                                 type = DataType.LIST_DATASTORE_ACL_ENTRY_STRUCT,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.JointFabricDatastore.Attributes.NodeEndpointList.ID to
                             AttributeInfo(
                                 name = "NodeEndpointList",
                                 type = DataType.LIST_DATASTORE_ENDPOINT_ENTRY_STRUCT,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.JointFabricDatastore.CommandsIncoming.AddKeySet.ID to
                             CommandInfo(
                                 name = "AddKeySet",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupKeySet",
                                                 type = DataType.GROUP_KEY_SET_STRUCT,
@@ -761,10 +761,10 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricDatastore.CommandsIncoming.UpdateKeySet.ID to
                             CommandInfo(
                                 name = "UpdateKeySet",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupKeySet",
                                                 type = DataType.GROUP_KEY_SET_STRUCT,
@@ -774,10 +774,10 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricDatastore.CommandsIncoming.RemoveKeySet.ID to
                             CommandInfo(
                                 name = "RemoveKeySet",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupKeySetID",
                                                 type = DataType.UINT16,
@@ -787,35 +787,35 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricDatastore.CommandsIncoming.AddGroup.ID to
                             CommandInfo(
                                 name = "AddGroup",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "FriendlyName",
                                                 type = DataType.STRING,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "GroupKeySetID",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "GroupCAT",
                                                 type = DataType.UINT16,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "GroupCATVersion",
                                                 type = DataType.UINT16,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "GroupPermission",
                                                 type = DataType.ACCESS_CONTROL_ENTRY_PRIVILEGE_ENUM,
@@ -825,35 +825,35 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricDatastore.CommandsIncoming.UpdateGroup.ID to
                             CommandInfo(
                                 name = "UpdateGroup",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "FriendlyName",
                                                 type = DataType.STRING,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "GroupKeySetID",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "GroupCAT",
                                                 type = DataType.UINT16,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "GroupCATVersion",
                                                 type = DataType.UINT16,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "GroupPermission",
                                                 type = DataType.ACCESS_CONTROL_ENTRY_PRIVILEGE_ENUM,
@@ -863,10 +863,10 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricDatastore.CommandsIncoming.RemoveGroup.ID to
                             CommandInfo(
                                 name = "RemoveGroup",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
@@ -876,32 +876,32 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricDatastore.CommandsIncoming.AddAdmin.ID to
                             CommandInfo(
                                 name = "AddAdmin",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NodeID",
                                                 type =
                                                     DataType
                                                         .DATASTORE_ADMINISTRATOR_INFORMATION_ENTRY,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "FriendlyName",
                                                 type = DataType.NODE_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "VendorID",
                                                 type = DataType.STRING,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "ICAC",
                                                 type = DataType.VENDOR_ID,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "ICAC",
                                                 type = DataType.OCTSTR,
@@ -911,20 +911,20 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricDatastore.CommandsIncoming.UpdateAdmin.ID to
                             CommandInfo(
                                 name = "UpdateAdmin",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NodeID",
                                                 type = DataType.NODE_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "FriendlyName",
                                                 type = DataType.STRING,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "ICAC",
                                                 type = DataType.OCTSTR,
@@ -934,10 +934,10 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricDatastore.CommandsIncoming.RemoveAdmin.ID to
                             CommandInfo(
                                 name = "RemoveAdmin",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NodeID",
                                                 type = DataType.NODE_ID,
@@ -947,15 +947,15 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricDatastore.CommandsIncoming.AddPendingNode.ID to
                             CommandInfo(
                                 name = "AddPendingNode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NodeID",
                                                 type = DataType.NODE_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "FriendlyName",
                                                 type = DataType.STRING,
@@ -965,10 +965,10 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricDatastore.CommandsIncoming.RefreshNode.ID to
                             CommandInfo(
                                 name = "RefreshNode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NodeID",
                                                 type = DataType.NODE_ID,
@@ -978,15 +978,15 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricDatastore.CommandsIncoming.UpdateNode.ID to
                             CommandInfo(
                                 name = "UpdateNode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NodeID",
                                                 type = DataType.NODE_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "FriendlyName",
                                                 type = DataType.STRING,
@@ -996,10 +996,10 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricDatastore.CommandsIncoming.RemoveNode.ID to
                             CommandInfo(
                                 name = "RemoveNode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NodeID",
                                                 type = DataType.NODE_ID,
@@ -1009,20 +1009,20 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricDatastore.CommandsIncoming.UpdateEndpointForNode.ID to
                             CommandInfo(
                                 name = "UpdateEndpointForNode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "EndpointID",
                                                 type = DataType.ENDPOINT_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "NodeID",
                                                 type = DataType.NODE_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "FriendlyName",
                                                 type = DataType.STRING,
@@ -1033,20 +1033,20 @@ val CLUSTERS_1_4 =
                             .ID to
                             CommandInfo(
                                 name = "AddGroupIDToEndpointForNode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NodeID",
                                                 type = DataType.NODE_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "EndpointID",
                                                 type = DataType.ENDPOINT_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
@@ -1058,20 +1058,20 @@ val CLUSTERS_1_4 =
                             .ID to
                             CommandInfo(
                                 name = "RemoveGroupIDFromEndpointForNode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NodeID",
                                                 type = DataType.NODE_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "EndpointID",
                                                 type = DataType.ENDPOINT_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
@@ -1082,20 +1082,20 @@ val CLUSTERS_1_4 =
                             .ID to
                             CommandInfo(
                                 name = "AddBindingToEndpointForNode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NodeID",
                                                 type = DataType.NODE_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "EndpointID",
                                                 type = DataType.ENDPOINT_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Binding",
                                                 type = DataType.TARGET_STRUCT,
@@ -1107,20 +1107,20 @@ val CLUSTERS_1_4 =
                             .ID to
                             CommandInfo(
                                 name = "RemoveBindingFromEndpointForNode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ListID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "EndpointID",
                                                 type = DataType.ENDPOINT_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "NodeID",
                                                 type = DataType.NODE_ID,
@@ -1130,15 +1130,15 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricDatastore.CommandsIncoming.AddACLToNode.ID to
                             CommandInfo(
                                 name = "AddACLToNode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "NodeID",
                                                 type = DataType.NODE_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "ACLEntry",
                                                 type = DataType.ACCESS_CONTROL_ENTRY_STRUCT,
@@ -1148,15 +1148,15 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricDatastore.CommandsIncoming.RemoveACLFromNode.ID to
                             CommandInfo(
                                 name = "RemoveACLFromNode",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ListID",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "NodeID",
                                                 type = DataType.NODE_ID,
@@ -1164,30 +1164,30 @@ val CLUSTERS_1_4 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.JointFabricAdministrator.ID to
             ClusterInfo(
                 name = "Joint Fabric Administrator",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.JointFabricAdministrator.Attributes.AdministratorFabricIndex.ID to
                             AttributeInfo(
                                 name = "AdministratorFabricIndex",
                                 type = DataType.FABRIC_IDX,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.JointFabricAdministrator.CommandsIncoming.ICACCSRRequest.ID to
                             CommandInfo(
                                 name = "ICACCSRRequest",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ICACSR",
                                                 type = DataType.OCTSTR,
@@ -1197,15 +1197,15 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricAdministrator.CommandsIncoming.AddICAC.ID to
                             CommandInfo(
                                 name = "AddICAC",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ICACValue",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "ICACValue",
                                                 type = DataType.OCTSTR,
@@ -1217,30 +1217,30 @@ val CLUSTERS_1_4 =
                             .ID to
                             CommandInfo(
                                 name = "OpenJointCommissioningWindow",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "CommissioningTimeout",
                                                 type = DataType.UINT16,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "PAKEPasscodeVerifier",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Discriminator",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "Iterations",
                                                 type = DataType.UINT32,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "Salt",
                                                 type = DataType.OCTSTR,
@@ -1251,25 +1251,25 @@ val CLUSTERS_1_4 =
                             .ID to
                             CommandInfo(
                                 name = "TransferAnchorRequest",
-                                privilege = Privilege.ADMIN,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                privilege = Privilege.ADMINISTER,
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.JointFabricAdministrator.CommandsIncoming.TransferAnchorComplete
                             .ID to
                             CommandInfo(
                                 name = "TransferAnchorComplete",
-                                privilege = Privilege.ADMIN,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                privilege = Privilege.ADMINISTER,
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.JointFabricAdministrator.CommandsIncoming
                             .AnnounceJointFabricAdministrator
                             .ID to
                             CommandInfo(
                                 name = "AnnounceJointFabricAdministrator",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "EndpointID",
                                                 type = DataType.ENDPOINT_NO,
@@ -1278,18 +1278,18 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.JointFabricAdministrator.CommandsOutgoing.ICACCSRResponse.ID to
                             CommandInfo(
                                 name = "ICACCSRResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "StatusCode",
                                                 type = DataType.ICAC_SIGNING_REQUEST_STATUS_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "ICACCSR",
                                                 type = DataType.OCTSTR,
@@ -1300,8 +1300,8 @@ val CLUSTERS_1_4 =
                             CommandInfo(
                                 name = "ICACResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "StatusCode",
                                                 type =
@@ -1314,8 +1314,8 @@ val CLUSTERS_1_4 =
                             CommandInfo(
                                 name = "TransferAnchorResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "StatusCode",
                                                 type =
@@ -1324,6 +1324,6 @@ val CLUSTERS_1_4 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
     )

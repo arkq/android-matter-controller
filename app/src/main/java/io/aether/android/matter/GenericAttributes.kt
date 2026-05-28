@@ -5,32 +5,32 @@ package io.aether.android.matter
 
 object GenericAttributes {
   object GeneratedCommandList {
-    const val ID = 0xFFF8
+    const val ID = 0xFFF8u
   }
 
   object AcceptedCommandList {
-    const val ID = 0xFFF9
+    const val ID = 0xFFF9u
   }
 
   object EventList {
-    const val ID = 0xFFFA
+    const val ID = 0xFFFAu
   }
 
   object AttributeList {
-    const val ID = 0xFFFB
+    const val ID = 0xFFFBu
   }
 
   object FeatureMap {
-    const val ID = 0xFFFC
+    const val ID = 0xFFFCu
   }
 
   object ClusterRevision {
-    const val ID = 0xFFFD
+    const val ID = 0xFFFDu
   }
 }
 
 val GENERIC_ATTRIBUTES =
-    mapOf<Int, AttributeInfo>(
+    mapOf<UInt, AttributeInfo>(
         GenericAttributes.GeneratedCommandList.ID to
             AttributeInfo(
                 name = "GeneratedCommandList",

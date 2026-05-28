@@ -332,13 +332,15 @@ constructor(
       try {
         val deviceMatterInfoList = clustersHelper.fetchDeviceMatterInfo(nodeId)
         val appEndpoints = deviceMatterInfoList.filter { info ->
-          info.endpoint != 0 && info.serverClusters.contains(Clusters.OnOff.ID.toLong())
+          info.endpoint != 0u && info.serverClusters.contains(Clusters.OnOff.ID.toLong())
         }
 
         if (appEndpoints.isEmpty()) {
           // Fallback for devices that expose no application endpoints with On/Off cluster
           // (e.g. legacy or non-standard devices). Fall back to first non-root endpoint.
-          val fallbackEndpointInfo = deviceMatterInfoList.firstOrNull { info -> info.endpoint != 0 }
+          val fallbackEndpointInfo = deviceMatterInfoList.firstOrNull { info ->
+            info.endpoint != 0u
+          }
           val commissionedDeviceTypes = fallbackEndpointInfo?.types ?: emptyList()
           val supportsLevel =
               fallbackEndpointInfo?.serverClusters?.contains(Clusters.LevelControl.ID.toLong()) ==
@@ -351,7 +353,10 @@ constructor(
               ) {
                 try {
                   clustersHelper
-                      .readColorControlClusterAttributeList(nodeId, fallbackEndpointInfo.endpoint)
+                      .readColorControlClusterAttributeList(
+                          nodeId,
+                          fallbackEndpointInfo.endpoint.toInt(),
+                      )
                       .contains(Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID.toLong())
                 } catch (e: Exception) {
                   Timber.w(
@@ -365,7 +370,7 @@ constructor(
               }
           val device =
               MatterEndpoint.newBuilder()
-                  .setEndpointId(fallbackEndpointInfo?.endpoint ?: 1)
+                  .setEndpointId(fallbackEndpointInfo?.endpoint?.toInt() ?: 1)
                   .setLabel(deviceName)
                   .setSupportsLevelControl(supportsLevel)
                   .setSupportsColorTemperature(supportsColorTemperature)
@@ -398,7 +403,7 @@ constructor(
                 if (info.serverClusters.contains(Clusters.ColorControl.ID.toLong())) {
                   try {
                     clustersHelper
-                        .readColorControlClusterAttributeList(nodeId, info.endpoint)
+                        .readColorControlClusterAttributeList(nodeId, info.endpoint.toInt())
                         .contains(
                             Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID.toLong()
                         )
@@ -415,7 +420,7 @@ constructor(
 
             val device =
                 MatterEndpoint.newBuilder()
-                    .setEndpointId(info.endpoint)
+                    .setEndpointId(info.endpoint.toInt())
                     .setLabel(endpointDisplayName)
                     .setSupportsLevelControl(supportsLevel)
                     .setSupportsColorTemperature(supportsColorTemperature)

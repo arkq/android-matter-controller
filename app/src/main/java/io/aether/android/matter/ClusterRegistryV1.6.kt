@@ -6,12 +6,12 @@
 package io.aether.android.matter
 
 val CLUSTERS_1_6 =
-    mapOf<Int, ClusterInfo>(
+    mapOf<UInt, ClusterInfo>(
         Clusters.TemperatureAlarm.ID to
             ClusterInfo(
                 name = "Temperature Alarm",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.TemperatureAlarm.Attributes.CriticalOverTemperatureThreshold.ID to
                             AttributeInfo(
                                 name = "CriticalOverTemperatureThreshold",
@@ -50,40 +50,40 @@ val CLUSTERS_1_6 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.TemperatureAlarm.CommandsIncoming.SetTemperatureAlarmThresholds
                             .ID to
                             CommandInfo(
                                 name = "SetTemperatureAlarmThresholds",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "CriticalOverTemperatureThreshold",
                                                 type = DataType.TEMPERATURE,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "MajorOverTemperatureThreshold",
                                                 type = DataType.TEMPERATURE,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "MinorOverTemperatureThreshold",
                                                 type = DataType.TEMPERATURE,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "MinorUnderTemperatureThreshold",
                                                 type = DataType.TEMPERATURE,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "MajorUnderTemperatureThreshold",
                                                 type = DataType.TEMPERATURE,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "CriticalUnderTemperatureThreshold",
                                                 type = DataType.TEMPERATURE,
@@ -91,14 +91,14 @@ val CLUSTERS_1_6 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.Groupcast.ID to
             ClusterInfo(
                 name = "Groupcast",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.Groupcast.Attributes.Membership.ID to
                             AttributeInfo(
                                 name = "Membership",
@@ -131,44 +131,44 @@ val CLUSTERS_1_6 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.Groupcast.CommandsIncoming.JoinGroup.ID to
                             CommandInfo(
                                 name = "JoinGroup",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Endpoints",
                                                 type = DataType.LIST_ENDPOINT_NO,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "KeySetID",
                                                 type = DataType.UINT16,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "Key",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "UseAuxiliaryACL",
                                                 type = DataType.BOOL,
                                             ),
-                                        5 to
+                                        5u to
                                             ParameterInfo(
                                                 name = "ReplaceEndpoints",
                                                 type = DataType.BOOL,
                                             ),
-                                        6 to
+                                        6u to
                                             ParameterInfo(
                                                 name = "McastAddrPolicy",
                                                 type = DataType.MULTICAST_ADDR_POLICY_ENUM,
@@ -180,13 +180,13 @@ val CLUSTERS_1_6 =
                                 name = "LeaveGroup",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Endpoints",
                                                 type = DataType.LIST_ENDPOINT_NO,
@@ -198,18 +198,18 @@ val CLUSTERS_1_6 =
                                 name = "UpdateGroupKey",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "KeySetID",
                                                 type = DataType.UINT16,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Key",
                                                 type = DataType.OCTSTR,
@@ -219,15 +219,15 @@ val CLUSTERS_1_6 =
                         Clusters.Groupcast.CommandsIncoming.ConfigureAuxiliaryACL.ID to
                             CommandInfo(
                                 name = "ConfigureAuxiliaryACL",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "UseAuxiliaryACL",
                                                 type = DataType.BOOL,
@@ -237,15 +237,15 @@ val CLUSTERS_1_6 =
                         Clusters.Groupcast.CommandsIncoming.GroupcastTesting.ID to
                             CommandInfo(
                                 name = "GroupcastTesting",
-                                privilege = Privilege.ADMIN,
+                                privilege = Privilege.ADMINISTER,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "TestOperation",
                                                 type = DataType.GROUPCAST_TESTING_ENUM,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "DurationSeconds",
                                                 type = DataType.UINT16,
@@ -254,18 +254,18 @@ val CLUSTERS_1_6 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.Groupcast.CommandsOutgoing.LeaveGroupResponse.ID to
                             CommandInfo(
                                 name = "LeaveGroupResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "GroupID",
                                                 type = DataType.GROUP_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "Endpoints",
                                                 type = DataType.LIST_ENDPOINT_NO,
@@ -274,7 +274,7 @@ val CLUSTERS_1_6 =
                             ),
                     ),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.Groupcast.Events.GroupcastTesting.ID to
                             EventInfo(
                                 name = "GroupcastTesting",
@@ -285,7 +285,7 @@ val CLUSTERS_1_6 =
             ClusterInfo(
                 name = "Ambient Context Sensing",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.AmbientContextSensing.Attributes.HumanActivityDetected.ID to
                             AttributeInfo(
                                 name = "HumanActivityDetected",
@@ -362,10 +362,10 @@ val CLUSTERS_1_6 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.AmbientContextSensing.Events.AmbientContextDetectStarted.ID to
                             EventInfo(
                                 name = "AmbientContextDetectStarted",

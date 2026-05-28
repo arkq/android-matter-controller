@@ -6,12 +6,12 @@
 package io.aether.android.matter
 
 val CLUSTERS_1_2 =
-    mapOf<Int, ClusterInfo>(
+    mapOf<UInt, ClusterInfo>(
         Clusters.ICDManagement.ID to
             ClusterInfo(
                 name = "ICD Management",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.ICDManagement.Attributes.IdleModeDuration.ID to
                             AttributeInfo(
                                 name = "IdleModeDuration",
@@ -34,13 +34,13 @@ val CLUSTERS_1_2 =
                             AttributeInfo(
                                 name = "RegisteredClients",
                                 type = DataType.LIST_MONITORING_REGISTRATION_STRUCT,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.ICDManagement.Attributes.ICDCounter.ID to
                             AttributeInfo(
                                 name = "ICDCounter",
                                 type = DataType.UINT32,
-                                readPrivilege = Privilege.ADMIN,
+                                readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.ICDManagement.Attributes.ClientsSupportedPerFabric.ID to
                             AttributeInfo(
@@ -74,34 +74,34 @@ val CLUSTERS_1_2 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ICDManagement.CommandsIncoming.RegisterClient.ID to
                             CommandInfo(
                                 name = "RegisterClient",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "CheckInNodeID",
                                                 type = DataType.NODE_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "MonitoredSubject",
                                                 type = DataType.SUBJECT_ID,
                                             ),
-                                        2 to
+                                        2u to
                                             ParameterInfo(
                                                 name = "Key",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        3 to
+                                        3u to
                                             ParameterInfo(
                                                 name = "VerificationKey",
                                                 type = DataType.OCTSTR,
                                             ),
-                                        4 to
+                                        4u to
                                             ParameterInfo(
                                                 name = "ClientType",
                                                 type = DataType.CLIENT_TYPE_ENUM,
@@ -113,13 +113,13 @@ val CLUSTERS_1_2 =
                                 name = "UnregisterClient",
                                 privilege = Privilege.MANAGE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "CheckInNodeID",
                                                 type = DataType.NODE_ID,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "VerificationKey",
                                                 type = DataType.OCTSTR,
@@ -131,8 +131,8 @@ val CLUSTERS_1_2 =
                                 name = "StayActiveRequest",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "StayActiveDuration",
                                                 type = DataType.UINT32,
@@ -141,13 +141,13 @@ val CLUSTERS_1_2 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ICDManagement.CommandsOutgoing.RegisterClientResponse.ID to
                             CommandInfo(
                                 name = "RegisterClientResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "ICDCounter",
                                                 type = DataType.UINT32,
@@ -158,8 +158,8 @@ val CLUSTERS_1_2 =
                             CommandInfo(
                                 name = "StayActiveResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "PromisedActiveDuration",
                                                 type = DataType.UINT32,
@@ -167,13 +167,13 @@ val CLUSTERS_1_2 =
                                     ),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.LaundryWasherMode.ID to
             ClusterInfo(
                 name = "Laundry Washer Mode",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.LaundryWasherMode.Attributes.SupportedModes.ID to
                             AttributeInfo(
                                 name = "SupportedModes",
@@ -195,15 +195,15 @@ val CLUSTERS_1_2 =
                                 type = DataType.UNKNOWN,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.RefrigeratorAndTemperatureControlledCabinetMode.ID to
             ClusterInfo(
                 name = "Refrigerator And Temperature Controlled Cabinet Mode",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.RefrigeratorAndTemperatureControlledCabinetMode.Attributes
                             .SupportedModes
                             .ID to
@@ -232,15 +232,15 @@ val CLUSTERS_1_2 =
                                 type = DataType.UNKNOWN,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.LaundryWasherControls.ID to
             ClusterInfo(
                 name = "Laundry Washer Controls",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.LaundryWasherControls.Attributes.SpinSpeeds.ID to
                             AttributeInfo(
                                 name = "SpinSpeeds",
@@ -268,15 +268,15 @@ val CLUSTERS_1_2 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.RVCRunMode.ID to
             ClusterInfo(
                 name = "RVC Run Mode",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.RVCRunMode.Attributes.SupportedModes.ID to
                             AttributeInfo(
                                 name = "SupportedModes",
@@ -298,15 +298,15 @@ val CLUSTERS_1_2 =
                                 type = DataType.UNKNOWN,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.RVCCleanMode.ID to
             ClusterInfo(
                 name = "RVC Clean Mode",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.RVCCleanMode.Attributes.SupportedModes.ID to
                             AttributeInfo(
                                 name = "SupportedModes",
@@ -328,15 +328,15 @@ val CLUSTERS_1_2 =
                                 type = DataType.UNKNOWN,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.TemperatureControl.ID to
             ClusterInfo(
                 name = "Temperature Control",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.TemperatureControl.Attributes.TemperatureSetpoint.ID to
                             AttributeInfo(
                                 name = "TemperatureSetpoint",
@@ -375,19 +375,19 @@ val CLUSTERS_1_2 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.TemperatureControl.CommandsIncoming.SetTemperature.ID to
                             CommandInfo(
                                 name = "SetTemperature",
                                 privilege = Privilege.OPERATE,
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "TargetTemperature",
                                                 type = DataType.TEMPERATURE,
                                             ),
-                                        1 to
+                                        1u to
                                             ParameterInfo(
                                                 name = "TargetTemperatureLevel",
                                                 type = DataType.UINT8,
@@ -395,29 +395,29 @@ val CLUSTERS_1_2 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.RefrigeratorAlarm.ID to
             ClusterInfo(
                 name = "Refrigerator Alarm",
-                attributes = mapOf<Int, AttributeInfo>(),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
+                attributes = mapOf<UInt, AttributeInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.RefrigeratorAlarm.CommandsOutgoing.ModifyEnabledAlarms.ID to
                             CommandInfo(
                                 name = "ModifyEnabledAlarms",
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.DishwasherMode.ID to
             ClusterInfo(
                 name = "Dishwasher Mode",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.DishwasherMode.Attributes.SupportedModes.ID to
                             AttributeInfo(
                                 name = "SupportedModes",
@@ -439,15 +439,15 @@ val CLUSTERS_1_2 =
                                 type = DataType.UNKNOWN,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.AirQuality.ID to
             ClusterInfo(
                 name = "Air Quality",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.AirQuality.Attributes.AirQuality.ID to
                             AttributeInfo(
                                 name = "AirQuality",
@@ -455,15 +455,15 @@ val CLUSTERS_1_2 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.SmokeCOAlarm.ID to
             ClusterInfo(
                 name = "Smoke CO Alarm",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.SmokeCOAlarm.Attributes.ExpressedState.ID to
                             AttributeInfo(
                                 name = "ExpressedState",
@@ -551,17 +551,17 @@ val CLUSTERS_1_2 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.SmokeCOAlarm.CommandsIncoming.SelfTestRequest.ID to
                             CommandInfo(
                                 name = "SelfTestRequest",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.SmokeCOAlarm.Events.SmokeAlarm.ID to
                             EventInfo(
                                 name = "SmokeAlarm",
@@ -611,16 +611,16 @@ val CLUSTERS_1_2 =
         Clusters.DishwasherAlarm.ID to
             ClusterInfo(
                 name = "Dishwasher Alarm",
-                attributes = mapOf<Int, AttributeInfo>(),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                attributes = mapOf<UInt, AttributeInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.OperationalState.ID to
             ClusterInfo(
                 name = "Operational State",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.OperationalState.Attributes.PhaseList.ID to
                             AttributeInfo(
                                 name = "PhaseList",
@@ -659,40 +659,40 @@ val CLUSTERS_1_2 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.OperationalState.CommandsIncoming.Pause.ID to
                             CommandInfo(
                                 name = "Pause",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.OperationalState.CommandsIncoming.Stop.ID to
                             CommandInfo(
                                 name = "Stop",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.OperationalState.CommandsIncoming.Start.ID to
                             CommandInfo(
                                 name = "Start",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.OperationalState.CommandsIncoming.Resume.ID to
                             CommandInfo(
                                 name = "Resume",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.OperationalState.CommandsOutgoing.OperationalCommandResponse.ID to
                             CommandInfo(
                                 name = "OperationalCommandResponse",
                                 parameters =
-                                    mapOf<Int, ParameterInfo>(
-                                        0 to
+                                    mapOf<UInt, ParameterInfo>(
+                                        0u to
                                             ParameterInfo(
                                                 name = "CommandResponseState",
                                                 type = DataType.ERROR_STATE_STRUCT,
@@ -701,7 +701,7 @@ val CLUSTERS_1_2 =
                             ),
                     ),
                 events =
-                    mapOf<Int, EventInfo>(
+                    mapOf<UInt, EventInfo>(
                         Clusters.OperationalState.Events.OperationalError.ID to
                             EventInfo(
                                 name = "OperationalError",
@@ -715,52 +715,52 @@ val CLUSTERS_1_2 =
         Clusters.RVCOperationalState.ID to
             ClusterInfo(
                 name = "RVC Operational State",
-                attributes = mapOf<Int, AttributeInfo>(),
+                attributes = mapOf<UInt, AttributeInfo>(),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.RVCOperationalState.CommandsIncoming.GoHome.ID to
                             CommandInfo(
                                 name = "GoHome",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.RVCOperationalState.CommandsOutgoing.Pause.ID to
                             CommandInfo(
                                 name = "Pause",
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.RVCOperationalState.CommandsOutgoing.Stop.ID to
                             CommandInfo(
                                 name = "Stop",
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.RVCOperationalState.CommandsOutgoing.Start.ID to
                             CommandInfo(
                                 name = "Start",
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.RVCOperationalState.CommandsOutgoing.Resume.ID to
                             CommandInfo(
                                 name = "Resume",
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                         Clusters.RVCOperationalState.CommandsOutgoing.OperationalCommandResponse
                             .ID to
                             CommandInfo(
                                 name = "OperationalCommandResponse",
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                events = mapOf<Int, EventInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.HEPAFilterMonitoring.ID to
             ClusterInfo(
                 name = "HEPA Filter Monitoring",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.HEPAFilterMonitoring.Attributes.Condition.ID to
                             AttributeInfo(
                                 name = "Condition",
@@ -800,22 +800,22 @@ val CLUSTERS_1_2 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.HEPAFilterMonitoring.CommandsIncoming.ResetCondition.ID to
                             CommandInfo(
                                 name = "ResetCondition",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.ActivatedCarbonFilterMonitoring.ID to
             ClusterInfo(
                 name = "Activated Carbon Filter Monitoring",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.ActivatedCarbonFilterMonitoring.Attributes.Condition.ID to
                             AttributeInfo(
                                 name = "Condition",
@@ -857,23 +857,23 @@ val CLUSTERS_1_2 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<Int, CommandInfo>(
+                    mapOf<UInt, CommandInfo>(
                         Clusters.ActivatedCarbonFilterMonitoring.CommandsIncoming.ResetCondition
                             .ID to
                             CommandInfo(
                                 name = "ResetCondition",
                                 privilege = Privilege.OPERATE,
-                                parameters = mapOf<Int, ParameterInfo>(),
+                                parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.CarbonMonoxideConcentrationMeasurement.ID to
             ClusterInfo(
                 name = "Carbon Monoxide Concentration Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.CarbonMonoxideConcentrationMeasurement.Attributes.MeasuredValue
                             .ID to
                             AttributeInfo(
@@ -953,15 +953,15 @@ val CLUSTERS_1_2 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.CarbonDioxideConcentrationMeasurement.ID to
             ClusterInfo(
                 name = "Carbon Dioxide Concentration Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.CarbonDioxideConcentrationMeasurement.Attributes.MeasuredValue
                             .ID to
                             AttributeInfo(
@@ -1041,15 +1041,15 @@ val CLUSTERS_1_2 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.NitrogenDioxideConcentrationMeasurement.ID to
             ClusterInfo(
                 name = "Nitrogen Dioxide Concentration Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.NitrogenDioxideConcentrationMeasurement.Attributes.MeasuredValue
                             .ID to
                             AttributeInfo(
@@ -1132,15 +1132,15 @@ val CLUSTERS_1_2 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.OzoneConcentrationMeasurement.ID to
             ClusterInfo(
                 name = "Ozone Concentration Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.OzoneConcentrationMeasurement.Attributes.MeasuredValue.ID to
                             AttributeInfo(
                                 name = "MeasuredValue",
@@ -1210,15 +1210,15 @@ val CLUSTERS_1_2 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.PM25ConcentrationMeasurement.ID to
             ClusterInfo(
                 name = "PM2.5 Concentration Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.PM25ConcentrationMeasurement.Attributes.MeasuredValue.ID to
                             AttributeInfo(
                                 name = "MeasuredValue",
@@ -1288,15 +1288,15 @@ val CLUSTERS_1_2 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.FormaldehydeConcentrationMeasurement.ID to
             ClusterInfo(
                 name = "Formaldehyde Concentration Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.FormaldehydeConcentrationMeasurement.Attributes.MeasuredValue.ID to
                             AttributeInfo(
                                 name = "MeasuredValue",
@@ -1375,15 +1375,15 @@ val CLUSTERS_1_2 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.PM1ConcentrationMeasurement.ID to
             ClusterInfo(
                 name = "PM1 Concentration Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.PM1ConcentrationMeasurement.Attributes.MeasuredValue.ID to
                             AttributeInfo(
                                 name = "MeasuredValue",
@@ -1453,15 +1453,15 @@ val CLUSTERS_1_2 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.PM10ConcentrationMeasurement.ID to
             ClusterInfo(
                 name = "PM10 Concentration Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.PM10ConcentrationMeasurement.Attributes.MeasuredValue.ID to
                             AttributeInfo(
                                 name = "MeasuredValue",
@@ -1531,15 +1531,15 @@ val CLUSTERS_1_2 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.TotalVolatileOrganicCompoundsConcentrationMeasurement.ID to
             ClusterInfo(
                 name = "Total Volatile Organic Compounds Concentration Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.TotalVolatileOrganicCompoundsConcentrationMeasurement.Attributes
                             .MeasuredValue
                             .ID to
@@ -1629,15 +1629,15 @@ val CLUSTERS_1_2 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
         Clusters.RadonConcentrationMeasurement.ID to
             ClusterInfo(
                 name = "Radon Concentration Measurement",
                 attributes =
-                    mapOf<Int, AttributeInfo>(
+                    mapOf<UInt, AttributeInfo>(
                         Clusters.RadonConcentrationMeasurement.Attributes.MeasuredValue.ID to
                             AttributeInfo(
                                 name = "MeasuredValue",
@@ -1707,8 +1707,8 @@ val CLUSTERS_1_2 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<Int, CommandInfo>(),
-                commandsOutgoing = mapOf<Int, CommandInfo>(),
-                events = mapOf<Int, EventInfo>(),
+                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                events = mapOf<UInt, EventInfo>(),
             ),
     )

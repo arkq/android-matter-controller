@@ -20,7 +20,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
-import io.aether.android.matter.Privilege
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.SearchTextField
 
@@ -94,7 +93,7 @@ internal fun ClusterDetailContent(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              items(filtered, key = { it.id }) { attribute ->
+              items(filtered, key = { "a-${it.id}" }) { attribute ->
                 ExplorerRow(
                     text =
                         formatIdAndName(
@@ -109,9 +108,8 @@ internal fun ClusterDetailContent(
                                   append(
                                       stringResource(
                                           R.string.device_explorer_attribute_privileges,
-                                          attribute.readPrivilege?.label ?: Privilege.UNKNOWN.label,
-                                          attribute.writePrivilege?.label
-                                              ?: Privilege.UNKNOWN.label,
+                                          attribute.readPrivilege.toLabel(),
+                                          attribute.writePrivilege.toLabel(),
                                       )
                                   )
                                   append("\n")
@@ -168,7 +166,7 @@ internal fun ClusterDetailContent(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              items(filteredCommands, key = { it.id }) { command ->
+              items(filteredCommands, key = { "c-${it.id}" }) { command ->
                 ExplorerRow(
                     text =
                         formatIdAndName(
@@ -229,7 +227,7 @@ internal fun ClusterDetailContent(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              items(filteredEvents, key = { it.id }) { event ->
+              items(filteredEvents, key = { "ev-${it.id}" }) { event ->
                 ExplorerRow(
                     text =
                         formatIdAndName(

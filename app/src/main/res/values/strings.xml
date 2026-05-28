@@ -30,11 +30,11 @@ SPDX-License-Identifier: Apache-2.0
     </string>
 
     <!-- Attribute Access Privileges -->
+    <string name="attr_access_privilege_none">None</string>
     <string name="attr_access_privilege_view">View</string>
     <string name="attr_access_privilege_operate">Operate</string>
     <string name="attr_access_privilege_manage">Manage</string>
     <string name="attr_access_privilege_administer">Administer</string>
-    <string name="attr_access_privilege_unknown">Unknown</string>
 
     <!-- Device Types -->
     <string name="device_type_unspecified">unspecified</string>

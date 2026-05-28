@@ -51,14 +51,14 @@ internal fun ExplorerRow(
   }
 }
 
-internal fun formatEndpointLabel(endpoint: Int, name: String?): String =
+internal fun formatEndpointLabel(endpoint: UInt, name: String?): String =
     if (name.isNullOrBlank()) {
       "[${formatEndpointId(endpoint)}]"
     } else {
       "[${formatEndpointId(endpoint)}] $name"
     }
 
-internal fun formatIdAndName(id: Int, name: String?): String {
+internal fun formatIdAndName(id: UInt, name: String?): String {
   val idText = formatExplorerId(id)
   return if (name.isNullOrBlank()) {
     "[$idText]"
@@ -67,11 +67,13 @@ internal fun formatIdAndName(id: Int, name: String?): String {
   }
 }
 
-internal fun formatExplorerId(id: Int): String =
-    if (id <= 0xFFFF) String.format("0x%04X", id) else String.format("0x%08X", id)
+internal fun formatExplorerId(id: UInt): String =
+    if (id <= 0xFFFFu) String.format("0x%04X", id.toLong())
+    else String.format("0x%08X", id.toLong())
 
-internal fun formatEndpointId(endpoint: Int): String =
-    if (endpoint <= 0xFF) String.format("0x%02X", endpoint) else String.format("0x%04X", endpoint)
+internal fun formatEndpointId(endpoint: UInt): String =
+    if (endpoint <= 0xFFu) String.format("0x%02X", endpoint.toLong())
+    else String.format("0x%04X", endpoint.toLong())
 
 internal fun matchesExplorerQuery(query: String, vararg fields: String): Boolean {
   val normalizedQuery = query.trim().lowercase()
