@@ -15,9 +15,18 @@ SPDX-License-Identifier: Apache-2.0
 - No "flexibility" or "configurability" that wasn't requested.
 - No error handling for impossible scenarios.
 - Prefer standard library functions over custom logic.
+- Prefer simpler Kotlin APIs (even if experimental) instead of complex ones.
 - If you write 200 lines and it could be 50, rewrite it.
 
-### 2. UI Strings Must Come from Resources
+### 2. Use Dedicated Types Instead of Primitives
+
+- If a value has a specific meaning or role (e.g. "device ID", "cluster ID",
+  "on/off state"), define a dedicated type for it instead of using a primitive
+  type like `String` or `Int`. This improves readability and type safety.
+- Keep primitives only in places like interfaces with external APIs or when the
+  value is truly generic and has no specific meaning.
+
+### 3. UI Strings Must Come from Resources
 
 - Every string displayed in the UI must be defined in `res/values/strings.xml`
   and referenced via `R.string.*` / `@string/*`.
@@ -25,7 +34,7 @@ SPDX-License-Identifier: Apache-2.0
 - Never hard-code user-visible strings directly in Kotlin/Java source or layout
   XML.
 
-### 3. No Monster Files and God Classes
+### 4. No Monster Files and God Classes
 
 - Each file must contain a **single, well-defined responsibility**. No
   monster files that bundle unrelated composables, classes, or logic.
@@ -42,7 +51,7 @@ SPDX-License-Identifier: Apache-2.0
 - If a file grows beyond a single responsibility, split it before adding more
   code.
 
-### 4. Remove Orphaned Files
+### 5. Remove Orphaned Files
 
 - After making changes, check whether any files, classes, resources, or imports
   have become unused as a direct result of your changes.
@@ -50,7 +59,7 @@ SPDX-License-Identifier: Apache-2.0
 - Remove orphans that **your changes** created. Do not remove preexisting dead
   code unless that is the explicit goal of the task.
 
-### 5. Copyright Headers
+### 6. Copyright Headers
 
 - Every **new file** must include an SPDX copyright header for the current
   year and "The Authors":

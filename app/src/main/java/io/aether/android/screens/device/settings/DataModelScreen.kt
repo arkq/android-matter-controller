@@ -35,6 +35,7 @@ import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.matter.ClusterId
 import io.aether.android.matter.DeviceTypeId
+import io.aether.android.matter.toNodeId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
@@ -52,6 +53,7 @@ fun DataModelRoute(
     dataModelViewModel: DataModelViewModel = hiltViewModel(),
 ) {
   Timber.d("DataModelRoute nodeId [$nodeId]")
+  val typedNodeId = nodeId.toNodeId()
 
   // Controls the Msg AlertDialog.
   // When the user dismisses the Msg AlertDialog, we "consume" the dialog.
@@ -65,7 +67,7 @@ fun DataModelRoute(
 
   LifecycleResumeEffect(Unit) {
     Timber.d("LifecycleResumeEffect: selectedNodeId [$nodeId]")
-    dataModelViewModel.inspectDevice(nodeId)
+    dataModelViewModel.inspectDevice(typedNodeId)
     onPauseOrDispose {
       // do any needed clean up here
       Timber.d("LifecycleResumeEffect:onPauseOrDispose")

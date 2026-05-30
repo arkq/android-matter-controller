@@ -3,6 +3,9 @@
 
 package io.aether.android.screens.scanner
 
+import io.aether.android.matter.ProductId
+import io.aether.android.matter.VendorId
+import io.aether.android.matter.toInt
 import java.util.*
 
 /**
@@ -16,8 +19,8 @@ import java.util.*
  */
 data class MatterBeacon(
     val name: String,
-    val vendorId: Int,
-    val productId: Int,
+    val vendorId: VendorId,
+    val productId: ProductId,
     val discriminator: Int,
     val transport: Transport,
 ) {
@@ -26,8 +29,8 @@ data class MatterBeacon(
         Locale.ROOT,
         "MatterBeacon([%s] VID=%04X, PID=%04X, Discriminator=%03X, Transport=%s",
         name,
-        vendorId,
-        productId,
+        vendorId.toInt(),
+        productId.toInt(),
         discriminator,
         transport,
     )

@@ -17,7 +17,9 @@ import chip.platform.NsdManagerServiceResolver
 import chip.platform.PreferencesConfigurationManager
 import chip.platform.PreferencesKeyValueStoreManager
 import dagger.hilt.android.qualifiers.ApplicationContext
-import io.aether.android.formatNodeId
+import io.aether.android.matter.NodeId
+import io.aether.android.matter.toLong
+import io.aether.android.matter.toNodeId
 import io.aether.android.stripLinkLocalInIpAddress
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
@@ -56,10 +58,10 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
   /**
    * Wrapper around [ChipDeviceController.getConnectedDevicePointer] to return the value directly.
    */
-  suspend fun getConnectedDevicePointer(nodeId: Long): Long {
+  suspend fun getConnectedDevicePointer(nodeId: NodeId): Long {
     return suspendCoroutine { continuation ->
       chipDeviceController.getConnectedDevicePointer(
-          nodeId,
+          nodeId.toLong(),
           object : GetConnectedDeviceCallback {
             override fun onDeviceConnected(devicePointer: Long) {
               Timber.d("Got connected device pointer")
@@ -67,8 +69,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
             }
 
             override fun onConnectionFailure(nodeId: Long, error: Exception) {
-              val errorMessage =
-                  "Unable to get connected device with nodeId ${formatNodeId(nodeId)}."
+              val errorMessage = "Unable to get connected device with nodeId ${nodeId.toNodeId()}."
               Timber.e(errorMessage, error)
               continuation.resumeWithException(IllegalStateException(errorMessage))
             }
@@ -77,12 +78,15 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
     }
   }
 
+  suspend fun getConnectedDevicePointer(nodeId: Long): Long =
+      getConnectedDevicePointer(nodeId.toNodeId())
+
   /**
    * Removes the app's fabric from the device.
    *
    * @param nodeId node identifier
    */
-  suspend fun awaitUnpairDevice(nodeId: Long) {
+  suspend fun awaitUnpairDevice(nodeId: NodeId) {
     return suspendCoroutine { continuation ->
       Timber.d("Calling chipDeviceController.unpair")
       val callback: UnpairDeviceCallback =
@@ -100,8 +104,12 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
               continuation.resume(Unit)
             }
           }
-      chipDeviceController.unpairDeviceCallback(nodeId, callback)
+      chipDeviceController.unpairDeviceCallback(nodeId.toLong(), callback)
     }
+  }
+
+  suspend fun awaitUnpairDevice(nodeId: Long) {
+    awaitUnpairDevice(nodeId.toNodeId())
   }
 
   fun computePaseVerifier(
@@ -246,10 +254,10 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
   /**
    * Wrapper around [ChipDeviceController.getConnectedDevicePointer] to return the value directly.
    */
-  suspend fun awaitGetConnectedDevicePointer(nodeId: Long): Long {
+  suspend fun awaitGetConnectedDevicePointer(nodeId: NodeId): Long {
     return suspendCoroutine { continuation ->
       chipDeviceController.getConnectedDevicePointer(
-          nodeId,
+          nodeId.toLong(),
           object : GetConnectedDeviceCallback {
             override fun onDeviceConnected(devicePointer: Long) {
               Timber.d("Got connected device pointer")
@@ -257,8 +265,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
             }
 
             override fun onConnectionFailure(nodeId: Long, error: Exception) {
-              val errorMessage =
-                  "Unable to get connected device with nodeId ${formatNodeId(nodeId)}"
+              val errorMessage = "Unable to get connected device with nodeId ${nodeId.toNodeId()}"
               Timber.e(errorMessage, error)
               continuation.resumeWithException(IllegalStateException(errorMessage))
             }
@@ -266,6 +273,9 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
       )
     }
   }
+
+  suspend fun awaitGetConnectedDevicePointer(nodeId: Long): Long =
+      awaitGetConnectedDevicePointer(nodeId.toNodeId())
 
   // ---------------------------------------------------------------------------
   // We use our own mDNS discovery code, but interesting to note that

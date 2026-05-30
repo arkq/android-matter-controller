@@ -17,7 +17,6 @@ import java.io.File
 import java.lang.Long.max
 import java.security.SecureRandom
 import java.time.Instant
-import java.util.Locale
 import kotlin.math.abs
 import timber.log.Timber
 
@@ -177,31 +176,6 @@ fun intentSenderToString(intentSender: IntentSender?): String {
 
 fun isMultiAdminCommissioning(intent: Intent): Boolean {
   return intent.action == "com.google.android.gms.home.matter.ACTION_COMMISSION_DEVICE"
-}
-
-/** Formats a signed Kotlin Long as a full-width unsigned 64-bit hex value. */
-fun formatUint64Hex(value: Long): String {
-  return String.format(Locale.ROOT, "0x%016X", value)
-}
-
-/** Formats a Matter Vendor ID as unsigned 16-bit hex with leading zeroes. */
-fun formatVendorId(vendorId: Int): String {
-  return String.format(Locale.ROOT, "0x%04X", vendorId)
-}
-
-/** Formats a Matter Product ID as unsigned 16-bit hex with leading zeroes. */
-fun formatProductId(productId: Int): String {
-  return String.format(Locale.ROOT, "0x%04X", productId)
-}
-
-/** Formats a Matter Node ID as unsigned 64-bit hex with leading zeroes. */
-fun formatNodeId(nodeId: Long): String {
-  return formatUint64Hex(nodeId)
-}
-
-/** Formats a Matter Fabric ID as unsigned 64-bit hex with leading zeroes. */
-fun formatFabricId(fabricId: Long): String {
-  return formatUint64Hex(fabricId)
 }
 
 /**

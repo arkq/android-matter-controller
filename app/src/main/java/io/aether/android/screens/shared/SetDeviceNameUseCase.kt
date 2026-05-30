@@ -7,6 +7,9 @@ import io.aether.android.AppErrorNotifier
 import io.aether.android.R
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.data.DevicesRepository
+import io.aether.android.matter.NodeId
+import io.aether.android.matter.toLong
+import io.aether.android.matter.toNodeId
 import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import javax.inject.Inject
@@ -72,10 +75,10 @@ constructor(
       onLocalPersisted: suspend () -> Unit = {},
   ): SetDeviceNameResult {
     Timber.d("SetDeviceNameUseCase: deviceId [$deviceId] nameLength [${name.length}]")
-    val nodeId: Long
+    val nodeId: NodeId
     try {
       val device = devicesRepository.getDevice(deviceId)
-      nodeId = nodeIdFor(device)
+      nodeId = nodeIdFor(device).toNodeId()
       devicesRepository.updateDevice(device.toBuilder().setName(name).build())
     } catch (e: CancellationException) {
       throw e
@@ -86,7 +89,7 @@ constructor(
     onLocalPersisted()
     scope.launch {
       try {
-        clustersHelper.writeBasicClusterNodeLabelAttribute(nodeId, name)
+        clustersHelper.writeBasicClusterNodeLabelAttribute(nodeId.toLong(), name)
       } catch (e: CancellationException) {
         throw e
       } catch (e: Exception) {

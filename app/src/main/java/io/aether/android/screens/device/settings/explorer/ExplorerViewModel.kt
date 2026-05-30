@@ -18,6 +18,8 @@ import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.EventId
 import io.aether.android.matter.MatterPrivilege
 import io.aether.android.matter.MatterType
+import io.aether.android.matter.NodeId
+import io.aether.android.matter.toLong
 import io.aether.android.screens.common.DialogInfo
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -159,11 +161,11 @@ constructor(
 
   fun shortTypeLabel(type: MatterType): String = dataModelLoader.shortTypeLabel(type)
 
-  fun loadExplorer(nodeId: Long) {
+  fun loadExplorer(nodeId: NodeId) {
     viewModelScope.launch {
       val isInitialLoad = _deviceMatterInfoList.value == null
       try {
-        val infos = clustersHelper.fetchDeviceMatterInfo(nodeId).sortedBy { it.endpoint }
+        val infos = clustersHelper.fetchDeviceMatterInfo(nodeId.toLong()).sortedBy { it.endpoint }
         _deviceMatterInfoList.value = infos
       } catch (e: Exception) {
         Timber.e(e, "loadExplorer failed")
@@ -199,7 +201,7 @@ constructor(
     _navStack.update { it + ExplorerLevel.ClusterList(endpoint) }
   }
 
-  fun selectCluster(nodeId: Long, endpoint: Int, clusterId: ClusterId) {
+  fun selectCluster(nodeId: NodeId, endpoint: Int, clusterId: ClusterId) {
     _attributeSearchQuery.value = ""
     _commandSearchQuery.value = ""
     _eventSearchQuery.value = ""
@@ -251,7 +253,7 @@ constructor(
     _navStack.update { it + ExplorerLevel.CommandInvoke(endpoint, clusterId, command) }
   }
 
-  private fun ensureClusterDetails(nodeId: Long, endpoint: Int, clusterId: ClusterId) {
+  private fun ensureClusterDetails(nodeId: NodeId, endpoint: Int, clusterId: ClusterId) {
     val key = ExplorerClusterKey(endpoint, clusterId)
     if (_clusterDetailsByKey.value.containsKey(key) || _loadingClusterKeys.value.contains(key)) {
       return
@@ -263,7 +265,9 @@ constructor(
         val knownSchema = _knownClustersById.value[clusterId]
 
         val attributesFromDevice =
-            runCatching { clustersHelper.readClusterAttributeList(nodeId, endpoint, clusterId) }
+            runCatching {
+                  clustersHelper.readClusterAttributeList(nodeId.toLong(), endpoint, clusterId)
+                }
                 .getOrElse {
                   Timber.w(
                       it,
@@ -275,7 +279,11 @@ constructor(
                 }
         val commandsFromDevice =
             runCatching {
-                  clustersHelper.readClusterAcceptedCommandList(nodeId, endpoint, clusterId)
+                  clustersHelper.readClusterAcceptedCommandList(
+                      nodeId.toLong(),
+                      endpoint,
+                      clusterId,
+                  )
                 }
                 .getOrElse {
                   Timber.w(
@@ -288,7 +296,11 @@ constructor(
                 }
         val generatedCommandsFromDevice =
             runCatching {
-                  clustersHelper.readClusterGeneratedCommandList(nodeId, endpoint, clusterId)
+                  clustersHelper.readClusterGeneratedCommandList(
+                      nodeId.toLong(),
+                      endpoint,
+                      clusterId,
+                  )
                 }
                 .getOrElse {
                   Timber.w(
@@ -300,7 +312,9 @@ constructor(
                   emptyList()
                 }
         val eventsFromDevice =
-            runCatching { clustersHelper.readClusterEventList(nodeId, endpoint, clusterId) }
+            runCatching {
+                  clustersHelper.readClusterEventList(nodeId.toLong(), endpoint, clusterId)
+                }
                 .getOrElse {
                   Timber.w(
                       it,
@@ -354,10 +368,16 @@ constructor(
     }
   }
 
-  fun readAttribute(nodeId: Long, endpoint: Int, clusterId: ClusterId, attributeId: AttributeId) {
+  fun readAttribute(
+      nodeId: NodeId,
+      endpoint: Int,
+      clusterId: ClusterId,
+      attributeId: AttributeId,
+  ) {
     viewModelScope.launch {
       try {
-        val value = clustersHelper.readAttributeValue(nodeId, endpoint, clusterId, attributeId)
+        val value =
+            clustersHelper.readAttributeValue(nodeId.toLong(), endpoint, clusterId, attributeId)
         _attributeValueByKey.update {
           it + (attributeKey(endpoint, clusterId, attributeId) to value)
         }
@@ -373,7 +393,7 @@ constructor(
   }
 
   fun writeAttribute(
-      nodeId: Long,
+      nodeId: NodeId,
       endpoint: Int,
       clusterId: ClusterId,
       attributeId: AttributeId,
@@ -400,7 +420,13 @@ constructor(
                   return@launch
                 }
 
-        clustersHelper.writeGenericAttribute(nodeId, endpoint, clusterId, attributeId, payload)
+        clustersHelper.writeGenericAttribute(
+            nodeId.toLong(),
+            endpoint,
+            clusterId,
+            attributeId,
+            payload,
+        )
         _attributeValueByKey.update {
           it + (attributeKey(endpoint, clusterId, attributeId) to value)
         }
@@ -418,7 +444,7 @@ constructor(
   }
 
   fun invokeCommand(
-      nodeId: Long,
+      nodeId: NodeId,
       endpoint: Int,
       clusterId: ClusterId,
       commandId: CommandId,
@@ -433,7 +459,13 @@ constructor(
                 ?.arguments
                 .orEmpty()
         val payload = ExplorerTlvCodec.encodeCommandPayload(arguments, argumentValues)
-        clustersHelper.invokeGenericCommand(nodeId, endpoint, clusterId, commandId, payload)
+        clustersHelper.invokeGenericCommand(
+            nodeId.toLong(),
+            endpoint,
+            clusterId,
+            commandId,
+            payload,
+        )
         _commandInvokeSuccessCount.update { it + 1 }
       } catch (e: ExplorerInputValidationException) {
         showMsgDialog(R.string.device_settings_admin_explorer, e.messageRes)

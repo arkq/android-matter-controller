@@ -12,8 +12,11 @@ import io.aether.android.chip.ClustersHelper
 import io.aether.android.data.DevicesRepository
 import io.aether.android.matter.FabricId
 import io.aether.android.matter.NodeId
+import io.aether.android.matter.VendorId
 import io.aether.android.matter.toFabricId
+import io.aether.android.matter.toLong
 import io.aether.android.matter.toNodeId
+import io.aether.android.matter.toVendorId
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +27,7 @@ import timber.log.Timber
 data class ManagedFabric(
     val fabricIndex: Int,
     val rootPublicKey: ByteArray?,
-    val vendorId: Int?,
+    val vendorId: VendorId?,
     val fabricId: FabricId?,
     val nodeId: NodeId?,
     val label: String?,
@@ -52,7 +55,7 @@ constructor(
   private var _uiState = MutableStateFlow<UiState>(UiState.Loading)
   val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
-  fun loadFabrics(nodeId: Long) {
+  fun loadFabrics(nodeId: NodeId) {
     Timber.d("FabricsViewModel.loadFabrics: nodeId [$nodeId]")
     viewModelScope.launch {
       val previousState = _uiState.value
@@ -63,13 +66,14 @@ constructor(
     }
   }
 
-  fun removeFabric(nodeId: Long, fabricIndex: Int) {
+  fun removeFabric(nodeId: NodeId, fabricIndex: Int) {
     Timber.d("FabricsViewModel.removeFabric: nodeId [$nodeId] fabricIndex [$fabricIndex]")
     viewModelScope.launch {
       val currentState = _uiState.value
       _uiState.value = UiState.Loading
       try {
-        val deviceCurrentFabricIndex = clustersHelper.readCurrentFabricIndexAttribute(nodeId)
+        val deviceCurrentFabricIndex =
+            clustersHelper.readCurrentFabricIndexAttribute(nodeId.toLong())
         val controllerFabricIndex = chipClient.chipDeviceController.getFabricIndex()
         val currentFabricIndex = deviceCurrentFabricIndex ?: controllerFabricIndex
         if (fabricIndex == currentFabricIndex) {
@@ -77,7 +81,7 @@ constructor(
           _uiState.value = currentState
           return@launch
         }
-        clustersHelper.removeFabric(nodeId, fabricIndex)
+        clustersHelper.removeFabric(nodeId.toLong(), fabricIndex)
         _uiState.value = refreshFabrics(nodeId, currentState)
       } catch (e: Exception) {
         Timber.e(e, "removeFabric failed")
@@ -88,16 +92,17 @@ constructor(
     }
   }
 
-  private suspend fun refreshFabrics(nodeId: Long, fallbackState: UiState): UiState {
+  private suspend fun refreshFabrics(nodeId: NodeId, fallbackState: UiState): UiState {
     return try {
-      devicesRepository.getDeviceByNodeId(nodeId)
-      val fabrics = clustersHelper.readFabricsAttribute(nodeId)
-      val nocs = clustersHelper.readNOCsAttribute(nodeId)
+      devicesRepository.getDeviceByNodeId(nodeId.toLong())
+      val fabrics = clustersHelper.readFabricsAttribute(nodeId.toLong())
+      val nocs = clustersHelper.readNOCsAttribute(nodeId.toLong())
       if (fabrics == null || nocs == null) {
         if (fallbackState is UiState.Loaded) fallbackState
         else UiState.Error(R.string.controllers_offline)
       } else {
-        val deviceCurrentFabricIndex = clustersHelper.readCurrentFabricIndexAttribute(nodeId)
+        val deviceCurrentFabricIndex =
+            clustersHelper.readCurrentFabricIndexAttribute(nodeId.toLong())
         val controllerFabricIndex = chipClient.chipDeviceController.getFabricIndex()
         val currentFabricIndex = deviceCurrentFabricIndex ?: controllerFabricIndex
         val fabricsByIndex = fabrics.associateBy { it.fabricIndex }
@@ -111,7 +116,7 @@ constructor(
                   ManagedFabric(
                       fabricIndex = fabricIndex,
                       rootPublicKey = fabric?.rootPublicKey,
-                      vendorId = fabric?.vendorID,
+                      vendorId = fabric?.vendorID?.toVendorId(),
                       fabricId = fabric?.fabricID?.toFabricId(),
                       nodeId = fabric?.nodeID?.toNodeId(),
                       label = fabric?.label,
