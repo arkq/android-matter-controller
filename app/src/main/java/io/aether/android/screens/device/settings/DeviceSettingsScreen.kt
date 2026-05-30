@@ -48,6 +48,7 @@ import io.aether.android.matter.VendorId
 import io.aether.android.matter.toLong
 import io.aether.android.matter.toNodeId
 import io.aether.android.matter.vendorLabel
+import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
