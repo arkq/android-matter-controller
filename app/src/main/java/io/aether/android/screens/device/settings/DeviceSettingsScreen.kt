@@ -15,7 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
@@ -49,7 +48,6 @@ import io.aether.android.matter.VendorId
 import io.aether.android.matter.toLong
 import io.aether.android.matter.toNodeId
 import io.aether.android.matter.vendorLabel
-import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
@@ -65,7 +63,6 @@ import timber.log.Timber
 @Composable
 fun DeviceSettingsRoute(
     navigateToHome: () -> Unit,
-    navigateToDeviceDataModel: (nodeId: Long) -> Unit,
     navigateToDeviceExplorer: (nodeId: Long) -> Unit,
     navigateToDeviceFabrics: (nodeId: Long) -> Unit,
     onBackClick: () -> Unit,
@@ -174,7 +171,6 @@ fun DeviceSettingsRoute(
             viewModel.removeDeviceWithoutUnlink(typedNodeId)
           }
         },
-        onInspect = { device?.let { navigateToDeviceDataModel(nodeIdFor(it)) } },
         onExplorer = { navigateToDeviceExplorer(typedNodeId.toLong()) },
         onManageControllers = { navigateToDeviceFabrics(typedNodeId.toLong()) },
     )
@@ -199,7 +195,6 @@ private fun DeviceSettingsScreen(
     onRemoveDeviceClick: () -> Unit,
     onRemoveDeviceOutcome: (Boolean) -> Unit,
     onConfirmDeviceRemovalOutcome: (Boolean) -> Unit,
-    onInspect: () -> Unit,
     onExplorer: () -> Unit,
     onManageControllers: () -> Unit,
 ) {
@@ -323,12 +318,6 @@ private fun DeviceSettingsScreen(
           label = stringResource(R.string.device_settings_admin_fabrics),
           subtitle = stringResource(R.string.device_settings_admin_fabrics_subtitle),
           onClick = onManageControllers,
-      )
-      SettingsActionRow(
-          icon = Icons.Outlined.Info,
-          label = stringResource(R.string.device_settings_admin_inspect),
-          subtitle = stringResource(R.string.device_settings_admin_inspect_subtitle),
-          onClick = onInspect,
       )
       SettingsActionRow(
           icon = Icons.Outlined.Search,
