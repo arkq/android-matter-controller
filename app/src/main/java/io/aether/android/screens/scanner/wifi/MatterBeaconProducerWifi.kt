@@ -7,6 +7,8 @@ import android.annotation.SuppressLint
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
 import android.os.Build
+import io.aether.android.matter.ProductId
+import io.aether.android.matter.VendorId
 import io.aether.android.screens.scanner.MatterBeacon
 import io.aether.android.screens.scanner.MatterBeaconInject
 import io.aether.android.screens.scanner.MatterBeaconProducer
@@ -74,8 +76,8 @@ private fun ScanResult.toMatterBeaconOrNull(): MatterBeacon? {
     val (discriminator, vid, pid) = result.destructured
     MatterBeacon(
         ssid,
-        vid.toInt(16),
-        pid.toInt(16),
+        VendorId(vid.toInt(16).toUShort()),
+        ProductId(pid.toInt(16).toUShort()),
         discriminator.toInt(16),
         Transport.Hotspot(ssid),
     )

@@ -7,14 +7,20 @@ import android.content.Context
 import androidx.annotation.StringRes
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.aether.android.R
+import io.aether.android.matter.AttributeId
+import io.aether.android.matter.ClusterId
+import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.MatterDataModel
 import io.aether.android.matter.MatterPrivilege
 import io.aether.android.matter.MatterType
+import io.aether.android.matter.toClusterId
+import io.aether.android.matter.toDeviceTypeId
+import io.aether.android.matter.toLong
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /** A reference to a specific attribute on a specific cluster. */
-data class ClusterAttribute(val clusterId: Long, val attributeId: Long)
+data class ClusterAttribute(val clusterId: ClusterId, val attributeId: AttributeId)
 
 /**
  * Loads Matter data-model binary assets and exposes the cluster / device-type maps used throughout
@@ -37,13 +43,13 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
 
   companion object {
     // Well-known cluster IDs
-    const val OnOffClusterId: Long = 6L
-    const val LevelControlClusterId: Long = 8L
-    const val ColorControlClusterId: Long = 768L
+    val OnOffClusterId: ClusterId = ClusterId(6u)
+    val LevelControlClusterId: ClusterId = ClusterId(8u)
+    val ColorControlClusterId: ClusterId = ClusterId(768u)
 
-    val OnOffAttribute = ClusterAttribute(OnOffClusterId, 0L)
-    val LevelAttribute = ClusterAttribute(LevelControlClusterId, 0L)
-    val ColorTemperatureAttribute = ClusterAttribute(ColorControlClusterId, 7L)
+    val OnOffAttribute = ClusterAttribute(OnOffClusterId, AttributeId(0u))
+    val LevelAttribute = ClusterAttribute(LevelControlClusterId, AttributeId(0u))
+    val ColorTemperatureAttribute = ClusterAttribute(ColorControlClusterId, AttributeId(7u))
 
     private const val ASSETS_DIR = "matter"
 
@@ -100,49 +106,49 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
   private val latestModel: MatterDataModel by lazy { load() }
 
   /** Maps device ID → device name using the latest bundled data model. */
-  val devicesMap: Map<Long, String> by lazy {
-    latestModel.devicesList.associate { it.id.toLong() to it.name }
+  val devicesMap: Map<DeviceTypeId, String> by lazy {
+    latestModel.devicesList.associate { it.id.toLong().toDeviceTypeId() to it.name }
   }
 
   /** Maps cluster ID → cluster name using the latest bundled data model. */
-  val clustersMap: Map<Long, String> by lazy {
-    latestModel.clustersList.associate { it.id.toLong() to it.name }
+  val clustersMap: Map<ClusterId, String> by lazy {
+    latestModel.clustersList.associate { it.id.toLong().toClusterId() to it.name }
   }
 
   val genericAttributes: List<GenericAttributeDefinition> by lazy {
     listOf(
         GenericAttributeDefinition(
-            id = 0xFFF8L,
+            id = AttributeId(0xFFF8u),
             name = "GeneratedCommandList",
             typeValue = MatterType.TYPE_LIST_UINT32,
             readPrivilege = MatterPrivilege.PRIVILEGE_VIEW,
         ),
         GenericAttributeDefinition(
-            id = 0xFFF9L,
+            id = AttributeId(0xFFF9u),
             name = "AcceptedCommandList",
             typeValue = MatterType.TYPE_LIST_UINT32,
             readPrivilege = MatterPrivilege.PRIVILEGE_VIEW,
         ),
         GenericAttributeDefinition(
-            id = 0xFFFAL,
+            id = AttributeId(0xFFFAu),
             name = "EventList",
             typeValue = MatterType.TYPE_LIST_UINT32,
             readPrivilege = MatterPrivilege.PRIVILEGE_VIEW,
         ),
         GenericAttributeDefinition(
-            id = 0xFFFBL,
+            id = AttributeId(0xFFFBu),
             name = "AttributeList",
             typeValue = MatterType.TYPE_LIST_UINT32,
             readPrivilege = MatterPrivilege.PRIVILEGE_VIEW,
         ),
         GenericAttributeDefinition(
-            id = 0xFFFCL,
+            id = AttributeId(0xFFFCu),
             name = "FeatureMap",
             typeValue = MatterType.TYPE_UINT32,
             readPrivilege = MatterPrivilege.PRIVILEGE_VIEW,
         ),
         GenericAttributeDefinition(
-            id = 0xFFFDL,
+            id = AttributeId(0xFFFDu),
             name = "ClusterRevision",
             typeValue = MatterType.TYPE_UINT16,
             readPrivilege = MatterPrivilege.PRIVILEGE_VIEW,
@@ -201,7 +207,7 @@ class DataModelLoader @Inject constructor(@ApplicationContext private val contex
       }
 
   data class GenericAttributeDefinition(
-      val id: Long,
+      val id: AttributeId,
       val name: String,
       val typeValue: MatterType = MatterType.TYPE_UNKNOWN,
       val readPrivilege: MatterPrivilege = MatterPrivilege.PRIVILEGE_UNKNOWN,

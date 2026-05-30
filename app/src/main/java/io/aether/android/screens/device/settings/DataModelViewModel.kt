@@ -11,6 +11,10 @@ import io.aether.android.R
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.chip.DataModelLoader
 import io.aether.android.chip.DeviceMatterInfo
+import io.aether.android.matter.ClusterId
+import io.aether.android.matter.DeviceTypeId
+import io.aether.android.matter.NodeId
+import io.aether.android.matter.toLong
 import io.aether.android.screens.common.DialogInfo
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,8 +32,8 @@ constructor(
     private val dataModelLoader: DataModelLoader,
 ) : ViewModel() {
 
-  val clustersMap: Map<Long, String> = dataModelLoader.clustersMap
-  val devicesMap: Map<Long, String> = dataModelLoader.devicesMap
+  val clustersMap: Map<ClusterId, String> = dataModelLoader.clustersMap
+  val devicesMap: Map<DeviceTypeId, String> = dataModelLoader.devicesMap
 
   // The introspection info fetched from the device.
   private var _deviceMatterInfoList = MutableStateFlow<List<DeviceMatterInfo>?>(null)
@@ -43,12 +47,12 @@ constructor(
   // Inspect device
 
   /** Inspect the device information. */
-  fun inspectDevice(nodeId: Long) {
+  fun inspectDevice(nodeId: NodeId) {
     Timber.d("inspectDevice: nodeId [${nodeId}]")
     viewModelScope.launch {
       try {
         // Introspect the device.
-        _deviceMatterInfoList.value = clustersHelper.fetchDeviceMatterInfo(nodeId)
+        _deviceMatterInfoList.value = clustersHelper.fetchDeviceMatterInfo(nodeId.toLong())
         Timber.d("after fetch...")
       } catch (e: Exception) {
         Timber.e("*** EXCEPTION GETTING DEVICE MATTER INFO *****", e)
@@ -59,10 +63,11 @@ constructor(
   }
 
   // TODO: document what the ApplicationBasicCluster is...
-  fun inspectApplicationBasicCluster(nodeId: Long) {
+  fun inspectApplicationBasicCluster(nodeId: NodeId) {
     Timber.d("inspectApplicationBasicCluster: nodeId [${nodeId}]")
     viewModelScope.launch {
-      val attributeList = clustersHelper.readApplicationBasicClusterAttributeList(nodeId, 1)
+      val attributeList =
+          clustersHelper.readApplicationBasicClusterAttributeList(nodeId.toLong(), 1)
       attributeList.forEach { Timber.d("inspectDevice attribute: [$it]") }
     }
   }

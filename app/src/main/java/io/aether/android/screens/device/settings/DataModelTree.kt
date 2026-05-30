@@ -21,14 +21,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
+import io.aether.android.matter.ClusterId
+import io.aether.android.matter.DeviceTypeId
 
 @Composable
 fun EndpointTree(
     endpoint: Int,
     infosByEndpoint: Map<Int, DeviceMatterInfo>,
     expandedEndpoints: MutableMap<Int, Boolean>,
-    clustersMap: Map<Long, String>,
-    devicesMap: Map<Long, String>,
+    clustersMap: Map<ClusterId, String>,
+    devicesMap: Map<DeviceTypeId, String>,
     depth: Int,
     visited: Set<Int>,
 ) {

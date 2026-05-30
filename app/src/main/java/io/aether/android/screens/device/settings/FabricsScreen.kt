@@ -44,9 +44,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import io.aether.android.R
-import io.aether.android.chip.vendorLabel
-import io.aether.android.formatFabricId
-import io.aether.android.formatNodeId
+import io.aether.android.matter.toNodeId
+import io.aether.android.matter.vendorLabel
 import io.aether.android.screens.common.LoadingIndicator
 
 /** Route composable for the Controllers screen. */
@@ -57,7 +56,8 @@ fun FabricsRoute(
     nodeId: Long,
     viewModel: FabricsViewModel = hiltViewModel(),
 ) {
-  LaunchedEffect(nodeId) { viewModel.loadFabrics(nodeId) }
+  val typedNodeId = nodeId.toNodeId()
+  LaunchedEffect(nodeId) { viewModel.loadFabrics(typedNodeId) }
 
   val uiState by viewModel.uiState.collectAsState()
 
@@ -79,7 +79,7 @@ fun FabricsRoute(
     FabricsScreen(
         innerPadding = innerPadding,
         uiState = uiState,
-        onRemoveController = { fabricIndex -> viewModel.removeFabric(nodeId, fabricIndex) },
+        onRemoveController = { fabricIndex -> viewModel.removeFabric(typedNodeId, fabricIndex) },
     )
   }
 }
@@ -197,7 +197,7 @@ private fun FabricItem(
               text =
                   stringResource(
                       R.string.device_fabrics_fabric_fabric_id,
-                      formatFabricId(fabricId),
+                      fabricId.toString(),
                   ),
               style = MaterialTheme.typography.bodySmall,
               color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -205,7 +205,7 @@ private fun FabricItem(
         }
         fabric.nodeId?.let { nodeId ->
           Text(
-              text = stringResource(R.string.device_fabrics_fabric_node_id, formatNodeId(nodeId)),
+              text = stringResource(R.string.device_fabrics_fabric_node_id, nodeId.toString()),
               style = MaterialTheme.typography.bodySmall,
               color = MaterialTheme.colorScheme.onSurfaceVariant,
           )

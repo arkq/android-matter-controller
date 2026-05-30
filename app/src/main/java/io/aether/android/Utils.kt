@@ -12,11 +12,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import com.google.protobuf.Timestamp
 import io.aether.android.Device.DeviceType
+import io.aether.android.matter.DeviceTypeId
 import java.io.File
 import java.lang.Long.max
 import java.security.SecureRandom
 import java.time.Instant
-import java.util.Locale
 import kotlin.math.abs
 import timber.log.Timber
 
@@ -122,14 +122,14 @@ fun getDeviceTypeDisplayStringId(deviceType: DeviceType): Int {
 // -----------------------------------------------------------------------------
 // Misc
 
-fun convertToAppDeviceType(matterDeviceType: Long): DeviceType {
-  return when (matterDeviceType) {
-    256L -> DeviceType.TYPE_LIGHT // 0x0100 On/Off Light
-    257L -> DeviceType.TYPE_DIMMABLE_LIGHT // 0x0101 Dimmable Light
-    259L -> DeviceType.TYPE_LIGHT_SWITCH // 0x0103 On/Off Light Switch
-    266L -> DeviceType.TYPE_OUTLET // 0x010A (On/Off Plug-in Unit)
-    268L -> DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT // 0x010C Color Temperature Light
-    269L -> DeviceType.TYPE_EXTENDED_COLOR_LIGHT // 0x010D Extended Color Light
+fun convertToAppDeviceType(matterDeviceType: DeviceTypeId): DeviceType {
+  return when (matterDeviceType.value) {
+    256u -> DeviceType.TYPE_LIGHT // 0x0100 On/Off Light
+    257u -> DeviceType.TYPE_DIMMABLE_LIGHT // 0x0101 Dimmable Light
+    259u -> DeviceType.TYPE_LIGHT_SWITCH // 0x0103 On/Off Light Switch
+    266u -> DeviceType.TYPE_OUTLET // 0x010A (On/Off Plug-in Unit)
+    268u -> DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT // 0x010C Color Temperature Light
+    269u -> DeviceType.TYPE_EXTENDED_COLOR_LIGHT // 0x010D Extended Color Light
     else -> DeviceType.TYPE_UNKNOWN
   }
 }
@@ -176,31 +176,6 @@ fun intentSenderToString(intentSender: IntentSender?): String {
 
 fun isMultiAdminCommissioning(intent: Intent): Boolean {
   return intent.action == "com.google.android.gms.home.matter.ACTION_COMMISSION_DEVICE"
-}
-
-/** Formats a signed Kotlin Long as a full-width unsigned 64-bit hex value. */
-fun formatUint64Hex(value: Long): String {
-  return String.format(Locale.ROOT, "0x%016X", value)
-}
-
-/** Formats a Matter Vendor ID as unsigned 16-bit hex with leading zeroes. */
-fun formatVendorId(vendorId: Int): String {
-  return String.format(Locale.ROOT, "0x%04X", vendorId)
-}
-
-/** Formats a Matter Product ID as unsigned 16-bit hex with leading zeroes. */
-fun formatProductId(productId: Int): String {
-  return String.format(Locale.ROOT, "0x%04X", productId)
-}
-
-/** Formats a Matter Node ID as unsigned 64-bit hex with leading zeroes. */
-fun formatNodeId(nodeId: Long): String {
-  return formatUint64Hex(nodeId)
-}
-
-/** Formats a Matter Fabric ID as unsigned 64-bit hex with leading zeroes. */
-fun formatFabricId(fabricId: Long): String {
-  return formatUint64Hex(fabricId)
 }
 
 /**

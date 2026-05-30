@@ -11,12 +11,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
+import io.aether.android.matter.ClusterId
+import io.aether.android.matter.DeviceTypeId
 
 @Composable
 fun EndpointDetails(
     endpointInfo: DeviceMatterInfo,
-    clustersMap: Map<Long, String>,
-    devicesMap: Map<Long, String>,
+    clustersMap: Map<ClusterId, String>,
+    devicesMap: Map<DeviceTypeId, String>,
     modifier: Modifier = Modifier,
 ) {
   Column(modifier = modifier) {
@@ -31,13 +33,12 @@ fun EndpointDetails(
       )
     } else {
       endpointInfo.types.sorted().forEach { deviceType ->
-        val hex = String.format("0x%04X", deviceType)
         val typeString =
             devicesMap.getOrDefault(
                 deviceType,
                 stringResource(R.string.device_data_model_unknown),
             )
-        Text(text = "[${hex}] $typeString", style = MaterialTheme.typography.bodySmall)
+        Text(text = "[${deviceType}] $typeString", style = MaterialTheme.typography.bodySmall)
       }
     }
 
@@ -56,7 +57,7 @@ fun EndpointDetails(
 }
 
 @Composable
-private fun ClusterList(clusters: List<Long>, clustersMap: Map<Long, String>) {
+private fun ClusterList(clusters: List<ClusterId>, clustersMap: Map<ClusterId, String>) {
   if (clusters.isEmpty()) {
     Text(
         text = stringResource(R.string.device_data_model_none),
@@ -65,12 +66,11 @@ private fun ClusterList(clusters: List<Long>, clustersMap: Map<Long, String>) {
     return
   }
   clusters.sorted().forEach { cluster ->
-    val hex = String.format("0x%04X", cluster)
     val clusterName =
         clustersMap.getOrDefault(
             cluster,
             stringResource(R.string.device_data_model_unknown),
         )
-    Text(text = "[${hex}] $clusterName", style = MaterialTheme.typography.bodySmall)
+    Text(text = "[${cluster}] $clusterName", style = MaterialTheme.typography.bodySmall)
   }
 }

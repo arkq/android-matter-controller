@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.R
+import io.aether.android.matter.toNodeId
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
 
@@ -37,6 +38,7 @@ fun ExplorerRoute(
     nodeId: Long,
     viewModel: ExplorerViewModel = hiltViewModel(),
 ) {
+  val typedNodeId = nodeId.toNodeId()
   val deviceMatterInfoList by viewModel.deviceMatterInfoList.collectAsState()
   val navStack by viewModel.navStack.collectAsState()
   val endpointSearchQuery by viewModel.endpointSearchQuery.collectAsState()
@@ -61,7 +63,7 @@ fun ExplorerRoute(
   BackHandler(enabled = !atRoot) { viewModel.navigateBack() }
 
   LifecycleResumeEffect(nodeId) {
-    viewModel.loadExplorer(nodeId)
+    viewModel.loadExplorer(typedNodeId)
     onPauseOrDispose {}
   }
 
@@ -124,7 +126,7 @@ fun ExplorerRoute(
                 searchQuery = clusterSearchQuery,
                 onSearchQueryChange = viewModel::onClusterSearchQueryChange,
                 onSelectCluster = { clusterId ->
-                  viewModel.selectCluster(nodeId, level.endpoint, clusterId)
+                  viewModel.selectCluster(typedNodeId, level.endpoint, clusterId)
                 },
             )
         is ExplorerLevel.ClusterDetail -> {
@@ -168,7 +170,7 @@ fun ExplorerRoute(
               writeSuccessCount = attributeWriteSuccessCount,
               onRead = {
                 viewModel.readAttribute(
-                    nodeId,
+                    typedNodeId,
                     level.endpoint,
                     level.clusterId,
                     level.attribute.id,
@@ -176,7 +178,7 @@ fun ExplorerRoute(
               },
               onWrite = { value ->
                 viewModel.writeAttribute(
-                    nodeId,
+                    typedNodeId,
                     level.endpoint,
                     level.clusterId,
                     level.attribute.id,
@@ -192,7 +194,7 @@ fun ExplorerRoute(
                 invokeSuccessCount = commandInvokeSuccessCount,
                 onInvoke = { argumentValues ->
                   viewModel.invokeCommand(
-                      nodeId,
+                      typedNodeId,
                       level.endpoint,
                       level.clusterId,
                       level.command.id,
