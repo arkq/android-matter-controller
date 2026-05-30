@@ -96,7 +96,7 @@ internal fun ClusterDetailContent(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              items(filtered, key = { it.id.value }) { attribute ->
+              items(filtered, key = { "attr-${it.id}" }) { attribute ->
                 ExplorerRow(
                     text =
                         formatIdAndName(
@@ -169,7 +169,7 @@ internal fun ClusterDetailContent(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              items(filteredCommands, key = { it.id.value }) { command ->
+              items(filteredCommands, key = { "cmd-${it.id}" }) { command ->
                 ExplorerRow(
                     text =
                         formatIdAndName(
@@ -230,7 +230,7 @@ internal fun ClusterDetailContent(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              items(filteredEvents, key = { it.id.value }) { event ->
+              items(filteredEvents, key = { "evt-${it.id}" }) { event ->
                 ExplorerRow(
                     text =
                         formatIdAndName(
