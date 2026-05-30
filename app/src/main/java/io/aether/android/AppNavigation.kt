@@ -12,7 +12,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import io.aether.android.screens.device.DeviceRoute
-import io.aether.android.screens.device.settings.DataModelRoute
 import io.aether.android.screens.device.settings.DeviceSettingsRoute
 import io.aether.android.screens.device.settings.FabricsRoute
 import io.aether.android.screens.device.settings.explorer.ExplorerRoute
@@ -29,15 +28,12 @@ const val ARG_NODE_ID = "nodeId"
 
 const val ROUTE_DEVICE = "device/{$ARG_NODE_ID}"
 const val ROUTE_DEVICE_SETTINGS = "device/{$ARG_NODE_ID}/settings"
-const val ROUTE_DEVICE_DATA_MODEL = "device/{$ARG_NODE_ID}/data-model"
 const val ROUTE_DEVICE_EXPLORER = "device/{$ARG_NODE_ID}/explorer"
 const val ROUTE_DEVICE_FABRICS = "device/{$ARG_NODE_ID}/fabrics"
 
 fun routeToDevice(nodeId: Long): String = "device/$nodeId"
 
 fun routeToDeviceSettings(nodeId: Long): String = "device/$nodeId/settings"
-
-fun routeToDeviceDataModel(nodeId: Long): String = "device/$nodeId/data-model"
 
 fun routeToDeviceExplorer(nodeId: Long): String = "device/$nodeId/explorer"
 
@@ -55,9 +51,6 @@ fun AppNavigation(
   val navigateToHome: () -> Unit = remember { { navController.navigate(DEST_HOME) } }
   val navigateToDevice: (nodeId: Long) -> Unit = remember {
     { nodeId -> navController.navigate(routeToDevice(nodeId)) }
-  }
-  val navigateToDeviceDataModel: (nodeId: Long) -> Unit = remember {
-    { nodeId -> navController.navigate(routeToDeviceDataModel(nodeId)) }
   }
   val navigateToDeviceSettings: (nodeId: Long) -> Unit = remember {
     { nodeId -> navController.navigate(routeToDeviceSettings(nodeId)) }
@@ -90,19 +83,8 @@ fun AppNavigation(
     ) {
       DeviceSettingsRoute(
           navigateToHome = navigateToHome,
-          navigateToDeviceDataModel = navigateToDeviceDataModel,
           navigateToDeviceExplorer = navigateToDeviceExplorer,
           navigateToDeviceFabrics = navigateToDeviceFabrics,
-          onBackClick = { navController.popBackStack() },
-          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!,
-      )
-    }
-    // Inspect device from Device Settings
-    composable(
-        ROUTE_DEVICE_DATA_MODEL,
-        arguments = listOf(navArgument(ARG_NODE_ID) { type = NavType.LongType }),
-    ) {
-      DataModelRoute(
           onBackClick = { navController.popBackStack() },
           nodeId = it.arguments?.getLong(ARG_NODE_ID)!!,
       )
