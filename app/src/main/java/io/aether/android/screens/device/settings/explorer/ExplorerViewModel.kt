@@ -17,7 +17,6 @@ import io.aether.android.matter.DataType
 import io.aether.android.matter.EventId
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.Privilege
-import io.aether.android.matter.toLong
 import io.aether.android.screens.common.DialogInfo
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers

@@ -12,8 +12,9 @@ import io.aether.android.MatterFabricState
 import io.aether.android.MatterNode
 import io.aether.android.convertToAppDeviceType
 import io.aether.android.convertToMatterDeviceType
-import io.aether.android.formatNodeId
 import io.aether.android.getTimestampForNow
+import io.aether.android.matter.NodeId
+import io.aether.android.matter.toDeviceTypeId
 import io.aether.android.matter.toNodeId
 import java.io.IOException
 import javax.inject.Inject
@@ -160,17 +161,17 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
     Timber.d("updateDevice: device [${device}]")
     val nodeIndex = findNodeIndex(device.nodeId)
     if (nodeIndex == -1) {
-      throw Exception("Device not found: ${formatNodeId(device.nodeId)}")
+      throw Exception("Device not found: ${device.nodeId.toNodeId()}")
     }
     addDevice(device)
   }
 
   suspend fun updateDeviceType(nodeId: Long, deviceType: Device.DeviceType) {
-    Timber.d("updateDeviceType: nodeId [${formatNodeId(nodeId)}] deviceType [${deviceType}]")
+    Timber.d("updateDeviceType: nodeId [${nodeId.toNodeId()}] deviceType [${deviceType}]")
     val nodeIndex = findNodeIndex(nodeId)
     if (nodeIndex == -1) {
       Timber.e(
-          "Unable to get device information to update its type: nodeId [${formatNodeId(nodeId)}] deviceType [${deviceType}]"
+          "Unable to get device information to update its type: nodeId [${nodeId.toNodeId()}] deviceType [${deviceType}]"
       )
       return
     }
@@ -190,25 +191,39 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
     }
   }
 
+  suspend fun updateDeviceType(nodeId: NodeId, deviceType: Device.DeviceType) {
+    updateDeviceType(nodeId.toLong(), deviceType)
+  }
+
   suspend fun removeDevice(nodeId: Long) {
-    Timber.d("removeDevice: nodeId [${formatNodeId(nodeId)}]")
+    Timber.d("removeDevice: nodeId [${nodeId.toNodeId()}]")
     val nodeIndex = findNodeIndex(nodeId)
     if (nodeIndex == -1) {
-      throw Exception("Device not found: ${formatNodeId(nodeId)}")
+      throw Exception("Device not found: ${nodeId.toNodeId()}")
     }
     devicesStateDataStore.updateData { state -> state.toBuilder().removeNodes(nodeIndex).build() }
   }
 
+  suspend fun removeDevice(nodeId: NodeId) {
+    removeDevice(nodeId.toLong())
+  }
+
   suspend fun getDevice(nodeId: Long): Device = getDeviceByNodeId(nodeId)
+
+  suspend fun getDevice(nodeId: NodeId): Device = getDevice(nodeId.toLong())
 
   suspend fun getDeviceByNodeId(nodeId: Long): Device {
     return getAllDevices().devicesList.firstOrNull { it.nodeId == nodeId }
         ?: throw Exception("Device not found for nodeId: ${nodeId.toNodeId()}")
   }
 
+  suspend fun getDeviceByNodeId(nodeId: NodeId): Device = getDeviceByNodeId(nodeId.toLong())
+
   suspend fun getDevicesByNodeId(nodeId: Long): List<Device> {
     return getAllDevices().devicesList.filter { it.nodeId == nodeId }
   }
+
+  suspend fun getDevicesByNodeId(nodeId: NodeId): List<Device> = getDevicesByNodeId(nodeId.toLong())
 
   suspend fun getAllDevices(): Devices {
     return devicesFlow.first()
@@ -253,8 +268,9 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
 
   private fun toDevice(node: MatterNode, endpoint: MatterEndpoint): Device {
     val type =
-        endpoint.deviceTypesList.firstOrNull()?.toLong()?.let { convertToAppDeviceType(it) }
-            ?: Device.DeviceType.TYPE_UNKNOWN
+        endpoint.deviceTypesList.firstOrNull()?.toLong()?.toDeviceTypeId()?.let {
+          convertToAppDeviceType(it)
+        } ?: Device.DeviceType.TYPE_UNKNOWN
     return Device.newBuilder()
         .setNodeId(node.nodeId)
         .setEndpoint(endpointOf(endpoint))

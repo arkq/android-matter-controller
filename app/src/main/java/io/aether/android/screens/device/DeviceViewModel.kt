@@ -28,6 +28,7 @@ import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.endpointFor
 import io.aether.android.matter.Clusters
+import io.aether.android.matter.toNodeId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.home.DeviceUiModel
 import io.aether.android.screens.shared.SetDeviceNameResult
@@ -163,7 +164,7 @@ constructor(
     viewModelScope.launch {
       when (
           val result =
-              setDeviceNameUseCase.execute(nodeId, newName) {
+              setDeviceNameUseCase.execute(nodeId.toNodeId(), newName) {
                 _deviceUiModel.update { current ->
                   current?.copy(node = current.node.toBuilder().setName(newName).build())
                 }

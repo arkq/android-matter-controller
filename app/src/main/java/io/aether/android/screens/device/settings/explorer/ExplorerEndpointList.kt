@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.matter.DEVICES
+import io.aether.android.matter.toDeviceId
 import io.aether.android.screens.common.SearchTextField
 
 @Composable
@@ -31,7 +32,8 @@ internal fun EndpointListContent(
 ) {
   val filteredInfos = infos.filter { info ->
     val endpointText = formatEndpointId(info.endpoint)
-    val typeNames = info.types.joinToString(" ") { typeId -> DEVICES[typeId.toUInt()].orEmpty() }
+    val typeNames =
+        info.types.joinToString(" ") { typeId -> DEVICES[typeId.toDeviceId()].orEmpty() }
     matchesExplorerQuery(searchQuery, endpointText, typeNames)
   }
   val normalizedQuery = searchQuery.trim().lowercase()
@@ -65,9 +67,9 @@ internal fun EndpointListContent(
             info.types
                 .map { typeId ->
                   val typeName =
-                      DEVICES[typeId.toUInt()]
+                      DEVICES[typeId.toDeviceId()]
                           ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
-                  typeId.toUInt() to typeName
+                  typeId to typeName
                 }
                 .sortedBy { it.first }
         val titleName = deviceTypes.joinToString(" & ") { it.second }

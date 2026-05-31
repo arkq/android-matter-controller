@@ -17,6 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
+import io.aether.android.matter.AttributeId
+import io.aether.android.matter.ClusterId
+import io.aether.android.matter.CommandId
+import io.aether.android.matter.DeviceTypeId
+import io.aether.android.matter.EventId
 
 @Composable
 internal fun ExplorerRow(
@@ -58,6 +63,9 @@ internal fun formatEndpointLabel(endpoint: UInt, name: String?): String =
       "[${formatEndpointId(endpoint)}] $name"
     }
 
+internal fun formatEndpointLabel(endpoint: Int, name: String?): String =
+    formatEndpointLabel(endpoint.toUInt(), name)
+
 internal fun formatIdAndName(id: UInt, name: String?): String {
   val idText = formatExplorerId(id)
   return if (name.isNullOrBlank()) {
@@ -67,13 +75,29 @@ internal fun formatIdAndName(id: UInt, name: String?): String {
   }
 }
 
+internal fun formatIdAndName(id: ClusterId, name: String?): String = formatIdAndName(id.value, name)
+
+internal fun formatIdAndName(id: AttributeId, name: String?): String =
+    formatIdAndName(id.value, name)
+
+internal fun formatIdAndName(id: CommandId, name: String?): String = formatIdAndName(id.value, name)
+
+internal fun formatIdAndName(id: EventId, name: String?): String = formatIdAndName(id.value, name)
+
+internal fun formatIdAndName(id: DeviceTypeId, name: String?): String =
+    formatIdAndName(id.value, name)
+
 internal fun formatExplorerId(id: UInt): String =
     if (id <= 0xFFFFu) String.format("0x%04X", id.toLong())
     else String.format("0x%08X", id.toLong())
 
+internal fun formatExplorerId(id: ClusterId): String = formatExplorerId(id.value)
+
 internal fun formatEndpointId(endpoint: UInt): String =
     if (endpoint <= 0xFFu) String.format("0x%02X", endpoint.toLong())
     else String.format("0x%04X", endpoint.toLong())
+
+internal fun formatEndpointId(endpoint: Int): String = formatEndpointId(endpoint.toUInt())
 
 internal fun matchesExplorerQuery(query: String, vararg fields: String): Boolean {
   val normalizedQuery = query.trim().lowercase()

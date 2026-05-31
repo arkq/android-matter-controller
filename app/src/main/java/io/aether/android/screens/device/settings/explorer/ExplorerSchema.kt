@@ -10,12 +10,11 @@ import io.aether.android.matter.CommandId
 import io.aether.android.matter.DataType
 import io.aether.android.matter.EventId
 import io.aether.android.matter.GENERIC_ATTRIBUTES
-import io.aether.android.matter.MatterType
 import io.aether.android.matter.Privilege
 
 data class ExplorerAttributeDefinition(
     val id: AttributeId,
-    val type: MatterType = MatterType.TYPE_UNKNOWN,
+    val type: DataType = DataType.UNKNOWN,
     val name: String,
     val readPrivilege: Privilege = Privilege.NONE,
     val writePrivilege: Privilege = Privilege.NONE,
@@ -63,7 +62,7 @@ object ExplorerSchema {
                         } +
                             GENERIC_ATTRIBUTES.map { (attributeId, attributeInfo) ->
                               ExplorerAttributeDefinition(
-                                  id = attributeId.toUInt(),
+                                  id = attributeId,
                                   type = attributeInfo.type,
                                   name = attributeInfo.name,
                                   readPrivilege = attributeInfo.readPrivilege,

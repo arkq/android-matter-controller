@@ -23,7 +23,6 @@ import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.VendorId
-import io.aether.android.matter.toLong
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.shared.SetDeviceNameResult
 import io.aether.android.screens.shared.SetDeviceNameUseCase
@@ -323,6 +322,10 @@ constructor(
 
   private suspend fun removePhysicalDevice(nodeId: Long) {
     devicesRepository.removeDevice(nodeId)
+  }
+
+  private suspend fun removePhysicalDevice(nodeId: NodeId) {
+    removePhysicalDevice(nodeId.toLong())
   }
 
   // -----------------------------------------------------------------------------------------------

@@ -120,7 +120,7 @@ fun ExplorerRoute(
                 searchQuery = clusterSearchQuery,
                 onSearchQueryChange = viewModel::onClusterSearchQueryChange,
                 onSelectCluster = { clusterId ->
-                  viewModel.selectCluster(typedNodeId, level.endpoint, clusterId)
+                  viewModel.selectCluster(typedNodeId, level.endpoint.toInt(), clusterId)
                 },
             )
         is ExplorerLevel.ClusterDetail -> {

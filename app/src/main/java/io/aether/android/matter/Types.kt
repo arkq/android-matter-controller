@@ -20,6 +20,8 @@ internal val hexFormat = HexFormat {
 value class FabricId(val value: ULong) : Comparable<FabricId> {
   override fun toString(): String = value.toHexString(hexFormat)
 
+  fun toLong(): Long = value.toLong()
+
   override fun compareTo(other: FabricId): Int = value.compareTo(other.value)
 }
 
@@ -29,6 +31,8 @@ value class FabricId(val value: ULong) : Comparable<FabricId> {
 @JvmInline
 value class NodeId(val value: ULong) : Comparable<NodeId> {
   override fun toString(): String = value.toHexString(hexFormat)
+
+  fun toLong(): Long = value.toLong()
 
   override fun compareTo(other: NodeId): Int = value.compareTo(other.value)
 }
@@ -43,6 +47,10 @@ value class ClusterId(val value: UInt) : Comparable<ClusterId> {
       }
 
   override fun compareTo(other: ClusterId): Int = value.compareTo(other.value)
+
+  fun toLong(): Long = value.toLong()
+
+  fun toUInt(): UInt = value
 }
 
 /** A Matter Attribute ID (uint32 per spec). Formats as 4-digit (≤0xFFFF) or 8-digit hex. */
@@ -55,6 +63,10 @@ value class AttributeId(val value: UInt) : Comparable<AttributeId> {
       }
 
   override fun compareTo(other: AttributeId): Int = value.compareTo(other.value)
+
+  fun toLong(): Long = value.toLong()
+
+  fun toUInt(): UInt = value
 }
 
 /** A Matter Command ID (uint32 per spec). Formats as 4-digit (≤0xFFFF) or 8-digit hex. */
@@ -67,6 +79,10 @@ value class CommandId(val value: UInt) : Comparable<CommandId> {
       }
 
   override fun compareTo(other: CommandId): Int = value.compareTo(other.value)
+
+  fun toLong(): Long = value.toLong()
+
+  fun toUInt(): UInt = value
 }
 
 /** A Matter Event ID (uint32 per spec). Formats as 4-digit (≤0xFFFF) or 8-digit hex. */
@@ -79,6 +95,10 @@ value class EventId(val value: UInt) : Comparable<EventId> {
       }
 
   override fun compareTo(other: EventId): Int = value.compareTo(other.value)
+
+  fun toLong(): Long = value.toLong()
+
+  fun toUInt(): UInt = value
 }
 
 /** A Matter Device Type ID (uint32 per spec). Formats as 4-digit (≤0xFFFF) or 8-digit hex. */
@@ -91,12 +111,38 @@ value class DeviceTypeId(val value: UInt) : Comparable<DeviceTypeId> {
       }
 
   override fun compareTo(other: DeviceTypeId): Int = value.compareTo(other.value)
+
+  fun toLong(): Long = value.toLong()
+
+  fun toInt(): Int = value.toInt()
+
+  fun toUInt(): UInt = value
+}
+
+/** A Matter Device ID (device-type identifier, uint32 per spec). */
+@JvmInline
+value class DeviceId(val value: UInt) : Comparable<DeviceId> {
+  override fun toString(): String =
+      when {
+        value <= 0xFFFFu -> value.toUShort().toHexString(hexFormat)
+        else -> value.toHexString(hexFormat)
+      }
+
+  fun toLong(): Long = value.toLong()
+
+  fun toInt(): Int = value.toInt()
+
+  fun toUInt(): UInt = value
+
+  override fun compareTo(other: DeviceId): Int = value.compareTo(other.value)
 }
 
 /** A Matter Vendor ID (uint16 per spec). Formats as 4-digit uppercase hex, e.g. 0x1011. */
 @JvmInline
 value class VendorId(val value: UShort) : Comparable<VendorId> {
   override fun toString(): String = value.toHexString(hexFormat)
+
+  fun toInt(): Int = value.toInt()
 
   override fun compareTo(other: VendorId): Int = value.compareTo(other.value)
 }
@@ -105,6 +151,8 @@ value class VendorId(val value: UShort) : Comparable<VendorId> {
 @JvmInline
 value class ProductId(val value: UShort) : Comparable<ProductId> {
   override fun toString(): String = value.toHexString(hexFormat)
+
+  fun toInt(): Int = value.toInt()
 
   override fun compareTo(other: ProductId): Int = value.compareTo(other.value)
 }
@@ -127,31 +175,15 @@ fun Long.toEventId(): EventId = EventId(toUInt())
 
 fun Long.toDeviceTypeId(): DeviceTypeId = DeviceTypeId(toUInt())
 
+fun Long.toDeviceId(): DeviceId = DeviceId(toUInt())
+
 fun Int.toVendorId(): VendorId = VendorId(toUShort())
 
 fun Int.toProductId(): ProductId = ProductId(toUShort())
 
-// ---------------------------------------------------------------------------
-// Conversion extensions back to Long/Int (used at Chip SDK boundary)
-// ---------------------------------------------------------------------------
+fun DeviceTypeId.toDeviceId(): DeviceId = DeviceId(value)
 
-fun FabricId.toLong(): Long = value.toLong()
-
-fun NodeId.toLong(): Long = value.toLong()
-
-fun ClusterId.toLong(): Long = value.toLong()
-
-fun AttributeId.toLong(): Long = value.toLong()
-
-fun CommandId.toLong(): Long = value.toLong()
-
-fun EventId.toLong(): Long = value.toLong()
-
-fun DeviceTypeId.toLong(): Long = value.toLong()
-
-fun VendorId.toInt(): Int = value.toInt()
-
-fun ProductId.toInt(): Int = value.toInt()
+fun DeviceId.toDeviceTypeId(): DeviceTypeId = DeviceTypeId(value)
 
 /** Data class representing Matter cluster from data model. */
 data class ClusterInfo(

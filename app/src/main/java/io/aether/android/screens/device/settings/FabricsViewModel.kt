@@ -14,7 +14,6 @@ import io.aether.android.matter.FabricId
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.VendorId
 import io.aether.android.matter.toFabricId
-import io.aether.android.matter.toLong
 import io.aether.android.matter.toNodeId
 import io.aether.android.matter.toVendorId
 import javax.inject.Inject

@@ -13,6 +13,7 @@ import io.aether.android.MatterEndpoint
 import io.aether.android.MatterFabricState
 import io.aether.android.MatterNode
 import io.aether.android.getTimestampForNow
+import io.aether.android.matter.NodeId
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -189,6 +190,10 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
       val stateBuilder = state.toBuilder().setNodes(nodeIndex, nodeBuilder.build())
       stateBuilder.build()
     }
+  }
+
+  suspend fun updateNodeOnlineState(nodeId: NodeId, isOnline: Boolean) {
+    updateNodeOnlineState(nodeId.toLong(), isOnline)
   }
 
   private fun findNodeIndex(state: MatterFabricState, nodeId: Long): Int {

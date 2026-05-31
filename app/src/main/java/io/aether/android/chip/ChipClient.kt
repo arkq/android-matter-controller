@@ -18,7 +18,6 @@ import chip.platform.PreferencesConfigurationManager
 import chip.platform.PreferencesKeyValueStoreManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.aether.android.matter.NodeId
-import io.aether.android.matter.toLong
 import io.aether.android.matter.toNodeId
 import io.aether.android.stripLinkLocalInIpAddress
 import java.util.concurrent.atomic.AtomicBoolean

@@ -35,7 +35,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import io.aether.android.R
-import io.aether.android.matter.toInt
 import timber.log.Timber
 
 /**

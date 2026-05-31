@@ -332,7 +332,7 @@ constructor(
       try {
         val deviceMatterInfoList = clustersHelper.fetchDeviceMatterInfo(nodeId)
         val appEndpoints = deviceMatterInfoList.filter { info ->
-          info.endpoint != 0u && info.serverClusters.contains(Clusters.OnOff.ID.toLong())
+          info.endpoint != 0u && info.serverClusters.contains(Clusters.OnOff.ID)
         }
 
         if (appEndpoints.isEmpty()) {
@@ -343,13 +343,10 @@ constructor(
           }
           val commissionedDeviceTypes = fallbackEndpointInfo?.types ?: emptyList()
           val supportsLevel =
-              fallbackEndpointInfo?.serverClusters?.contains(Clusters.LevelControl.ID.toLong()) ==
-                  true
+              fallbackEndpointInfo?.serverClusters?.contains(Clusters.LevelControl.ID) == true
           val supportsColorTemperature =
               if (
-                  fallbackEndpointInfo
-                      ?.serverClusters
-                      ?.contains(Clusters.ColorControl.ID.toLong()) == true
+                  fallbackEndpointInfo?.serverClusters?.contains(Clusters.ColorControl.ID) == true
               ) {
                 try {
                   clustersHelper
@@ -357,7 +354,7 @@ constructor(
                           nodeId,
                           fallbackEndpointInfo.endpoint.toInt(),
                       )
-                      .contains(Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID.toLong())
+                      .contains(Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID)
                 } catch (e: Exception) {
                   Timber.w(
                       e,
@@ -396,17 +393,15 @@ constructor(
         } else {
           appEndpoints.forEach { info ->
             val endpointDisplayName = deviceName
-            val supportsLevel = info.serverClusters.contains(Clusters.LevelControl.ID.toLong())
+            val supportsLevel = info.serverClusters.contains(Clusters.LevelControl.ID)
             // Check the Color Control cluster's AttributeList to confirm that the optional
             // color temperature attribute (id 7) is actually present, not just the cluster.
             val supportsColorTemperature =
-                if (info.serverClusters.contains(Clusters.ColorControl.ID.toLong())) {
+                if (info.serverClusters.contains(Clusters.ColorControl.ID)) {
                   try {
                     clustersHelper
                         .readColorControlClusterAttributeList(nodeId, info.endpoint.toInt())
-                        .contains(
-                            Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID.toLong()
-                        )
+                        .contains(Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID)
                   } catch (e: Exception) {
                     Timber.w(
                         e,

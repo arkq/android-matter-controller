@@ -44,11 +44,10 @@ import com.google.protobuf.Timestamp
 import io.aether.android.Device
 import io.aether.android.R
 import io.aether.android.chip.BasicInformationAttributes
-import io.aether.android.formatProductId
 import io.aether.android.formatTimestamp
 import io.aether.android.getDeviceTypeDisplayStringId
-import io.aether.android.matter.toLong
 import io.aether.android.matter.toNodeId
+import io.aether.android.matter.toVendorId
 import io.aether.android.matter.vendorLabel
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.LoadingIndicator
@@ -268,12 +267,12 @@ private fun DeviceSettingsScreen(
 
     // Basic section
     SettingsSection(title = stringResource(R.string.device_settings_section_basic)) {
-      val unknown = stringResource(R.string.device_data_model_unknown)
+      val unknown = stringResource(R.string.device_type_unknown)
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_vendor),
           value =
               vendorLabel(
-                  basicInformation?.vendorId ?: device.vendorId.toIntOrNull() ?: 0,
+                  basicInformation?.vendorId ?: (device.vendorId.toIntOrNull() ?: 0).toVendorId(),
                   basicInformation?.vendorName?.takeIf { it.isNotBlank() }
                       ?: device.vendorName.takeIf { it.isNotBlank() },
               ),
@@ -286,9 +285,9 @@ private fun DeviceSettingsScreen(
                   basicInformation?.productName?.takeIf { it.isNotBlank() }
                       ?: device.productName.takeIf { it.isNotBlank() }
                       ?: unknown,
-                  (basicInformation?.productId ?: device.productId.toIntOrNull())
-                      ?.takeIf { it != 0 }
-                      ?.let { formatProductId(it) } ?: unknown,
+                  basicInformation?.productId?.takeIf { it.toInt() != 0 }?.toString()
+                      ?: device.productId.toIntOrNull()?.takeIf { it != 0 }?.toString()
+                      ?: unknown,
               ),
       )
       SettingsInfoRow(
@@ -314,7 +313,7 @@ private fun DeviceSettingsScreen(
 
     // General section
     SettingsSection(title = stringResource(R.string.device_settings_section_general)) {
-      val unknown = stringResource(R.string.device_data_model_unknown)
+      val unknown = stringResource(R.string.device_type_unknown)
       SettingsClickableRow(
           label = stringResource(R.string.device_settings_general_name),
           value =

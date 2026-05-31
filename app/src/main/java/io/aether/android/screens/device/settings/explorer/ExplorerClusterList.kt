@@ -33,8 +33,8 @@ internal fun ClusterListContent(
     onSelectCluster: (ClusterId) -> Unit,
 ) {
   val endpointInfo = infos.firstOrNull { it.endpoint == endpoint }
-  val serverClusters = endpointInfo?.serverClusters.orEmpty().map { it.toUInt() }.sorted()
-  val clientClusters = endpointInfo?.clientClusters.orEmpty().map { it.toUInt() }.sorted()
+  val serverClusters = endpointInfo?.serverClusters.orEmpty().sorted()
+  val clientClusters = endpointInfo?.clientClusters.orEmpty().sorted()
   val clusterMatchesQuery: (ClusterId) -> Boolean = { clusterId ->
     matchesExplorerQuery(
         searchQuery,
