@@ -21,6 +21,8 @@ import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
+import io.aether.android.matter.DEVICES
+import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.EndpointId
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.VendorId
@@ -141,7 +143,7 @@ constructor(
   private fun chooseBestDevice(candidates: List<Device>): Device? {
     return candidates.maxByOrNull { candidate ->
       var score = 0
-      if (candidate.deviceType != Device.DeviceType.TYPE_UNKNOWN) score += 4
+      if (candidate.deviceTypeId in DEVICES) score += 4
       if (candidate.name.isNotBlank()) score += 2
       if (candidate.productName.isNotBlank()) score += 2
       if (candidate.productId.toIntOrNull()?.let { it != 0 } == true) score += 1
@@ -174,12 +176,12 @@ constructor(
   // -----------------------------------------------------------------------------------------------
   // Change device type
 
-  fun changeDeviceType(nodeId: NodeId, deviceType: Device.DeviceType) {
-    Timber.d("changeDeviceType: nodeId [$nodeId] deviceType [$deviceType]")
+  fun changeDeviceType(nodeId: NodeId, deviceTypeId: DeviceTypeId) {
+    Timber.d("changeDeviceType: nodeId [$nodeId] deviceTypeId [$deviceTypeId]")
     viewModelScope.launch {
       try {
-        devicesRepository.updateDeviceType(nodeId, deviceType)
-        _device.value = _device.value?.toBuilder()?.setDeviceType(deviceType)?.build()
+        devicesRepository.updateDeviceType(nodeId, deviceTypeId)
+        _device.value = _device.value?.toBuilder()?.setDeviceTypeId(deviceTypeId)?.build()
       } catch (e: Exception) {
         Timber.e(e, "changeDeviceType failed")
       }

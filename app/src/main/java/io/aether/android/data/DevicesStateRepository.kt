@@ -179,12 +179,11 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
   }
 
   suspend fun updateNodeOnlineState(nodeId: NodeId, isOnline: Boolean) {
-    val capturedAt = getTimestampForNow()
     devicesStateDataStore.updateData { state ->
       val nodeIndex = findNodeIndex(state, nodeId)
       if (nodeIndex == -1) {
         Timber.e(
-            "updateNodeOnlineState: missing node state for nodeId=%d; refusing to create a new node",
+            "updateNodeOnlineState: missing node state for nodeId=%s; refusing to create a new node",
             nodeId,
         )
         return@updateData state

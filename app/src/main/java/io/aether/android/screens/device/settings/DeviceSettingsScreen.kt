@@ -46,6 +46,7 @@ import io.aether.android.R
 import io.aether.android.chip.BasicInformationAttributes
 import io.aether.android.formatTimestamp
 import io.aether.android.getDeviceTypeDisplayStringId
+import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.toVendorId
 import io.aether.android.matter.vendorLabel
@@ -188,7 +189,7 @@ private fun DeviceSettingsScreen(
     showConfirmDeviceRemovalAlertDialog: Boolean,
     onDismissMsgDialog: () -> Unit,
     onRenameDevice: (String) -> Unit,
-    onChangeDeviceType: (io.aether.android.Device.DeviceType) -> Unit,
+    onChangeDeviceType: (DeviceTypeId) -> Unit,
     onShareDevice: () -> Unit,
     onRemoveDeviceClick: () -> Unit,
     onRemoveDeviceOutcome: (Boolean) -> Unit,
@@ -233,7 +234,7 @@ private fun DeviceSettingsScreen(
 
   if (showTypeDialog && device != null) {
     DeviceTypeDialog(
-        currentType = device.deviceType,
+        currentType = device.deviceTypeId,
         onConfirm = { type ->
           onChangeDeviceType(type)
           showTypeDialog = false
@@ -324,7 +325,7 @@ private fun DeviceSettingsScreen(
       )
       SettingsClickableRow(
           label = stringResource(R.string.device_settings_general_type),
-          value = stringResource(getDeviceTypeDisplayStringId(device.deviceType)),
+          value = getDeviceTypeDisplayStringId(device.deviceTypeId),
           onClick = { showTypeDialog = true },
       )
     }

@@ -22,9 +22,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import io.aether.android.Device
 import io.aether.android.R
 import io.aether.android.getDeviceTypeDisplayStringId
+import io.aether.android.matter.DeviceTypeId
+import io.aether.android.matter.Devices
 
 @Composable
 internal fun RenameDialog(
@@ -60,19 +61,19 @@ internal fun RenameDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DeviceTypeDialog(
-    currentType: io.aether.android.Device.DeviceType,
-    onConfirm: (io.aether.android.Device.DeviceType) -> Unit,
+    currentType: DeviceTypeId,
+    onConfirm: (DeviceTypeId) -> Unit,
     onDismiss: () -> Unit,
 ) {
   val types =
       listOf(
-          io.aether.android.Device.DeviceType.TYPE_LIGHT,
-          io.aether.android.Device.DeviceType.TYPE_DIMMABLE_LIGHT,
-          io.aether.android.Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT,
-          io.aether.android.Device.DeviceType.TYPE_EXTENDED_COLOR_LIGHT,
-          io.aether.android.Device.DeviceType.TYPE_LIGHT_SWITCH,
-          io.aether.android.Device.DeviceType.TYPE_OUTLET,
-          io.aether.android.Device.DeviceType.TYPE_UNKNOWN,
+          Devices.OnOffLight.ID,
+          Devices.DimmableLight.ID,
+          Devices.ColorTemperatureLight.ID,
+          Devices.ExtendedColorLight.ID,
+          Devices.OnOffLightSwitch.ID,
+          Devices.OnOffPluginUnit.ID,
+          DeviceTypeId(0u),
       )
   var expanded by remember { mutableStateOf(false) }
   var selectedType by remember(currentType) { mutableStateOf(currentType) }
@@ -85,7 +86,7 @@ internal fun DeviceTypeDialog(
             onExpandedChange = { expanded = it },
         ) {
           OutlinedTextField(
-              value = stringResource(getDeviceTypeDisplayStringId(selectedType)),
+              value = getDeviceTypeDisplayStringId(selectedType),
               onValueChange = {},
               readOnly = true,
               trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -99,7 +100,7 @@ internal fun DeviceTypeDialog(
           ) {
             types.forEach { type ->
               DropdownMenuItem(
-                  text = { Text(stringResource(getDeviceTypeDisplayStringId(type))) },
+                  text = { Text(getDeviceTypeDisplayStringId(type)) },
                   onClick = {
                     selectedType = type
                     expanded = false

@@ -10,9 +10,8 @@ import io.aether.android.Devices
 import io.aether.android.MatterEndpoint
 import io.aether.android.MatterFabricState
 import io.aether.android.MatterNode
-import io.aether.android.convertToAppDeviceType
-import io.aether.android.convertToMatterDeviceType
 import io.aether.android.getTimestampForNow
+import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.EndpointId
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.toDeviceTypeId
@@ -167,12 +166,12 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
     addDevice(device)
   }
 
-  suspend fun updateDeviceType(nodeId: NodeId, deviceType: Device.DeviceType) {
-    Timber.d("updateDeviceType: nodeId [${nodeId}] deviceType [${deviceType}]")
+  suspend fun updateDeviceType(nodeId: NodeId, deviceTypeId: DeviceTypeId) {
+    Timber.d("updateDeviceType: nodeId [${nodeId}] deviceTypeId [${deviceTypeId}]")
     val nodeIndex = findNodeIndex(nodeId)
     if (nodeIndex == -1) {
       Timber.e(
-          "Unable to get device information to update its type: nodeId [${nodeId}] deviceType [${deviceType}]"
+          "Unable to get device information to update its type: nodeId [${nodeId}] deviceTypeId [${deviceTypeId}]"
       )
       return
     }
@@ -182,9 +181,8 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
       for (i in endpoints.indices) {
         val endpointBuilder = endpoints[i].toBuilder()
         endpointBuilder.clearDeviceTypes()
-        val matterType = convertToMatterDeviceType(deviceType)
-        if (matterType != 0) {
-          endpointBuilder.addDeviceTypes(matterType)
+        if (deviceTypeId.toInt() != 0) {
+          endpointBuilder.addDeviceTypes(deviceTypeId.toInt())
         }
         nodeBuilder.setEndpoints(i, endpointBuilder.build())
       }
@@ -254,10 +252,8 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
   }
 
   private fun toDevice(node: MatterNode, endpoint: MatterEndpoint): Device {
-    val type =
-        endpoint.deviceTypesList.firstOrNull()?.toLong()?.toDeviceTypeId()?.let {
-          convertToAppDeviceType(it)
-        } ?: Device.DeviceType.TYPE_UNKNOWN
+    val typeId =
+        endpoint.deviceTypesList.firstOrNull()?.toLong()?.toDeviceTypeId() ?: DeviceTypeId(0u)
     return Device.newBuilder()
         .setNodeId(node.nodeId)
         .setEndpointId(endpointOf(endpoint).toEndpointId())
@@ -266,7 +262,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
         .setVendorName(node.vendorName)
         .setProductId(node.productId.toString())
         .setProductName(node.productName)
-        .setDeviceType(type)
+        .setDeviceTypeId(typeId)
         .setSupportsLevelControl(endpoint.supportsLevelControl)
         .setSupportsColorTemperature(endpoint.supportsColorTemperature)
         .setOn(endpoint.on)
@@ -289,9 +285,8 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
     builder.level = device.level
     builder.colorTemperature = device.colorTemperature
     builder.clearDeviceTypes()
-    val matterType = convertToMatterDeviceType(device.deviceType)
-    if (matterType != 0) {
-      builder.addDeviceTypes(matterType)
+    if (device.deviceTypeId.toInt() != 0) {
+      builder.addDeviceTypes(device.deviceTypeId.toInt())
     }
     return builder.build()
   }

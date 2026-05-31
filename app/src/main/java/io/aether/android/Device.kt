@@ -3,6 +3,7 @@
 
 package io.aether.android
 
+import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.EndpointId
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.toNodeId
@@ -16,25 +17,13 @@ data class Device(
     val vendorName: String = "",
     val productId: String = "",
     val productName: String = "",
-    val deviceType: DeviceType = DeviceType.TYPE_UNKNOWN,
+    val deviceTypeId: DeviceTypeId = DeviceTypeId(0u),
     val supportsLevelControl: Boolean = false,
     val supportsColorTemperature: Boolean = false,
     val on: Boolean = false,
     val level: Int = 0,
     val colorTemperature: Int = 0,
 ) {
-  enum class DeviceType {
-    TYPE_UNSPECIFIED,
-    TYPE_LIGHT,
-    TYPE_OUTLET,
-    TYPE_DIMMABLE_LIGHT,
-    TYPE_COLOR_TEMPERATURE_LIGHT,
-    TYPE_EXTENDED_COLOR_LIGHT,
-    TYPE_LIGHT_SWITCH,
-    TYPE_UNKNOWN,
-    UNRECOGNIZED,
-  }
-
   fun toBuilder(): Builder = Builder(this)
 
   class Builder internal constructor(private var device: Device = Device()) {
@@ -58,8 +47,8 @@ data class Device(
       device = device.copy(productName = productName)
     }
 
-    fun setDeviceType(deviceType: DeviceType) = apply {
-      device = device.copy(deviceType = deviceType)
+    fun setDeviceTypeId(deviceTypeId: DeviceTypeId) = apply {
+      device = device.copy(deviceTypeId = deviceTypeId)
     }
 
     fun setSupportsLevelControl(supportsLevelControl: Boolean) = apply {
