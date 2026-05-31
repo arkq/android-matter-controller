@@ -93,7 +93,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
         if (device.productId.isNotBlank()) {
           nodeBuilder.productId = device.productId.toIntOrNull() ?: existingNode.productId
         }
-        val endpointIndex = findEndpointIndex(existingNode, normalizedEndpoint)
+        val endpointIndex = findEndpointIndex(existingNode, normalizedEndpoint.toEndpointId())
         val updatedEndpoint =
             toEndpoint(
                 device,
@@ -146,7 +146,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
         if (productId != 0) nodeBuilder.productId = productId
 
         val normalizedEndpoint = endpointOf(endpoint)
-        val endpointIndex = findEndpointIndex(existingNode, normalizedEndpoint)
+        val endpointIndex = findEndpointIndex(existingNode, normalizedEndpoint.toEndpointId())
         if (endpointIndex == -1) {
           nodeBuilder.addEndpoints(endpoint)
         } else {
@@ -235,10 +235,10 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
     return -1
   }
 
-  private fun findEndpointIndex(node: MatterNode, endpoint: Int): Int {
+  private fun findEndpointIndex(node: MatterNode, endpointId: EndpointId): Int {
     val endpointsCount = node.endpointsCount
     for (index in 0 until endpointsCount) {
-      if (endpointOf(node.getEndpoints(index)) == endpoint) {
+      if (endpointOf(node.getEndpoints(index)) == endpointId.toInt()) {
         return index
       }
     }
@@ -246,7 +246,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
   }
 
   private fun endpointOf(device: Device): Int {
-    return if (device.endpoint != 0) device.endpoint else 1
+    return if (device.endpointId.toInt() != 0) device.endpointId.toInt() else 1
   }
 
   private fun endpointOf(endpoint: MatterEndpoint): Int {
@@ -260,7 +260,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
         } ?: Device.DeviceType.TYPE_UNKNOWN
     return Device.newBuilder()
         .setNodeId(node.nodeId)
-        .setEndpoint(endpointOf(endpoint))
+        .setEndpointId(endpointOf(endpoint).toEndpointId())
         .setName(if (node.name.isNotBlank()) node.name else endpoint.label)
         .setVendorId(node.vendorId.toString())
         .setVendorName(node.vendorName)

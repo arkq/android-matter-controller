@@ -21,6 +21,7 @@ import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
+import io.aether.android.matter.EndpointId
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.VendorId
 import io.aether.android.screens.common.DialogInfo
@@ -277,7 +278,7 @@ constructor(
         chipClient.computePaseVerifier(connectedDevicePointer, SETUP_PIN_CODE, ITERATION, salt)
     clustersHelper.openCommissioningWindowAdministratorCommissioningCluster(
         nodeId.toLong(),
-        0,
+        EndpointId(0u),
         OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS,
         verifier.pakeVerifier,
         DISCRIMINATOR,

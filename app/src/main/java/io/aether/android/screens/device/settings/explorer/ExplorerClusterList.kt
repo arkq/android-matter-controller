@@ -20,11 +20,12 @@ import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.matter.CLUSTERS
 import io.aether.android.matter.ClusterId
+import io.aether.android.matter.EndpointId
 import io.aether.android.screens.common.SearchTextField
 
 @Composable
 internal fun ClusterListContent(
-    endpoint: UInt,
+    endpointId: EndpointId,
     infos: List<DeviceMatterInfo>,
     knownClustersById: Map<ClusterId, ExplorerClusterDefinition>,
     showSearch: Boolean,
@@ -32,7 +33,7 @@ internal fun ClusterListContent(
     onSearchQueryChange: (String) -> Unit,
     onSelectCluster: (ClusterId) -> Unit,
 ) {
-  val endpointInfo = infos.firstOrNull { it.endpoint == endpoint }
+  val endpointInfo = infos.firstOrNull { it.endpointId == endpointId }
   val serverClusters = endpointInfo?.serverClusters.orEmpty().sorted()
   val clientClusters = endpointInfo?.clientClusters.orEmpty().sorted()
   val clusterMatchesQuery: (ClusterId) -> Boolean = { clusterId ->

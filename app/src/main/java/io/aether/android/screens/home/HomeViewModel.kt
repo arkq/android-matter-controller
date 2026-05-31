@@ -41,6 +41,7 @@ import io.aether.android.data.DevicesStateRepository
 import io.aether.android.data.UserPreferencesRepository
 import io.aether.android.endpointIdTyped
 import io.aether.android.matter.Clusters
+import io.aether.android.matter.EndpointId
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.toEndpointId
 import io.aether.android.matter.toNodeId
@@ -335,14 +336,14 @@ constructor(
       try {
         val deviceMatterInfoList = clustersHelper.fetchDeviceMatterInfo(nodeId)
         val appEndpoints = deviceMatterInfoList.filter { info ->
-          info.endpoint != 0u && info.serverClusters.contains(Clusters.OnOff.ID)
+          info.endpointId != EndpointId(0u) && info.serverClusters.contains(Clusters.OnOff.ID)
         }
 
         if (appEndpoints.isEmpty()) {
           // Fallback for devices that expose no application endpoints with On/Off cluster
           // (e.g. legacy or non-standard devices). Fall back to first non-root endpoint.
           val fallbackEndpointInfo = deviceMatterInfoList.firstOrNull { info ->
-            info.endpoint != 0u
+            info.endpointId != EndpointId(0u)
           }
           val commissionedDeviceTypes = fallbackEndpointInfo?.types ?: emptyList()
           val supportsLevel =
@@ -355,13 +356,13 @@ constructor(
                   clustersHelper
                       .readColorControlClusterAttributeList(
                           nodeId,
-                          fallbackEndpointInfo.endpoint.toInt(),
+                          fallbackEndpointInfo.endpointId,
                       )
                       .contains(Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID)
                 } catch (e: Exception) {
                   Timber.w(
                       e,
-                      "Could not read Color Control attribute list for endpoint ${fallbackEndpointInfo.endpoint}; assuming color temperature unsupported",
+                      "Could not read Color Control attribute list for endpoint ${fallbackEndpointInfo.endpointId}; assuming color temperature unsupported",
                   )
                   false
                 }
@@ -370,7 +371,7 @@ constructor(
               }
           val device =
               MatterEndpoint.newBuilder()
-                  .setEndpointId(fallbackEndpointInfo?.endpoint?.toInt() ?: 1)
+                  .setEndpointId(fallbackEndpointInfo?.endpointId?.toInt() ?: 1)
                   .setLabel(deviceName)
                   .setSupportsLevelControl(supportsLevel)
                   .setSupportsColorTemperature(supportsColorTemperature)
@@ -403,12 +404,12 @@ constructor(
                 if (info.serverClusters.contains(Clusters.ColorControl.ID)) {
                   try {
                     clustersHelper
-                        .readColorControlClusterAttributeList(nodeId, info.endpoint.toInt())
+                        .readColorControlClusterAttributeList(nodeId, info.endpointId)
                         .contains(Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID)
                   } catch (e: Exception) {
                     Timber.w(
                         e,
-                        "Could not read Color Control attribute list for endpoint ${info.endpoint}; assuming color temperature unsupported",
+                        "Could not read Color Control attribute list for endpoint ${info.endpointId}; assuming color temperature unsupported",
                     )
                     false
                   }
@@ -418,7 +419,7 @@ constructor(
 
             val device =
                 MatterEndpoint.newBuilder()
-                    .setEndpointId(info.endpoint.toInt())
+                    .setEndpointId(info.endpointId.toInt())
                     .setLabel(endpointDisplayName)
                     .setSupportsLevelControl(supportsLevel)
                     .setSupportsColorTemperature(supportsColorTemperature)
@@ -482,16 +483,26 @@ constructor(
         val endpointDevice = node.endpointsList.minByOrNull { it.endpointId } ?: return@launch
         val endpoint = endpointDevice.endpointId
         Timber.d("Handling real device nodeId [$nodeId] endpoint [$endpoint]")
-        clustersHelper.setOnOffDeviceStateOnOffCluster(nodeId.toLong(), isOn, endpoint)
+        clustersHelper.setOnOffDeviceStateOnOffCluster(
+            nodeId.toLong(),
+            isOn,
+            endpoint.toEndpointId(),
+        )
         val level =
             if (supportsLevelControl(endpointDevice)) {
-              clustersHelper.getDeviceStateLevelControlCluster(nodeId.toLong(), endpoint) ?: 0
+              clustersHelper.getDeviceStateLevelControlCluster(
+                  nodeId.toLong(),
+                  endpoint.toEndpointId(),
+              ) ?: 0
             } else {
               0
             }
         val colorTemperature =
             if (supportsColorTemperature(endpointDevice)) {
-              clustersHelper.getColorTemperatureColorControlCluster(nodeId.toLong(), endpoint) ?: 0
+              clustersHelper.getColorTemperatureColorControlCluster(
+                  nodeId.toLong(),
+                  endpoint.toEndpointId(),
+              ) ?: 0
             } else {
               0
             }
@@ -694,16 +705,23 @@ constructor(
                 val endpoint = endpointDevice.endpointId
                 val hasLevelControl = supportsLevelControl(endpointDevice)
                 val hasColorTemperature = supportsColorTemperature(endpointDevice)
-                var isOn = clustersHelper.getDeviceStateOnOffCluster(nId.toLong(), endpoint)
+                var isOn =
+                    clustersHelper.getDeviceStateOnOffCluster(nId.toLong(), endpoint.toEndpointId())
                 val levelRead =
                     if (hasLevelControl) {
-                      clustersHelper.getDeviceStateLevelControlCluster(nId.toLong(), endpoint)
+                      clustersHelper.getDeviceStateLevelControlCluster(
+                          nId.toLong(),
+                          endpoint.toEndpointId(),
+                      )
                     } else {
                       null
                     }
                 val colorTemperatureRead =
                     if (hasColorTemperature) {
-                      clustersHelper.getColorTemperatureColorControlCluster(nId.toLong(), endpoint)
+                      clustersHelper.getColorTemperatureColorControlCluster(
+                          nId.toLong(),
+                          endpoint.toEndpointId(),
+                      )
                     } else {
                       null
                     }

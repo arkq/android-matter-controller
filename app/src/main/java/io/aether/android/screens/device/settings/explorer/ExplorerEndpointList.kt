@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.matter.DEVICES
+import io.aether.android.matter.EndpointId
 import io.aether.android.matter.toDeviceId
 import io.aether.android.screens.common.SearchTextField
 
@@ -28,10 +29,10 @@ internal fun EndpointListContent(
     showSearch: Boolean,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
-    onSelectEndpoint: (UInt) -> Unit,
+    onSelectEndpoint: (EndpointId) -> Unit,
 ) {
   val filteredInfos = infos.filter { info ->
-    val endpointText = formatEndpointId(info.endpoint)
+    val endpointText = formatEndpointId(info.endpointId)
     val typeNames =
         info.types.joinToString(" ") { typeId -> DEVICES[typeId.toDeviceId()].orEmpty() }
     matchesExplorerQuery(searchQuery, endpointText, typeNames)
@@ -62,7 +63,7 @@ internal fun EndpointListContent(
     }
 
     LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-      items(filteredInfos, key = { "e-${it.endpoint}" }) { info ->
+      items(filteredInfos, key = { "e-${it.endpointId}" }) { info ->
         val deviceTypes =
             info.types
                 .map { typeId ->
@@ -74,7 +75,7 @@ internal fun EndpointListContent(
                 .sortedBy { it.first }
         val titleName = deviceTypes.joinToString(" & ") { it.second }
         ExplorerRow(
-            text = formatEndpointLabel(info.endpoint, titleName),
+            text = formatEndpointLabel(info.endpointId, titleName),
             secondaryText =
                 buildString {
                   if (deviceTypes.size == 1) {
@@ -109,7 +110,7 @@ internal fun EndpointListContent(
                       )
                   )
                 },
-            onClick = { onSelectEndpoint(info.endpoint) },
+            onClick = { onSelectEndpoint(info.endpointId) },
         )
       }
     }

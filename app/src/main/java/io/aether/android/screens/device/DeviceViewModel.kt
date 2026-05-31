@@ -28,6 +28,7 @@ import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.endpointIdTyped
 import io.aether.android.matter.Clusters
+import io.aether.android.matter.EndpointId
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.toEndpointId
 import io.aether.android.matter.toNodeId
@@ -289,7 +290,7 @@ constructor(
     val verifier = chipClient.computePaseVerifier(devicePtr, SETUP_PIN_CODE, ITERATION, salt)
     clustersHelper.openCommissioningWindowAdministratorCommissioningCluster(
         nodeId.toLong(),
-        0,
+        EndpointId(0u),
         180,
         verifier.pakeVerifier,
         DISCRIMINATOR,
@@ -369,7 +370,7 @@ constructor(
         clustersHelper.setOnOffDeviceStateOnOffCluster(
             nodeId.toLong(),
             isOn,
-            deviceUiModel.endpoint.endpointId,
+            deviceUiModel.endpoint.endpointId.toEndpointId(),
         )
         val endpoint = deviceUiModel.endpoint.endpointId
         // Read the current stored state to avoid overwriting fresh level/colorTemperature values
@@ -406,7 +407,7 @@ constructor(
         clustersHelper.setLevelStateLevelControlCluster(
             nodeId.toLong(),
             level,
-            deviceUiModel.endpoint.endpointId,
+            deviceUiModel.endpoint.endpointId.toEndpointId(),
         )
         val endpoint = deviceUiModel.endpoint.endpointId
         // Read the current stored state to avoid overwriting fresh isOn/colorTemperature values.
@@ -442,7 +443,7 @@ constructor(
         clustersHelper.setColorTemperatureColorControlCluster(
             nodeId.toLong(),
             colorTemperature,
-            deviceUiModel.endpoint.endpointId,
+            deviceUiModel.endpoint.endpointId.toEndpointId(),
         )
         val endpoint = deviceUiModel.endpoint.endpointId
         // Read the current stored state to avoid overwriting fresh isOn/level values.
@@ -477,7 +478,7 @@ constructor(
       val partsListAttribute =
           clustersHelper.readDescriptorClusterPartsListAttribute(
               chipClient.getConnectedDevicePointer(nodeId),
-              0u,
+              EndpointId(0u),
           )
       Timber.d("partsListAttribute [${partsListAttribute}]")
 
@@ -506,7 +507,7 @@ constructor(
     Timber.d("inspectApplicationBasicCluster: nodeId [${nodeId}]")
     viewModelScope.launch {
       val attributeList =
-          clustersHelper.readApplicationBasicClusterAttributeList(nodeId.toLong(), 1u)
+          clustersHelper.readApplicationBasicClusterAttributeList(nodeId.toLong(), 1.toEndpointId())
       attributeList.forEach { Timber.d("inspectDevice attribute: [$it]") }
     }
   }
@@ -514,10 +515,12 @@ constructor(
   fun inspectBasicCluster(nodeId: NodeId) {
     Timber.d("inspectBasicCluster: nodeId [${nodeId}]")
     viewModelScope.launch {
-      val vendorId = clustersHelper.readBasicClusterVendorIDAttribute(nodeId.toLong(), 0u)
+      val vendorId =
+          clustersHelper.readBasicClusterVendorIDAttribute(nodeId.toLong(), EndpointId(0u))
       Timber.d("vendorId [${vendorId}]")
 
-      val attributeList = clustersHelper.readBasicClusterAttributeList(nodeId.toLong(), 0u)
+      val attributeList =
+          clustersHelper.readBasicClusterAttributeList(nodeId.toLong(), EndpointId(0u))
       Timber.d("attributeList [${attributeList}]")
     }
   }
@@ -760,19 +763,19 @@ constructor(
           var level: Int
           var colorTemperature: Int
           val nodeId = endpointUiModel.nodeId
-          val endpoint = endpointUiModel.endpoint.endpointId
+          val endpointId = endpointUiModel.endpoint.endpointId.toEndpointId()
           val hasLevelControl = supportsLevelControl(endpointUiModel.endpoint)
           val hasColorTemperature = supportsColorTemperature(endpointUiModel.endpoint)
-          isOn = clustersHelper.getDeviceStateOnOffCluster(nodeId.toLong(), endpoint)
+          isOn = clustersHelper.getDeviceStateOnOffCluster(nodeId.toLong(), endpointId)
           val levelRead =
               if (hasLevelControl) {
-                clustersHelper.getDeviceStateLevelControlCluster(nodeId.toLong(), endpoint)
+                clustersHelper.getDeviceStateLevelControlCluster(nodeId.toLong(), endpointId)
               } else {
                 null
               }
           val colorTemperatureRead =
               if (hasColorTemperature) {
-                clustersHelper.getColorTemperatureColorControlCluster(nodeId.toLong(), endpoint)
+                clustersHelper.getColorTemperatureColorControlCluster(nodeId.toLong(), endpointId)
               } else {
                 null
               }
@@ -781,7 +784,7 @@ constructor(
                   (hasLevelControl && levelRead == null) ||
                   (hasColorTemperature && colorTemperatureRead == null)
           ) {
-            Timber.e("[device ping] failed for endpoint $endpoint")
+            Timber.e("[device ping] failed for endpoint $endpointId")
             isOn = false
             isOnline = false
             level = 0
@@ -789,12 +792,12 @@ constructor(
           } else {
             level = if (hasLevelControl) levelRead!! else 0
             colorTemperature = if (hasColorTemperature) colorTemperatureRead!! else 0
-            Timber.d("[device ping] success [${isOn}] for endpoint $endpoint")
+            Timber.d("[device ping] success [${isOn}] for endpoint $endpointId")
             isOnline = true
           }
           devicesStateRepository.upsertEndpointState(
               nodeId,
-              endpoint.toEndpointId(),
+              endpointId,
               isOnline = isOnline,
               isOn = isOn == true,
               level = level,

@@ -113,18 +113,18 @@ fun ExplorerRoute(
             )
         is ExplorerLevel.ClusterList ->
             ClusterListContent(
-                endpoint = level.endpoint,
+                endpointId = level.endpointId,
                 infos = infos,
                 knownClustersById = knownClustersById,
                 showSearch = showSearch,
                 searchQuery = clusterSearchQuery,
                 onSearchQueryChange = viewModel::onClusterSearchQueryChange,
                 onSelectCluster = { clusterId ->
-                  viewModel.selectCluster(typedNodeId, level.endpoint.toInt(), clusterId)
+                  viewModel.selectCluster(typedNodeId, level.endpointId, clusterId)
                 },
             )
         is ExplorerLevel.ClusterDetail -> {
-          val key = ExplorerClusterKey(level.endpoint, level.clusterId)
+          val key = ExplorerClusterKey(level.endpointId, level.clusterId)
           ClusterDetailContent(
               tab = level.tab,
               isLoading = loadingClusterKeys.contains(key),
@@ -137,13 +137,13 @@ fun ExplorerRoute(
               onCommandSearchQueryChange = viewModel::onCommandSearchQueryChange,
               onEventSearchQueryChange = viewModel::onEventSearchQueryChange,
               onTabSelected = { tab ->
-                viewModel.setClusterDetailTab(level.endpoint, level.clusterId, tab)
+                viewModel.setClusterDetailTab(level.endpointId, level.clusterId, tab)
               },
               onAttributeSelected = { attribute ->
-                viewModel.openAttributeDetail(level.endpoint, level.clusterId, attribute)
+                viewModel.openAttributeDetail(level.endpointId, level.clusterId, attribute)
               },
               onCommandSelected = { command ->
-                viewModel.openCommandInvoke(level.endpoint, level.clusterId, command)
+                viewModel.openCommandInvoke(level.endpointId, level.clusterId, command)
               },
           )
         }
@@ -151,7 +151,7 @@ fun ExplorerRoute(
           val currentValue =
               attributeValueByKey[
                   viewModel.attributeKey(
-                      level.endpoint,
+                      level.endpointId,
                       level.clusterId,
                       level.attribute.id,
                   )]
@@ -163,7 +163,7 @@ fun ExplorerRoute(
               onRead = {
                 viewModel.readAttribute(
                     typedNodeId,
-                    level.endpoint,
+                    level.endpointId,
                     level.clusterId,
                     level.attribute.id,
                 )
@@ -171,7 +171,7 @@ fun ExplorerRoute(
               onWrite = { value ->
                 viewModel.writeAttribute(
                     typedNodeId,
-                    level.endpoint,
+                    level.endpointId,
                     level.clusterId,
                     level.attribute.id,
                     value,
@@ -186,7 +186,7 @@ fun ExplorerRoute(
                 onInvoke = { argumentValues ->
                   viewModel.invokeCommand(
                       typedNodeId,
-                      level.endpoint,
+                      level.endpointId,
                       level.clusterId,
                       level.command.id,
                       argumentValues,

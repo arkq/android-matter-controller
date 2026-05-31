@@ -87,7 +87,7 @@ private fun breadcrumbLabelFor(
     when (level) {
       ExplorerLevel.EndpointList -> stringResource(R.string.device_explorer_root)
       is ExplorerLevel.ClusterList -> {
-        val info = deviceMatterInfoList.firstOrNull { it.endpoint == level.endpoint }
+        val info = deviceMatterInfoList.firstOrNull { it.endpointId == level.endpointId }
         val endpointName =
             info
                 ?.types
@@ -97,7 +97,7 @@ private fun breadcrumbLabelFor(
                       ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
                 }
                 .joinToString(" & ")
-        formatEndpointLabel(level.endpoint, endpointName)
+        formatEndpointLabel(level.endpointId, endpointName)
       }
       is ExplorerLevel.ClusterDetail -> {
         val name =

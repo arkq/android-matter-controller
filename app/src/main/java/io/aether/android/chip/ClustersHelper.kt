@@ -18,6 +18,7 @@ import io.aether.android.matter.ClusterId
 import io.aether.android.matter.Clusters
 import io.aether.android.matter.CommandId
 import io.aether.android.matter.DeviceTypeId
+import io.aether.android.matter.EndpointId
 import io.aether.android.matter.EventId
 import io.aether.android.matter.GenericAttributes
 import io.aether.android.matter.NodeId
@@ -27,6 +28,7 @@ import io.aether.android.matter.toAttributeId
 import io.aether.android.matter.toClusterId
 import io.aether.android.matter.toCommandId
 import io.aether.android.matter.toDeviceTypeId
+import io.aether.android.matter.toEndpointId
 import io.aether.android.matter.toEventId
 import io.aether.android.matter.toNodeId
 import io.aether.android.matter.toProductId
@@ -46,16 +48,16 @@ import timber.log.Timber
  * commissioned.
  */
 data class DeviceMatterInfo(
-    val endpoint: UInt,
+    val endpointId: EndpointId,
     val types: List<DeviceTypeId>,
     val serverClusters: List<ClusterId>,
     val clientClusters: List<ClusterId>,
-    val parts: List<UInt>,
+    val parts: List<EndpointId>,
 )
 
 // Timed invoke timeout for commands like removeFabric that require a short grace period.
 private const val TIMED_INVOKE_TIMEOUT_MS = 500
-private const val ROOT_ENDPOINT: UInt = 0u
+private val ROOT_ENDPOINT_ID: EndpointId = EndpointId(0u)
 
 data class BasicInformationAttributes(
     val vendorName: String? = null,
@@ -73,7 +75,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   // -----------------------------------------------------------------------------------------------
   // Convenience functions
 
-  /** Fetches MatterDeviceInfo for each endpoint supported by the device. */
+  /** Fetches MatterDeviceInfo for each endpointId supported by the device. */
   suspend fun fetchDeviceMatterInfo(nodeId: NodeId): List<DeviceMatterInfo> {
     Timber.d("fetchDeviceMatterInfo(): nodeId [${nodeId}]")
     val matterDeviceInfoList = arrayListOf<DeviceMatterInfo>()
@@ -84,18 +86,18 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
           Timber.e("Can't get connectedDevicePointer.")
           return emptyList()
         }
-    fetchDeviceMatterInfo(nodeId, connectedDevicePtr, ROOT_ENDPOINT, matterDeviceInfoList)
+    fetchDeviceMatterInfo(nodeId, connectedDevicePtr, ROOT_ENDPOINT_ID, matterDeviceInfoList)
     return matterDeviceInfoList
   }
 
   suspend fun readClusterAttributeList(
       nodeId: NodeId,
-      endpoint: Int,
+      endpointId: EndpointId,
       clusterId: ClusterId,
   ): List<AttributeId> {
     return readGlobalListAttribute(
             nodeId = nodeId,
-            endpoint = endpoint,
+            endpointId = endpointId,
             clusterId = clusterId,
             globalAttributeId = GenericAttributes.AttributeList.ID,
         )
@@ -104,12 +106,12 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
   suspend fun readClusterAcceptedCommandList(
       nodeId: NodeId,
-      endpoint: Int,
+      endpointId: EndpointId,
       clusterId: ClusterId,
   ): List<CommandId> {
     return readGlobalListAttribute(
             nodeId = nodeId,
-            endpoint = endpoint,
+            endpointId = endpointId,
             clusterId = clusterId,
             globalAttributeId = GenericAttributes.AcceptedCommandList.ID,
         )
@@ -118,12 +120,12 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
   suspend fun readClusterGeneratedCommandList(
       nodeId: NodeId,
-      endpoint: Int,
+      endpointId: EndpointId,
       clusterId: ClusterId,
   ): List<CommandId> {
     return readGlobalListAttribute(
             nodeId = nodeId,
-            endpoint = endpoint,
+            endpointId = endpointId,
             clusterId = clusterId,
             globalAttributeId = GenericAttributes.GeneratedCommandList.ID,
         )
@@ -132,12 +134,12 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
   suspend fun readClusterEventList(
       nodeId: NodeId,
-      endpoint: Int,
+      endpointId: EndpointId,
       clusterId: ClusterId,
   ): List<EventId> {
     return readGlobalListAttribute(
             nodeId = nodeId,
-            endpoint = endpoint,
+            endpointId = endpointId,
             clusterId = clusterId,
             globalAttributeId = GenericAttributes.EventList.ID,
         )
@@ -146,7 +148,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
   suspend fun readAttributeValue(
       nodeId: NodeId,
-      endpoint: Int,
+      endpointId: EndpointId,
       clusterId: ClusterId,
       attributeId: AttributeId,
   ): String {
@@ -161,7 +163,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         chipClient.readAttribute(
             connectedDevicePtr,
             ChipAttributePath.newInstance(
-                endpoint.toLong(),
+                endpointId.toLong(),
                 clusterId.toLong(),
                 attributeId.toLong(),
             ),
@@ -175,7 +177,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
   suspend fun invokeGenericCommand(
       nodeId: NodeId,
-      endpoint: Int,
+      endpointId: EndpointId,
       clusterId: ClusterId,
       commandId: CommandId,
       tlvPayload: ByteArray,
@@ -191,7 +193,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     chipClient.invoke(
         connectedDevicePtr,
         InvokeElement.newInstance(
-            endpoint.toLong(),
+            endpointId.toLong(),
             clusterId.toLong(),
             commandId.toLong(),
             tlvPayload,
@@ -202,7 +204,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
   suspend fun writeGenericAttribute(
       nodeId: NodeId,
-      endpoint: Int,
+      endpointId: EndpointId,
       clusterId: ClusterId,
       attributeId: AttributeId,
       tlvPayload: ByteArray,
@@ -217,14 +219,18 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
     chipClient.writeAttribute(
         connectedDevicePtr,
-        ChipAttributePath.newInstance(endpoint.toLong(), clusterId.toLong(), attributeId.toLong()),
+        ChipAttributePath.newInstance(
+            endpointId.toLong(),
+            clusterId.toLong(),
+            attributeId.toLong(),
+        ),
         tlvPayload,
     )
   }
 
   private suspend fun readGlobalListAttribute(
       nodeId: NodeId,
-      endpoint: Int,
+      endpointId: EndpointId,
       clusterId: ClusterId,
       globalAttributeId: AttributeId,
   ): List<Long> {
@@ -240,7 +246,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
           chipClient.readAttribute(
               connectedDevicePtr,
               ChipAttributePath.newInstance(
-                  endpoint.toLong(),
+                  endpointId.toLong(),
                   clusterId.toLong(),
                   globalAttributeId.toLong(),
               ),
@@ -249,8 +255,8 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
           if (isUnsupportedAttributeError(e)) {
             Timber.d(
                 e,
-                "readGlobalListAttribute: unsupported global attribute endpoint=%d cluster=0x%X attribute=0x%X",
-                endpoint,
+                "readGlobalListAttribute: unsupported global attribute endpointId=%d cluster=0x%X attribute=0x%X",
+                endpointId,
                 clusterId.toLong(),
                 globalAttributeId.toLong(),
             )
@@ -290,49 +296,48 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     }
   }
 
-  /** Fetches MatterDeviceInfo for a specific endpoint. */
+  /** Fetches MatterDeviceInfo for a specific endpointId. */
   suspend fun fetchDeviceMatterInfo(
       nodeId: NodeId,
       connectedDevicePtr: Long,
-      endpointInt: UInt,
+      endpointId: EndpointId,
       matterDeviceInfoList: ArrayList<DeviceMatterInfo>,
   ) {
-    Timber.d("fetchDeviceMatterInfo(): nodeId [${nodeId}] endpoint [$endpointInt]")
+    Timber.d("fetchDeviceMatterInfo(): nodeId [${nodeId}] endpointId [$endpointId]")
 
-    val partsListAttribute =
-        readDescriptorClusterPartsListAttribute(connectedDevicePtr, endpointInt.toInt())
+    val partsListAttribute = readDescriptorClusterPartsListAttribute(connectedDevicePtr, endpointId)
     Timber.d("partsListAttribute [${partsListAttribute}]")
     val parts = partsListAttribute.orEmpty()
 
     // DeviceListAttribute
     val deviceListAttribute =
-        readDescriptorClusterDeviceListAttribute(connectedDevicePtr, endpointInt)
+        readDescriptorClusterDeviceListAttribute(connectedDevicePtr, endpointId)
     val types = arrayListOf<DeviceTypeId>()
     deviceListAttribute.forEach { types.add(it.deviceType.toDeviceTypeId()) }
 
     // ServerListAttribute
     val serverListAttribute =
-        readDescriptorClusterServerListAttribute(connectedDevicePtr, endpointInt.toInt())
+        readDescriptorClusterServerListAttribute(connectedDevicePtr, endpointId)
     val serverClusters = arrayListOf<ClusterId>()
     serverListAttribute.forEach { serverClusters.add(it) }
 
     // ClientListAttribute
     val clientListAttribute =
-        readDescriptorClusterClientListAttribute(connectedDevicePtr, endpointInt.toInt())
+        readDescriptorClusterClientListAttribute(connectedDevicePtr, endpointId)
     val clientClusters = arrayListOf<ClusterId>()
     clientListAttribute.forEach { clientClusters.add(it) }
 
     // Build the DeviceMatterInfo
     val deviceMatterInfo =
-        DeviceMatterInfo(endpointInt, types, serverClusters, clientClusters, parts)
+        DeviceMatterInfo(endpointId, types, serverClusters, clientClusters, parts)
     matterDeviceInfoList.add(deviceMatterInfo)
 
-    // Recursive call for the parts supported by the endpoint.
-    // For each part (endpoint)
+    // Recursive call for the parts supported by the endpointId.
+    // For each part (endpointId)
     parts.forEach { part ->
       Timber.d("Processing part [$part]")
-      val endpointInt = part
-      fetchDeviceMatterInfo(nodeId, connectedDevicePtr, endpointInt, matterDeviceInfoList)
+      val childEndpointId = part
+      fetchDeviceMatterInfo(nodeId, connectedDevicePtr, childEndpointId, matterDeviceInfoList)
     }
   }
 
@@ -343,21 +348,21 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
    * PartsListAttribute. These are the endpoints supported.
    *
    * ```
-   * For example, on endpoint 0:
+   * For example, on endpointId 0:
    *     sendReadPartsListAttribute part: [1]
    *     sendReadPartsListAttribute part: [2]
    * ```
    */
   suspend fun readDescriptorClusterPartsListAttribute(
       devicePtr: Long,
-      endpoint: Int,
-  ): List<UInt>? {
+      endpointId: EndpointId,
+  ): List<EndpointId>? {
     return suspendCoroutine { continuation ->
-      getDescriptorClusterForDevice(devicePtr, endpoint.toUInt())
+      getDescriptorClusterForDevice(devicePtr, endpointId)
           .readPartsListAttribute(
               object : ChipClusters.DescriptorCluster.PartsListAttributeCallback {
                 override fun onSuccess(values: MutableList<Int>?) {
-                  continuation.resume(values?.map { it.toUInt() })
+                  continuation.resume(values?.map { it.toEndpointId() })
                 }
 
                 override fun onError(ex: Exception) {
@@ -368,27 +373,22 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     }
   }
 
-  suspend fun readDescriptorClusterPartsListAttribute(
-      devicePtr: Long,
-      endpoint: UInt,
-  ): List<UInt>? = readDescriptorClusterPartsListAttribute(devicePtr, endpoint.toInt())
-
   /**
    * DeviceListAttribute
    *
    * ```
-   * For example, on endpoint 0:
+   * For example, on endpointId 0:
    *   device: [long type: 22, int revision: 1] -> maps to Root node (0x0016) (utility device type)
-   * on endpoint 1:
+   * on endpointId 1:
    *   device: [long type: 256, int revision: 1] -> maps to On/Off Light (0x0100)
    * ```
    */
   suspend fun readDescriptorClusterDeviceListAttribute(
       devicePtr: Long,
-      endpoint: UInt,
+      endpointId: EndpointId,
   ): List<ChipStructs.DescriptorClusterDeviceTypeStruct> {
     return suspendCoroutine { continuation ->
-      getDescriptorClusterForDevice(devicePtr, endpoint)
+      getDescriptorClusterForDevice(devicePtr, endpointId)
           .readDeviceTypeListAttribute(
               object : ChipClusters.DescriptorCluster.DeviceTypeListAttributeCallback {
                 override fun onSuccess(
@@ -410,19 +410,19 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
    * https://github.com/project-chip/connectedhomeip/blob/master/zzz_generated/app-common/app-common/zap-generated/ids/Clusters.h
    *
    * ```
-   * For example: on endpoint 0
+   * For example: on endpointId 0
    *     sendReadServerListAttribute: [3]
    *     sendReadServerListAttribute: [4]
    *     sendReadServerListAttribute: [29]
    *     ... and more ...
-   * on endpoint 1:
+   * on endpointId 1:
    *     sendReadServerListAttribute: [3]
    *     sendReadServerListAttribute: [4]
    *     sendReadServerListAttribute: [5]
    *     sendReadServerListAttribute: [6]
    *     sendReadServerListAttribute: [7]
    *     ... and more ...
-   * on endpoint 2:
+   * on endpointId 2:
    *     sendReadServerListAttribute: [4]
    *     sendReadServerListAttribute: [6]
    *     sendReadServerListAttribute: [29]
@@ -437,10 +437,10 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
    */
   suspend fun readDescriptorClusterServerListAttribute(
       devicePtr: Long,
-      endpoint: Int,
+      endpointId: EndpointId,
   ): List<ClusterId> {
     return suspendCoroutine { continuation ->
-      getDescriptorClusterForDevice(devicePtr, endpoint.toUInt())
+      getDescriptorClusterForDevice(devicePtr, endpointId)
           .readServerListAttribute(
               object : ChipClusters.DescriptorCluster.ServerListAttributeCallback {
                 override fun onSuccess(values: MutableList<Long>) {
@@ -455,18 +455,13 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     }
   }
 
-  suspend fun readDescriptorClusterServerListAttribute(
-      devicePtr: Long,
-      endpoint: UInt,
-  ): List<ClusterId> = readDescriptorClusterServerListAttribute(devicePtr, endpoint.toInt())
-
   /** ClientListAttribute */
   suspend fun readDescriptorClusterClientListAttribute(
       devicePtr: Long,
-      endpoint: Int,
+      endpointId: EndpointId,
   ): List<ClusterId> {
     return suspendCoroutine { continuation ->
-      getDescriptorClusterForDevice(devicePtr, endpoint.toUInt())
+      getDescriptorClusterForDevice(devicePtr, endpointId)
           .readClientListAttribute(
               object : ChipClusters.DescriptorCluster.ClientListAttributeCallback {
                 override fun onSuccess(values: MutableList<Long>) {
@@ -481,35 +476,19 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     }
   }
 
-  suspend fun readDescriptorClusterClientListAttribute(
-      devicePtr: Long,
-      endpoint: UInt,
-  ): List<ClusterId> = readDescriptorClusterClientListAttribute(devicePtr, endpoint.toInt())
-
   private fun getDescriptorClusterForDevice(
       devicePtr: Long,
-      endpoint: UInt,
+      endpointId: EndpointId,
   ): ChipClusters.DescriptorCluster {
-    return ChipClusters.DescriptorCluster(devicePtr, endpoint.toInt())
+    return ChipClusters.DescriptorCluster(devicePtr, endpointId.toInt())
   }
-
-  suspend fun readApplicationBasicClusterAttributeList(
-      deviceId: Long,
-      endpoint: UInt,
-  ): List<AttributeId> = readApplicationBasicClusterAttributeList(deviceId, endpoint.toInt())
-
-  suspend fun readBasicClusterVendorIDAttribute(deviceId: Long, endpoint: UInt): Int? =
-      readBasicClusterVendorIDAttribute(deviceId, endpoint.toInt())
-
-  suspend fun readBasicClusterAttributeList(deviceId: Long, endpoint: UInt): List<AttributeId> =
-      readBasicClusterAttributeList(deviceId, endpoint.toInt())
 
   // -----------------------------------------------------------------------------------------------
   // ApplicationCluster functions
 
   suspend fun readApplicationBasicClusterAttributeList(
       deviceId: Long,
-      endpoint: Int,
+      endpointId: EndpointId,
   ): List<AttributeId> {
     val connectedDevicePtr =
         try {
@@ -519,7 +498,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
           return emptyList()
         }
     return suspendCoroutine { continuation ->
-      getApplicationBasicClusterForDevice(connectedDevicePtr, endpoint)
+      getApplicationBasicClusterForDevice(connectedDevicePtr, endpointId)
           .readAttributeListAttribute(
               object : ChipClusters.ApplicationBasicCluster.AttributeListAttributeCallback {
                 override fun onSuccess(value: MutableList<Long>) {
@@ -536,15 +515,15 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
   private fun getApplicationBasicClusterForDevice(
       devicePtr: Long,
-      endpoint: Int,
+      endpointId: EndpointId,
   ): ChipClusters.ApplicationBasicCluster {
-    return ChipClusters.ApplicationBasicCluster(devicePtr, endpoint)
+    return ChipClusters.ApplicationBasicCluster(devicePtr, endpointId.toInt())
   }
 
   // -----------------------------------------------------------------------------------------------
   // BasicCluster functions
 
-  suspend fun readBasicClusterVendorIDAttribute(deviceId: Long, endpoint: Int): Int? {
+  suspend fun readBasicClusterVendorIDAttribute(deviceId: Long, endpointId: EndpointId): Int? {
     val connectedDevicePtr =
         try {
           chipClient.getConnectedDevicePointer(deviceId.toNodeId())
@@ -553,7 +532,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
           return null
         }
     return suspendCoroutine { continuation ->
-      getBasicClusterForDevice(connectedDevicePtr, endpoint)
+      getBasicClusterForDevice(connectedDevicePtr, endpointId)
           .readVendorIDAttribute(
               object : ChipClusters.ApplicationBasicCluster.VendorIDAttributeCallback {
                 override fun onSuccess(value: Int?) {
@@ -568,7 +547,10 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     }
   }
 
-  suspend fun readBasicClusterAttributeList(deviceId: Long, endpoint: Int): List<AttributeId> {
+  suspend fun readBasicClusterAttributeList(
+      deviceId: Long,
+      endpointId: EndpointId,
+  ): List<AttributeId> {
     val connectedDevicePtr =
         try {
           chipClient.getConnectedDevicePointer(deviceId.toNodeId())
@@ -578,7 +560,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         }
 
     return suspendCoroutine { continuation ->
-      getBasicClusterForDevice(connectedDevicePtr, endpoint)
+      getBasicClusterForDevice(connectedDevicePtr, endpointId)
           .readAttributeListAttribute(
               object : ChipClusters.ApplicationBasicCluster.AttributeListAttributeCallback {
                 override fun onSuccess(values: MutableList<Long>) {
@@ -595,9 +577,9 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
   private fun getBasicClusterForDevice(
       devicePtr: Long,
-      endpoint: Int,
+      endpointId: EndpointId,
   ): ChipClusters.ApplicationBasicCluster {
-    return ChipClusters.ApplicationBasicCluster(devicePtr, endpoint)
+    return ChipClusters.ApplicationBasicCluster(devicePtr, endpointId.toInt())
   }
 
   /**
@@ -725,7 +707,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   // -----------------------------------------------------------------------------------------------
   // OnOffCluster functions
 
-  suspend fun toggleDeviceStateOnOffCluster(deviceId: Long, endpoint: Int) {
+  suspend fun toggleDeviceStateOnOffCluster(deviceId: Long, endpointId: EndpointId) {
     Timber.d("toggleDeviceStateOnOffCluster())")
     val connectedDevicePtr =
         try {
@@ -735,7 +717,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
           return
         }
     return suspendCoroutine { continuation ->
-      getOnOffClusterForDevice(connectedDevicePtr, endpoint)
+      getOnOffClusterForDevice(connectedDevicePtr, endpointId)
           .toggle(
               object : ChipClusters.DefaultClusterCallback {
                 override fun onSuccess() {
@@ -751,9 +733,13 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     }
   }
 
-  suspend fun setOnOffDeviceStateOnOffCluster(deviceId: Long, isOn: Boolean, endpoint: Int) {
+  suspend fun setOnOffDeviceStateOnOffCluster(
+      deviceId: Long,
+      isOn: Boolean,
+      endpointId: EndpointId,
+  ) {
     Timber.d(
-        "setOnOffDeviceStateOnOffCluster() [${deviceId}] isOn [${isOn}] endpoint [${endpoint}]"
+        "setOnOffDeviceStateOnOffCluster() [${deviceId}] isOn [${isOn}] endpointId [${endpointId}]"
     )
     val connectedDevicePtr =
         try {
@@ -765,7 +751,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     if (isOn) {
       // ON
       return suspendCoroutine { continuation ->
-        getOnOffClusterForDevice(connectedDevicePtr, endpoint)
+        getOnOffClusterForDevice(connectedDevicePtr, endpointId)
             .on(
                 object : ChipClusters.DefaultClusterCallback {
                   override fun onSuccess() {
@@ -783,7 +769,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     } else {
       // OFF
       return suspendCoroutine { continuation ->
-        getOnOffClusterForDevice(connectedDevicePtr, endpoint)
+        getOnOffClusterForDevice(connectedDevicePtr, endpointId)
             .off(
                 object : ChipClusters.DefaultClusterCallback {
                   override fun onSuccess() {
@@ -801,7 +787,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     }
   }
 
-  suspend fun getDeviceStateOnOffCluster(deviceId: Long, endpoint: Int): Boolean? {
+  suspend fun getDeviceStateOnOffCluster(deviceId: Long, endpointId: EndpointId): Boolean? {
     Timber.d("getDeviceStateOnOffCluster())")
     val connectedDevicePtr =
         try {
@@ -811,7 +797,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
           return null
         }
     return suspendCoroutine { continuation ->
-      getOnOffClusterForDevice(connectedDevicePtr, endpoint)
+      getOnOffClusterForDevice(connectedDevicePtr, endpointId)
           .readOnOffAttribute(
               object : ChipClusters.BooleanAttributeCallback {
                 override fun onSuccess(value: Boolean) {
@@ -828,16 +814,19 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     }
   }
 
-  private fun getOnOffClusterForDevice(devicePtr: Long, endpoint: Int): ChipClusters.OnOffCluster {
-    return ChipClusters.OnOffCluster(devicePtr, endpoint)
+  private fun getOnOffClusterForDevice(
+      devicePtr: Long,
+      endpointId: EndpointId,
+  ): ChipClusters.OnOffCluster {
+    return ChipClusters.OnOffCluster(devicePtr, endpointId.toInt())
   }
 
   // -----------------------------------------------------------------------------------------------
   // LevelControlCluster functions
 
-  suspend fun setLevelStateLevelControlCluster(deviceId: Long, level: Int, endpoint: Int) {
+  suspend fun setLevelStateLevelControlCluster(deviceId: Long, level: Int, endpointId: EndpointId) {
     Timber.d(
-        "setLevelStateLevelControlCluster() [${deviceId}] level [${level}] endpoint [${endpoint}]"
+        "setLevelStateLevelControlCluster() [${deviceId}] level [${level}] endpointId [${endpointId}]"
     )
     val connectedDevicePtr =
         try {
@@ -847,7 +836,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
           return
         }
     return suspendCoroutine { continuation ->
-      getLevelControlClusterForDevice(connectedDevicePtr, endpoint)
+      getLevelControlClusterForDevice(connectedDevicePtr, endpointId)
           .moveToLevel(
               object : ChipClusters.DefaultClusterCallback {
                 override fun onSuccess() {
@@ -868,7 +857,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     }
   }
 
-  suspend fun getDeviceStateLevelControlCluster(deviceId: Long, endpoint: Int): Int? {
+  suspend fun getDeviceStateLevelControlCluster(deviceId: Long, endpointId: EndpointId): Int? {
     Timber.d("getDeviceStateLevelControlCluster())")
     val connectedDevicePtr =
         try {
@@ -878,7 +867,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
           return null
         }
     return suspendCoroutine { continuation ->
-      getLevelControlClusterForDevice(connectedDevicePtr, endpoint)
+      getLevelControlClusterForDevice(connectedDevicePtr, endpointId)
           .readCurrentLevelAttribute(
               object : ChipClusters.LevelControlCluster.CurrentLevelAttributeCallback {
                 override fun onSuccess(value: Int?) {
@@ -897,9 +886,9 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
   private fun getLevelControlClusterForDevice(
       devicePtr: Long,
-      endpoint: Int,
+      endpointId: EndpointId,
   ): ChipClusters.LevelControlCluster {
-    return ChipClusters.LevelControlCluster(devicePtr, endpoint)
+    return ChipClusters.LevelControlCluster(devicePtr, endpointId.toInt())
   }
 
   // -----------------------------------------------------------------------------------------------
@@ -908,10 +897,10 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   suspend fun setColorTemperatureColorControlCluster(
       deviceId: Long,
       colorTemperature: Int,
-      endpoint: Int,
+      endpointId: EndpointId,
   ) {
     Timber.d(
-        "setColorTemperatureColorControlCluster() [${deviceId}] colorTemperature [${colorTemperature}] endpoint [${endpoint}]"
+        "setColorTemperatureColorControlCluster() [${deviceId}] colorTemperature [${colorTemperature}] endpointId [${endpointId}]"
     )
     val connectedDevicePtr =
         try {
@@ -921,7 +910,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
           return
         }
     return suspendCoroutine { continuation ->
-      getColorControlClusterForDevice(connectedDevicePtr, endpoint)
+      getColorControlClusterForDevice(connectedDevicePtr, endpointId)
           .moveToColorTemperature(
               object : ChipClusters.DefaultClusterCallback {
                 override fun onSuccess() {
@@ -942,7 +931,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     }
   }
 
-  suspend fun getColorTemperatureColorControlCluster(deviceId: Long, endpoint: Int): Int? {
+  suspend fun getColorTemperatureColorControlCluster(deviceId: Long, endpointId: EndpointId): Int? {
     Timber.d("getDeviceStateColorControlCluster())")
     val connectedDevicePtr =
         try {
@@ -952,7 +941,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
           return null
         }
     return suspendCoroutine { continuation ->
-      getColorControlClusterForDevice(connectedDevicePtr, endpoint)
+      getColorControlClusterForDevice(connectedDevicePtr, endpointId)
           .readColorTemperatureMiredsAttribute(
               object : ChipClusters.IntegerAttributeCallback {
                 override fun onSuccess(value: Int) {
@@ -970,14 +959,14 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   }
 
   /**
-   * Reads the AttributeList of the Color Control cluster for the given [nodeId] and [endpoint].
+   * Reads the AttributeList of the Color Control cluster for the given [nodeId] and [endpointId].
    * Returns the list of supported attribute IDs, or an empty list on error. Use this to check
    * whether the optional Color Temperature attribute (id 7) is present before flagging a device as
    * supporting color temperature control.
    */
   suspend fun readColorControlClusterAttributeList(
       nodeId: NodeId,
-      endpoint: Int,
+      endpointId: EndpointId,
   ): List<AttributeId> {
     val connectedDevicePtr =
         try {
@@ -987,7 +976,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
           return emptyList()
         }
     return suspendCoroutine { continuation ->
-      getColorControlClusterForDevice(connectedDevicePtr, endpoint)
+      getColorControlClusterForDevice(connectedDevicePtr, endpointId)
           .readAttributeListAttribute(
               object : ChipClusters.ColorControlCluster.AttributeListAttributeCallback {
                 override fun onSuccess(value: MutableList<Long>) {
@@ -1005,9 +994,9 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
   private fun getColorControlClusterForDevice(
       devicePtr: Long,
-      endpoint: Int,
+      endpointId: EndpointId,
   ): ChipClusters.ColorControlCluster {
-    return ChipClusters.ColorControlCluster(devicePtr, endpoint)
+    return ChipClusters.ColorControlCluster(devicePtr, endpointId.toInt())
   }
 
   // -----------------------------------------------------------------------------------------------
@@ -1015,7 +1004,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
   suspend fun openCommissioningWindowAdministratorCommissioningCluster(
       deviceId: Long,
-      endpoint: Int,
+      endpointId: EndpointId,
       timeoutSeconds: Int,
       pakeVerifier: ByteArray,
       discriminator: Int,
@@ -1036,7 +1025,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     ChipClusters.DefaultClusterCallback var1, Integer var2, byte[] var3, Integer var4, Long var5, byte[] var6, int var7
      */
     return suspendCoroutine { continuation ->
-      getAdministratorCommissioningClusterForDevice(connectedDevicePtr, endpoint)
+      getAdministratorCommissioningClusterForDevice(connectedDevicePtr, endpointId)
           .openCommissioningWindow(
               object : ChipClusters.DefaultClusterCallback {
                 override fun onSuccess() {
@@ -1138,37 +1127,37 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         val basicInfoPaths =
             listOf(
                 ChipAttributePath.newInstance(
-                    ROOT_ENDPOINT.toLong(),
+                    ROOT_ENDPOINT_ID.toInt().toLong(),
                     Clusters.BasicInformation.ID.toLong(),
                     Clusters.BasicInformation.Attributes.VendorName.ID.toLong(),
                 ),
                 ChipAttributePath.newInstance(
-                    ROOT_ENDPOINT.toLong(),
+                    ROOT_ENDPOINT_ID.toInt().toLong(),
                     Clusters.BasicInformation.ID.toLong(),
                     Clusters.BasicInformation.Attributes.VendorID.ID.toLong(),
                 ),
                 ChipAttributePath.newInstance(
-                    ROOT_ENDPOINT.toLong(),
+                    ROOT_ENDPOINT_ID.toInt().toLong(),
                     Clusters.BasicInformation.ID.toLong(),
                     Clusters.BasicInformation.Attributes.ProductName.ID.toLong(),
                 ),
                 ChipAttributePath.newInstance(
-                    ROOT_ENDPOINT.toLong(),
+                    ROOT_ENDPOINT_ID.toInt().toLong(),
                     Clusters.BasicInformation.ID.toLong(),
                     Clusters.BasicInformation.Attributes.ProductID.ID.toLong(),
                 ),
                 ChipAttributePath.newInstance(
-                    ROOT_ENDPOINT.toLong(),
+                    ROOT_ENDPOINT_ID.toInt().toLong(),
                     Clusters.BasicInformation.ID.toLong(),
                     Clusters.BasicInformation.Attributes.NodeLabel.ID.toLong(),
                 ),
                 ChipAttributePath.newInstance(
-                    ROOT_ENDPOINT.toLong(),
+                    ROOT_ENDPOINT_ID.toInt().toLong(),
                     Clusters.BasicInformation.ID.toLong(),
                     Clusters.BasicInformation.Attributes.HardwareVersionString.ID.toLong(),
                 ),
                 ChipAttributePath.newInstance(
-                    ROOT_ENDPOINT.toLong(),
+                    ROOT_ENDPOINT_ID.toInt().toLong(),
                     Clusters.BasicInformation.ID.toLong(),
                     Clusters.BasicInformation.Attributes.SoftwareVersionString.ID.toLong(),
                 ),
@@ -1207,7 +1196,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   private fun extractBasicInformationAttributes(nodeState: NodeState): BasicInformationAttributes {
     val clusterState =
         nodeState
-            .getEndpointState(ROOT_ENDPOINT.toInt())
+            .getEndpointState(ROOT_ENDPOINT_ID.toInt())
             ?.getClusterState(Clusters.BasicInformation.ID.toLong())
             ?: return BasicInformationAttributes()
 
@@ -1304,7 +1293,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
             connectedDevicePtr,
             listOf(
                 ChipAttributePath.newInstance(
-                    ROOT_ENDPOINT.toLong(),
+                    ROOT_ENDPOINT_ID.toInt().toLong(),
                     Clusters.OperationalCredentials.ID.toLong(),
                     Clusters.OperationalCredentials.Attributes.Fabrics.ID.toLong(),
                 )
@@ -1352,7 +1341,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
                 if (completed.compareAndSet(false, true)) {
                   val currentFabricIndex =
                       nodeState
-                          .getEndpointState(ROOT_ENDPOINT.toInt())
+                          .getEndpointState(ROOT_ENDPOINT_ID.toInt())
                           ?.getClusterState(Clusters.OperationalCredentials.ID.toLong())
                           ?.getAttributeState(
                               Clusters.OperationalCredentials.Attributes.CurrentFabricIndex.ID
@@ -1367,7 +1356,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
             connectedDevicePtr,
             listOf(
                 ChipAttributePath.newInstance(
-                    ROOT_ENDPOINT.toLong(),
+                    ROOT_ENDPOINT_ID.toInt().toLong(),
                     Clusters.OperationalCredentials.ID.toLong(),
                     Clusters.OperationalCredentials.Attributes.CurrentFabricIndex.ID.toLong(),
                 )
@@ -1387,7 +1376,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   ): List<ChipStructs.OperationalCredentialsClusterFabricDescriptorStruct> {
     val attributeState =
         nodeState
-            .getEndpointState(ROOT_ENDPOINT.toInt())
+            .getEndpointState(ROOT_ENDPOINT_ID.toInt())
             ?.getClusterState(Clusters.OperationalCredentials.ID.toLong())
             ?.getAttributeState(Clusters.OperationalCredentials.Attributes.Fabrics.ID.toLong())
             ?: return emptyList()
@@ -1598,8 +1587,8 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
 
   private fun getAdministratorCommissioningClusterForDevice(
       devicePtr: Long,
-      endpoint: Int,
+      endpointId: EndpointId,
   ): ChipClusters.AdministratorCommissioningCluster {
-    return ChipClusters.AdministratorCommissioningCluster(devicePtr, endpoint)
+    return ChipClusters.AdministratorCommissioningCluster(devicePtr, endpointId.toInt())
   }
 }
