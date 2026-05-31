@@ -21,6 +21,10 @@ import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
+import io.aether.android.matter.NodeId
+import io.aether.android.matter.VendorId
+import io.aether.android.matter.toLong
+import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.shared.SetDeviceNameResult
 import io.aether.android.screens.shared.SetDeviceNameUseCase
@@ -75,6 +79,10 @@ constructor(
         .launchIn(viewModelScope)
   }
 
+  // Vendor ID fetched from the device (null when not yet loaded or unavailable).
+  private var _vendorId = MutableStateFlow<VendorId?>(null)
+  val vendorId: StateFlow<VendorId?> = _vendorId.asStateFlow()
+
   // Controls whether the "Message" AlertDialog should be shown in the UI.
   private var _msgDialogInfo = MutableStateFlow<DialogInfo?>(null)
   val msgDialogInfo: StateFlow<DialogInfo?> = _msgDialogInfo.asStateFlow()
@@ -100,7 +108,7 @@ constructor(
   // -----------------------------------------------------------------------------------------------
   // Load device
 
-  fun loadDevice(nodeId: Long) {
+  fun loadDevice(nodeId: NodeId) {
     Timber.d("loadDevice: nodeId [$nodeId]")
     viewModelScope.launch {
       val shouldBlockUiUntilLoaded = _device.value == null
@@ -110,7 +118,7 @@ constructor(
             chooseBestDevice(devicesForNode) ?: devicesRepository.getDeviceByNodeId(nodeId)
         val basicInfo =
             try {
-              clustersHelper.readBasicInformationAttributes(nodeId)
+              clustersHelper.readBasicInformationAttributes(nodeId.toLong())
             } catch (e: Exception) {
               Timber.w(e, "loadDevice: could not read basic information attributes")
               null
@@ -147,10 +155,10 @@ constructor(
   // -----------------------------------------------------------------------------------------------
   // Rename device
 
-  fun renameDevice(nodeId: Long, newName: String) {
+  fun renameDevice(nodeId: NodeId, newName: String) {
     Timber.d("renameDevice: nodeId [$nodeId] newName [$newName]")
     viewModelScope.launch {
-      val device = devicesRepository.getDeviceByNodeId(nodeId)
+      val device = devicesRepository.getDeviceByNodeId(nodeId.toLong())
       val result =
           setDeviceNameUseCase.execute(nodeId, newName) {
             // Immediately update local state so the UI reflects the new name.
@@ -165,7 +173,7 @@ constructor(
   // -----------------------------------------------------------------------------------------------
   // Change device type
 
-  fun changeDeviceType(nodeId: Long, deviceType: io.aether.android.Device.DeviceType) {
+  fun changeDeviceType(nodeId: NodeId, deviceType: Device.DeviceType) {
     Timber.d("changeDeviceType: nodeId [$nodeId] deviceType [$deviceType]")
     viewModelScope.launch {
       try {
@@ -214,7 +222,7 @@ constructor(
   // Share device
 
   // Open commissioning window for device sharing.
-  fun openPairingWindow(nodeId: Long) {
+  fun openPairingWindow(nodeId: NodeId) {
     Timber.d("ShareDevice: openPairingWindow")
     viewModelScope.launch {
       showMsgDialog(
@@ -223,7 +231,7 @@ constructor(
           false,
       )
       try {
-        val devicePtr = chipClient.awaitGetConnectedDevicePointer(nodeId)
+        val devicePtr = chipClient.awaitGetConnectedDevicePointer(nodeId.toLong())
         val isCommissioningWindowOpen = clustersHelper.isCommissioningWindowOpen(devicePtr)
         if (isCommissioningWindowOpen) {
           Timber.d("ShareDevice: commissioning window is already open, closing it")
@@ -245,13 +253,13 @@ constructor(
     }
   }
 
-  private suspend fun openCommissioningWindowUsingOpenPairingWindowWithPin(nodeId: Long) {
+  private suspend fun openCommissioningWindowUsingOpenPairingWindowWithPin(nodeId: NodeId) {
     Timber.d(
         "ShareDevice: chipClient.awaitOpenPairingWindowWithPIN " +
             "duration [${OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS}] iteration [${ITERATION}] " +
             "discriminator [${DISCRIMINATOR}]"
     )
-    val connectedDevicePointer = chipClient.awaitGetConnectedDevicePointer(nodeId)
+    val connectedDevicePointer = chipClient.awaitGetConnectedDevicePointer(nodeId.toLong())
     chipClient.awaitOpenPairingWindowWithPIN(
         connectedDevicePointer,
         OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS,
@@ -261,14 +269,14 @@ constructor(
     )
   }
 
-  private suspend fun openCommissioningWindowWithAdministratorCommissioningCluster(nodeId: Long) {
+  private suspend fun openCommissioningWindowWithAdministratorCommissioningCluster(nodeId: NodeId) {
     val salt = Random.nextBytes(32)
     val timedInvokeTimeoutMs = 10000
-    val connectedDevicePointer = chipClient.awaitGetConnectedDevicePointer(nodeId)
+    val connectedDevicePointer = chipClient.awaitGetConnectedDevicePointer(nodeId.toLong())
     val verifier =
         chipClient.computePaseVerifier(connectedDevicePointer, SETUP_PIN_CODE, ITERATION, salt)
     clustersHelper.openCommissioningWindowAdministratorCommissioningCluster(
-        nodeId,
+        nodeId.toLong(),
         0,
         OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS,
         verifier.pakeVerifier,
@@ -282,12 +290,12 @@ constructor(
   // -----------------------------------------------------------------------------------------------
   // Remove device
 
-  fun removeDevice(nodeId: Long) {
+  fun removeDevice(nodeId: NodeId) {
     Timber.d("Removing device for nodeId [$nodeId]")
     showMsgDialog(R.string.unlinking_device_title, R.string.unlinking_device_body, false)
     viewModelScope.launch {
       try {
-        chipClient.awaitUnpairDevice(nodeId)
+        chipClient.awaitUnpairDevice(nodeId.toLong())
       } catch (e: Exception) {
         Timber.e(e, "Unlinking the device failed.")
         dismissMsgDialog()
@@ -301,7 +309,7 @@ constructor(
     }
   }
 
-  fun removeDeviceWithoutUnlink(nodeId: Long) {
+  fun removeDeviceWithoutUnlink(nodeId: NodeId) {
     Timber.d("removeDeviceWithoutUnlink: nodeId [$nodeId]")
     viewModelScope.launch {
       try {

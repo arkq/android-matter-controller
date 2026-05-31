@@ -9,6 +9,10 @@ import io.aether.android.chip.ClustersHelper
 import io.aether.android.chip.isCommunicationTimeoutError
 import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
+import io.aether.android.matter.NodeId
+import io.aether.android.matter.toLong
+import io.aether.android.matter.toNodeId
+import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -69,7 +73,7 @@ constructor(
    *   update fails. NodeLabel write failures are delivered asynchronously via [AppErrorNotifier].
    */
   suspend fun execute(
-      nodeId: Long,
+      nodeId: NodeId,
       name: String,
       onLocalPersisted: suspend () -> Unit = {},
   ): SetDeviceNameResult {
@@ -86,7 +90,7 @@ constructor(
     onLocalPersisted()
     scope.launch {
       try {
-        clustersHelper.writeBasicClusterNodeLabelAttribute(nodeId, name)
+        clustersHelper.writeBasicClusterNodeLabelAttribute(nodeId.toLong(), name)
         devicesStateRepository.updateNodeOnlineState(nodeId, isOnline = true)
       } catch (e: CancellationException) {
         throw e

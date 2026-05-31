@@ -7,10 +7,21 @@ import io.aether.android.matter.CLUSTERS
 import io.aether.android.matter.DataType
 import io.aether.android.matter.GENERIC_ATTRIBUTES
 import io.aether.android.matter.Privilege
+import io.aether.android.chip.DataModelLoader
+import io.aether.android.matter.AttributeId
+import io.aether.android.matter.ClusterId
+import io.aether.android.matter.CommandId
+import io.aether.android.matter.EventId
+import io.aether.android.matter.MatterDataModel
+import io.aether.android.matter.MatterPrivilege
+import io.aether.android.matter.MatterType
+import io.aether.android.matter.toAttributeId
+import io.aether.android.matter.toClusterId
+import io.aether.android.matter.toCommandId
 
 data class ExplorerAttributeDefinition(
-    val id: UInt,
-    val type: DataType = DataType.UNKNOWN,
+    val id: AttributeId,
+    val type: MatterType = MatterType.TYPE_UNKNOWN,
     val name: String,
     val readPrivilege: Privilege = Privilege.NONE,
     val writePrivilege: Privilege = Privilege.NONE,
@@ -23,25 +34,25 @@ data class ExplorerCommandArgumentDefinition(
 )
 
 data class ExplorerCommandDefinition(
-    val id: UInt,
+    val id: CommandId,
     val name: String,
     val arguments: List<ExplorerCommandArgumentDefinition> = emptyList(),
 )
 
 data class ExplorerEventDefinition(
-    val id: UInt,
+    val id: EventId,
     val name: String,
 )
 
 data class ExplorerClusterDefinition(
-    val clusterId: UInt,
+    val clusterId: ClusterId,
     val attributes: List<ExplorerAttributeDefinition> = emptyList(),
     val commands: List<ExplorerCommandDefinition> = emptyList(),
     val events: List<ExplorerEventDefinition> = emptyList(),
 )
 
 object ExplorerSchema {
-  fun buildKnownClustersById(): Map<UInt, ExplorerClusterDefinition> =
+  fun buildKnownClustersById(): Map<ClusterId, ExplorerClusterDefinition> =
       CLUSTERS.entries.associate { (clusterId, clusterInfo) ->
         clusterId to
             ExplorerClusterDefinition(

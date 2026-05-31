@@ -19,22 +19,23 @@ import androidx.compose.ui.unit.dp
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.matter.CLUSTERS
+import io.aether.android.matter.ClusterId
 import io.aether.android.screens.common.SearchTextField
 
 @Composable
 internal fun ClusterListContent(
     endpoint: UInt,
     infos: List<DeviceMatterInfo>,
-    knownClustersById: Map<UInt, ExplorerClusterDefinition>,
+    knownClustersById: Map<ClusterId, ExplorerClusterDefinition>,
     showSearch: Boolean,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
-    onSelectCluster: (UInt) -> Unit,
+    onSelectCluster: (ClusterId) -> Unit,
 ) {
   val endpointInfo = infos.firstOrNull { it.endpoint == endpoint }
   val serverClusters = endpointInfo?.serverClusters.orEmpty().map { it.toUInt() }.sorted()
   val clientClusters = endpointInfo?.clientClusters.orEmpty().map { it.toUInt() }.sorted()
-  val clusterMatchesQuery: (UInt) -> Boolean = { clusterId ->
+  val clusterMatchesQuery: (ClusterId) -> Boolean = { clusterId ->
     matchesExplorerQuery(
         searchQuery,
         CLUSTERS[clusterId]?.name.orEmpty(),
@@ -83,12 +84,12 @@ internal fun ClusterListContent(
           )
         }
       } else {
-        items(filteredServerClusters, key = { "s-$it" }) { clusterId ->
+        items(filteredServerClusters, key = { "s-${it.value}" }) { clusterId ->
           val name =
               CLUSTERS[clusterId]?.name ?: stringResource(R.string.device_explorer_cluster_unknown)
           val known = knownClustersById[clusterId]
           ExplorerRow(
-              text = formatIdAndName(clusterId, name),
+              text = formatIdAndName(clusterId.value, name),
               secondaryText =
                   stringResource(
                       R.string.device_explorer_cluster_counts,
@@ -116,12 +117,12 @@ internal fun ClusterListContent(
           )
         }
       } else {
-        items(filteredClientClusters, key = { "c-$it" }) { clusterId ->
+        items(filteredClientClusters, key = { "c-${it.value}" }) { clusterId ->
           val name =
               CLUSTERS[clusterId]?.name ?: stringResource(R.string.device_explorer_cluster_unknown)
           val known = knownClustersById[clusterId]
           ExplorerRow(
-              text = formatIdAndName(clusterId, name),
+              text = formatIdAndName(clusterId.value, name),
               secondaryText =
                   stringResource(
                       R.string.device_explorer_cluster_counts,

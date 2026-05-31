@@ -11,6 +11,7 @@ import chip.devicecontroller.model.ChipAttributePath
 import chip.devicecontroller.model.ChipEventPath
 import chip.devicecontroller.model.ChipPathId
 import chip.devicecontroller.model.NodeState
+import io.aether.android.matter.toLong
 import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton

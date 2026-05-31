@@ -27,6 +27,8 @@ import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.matter.CLUSTERS
 import io.aether.android.matter.DEVICES
+import io.aether.android.matter.ClusterId
+import io.aether.android.matter.DeviceTypeId
 
 @Composable
 internal fun BreadcrumbBar(
@@ -104,6 +106,7 @@ private fun breadcrumbLabelFor(
                 ?: stringResource(R.string.device_explorer_cluster_unknown)
         formatIdAndName(level.clusterId, name)
       }
-      is ExplorerLevel.AttributeDetail -> formatIdAndName(level.attribute.id, level.attribute.name)
-      is ExplorerLevel.CommandInvoke -> formatIdAndName(level.command.id, level.command.name)
+      is ExplorerLevel.AttributeDetail ->
+          formatIdAndName(level.attribute.id.value, level.attribute.name)
+      is ExplorerLevel.CommandInvoke -> formatIdAndName(level.command.id.value, level.command.name)
     }

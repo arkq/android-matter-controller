@@ -13,6 +13,8 @@ import com.google.android.gms.home.matter.discovery.ResolveServiceRequest
 import com.google.android.gms.home.matter.discovery.ResolveServiceRequest.SERVICE_TYPE_COMMISSIONABLE
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.aether.android.chip.ChipClient
+import io.aether.android.matter.ProductId
+import io.aether.android.matter.VendorId
 import io.aether.android.screens.scanner.MatterBeacon
 import io.aether.android.screens.scanner.MatterBeaconProducer
 import io.aether.android.screens.scanner.Transport
@@ -127,8 +129,8 @@ constructor(
     val beacon =
         MatterBeacon(
             name = dnsSdServiceInfo.instanceName,
-            vendorId = vidPid?.getOrNull(0)?.toIntOrNull() ?: 0,
-            productId = vidPid?.getOrNull(1)?.toIntOrNull() ?: 0,
+            vendorId = VendorId((vidPid?.getOrNull(0)?.toIntOrNull() ?: 0).toUShort()),
+            productId = ProductId((vidPid?.getOrNull(1)?.toIntOrNull() ?: 0).toUShort()),
             discriminator = discriminator!!,
             transport = Transport.Mdns(address, port, true),
         )
@@ -142,8 +144,8 @@ constructor(
     val beacon =
         MatterBeacon(
             name = nsdServiceInfo.serviceName,
-            vendorId = 0,
-            productId = 0,
+            vendorId = VendorId(0u.toUShort()),
+            productId = ProductId(0u.toUShort()),
             discriminator = 0,
             Transport.Mdns("0.0.0.0", 0 /* fixme */, false),
         )

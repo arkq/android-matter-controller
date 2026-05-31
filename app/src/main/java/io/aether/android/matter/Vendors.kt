@@ -3,41 +3,49 @@
 
 package io.aether.android.matter
 
-import io.aether.android.formatVendorId
-
 /**
  * Known Matter Vendor IDs from the CSA Distributed Compliance Ledger (DCL).
  *
  * Source: https://webui.dcl.csa-iot.org/vendors
  */
-val VENDORS =
-    mapOf<Int, String>(
-        0x0000 to "Unspecified",
-        0x1011 to "Google",
-        0x1135 to "Amazon",
-        0x1217 to "Apple",
-        0x1341 to "Apple",
-        0x100B to "Philips Hue (Signify)",
-        0x100C to "IKEA",
-        0x1321 to "Samsung SmartThings",
-        0x10D9 to "Legrand",
-        0x117C to "Eve Systems",
-        0x1020 to "Comcast",
-        0x1049 to "Wulian",
-        0x1037 to "Tuya",
-        0x111D to "Belkin (Wemo)",
-        0x1349 to "Apple Home",
-        0x1384 to "Apple Keychain",
-        0x6006 to "Google LLC",
-        0xFFF1 to "Test Vendor 1",
-        0xFFF2 to "Test Vendor 2",
-        0xFFF3 to "Test Vendor 3",
-        0xFFF4 to "Test Vendor 4",
+val VENDORS: Map<VendorId, String> =
+    mapOf(
+        VendorId(0x0000u) to "Unspecified",
+        VendorId(0x1011u) to "Google",
+        VendorId(0x1135u) to "Amazon",
+        VendorId(0x1217u) to "Apple",
+        VendorId(0x1341u) to "Apple",
+        VendorId(0x100Bu) to "Philips Hue (Signify)",
+        VendorId(0x100Cu) to "IKEA",
+        VendorId(0x1321u) to "Samsung SmartThings",
+        VendorId(0x10D9u) to "Legrand",
+        VendorId(0x117Cu) to "Eve Systems",
+        VendorId(0x1020u) to "Comcast",
+        VendorId(0x1049u) to "Wulian",
+        VendorId(0x1037u) to "Tuya",
+        VendorId(0x111Du) to "Belkin (Wemo)",
+        VendorId(0x1349u) to "Apple Home",
+        VendorId(0x1384u) to "Apple Keychain",
+        VendorId(0x6006u) to "Google LLC",
+        VendorId(0xFFF1u) to "Test Vendor 1",
+        VendorId(0xFFF2u) to "Test Vendor 2",
+        VendorId(0xFFF3u) to "Test Vendor 3",
+        VendorId(0xFFF4u) to "Test Vendor 4",
     )
 
 /** Returns a human-readable vendor label for a Matter VID, including the hex code. */
-fun vendorLabel(vendorID: Int, providedLabel: String? = null): String {
-  val name = providedLabel?.takeIf { it.isNotBlank() } ?: VENDORS[vendorID]
-  val hex = formatVendorId(vendorID)
+fun vendorLabel(vendorId: VendorId, providedLabel: String? = null): String {
+  val name = providedLabel?.takeIf { it.isNotBlank() } ?: VENDORS[vendorId]
+  val hex = vendorId.toString()
   return if (name != null) "$name ($hex)" else hex
 }
+
+/** Overload for callers that still have an Int vendor ID (e.g. from proto). */
+fun vendorLabel(vendorId: Int, providedLabel: String? = null): String =
+    vendorLabel(vendorId.toVendorId(), providedLabel)
+
+/**
+ * Overload for callers that still have a UShort vendor ID (e.g. proto uint32 narrowed to uint16).
+ */
+fun vendorLabel(vendorId: UShort, providedLabel: String? = null): String =
+    vendorLabel(VendorId(vendorId), providedLabel)

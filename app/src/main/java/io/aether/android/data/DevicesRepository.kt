@@ -14,6 +14,8 @@ import io.aether.android.convertToAppDeviceType
 import io.aether.android.convertToMatterDeviceType
 import io.aether.android.formatNodeId
 import io.aether.android.getTimestampForNow
+import io.aether.android.matter.toNodeId
+import io.aether.android.nodeIdFor
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -202,7 +204,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
 
   suspend fun getDeviceByNodeId(nodeId: Long): Device {
     return getAllDevices().devicesList.firstOrNull { it.nodeId == nodeId }
-        ?: throw Exception("Device not found for nodeId: ${formatNodeId(nodeId)}")
+        ?: throw Exception("Device not found for nodeId: ${nodeId.toNodeId()}")
   }
 
   suspend fun getDevicesByNodeId(nodeId: Long): List<Device> {
