@@ -29,6 +29,7 @@ import io.aether.android.data.DevicesStateRepository
 import io.aether.android.endpointFor
 import io.aether.android.matter.Clusters
 import io.aether.android.matter.NodeId
+import io.aether.android.matter.toEndpointId
 import io.aether.android.matter.toNodeId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.home.DeviceUiModel
@@ -121,7 +122,10 @@ constructor(
             node.endpointsList.minByOrNull { endpointFor(it) }
                 ?: MatterEndpoint.getDefaultInstance()
         val deviceState =
-          devicesStateRepository.loadEndpointState(node.nodeId.toNodeId(), endpointFor(endpoint))
+            devicesStateRepository.loadEndpointState(
+                node.nodeId.toNodeId(),
+                endpointFor(endpoint).toEndpointId(),
+            )
         var isOnline = false
         var isOn = false
         var level = 0
@@ -139,7 +143,10 @@ constructor(
         val siblings = node.endpointsList.sortedBy { endpointFor(it) }
         val models = siblings.map { sibling ->
           val siblingState =
-              devicesStateRepository.loadEndpointState(node.nodeId.toNodeId(), endpointFor(sibling))
+              devicesStateRepository.loadEndpointState(
+                  node.nodeId.toNodeId(),
+                  endpointFor(sibling).toEndpointId(),
+              )
           if (siblingState != null) {
             DeviceUiModel(
                 node,
@@ -282,7 +289,7 @@ constructor(
     val devicePtr = chipClient.awaitGetConnectedDevicePointer(nodeId)
     val verifier = chipClient.computePaseVerifier(devicePtr, SETUP_PIN_CODE, ITERATION, salt)
     clustersHelper.openCommissioningWindowAdministratorCommissioningCluster(
-      nodeId.toLong(),
+        nodeId.toLong(),
         0,
         180,
         verifier.pakeVerifier,
@@ -368,10 +375,10 @@ constructor(
         val endpoint = endpointFor(deviceUiModel.endpoint)
         // Read the current stored state to avoid overwriting fresh level/colorTemperature values
         // with whatever was loaded at screen-open time.
-        val current = devicesStateRepository.loadEndpointState(nodeId, endpoint)
+        val current = devicesStateRepository.loadEndpointState(nodeId, endpoint.toEndpointId())
         devicesStateRepository.upsertEndpointState(
             nodeId,
-            endpoint,
+            endpoint.toEndpointId(),
             true,
             isOn,
             current?.level ?: deviceUiModel.level,
@@ -404,10 +411,10 @@ constructor(
         )
         val endpoint = endpointFor(deviceUiModel.endpoint)
         // Read the current stored state to avoid overwriting fresh isOn/colorTemperature values.
-        val current = devicesStateRepository.loadEndpointState(nodeId, endpoint)
+        val current = devicesStateRepository.loadEndpointState(nodeId, endpoint.toEndpointId())
         devicesStateRepository.upsertEndpointState(
             nodeId,
-            endpoint,
+            endpoint.toEndpointId(),
             true,
             current?.on ?: deviceUiModel.isOn,
             level,
@@ -440,10 +447,10 @@ constructor(
         )
         val endpoint = endpointFor(deviceUiModel.endpoint)
         // Read the current stored state to avoid overwriting fresh isOn/level values.
-        val current = devicesStateRepository.loadEndpointState(nodeId, endpoint)
+        val current = devicesStateRepository.loadEndpointState(nodeId, endpoint.toEndpointId())
         devicesStateRepository.upsertEndpointState(
             nodeId,
-            endpoint,
+            endpoint.toEndpointId(),
             true,
             current?.on ?: deviceUiModel.isOn,
             current?.level ?: deviceUiModel.level,
@@ -499,7 +506,8 @@ constructor(
   fun inspectApplicationBasicCluster(nodeId: NodeId) {
     Timber.d("inspectApplicationBasicCluster: nodeId [${nodeId}]")
     viewModelScope.launch {
-      val attributeList = clustersHelper.readApplicationBasicClusterAttributeList(nodeId.toLong(), 1u)
+      val attributeList =
+          clustersHelper.readApplicationBasicClusterAttributeList(nodeId.toLong(), 1u)
       attributeList.forEach { Timber.d("inspectDevice attribute: [$it]") }
     }
   }
@@ -585,7 +593,7 @@ constructor(
               return
             }
     val reportCallback =
-      object : SubscriptionHelper.ReportCallbackForDevice(primaryDevice.nodeId) {
+        object : SubscriptionHelper.ReportCallbackForDevice(primaryDevice.nodeId) {
           override fun onError(
               attributePath: chip.devicecontroller.model.ChipAttributePath?,
               eventPath: chip.devicecontroller.model.ChipEventPath?,
@@ -612,22 +620,22 @@ constructor(
                 val onOffState =
                     subscriptionHelper.extractAttribute(
                         nodeState,
-                        endpoint,
-                        Clusters.OnOff.ID.toLong(),
+                        endpoint.toEndpointId(),
+                        Clusters.OnOff.ID,
                         Clusters.OnOff.Attributes.OnOff.ID.toLong(),
                     ) as Boolean?
                 val levelState =
                     subscriptionHelper.extractAttribute(
                         nodeState,
-                        endpoint,
-                        Clusters.LevelControl.ID.toLong(),
+                        endpoint.toEndpointId(),
+                        Clusters.LevelControl.ID,
                         Clusters.LevelControl.Attributes.CurrentLevel.ID.toLong(),
                     ) as Int?
                 val colorTemperatureState =
                     subscriptionHelper.extractAttribute(
                         nodeState,
-                        endpoint,
-                        Clusters.ColorControl.ID.toLong(),
+                        endpoint.toEndpointId(),
+                        Clusters.ColorControl.ID,
                         Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID.toLong(),
                     ) as Int?
                 Timber.d("onOffState [${onOffState}] for endpoint $endpoint")
@@ -658,7 +666,7 @@ constructor(
                     else 0
                 devicesStateRepository.upsertEndpointState(
                     endpointModel.nodeId,
-                    endpoint,
+                    endpoint.toEndpointId(),
                     isOnline = true,
                     isOn = onOffState,
                     level = level,
@@ -787,7 +795,7 @@ constructor(
           }
           devicesStateRepository.upsertEndpointState(
               nodeId,
-              endpoint,
+              endpoint.toEndpointId(),
               isOnline = isOnline,
               isOn = isOn == true,
               level = level,

@@ -11,6 +11,8 @@ import chip.devicecontroller.model.ChipAttributePath
 import chip.devicecontroller.model.ChipEventPath
 import chip.devicecontroller.model.ChipPathId
 import chip.devicecontroller.model.NodeState
+import io.aether.android.matter.ClusterId
+import io.aether.android.matter.EndpointId
 import io.aether.android.matter.NodeId
 import java.lang.Exception
 import javax.inject.Inject
@@ -74,14 +76,14 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
   /** Endpoint [1] { Cluster [6] [OnOff] { [0] [OnOff] false } } */
   fun extractAttribute(
       nodeState: NodeState,
-      endpointId: Int,
-      clusterId: Long,
+      endpointId: EndpointId,
+      clusterId: ClusterId,
       attributeId: Long,
   ): Any? {
     nodeState.endpointStates.forEach { (_endpointId, endpointState) ->
-      if (_endpointId != endpointId) return@forEach
+      if (_endpointId != endpointId.toInt()) return@forEach
       endpointState.clusterStates.forEach { (stateClusterId, clusterState) ->
-        if (stateClusterId != clusterId) return@forEach
+        if (stateClusterId != clusterId.toLong()) return@forEach
         clusterState.attributeStates.forEach { (stateAttributeId, attributeState) ->
           if (stateAttributeId != attributeId) return@forEach
           return attributeState.value

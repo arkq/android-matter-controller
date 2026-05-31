@@ -42,6 +42,7 @@ import io.aether.android.data.UserPreferencesRepository
 import io.aether.android.endpointFor
 import io.aether.android.matter.Clusters
 import io.aether.android.matter.NodeId
+import io.aether.android.matter.toEndpointId
 import io.aether.android.matter.toNodeId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.supportsColorTemperature
@@ -386,7 +387,7 @@ constructor(
           )
           devicesStateRepository.addEndpointState(
               nodeId,
-              endpointFor(device),
+              endpointFor(device).toEndpointId(),
               isOnline = true,
               isOn = false,
               level = 0,
@@ -434,7 +435,7 @@ constructor(
             )
             devicesStateRepository.addEndpointState(
                 nodeId,
-                endpointFor(device),
+                endpointFor(device).toEndpointId(),
                 isOnline = true,
                 isOn = false,
                 level = 0,
@@ -495,8 +496,8 @@ constructor(
               0
             }
         devicesStateRepository.upsertEndpointState(
-          nodeId,
-            endpoint,
+            nodeId,
+            endpoint.toEndpointId(),
             true,
             isOn,
             level,
@@ -571,22 +572,22 @@ constructor(
                 val onOffState =
                     subscriptionHelper.extractAttribute(
                         nodeState,
-                        endpoint,
-                        Clusters.OnOff.ID.toLong(),
+                        endpoint.toEndpointId(),
+                        Clusters.OnOff.ID,
                         Clusters.OnOff.Attributes.OnOff.ID.toLong(),
                     ) as Boolean?
                 val levelState =
                     subscriptionHelper.extractAttribute(
                         nodeState,
-                        endpoint,
-                        Clusters.LevelControl.ID.toLong(),
+                        endpoint.toEndpointId(),
+                        Clusters.LevelControl.ID,
                         Clusters.LevelControl.Attributes.CurrentLevel.ID.toLong(),
                     ) as Int?
                 val colorTemperatureState =
                     subscriptionHelper.extractAttribute(
                         nodeState,
-                        endpoint,
-                        Clusters.ColorControl.ID.toLong(),
+                        endpoint.toEndpointId(),
+                        Clusters.ColorControl.ID,
                         Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID.toLong(),
                     ) as Int?
                 Timber.d("onOffState [${onOffState}]")
@@ -608,7 +609,7 @@ constructor(
                 viewModelScope.launch {
                   devicesStateRepository.upsertEndpointState(
                       nId,
-                      endpoint,
+                      endpoint.toEndpointId(),
                       isOnline = true,
                       isOn = onOffState,
                       level = level,
@@ -630,7 +631,7 @@ constructor(
                   }
                 }
               },
-                SubscriptionHelper.ResubscriptionAttemptCallbackForDevice(nId),
+              SubscriptionHelper.ResubscriptionAttemptCallbackForDevice(nId),
               reportCallback,
           )
         } catch (e: IllegalStateException) {
@@ -728,7 +729,7 @@ constructor(
                 // TODO: only need to do it if state has changed
                 devicesStateRepository.upsertEndpointState(
                     nId,
-                    endpoint,
+                    endpoint.toEndpointId(),
                     isOnline = isOnline,
                     isOn = isOn,
                     level = level,

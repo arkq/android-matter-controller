@@ -252,9 +252,7 @@ constructor(
         val knownSchema = _knownClustersById.value[clusterId]
 
         val attributesFromDevice =
-            runCatching {
-                  clustersHelper.readClusterAttributeList(nodeId, endpoint, clusterId)
-                }
+            runCatching { clustersHelper.readClusterAttributeList(nodeId, endpoint, clusterId) }
                 .getOrElse {
                   Timber.w(
                       it,
@@ -267,7 +265,7 @@ constructor(
         val commandsFromDevice =
             runCatching {
                   clustersHelper.readClusterAcceptedCommandList(
-                  nodeId,
+                      nodeId,
                       endpoint,
                       clusterId,
                   )
@@ -284,7 +282,7 @@ constructor(
         val generatedCommandsFromDevice =
             runCatching {
                   clustersHelper.readClusterGeneratedCommandList(
-                  nodeId,
+                      nodeId,
                       endpoint,
                       clusterId,
                   )
@@ -299,9 +297,7 @@ constructor(
                   emptyList()
                 }
         val eventsFromDevice =
-            runCatching {
-                  clustersHelper.readClusterEventList(nodeId, endpoint, clusterId)
-                }
+            runCatching { clustersHelper.readClusterEventList(nodeId, endpoint, clusterId) }
                 .getOrElse {
                   Timber.w(
                       it,
@@ -363,8 +359,7 @@ constructor(
   ) {
     viewModelScope.launch {
       try {
-        val value =
-          clustersHelper.readAttributeValue(nodeId, endpoint, clusterId, attributeId)
+        val value = clustersHelper.readAttributeValue(nodeId, endpoint, clusterId, attributeId)
         _attributeValueByKey.update {
           it + (attributeKey(endpoint, clusterId, attributeId) to value)
         }
@@ -408,7 +403,7 @@ constructor(
                 }
 
         clustersHelper.writeGenericAttribute(
-          nodeId,
+            nodeId,
             endpoint,
             clusterId,
             attributeId,
@@ -447,7 +442,7 @@ constructor(
                 .orEmpty()
         val payload = ExplorerTlvCodec.encodeCommandPayload(arguments, argumentValues)
         clustersHelper.invokeGenericCommand(
-          nodeId,
+            nodeId,
             endpoint,
             clusterId,
             commandId,

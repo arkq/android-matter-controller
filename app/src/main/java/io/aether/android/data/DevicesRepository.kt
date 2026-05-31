@@ -13,9 +13,10 @@ import io.aether.android.MatterNode
 import io.aether.android.convertToAppDeviceType
 import io.aether.android.convertToMatterDeviceType
 import io.aether.android.getTimestampForNow
+import io.aether.android.matter.EndpointId
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.toDeviceTypeId
-import io.aether.android.matter.toNodeId
+import io.aether.android.matter.toEndpointId
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -71,7 +72,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
                 .setDateCommissioned(getTimestampForNow())
                 .setName(device.name)
                 .setOnline(false)
-        newNodeBuilder.addEndpoints(toEndpoint(device, normalizedEndpoint))
+        newNodeBuilder.addEndpoints(toEndpoint(device, normalizedEndpoint.toEndpointId()))
         val newNode = newNodeBuilder.build()
         stateBuilder.addNodes(newNode)
       } else {
@@ -96,7 +97,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
         val updatedEndpoint =
             toEndpoint(
                 device,
-                normalizedEndpoint,
+                normalizedEndpoint.toEndpointId(),
                 if (endpointIndex == -1) null else existingNode.getEndpoints(endpointIndex),
             )
         if (endpointIndex == -1) {
@@ -125,7 +126,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
       if (nodeIndex == -1) {
         val nodeBuilder =
             MatterNode.newBuilder()
-              .setNodeId(nodeId.toLong())
+                .setNodeId(nodeId.toLong())
                 .setName(nodeName)
                 .setVendorId(vendorId)
                 .setVendorName(vendorName)
@@ -276,11 +277,11 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
 
   private fun toEndpoint(
       device: Device,
-      endpointId: Int,
+      endpointId: EndpointId,
       existing: MatterEndpoint? = null,
   ): MatterEndpoint {
     val builder = (existing ?: MatterEndpoint.getDefaultInstance()).toBuilder()
-    builder.endpointId = endpointId
+    builder.endpointId = endpointId.toInt()
     builder.label = device.name
     builder.supportsLevelControl = device.supportsLevelControl
     builder.supportsColorTemperature = device.supportsColorTemperature

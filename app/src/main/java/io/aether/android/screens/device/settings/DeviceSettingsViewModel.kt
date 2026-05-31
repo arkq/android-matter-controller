@@ -67,7 +67,9 @@ constructor(
     kotlinx.coroutines.flow
         .combine(_device, devicesStateRepository.devicesStateFlow) { device, state ->
           val node =
-              device?.nodeId?.let { nodeId -> state.nodesList.firstOrNull { it.nodeId == nodeId.toLong() } }
+              device?.nodeId?.let { nodeId ->
+                state.nodesList.firstOrNull { it.nodeId == nodeId.toLong() }
+              }
           (node?.online ?: false) to node?.dateCommissioned
         }
         .onEach { (isOnline, dateCommissioned) ->

@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import io.aether.android.R
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.endpointFor
+import io.aether.android.matter.toEndpointId
 import io.aether.android.screens.device.cluster.COLOR_TEMPERATURE_MAX
 import io.aether.android.screens.device.cluster.LEVEL_MAX
 import io.aether.android.screens.device.cluster.LevelClusterControl
@@ -54,7 +55,8 @@ internal fun ColorTemperatureDeviceControl(
   LaunchedEffect(endpointModel, lastUpdatedDeviceState) {
     when {
       lastUpdatedDeviceState?.nodeId == endpointModel.nodeId &&
-          lastUpdatedDeviceState.endpointId == endpointFor(endpointModel.endpoint) -> {
+          lastUpdatedDeviceState.endpointId ==
+              endpointFor(endpointModel.endpoint).toEndpointId() -> {
         isOnline = lastUpdatedDeviceState.online
         isOn = lastUpdatedDeviceState.on
         brightness = lastUpdatedDeviceState.level / LEVEL_MAX

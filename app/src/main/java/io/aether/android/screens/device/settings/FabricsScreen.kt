@@ -45,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import io.aether.android.R
 import io.aether.android.matter.NodeId
-import io.aether.android.matter.toNodeId
 import io.aether.android.matter.vendorLabel
 import io.aether.android.screens.common.LoadingIndicator
 

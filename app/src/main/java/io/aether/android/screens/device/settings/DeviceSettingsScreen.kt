@@ -47,7 +47,6 @@ import io.aether.android.chip.BasicInformationAttributes
 import io.aether.android.formatTimestamp
 import io.aether.android.getDeviceTypeDisplayStringId
 import io.aether.android.matter.NodeId
-import io.aether.android.matter.toNodeId
 import io.aether.android.matter.toVendorId
 import io.aether.android.matter.vendorLabel
 import io.aether.android.screens.common.DialogInfo

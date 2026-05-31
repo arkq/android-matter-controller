@@ -21,8 +21,8 @@ value class FabricId(val value: ULong) : Comparable<FabricId> {
   override fun toString(): String = value.toHexString(hexFormat)
 
   override fun compareTo(other: FabricId): Int = value.compareTo(other.value)
-  fun toLong(): Long = value.toLong()
 
+  fun toLong(): Long = value.toLong()
 }
 
 /**
@@ -33,17 +33,17 @@ value class NodeId(val value: ULong) : Comparable<NodeId> {
   override fun toString(): String = value.toHexString(hexFormat)
 
   override fun compareTo(other: NodeId): Int = value.compareTo(other.value)
-  fun toLong(): Long = value.toLong()
 
+  fun toLong(): Long = value.toLong()
 }
 
-/**
- * A Matter Endpoint ID (uint16 per spec). Formats as 4-digit uppercase hex, e.g. 0x0001.
- */
+/** A Matter Endpoint ID (uint16 per spec). Formats as 4-digit uppercase hex, e.g. 0x0001. */
 @JvmInline
 value class EndpointId(val value: UShort) : Comparable<EndpointId> {
   override fun toString(): String = value.toHexString(hexFormat)
+
   override fun compareTo(other: EndpointId): Int = value.compareTo(other.value)
+
   fun toInt(): Int = value.toInt()
 }
 
@@ -137,6 +137,7 @@ value class DeviceId(val value: UInt) : Comparable<DeviceId> {
         value <= 0xFFFFu -> value.toUShort().toHexString(hexFormat)
         else -> value.toHexString(hexFormat)
       }
+
   override fun compareTo(other: DeviceId): Int = value.compareTo(other.value)
 
   fun toLong(): Long = value.toLong()
@@ -144,7 +145,6 @@ value class DeviceId(val value: UInt) : Comparable<DeviceId> {
   fun toInt(): Int = value.toInt()
 
   fun toUInt(): UInt = value
-
 }
 
 /** A Matter Vendor ID (uint16 per spec). Formats as 4-digit uppercase hex, e.g. 0x1011. */
@@ -153,6 +153,7 @@ value class VendorId(val value: UShort) : Comparable<VendorId> {
   override fun toString(): String = value.toHexString(hexFormat)
 
   override fun compareTo(other: VendorId): Int = value.compareTo(other.value)
+
   fun toInt(): Int = value.toInt()
 }
 
@@ -162,8 +163,8 @@ value class ProductId(val value: UShort) : Comparable<ProductId> {
   override fun toString(): String = value.toHexString(hexFormat)
 
   override fun compareTo(other: ProductId): Int = value.compareTo(other.value)
-  fun toInt(): Int = value.toInt()
 
+  fun toInt(): Int = value.toInt()
 }
 
 // ---------------------------------------------------------------------------
@@ -173,6 +174,8 @@ value class ProductId(val value: UShort) : Comparable<ProductId> {
 fun Long.toFabricId(): FabricId = FabricId(toULong())
 
 fun Long.toNodeId(): NodeId = NodeId(toULong())
+
+fun Int.toEndpointId(): EndpointId = EndpointId(toUShort())
 
 fun Long.toClusterId(): ClusterId = ClusterId(toUInt())
 

@@ -71,8 +71,7 @@ constructor(
       val currentState = _uiState.value
       _uiState.value = UiState.Loading
       try {
-        val deviceCurrentFabricIndex =
-            clustersHelper.readCurrentFabricIndexAttribute(nodeId)
+        val deviceCurrentFabricIndex = clustersHelper.readCurrentFabricIndexAttribute(nodeId)
         val controllerFabricIndex = chipClient.chipDeviceController.getFabricIndex()
         val currentFabricIndex = deviceCurrentFabricIndex ?: controllerFabricIndex
         if (fabricIndex == currentFabricIndex) {
@@ -100,8 +99,7 @@ constructor(
         if (fallbackState is UiState.Loaded) fallbackState
         else UiState.Error(R.string.controllers_offline)
       } else {
-        val deviceCurrentFabricIndex =
-          clustersHelper.readCurrentFabricIndexAttribute(nodeId)
+        val deviceCurrentFabricIndex = clustersHelper.readCurrentFabricIndexAttribute(nodeId)
         val controllerFabricIndex = chipClient.chipDeviceController.getFabricIndex()
         val currentFabricIndex = deviceCurrentFabricIndex ?: controllerFabricIndex
         val fabricsByIndex = fabrics.associateBy { it.fabricIndex }

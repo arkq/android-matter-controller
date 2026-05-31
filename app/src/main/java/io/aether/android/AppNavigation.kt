@@ -75,7 +75,7 @@ fun AppNavigation(
       DeviceRoute(
           navigateToDeviceSettings = navigateToDeviceSettings,
           onBackClick = { navController.popBackStack() },
-            nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId(),
+          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId(),
       )
     }
     // Device settings
@@ -88,7 +88,7 @@ fun AppNavigation(
           navigateToDeviceExplorer = navigateToDeviceExplorer,
           navigateToDeviceFabrics = navigateToDeviceFabrics,
           onBackClick = { navController.popBackStack() },
-            nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId(),
+          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId(),
       )
     }
     // Explorer from Device Settings

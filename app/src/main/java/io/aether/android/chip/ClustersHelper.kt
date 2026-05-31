@@ -96,7 +96,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     return readGlobalListAttribute(
             nodeId = nodeId,
             endpoint = endpoint,
-            clusterId = clusterId.toLong(),
+            clusterId = clusterId,
             globalAttributeId = GenericAttributes.AttributeList.ID,
         )
         .map { it.toAttributeId() }
@@ -110,7 +110,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     return readGlobalListAttribute(
             nodeId = nodeId,
             endpoint = endpoint,
-            clusterId = clusterId.toLong(),
+            clusterId = clusterId,
             globalAttributeId = GenericAttributes.AcceptedCommandList.ID,
         )
         .map { it.toCommandId() }
@@ -124,7 +124,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     return readGlobalListAttribute(
             nodeId = nodeId,
             endpoint = endpoint,
-            clusterId = clusterId.toLong(),
+            clusterId = clusterId,
             globalAttributeId = GenericAttributes.GeneratedCommandList.ID,
         )
         .map { it.toCommandId() }
@@ -138,7 +138,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     return readGlobalListAttribute(
             nodeId = nodeId,
             endpoint = endpoint,
-            clusterId = clusterId.toLong(),
+            clusterId = clusterId,
             globalAttributeId = GenericAttributes.EventList.ID,
         )
         .map { it.toEventId() }
@@ -225,7 +225,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
   private suspend fun readGlobalListAttribute(
       nodeId: NodeId,
       endpoint: Int,
-      clusterId: Long,
+      clusterId: ClusterId,
       globalAttributeId: AttributeId,
   ): List<Long> {
     val connectedDevicePtr =
@@ -241,7 +241,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
               connectedDevicePtr,
               ChipAttributePath.newInstance(
                   endpoint.toLong(),
-                  clusterId,
+                  clusterId.toLong(),
                   globalAttributeId.toLong(),
               ),
           )
@@ -251,7 +251,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
                 e,
                 "readGlobalListAttribute: unsupported global attribute endpoint=%d cluster=0x%X attribute=0x%X",
                 endpoint,
-                clusterId,
+                clusterId.toLong(),
                 globalAttributeId.toLong(),
             )
             return emptyList()
@@ -975,7 +975,10 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
    * whether the optional Color Temperature attribute (id 7) is present before flagging a device as
    * supporting color temperature control.
    */
-  suspend fun readColorControlClusterAttributeList(nodeId: NodeId, endpoint: Int): List<AttributeId> {
+  suspend fun readColorControlClusterAttributeList(
+      nodeId: NodeId,
+      endpoint: Int,
+  ): List<AttributeId> {
     val connectedDevicePtr =
         try {
           chipClient.getConnectedDevicePointer(nodeId)

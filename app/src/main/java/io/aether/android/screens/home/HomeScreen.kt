@@ -93,8 +93,8 @@ import io.aether.android.commissioning.AppCommissioningService
 import io.aether.android.getDeviceTypeIconId
 import io.aether.android.isMultiAdminCommissioning
 import io.aether.android.isOnDisplayString
-import io.aether.android.screens.common.DialogInfo
 import io.aether.android.matter.NodeId
+import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.thread.getActivity
 import timber.log.Timber
@@ -391,12 +391,12 @@ fun openPlayServicesInStore(context: Context) {
 
 @Composable
 private fun DeviceItem(
-  nodeId: NodeId,
+    nodeId: NodeId,
     deviceTypeId: Long,
     name: String,
     isOnline: Boolean,
     isOn: Boolean,
-  onOnOffClick: (nodeId: NodeId, value: Boolean) -> Unit,
+    onOnOffClick: (nodeId: NodeId, value: Boolean) -> Unit,
     onDeviceClick: (() -> Unit),
 ) {
   val bgColor =
