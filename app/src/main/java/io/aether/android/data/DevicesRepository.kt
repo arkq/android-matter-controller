@@ -15,7 +15,6 @@ import io.aether.android.convertToMatterDeviceType
 import io.aether.android.formatNodeId
 import io.aether.android.getTimestampForNow
 import io.aether.android.matter.toNodeId
-import io.aether.android.nodeIdFor
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -11,8 +11,6 @@ import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.toLong
-import io.aether.android.matter.toNodeId
-import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import javax.inject.Inject
 import javax.inject.Singleton

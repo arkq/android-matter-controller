@@ -6,12 +6,12 @@
 package io.aether.android.matter
 
 val CLUSTERS_1_6 =
-    mapOf<UInt, ClusterInfo>(
+    mapOf<ClusterId, ClusterInfo>(
         Clusters.TemperatureAlarm.ID to
             ClusterInfo(
                 name = "Temperature Alarm",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.TemperatureAlarm.Attributes.CriticalOverTemperatureThreshold.ID to
                             AttributeInfo(
                                 name = "CriticalOverTemperatureThreshold",
@@ -50,7 +50,7 @@ val CLUSTERS_1_6 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.TemperatureAlarm.CommandsIncoming.SetTemperatureAlarmThresholds
                             .ID to
                             CommandInfo(
@@ -91,14 +91,14 @@ val CLUSTERS_1_6 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
-                events = mapOf<UInt, EventInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.Groupcast.ID to
             ClusterInfo(
                 name = "Groupcast",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.Groupcast.Attributes.Membership.ID to
                             AttributeInfo(
                                 name = "Membership",
@@ -131,7 +131,7 @@ val CLUSTERS_1_6 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.Groupcast.CommandsIncoming.JoinGroup.ID to
                             CommandInfo(
                                 name = "JoinGroup",
@@ -254,7 +254,7 @@ val CLUSTERS_1_6 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.Groupcast.CommandsOutgoing.LeaveGroupResponse.ID to
                             CommandInfo(
                                 name = "LeaveGroupResponse",
@@ -274,7 +274,7 @@ val CLUSTERS_1_6 =
                             ),
                     ),
                 events =
-                    mapOf<UInt, EventInfo>(
+                    mapOf<EventId, EventInfo>(
                         Clusters.Groupcast.Events.GroupcastTesting.ID to
                             EventInfo(
                                 name = "GroupcastTesting",
@@ -285,7 +285,7 @@ val CLUSTERS_1_6 =
             ClusterInfo(
                 name = "Ambient Context Sensing",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.AmbientContextSensing.Attributes.HumanActivityDetected.ID to
                             AttributeInfo(
                                 name = "HumanActivityDetected",
@@ -362,10 +362,10 @@ val CLUSTERS_1_6 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<UInt, CommandInfo>(),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                commandsIncoming = mapOf<CommandId, CommandInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
                 events =
-                    mapOf<UInt, EventInfo>(
+                    mapOf<EventId, EventInfo>(
                         Clusters.AmbientContextSensing.Events.AmbientContextDetectStarted.ID to
                             EventInfo(
                                 name = "AmbientContextDetectStarted",

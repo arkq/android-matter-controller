@@ -153,14 +153,16 @@ fun VendorId.toInt(): Int = value.toInt()
 
 fun ProductId.toInt(): Int = value.toInt()
 
+/** Data class representing Matter cluster from data model. */
 data class ClusterInfo(
     val name: String,
-    val attributes: Map<UInt, AttributeInfo>,
-    val commandsIncoming: Map<UInt, CommandInfo>,
-    val commandsOutgoing: Map<UInt, CommandInfo>,
-    val events: Map<UInt, EventInfo>,
+    val attributes: Map<AttributeId, AttributeInfo>,
+    val commandsIncoming: Map<CommandId, CommandInfo>,
+    val commandsOutgoing: Map<CommandId, CommandInfo>,
+    val events: Map<EventId, EventInfo>,
 )
 
+/** Data class representing Matter attribute from data model. */
 data class AttributeInfo(
     val name: String,
     val type: DataType,
@@ -183,6 +185,7 @@ data class EventInfo(
     val name: String,
 )
 
+/** Matter data model access privilege for attributes and commands. */
 enum class Privilege(val label: UInt) {
   NONE(0u),
   VIEW(1u),

@@ -7,35 +7,35 @@ package io.aether.android.matter
 
 object Clusters {
   object Identify {
-    const val ID = 0x0003u
+    val ID = ClusterId(0x0003u)
 
     object Attributes {
       object IdentifyTime {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object IdentifyType {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
     object CommandsIncoming {
       object Identify {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object IdentifyQuery {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object TriggerEffect {
-        const val ID = 0x0040u
+        val ID = CommandId(0x0040u)
       }
     }
 
     object CommandsOutgoing {
       object IdentifyQueryResponse {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
@@ -43,55 +43,55 @@ object Clusters {
   }
 
   object Groups {
-    const val ID = 0x0004u
+    val ID = ClusterId(0x0004u)
 
     object Attributes {
       object NameSupport {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
     }
 
     object CommandsIncoming {
       object AddGroup {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object ViewGroup {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object GetGroupMembership {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object RemoveGroup {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object RemoveAllGroups {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object AddGroupIfIdentifying {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
     }
 
     object CommandsOutgoing {
       object AddGroupResponse {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object ViewGroupResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object GetGroupMembershipResponse {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object RemoveGroupResponse {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
     }
 
@@ -99,119 +99,119 @@ object Clusters {
   }
 
   object Scenes {
-    const val ID = 0x0005u
+    val ID = ClusterId(0x0005u)
 
     object Attributes {
       object SceneCount {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentScene {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object CurrentGroup {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object SceneValid {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object NameSupport {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object LastConfiguredBy {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object SceneTableSize {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object FabricSceneInfo {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
     }
 
     object CommandsIncoming {
       object AddScene {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object ViewScene {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object RemoveScene {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object RemoveAllScenes {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object StoreScene {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object RecallScene {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object GetSceneMembership {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object EnhancedAddScene {
-        const val ID = 0x0040u
+        val ID = CommandId(0x0040u)
       }
 
       object EnhancedViewScene {
-        const val ID = 0x0041u
+        val ID = CommandId(0x0041u)
       }
 
       object CopyScene {
-        const val ID = 0x0042u
+        val ID = CommandId(0x0042u)
       }
     }
 
     object CommandsOutgoing {
       object AddSceneResponse {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object ViewSceneResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object RemoveSceneResponse {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object RemoveAllScenesResponse {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object StoreSceneResponse {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object GetSceneMembershipResponse {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object EnhancedAddSceneResponse {
-        const val ID = 0x0040u
+        val ID = CommandId(0x0040u)
       }
 
       object EnhancedViewSceneResponse {
-        const val ID = 0x0041u
+        val ID = CommandId(0x0041u)
       }
 
       object CopySceneResponse {
-        const val ID = 0x0042u
+        val ID = CommandId(0x0042u)
       }
     }
 
@@ -219,53 +219,53 @@ object Clusters {
   }
 
   object OnOff {
-    const val ID = 0x0006u
+    val ID = ClusterId(0x0006u)
 
     object Attributes {
       object OnOff {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object GlobalSceneControl {
-        const val ID = 0x4000u
+        val ID = AttributeId(0x4000u)
       }
 
       object OnTime {
-        const val ID = 0x4001u
+        val ID = AttributeId(0x4001u)
       }
 
       object OffWaitTime {
-        const val ID = 0x4002u
+        val ID = AttributeId(0x4002u)
       }
 
       object StartUpOnOff {
-        const val ID = 0x4003u
+        val ID = AttributeId(0x4003u)
       }
     }
 
     object CommandsIncoming {
       object Off {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object On {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object Toggle {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object OffWithEffect {
-        const val ID = 0x0040u
+        val ID = CommandId(0x0040u)
       }
 
       object OnWithRecallGlobalScene {
-        const val ID = 0x0041u
+        val ID = CommandId(0x0041u)
       }
 
       object OnWithTimedOff {
-        const val ID = 0x0042u
+        val ID = CommandId(0x0042u)
       }
     }
 
@@ -275,101 +275,101 @@ object Clusters {
   }
 
   object LevelControl {
-    const val ID = 0x0008u
+    val ID = ClusterId(0x0008u)
 
     object Attributes {
       object CurrentLevel {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object RemainingTime {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MinLevel {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object MaxLevel {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object CurrentFrequency {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object MinFrequency {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object MaxFrequency {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object Options {
-        const val ID = 0x000Fu
+        val ID = AttributeId(0x000Fu)
       }
 
       object OnOffTransitionTime {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object OnLevel {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object OnTransitionTime {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
 
       object OffTransitionTime {
-        const val ID = 0x0013u
+        val ID = AttributeId(0x0013u)
       }
 
       object DefaultMoveRate {
-        const val ID = 0x0014u
+        val ID = AttributeId(0x0014u)
       }
 
       object StartUpCurrentLevel {
-        const val ID = 0x4000u
+        val ID = AttributeId(0x4000u)
       }
     }
 
     object CommandsIncoming {
       object MoveToLevel {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object Move {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object Step {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object Stop {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object MoveToLevelWithOnOff {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object MoveWithOnOff {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object StepWithOnOff {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object StopWithOnOff {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
 
       object MoveToClosestFrequency {
-        const val ID = 0x0008u
+        val ID = CommandId(0x0008u)
       }
     }
 
@@ -379,101 +379,101 @@ object Clusters {
   }
 
   object PulseWidthModulation {
-    const val ID = 0x001Cu
+    val ID = ClusterId(0x001Cu)
 
     object Attributes {
       object CurrentLevel {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object RemainingTime {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MinLevel {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object MaxLevel {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object CurrentFrequency {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object MinFrequency {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object MaxFrequency {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object Options {
-        const val ID = 0x000Fu
+        val ID = AttributeId(0x000Fu)
       }
 
       object OnOffTransitionTime {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object OnLevel {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object OnTransitionTime {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
 
       object OffTransitionTime {
-        const val ID = 0x0013u
+        val ID = AttributeId(0x0013u)
       }
 
       object DefaultMoveRate {
-        const val ID = 0x0014u
+        val ID = AttributeId(0x0014u)
       }
 
       object StartUpCurrentLevel {
-        const val ID = 0x4000u
+        val ID = AttributeId(0x4000u)
       }
     }
 
     object CommandsIncoming {
       object MoveToLevel {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object Move {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object Step {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object Stop {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object MoveToLevelWithOnOff {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object MoveWithOnOff {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object StepWithOnOff {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object StopWithOnOff {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
 
       object MoveToClosestFrequency {
-        const val ID = 0x0008u
+        val ID = CommandId(0x0008u)
       }
     }
 
@@ -483,31 +483,31 @@ object Clusters {
   }
 
   object Descriptor {
-    const val ID = 0x001Du
+    val ID = ClusterId(0x001Du)
 
     object Attributes {
       object DeviceTypeList {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object ServerList {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object ClientList {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object PartsList {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object TagList {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object EndpointUniqueID {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
     }
 
@@ -519,11 +519,11 @@ object Clusters {
   }
 
   object Binding {
-    const val ID = 0x001Eu
+    val ID = ClusterId(0x001Eu)
 
     object Attributes {
       object Binding {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
     }
 
@@ -535,137 +535,137 @@ object Clusters {
   }
 
   object AccessControl {
-    const val ID = 0x001Fu
+    val ID = ClusterId(0x001Fu)
 
     object Attributes {
       object ACL {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object Extension {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object SubjectsPerAccessControlEntry {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object TargetsPerAccessControlEntry {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object AccessControlEntriesPerFabric {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object CommissioningARL {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object ARL {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object AuxiliaryACL {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
     }
 
     object CommandsIncoming {
       object ReviewFabricRestrictions {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
     object CommandsOutgoing {
       object ReviewFabricRestrictionsResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
     object Events {
       object AccessControlEntryChanged {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object AccessControlExtensionChanged {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object FabricRestrictionReviewUpdate {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
 
       object AuxiliaryAccessUpdated {
-        const val ID = 0x0003u
+        val ID = EventId(0x0003u)
       }
     }
   }
 
   object Actions {
-    const val ID = 0x0025u
+    val ID = ClusterId(0x0025u)
 
     object Attributes {
       object ActionList {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object EndpointLists {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object SetupURL {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
     }
 
     object CommandsIncoming {
       object InstantAction {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object InstantActionWithTransition {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object StartAction {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object StartActionWithDuration {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object StopAction {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object PauseAction {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object PauseActionWithDuration {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object ResumeAction {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
 
       object EnableAction {
-        const val ID = 0x0008u
+        val ID = CommandId(0x0008u)
       }
 
       object EnableActionWithDuration {
-        const val ID = 0x0009u
+        val ID = CommandId(0x0009u)
       }
 
       object DisableAction {
-        const val ID = 0x000Au
+        val ID = CommandId(0x000Au)
       }
 
       object DisableActionWithDuration {
-        const val ID = 0x000Bu
+        val ID = CommandId(0x000Bu)
       }
     }
 
@@ -673,113 +673,113 @@ object Clusters {
 
     object Events {
       object StateChanged {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object ActionFailed {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
     }
   }
 
   object BasicInformation {
-    const val ID = 0x0028u
+    val ID = ClusterId(0x0028u)
 
     object Attributes {
       object DataModelRevision {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object VendorName {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object VendorID {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object ProductName {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object ProductID {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object NodeLabel {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object Location {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object HardwareVersion {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object HardwareVersionString {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object SoftwareVersion {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object SoftwareVersionString {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object ManufacturingDate {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
 
       object PartNumber {
-        const val ID = 0x000Cu
+        val ID = AttributeId(0x000Cu)
       }
 
       object ProductURL {
-        const val ID = 0x000Du
+        val ID = AttributeId(0x000Du)
       }
 
       object ProductLabel {
-        const val ID = 0x000Eu
+        val ID = AttributeId(0x000Eu)
       }
 
       object SerialNumber {
-        const val ID = 0x000Fu
+        val ID = AttributeId(0x000Fu)
       }
 
       object LocalConfigDisabled {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object Reachable {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object UniqueID {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
 
       object CapabilityMinima {
-        const val ID = 0x0013u
+        val ID = AttributeId(0x0013u)
       }
 
       object ProductAppearance {
-        const val ID = 0x0014u
+        val ID = AttributeId(0x0014u)
       }
 
       object SpecificationVersion {
-        const val ID = 0x0015u
+        val ID = AttributeId(0x0015u)
       }
 
       object MaxPathsPerInvoke {
-        const val ID = 0x0016u
+        val ID = AttributeId(0x0016u)
       }
 
       object ConfigurationVersion {
-        const val ID = 0x0018u
+        val ID = AttributeId(0x0018u)
       }
     }
 
@@ -789,49 +789,49 @@ object Clusters {
 
     object Events {
       object StartUp {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object ShutDown {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object Leave {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
 
       object ReachableChanged {
-        const val ID = 0x0003u
+        val ID = EventId(0x0003u)
       }
     }
   }
 
   object OTASoftwareUpdateProvider {
-    const val ID = 0x0029u
+    val ID = ClusterId(0x0029u)
 
     object Attributes {}
 
     object CommandsIncoming {
       object QueryImage {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object ApplyUpdateRequest {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object NotifyUpdateApplied {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
     }
 
     object CommandsOutgoing {
       object QueryImageResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object ApplyUpdateResponse {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
     }
 
@@ -839,29 +839,29 @@ object Clusters {
   }
 
   object OTASoftwareUpdateRequestor {
-    const val ID = 0x002Au
+    val ID = ClusterId(0x002Au)
 
     object Attributes {
       object DefaultOTAProviders {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object UpdatePossible {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object UpdateState {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object UpdateStateProgress {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
     object CommandsIncoming {
       object AnnounceOTAProvider {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
@@ -869,29 +869,29 @@ object Clusters {
 
     object Events {
       object StateTransition {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object VersionApplied {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object DownloadError {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
     }
   }
 
   object LocalizationConfiguration {
-    const val ID = 0x002Bu
+    val ID = ClusterId(0x002Bu)
 
     object Attributes {
       object ActiveLocale {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object SupportedLocales {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
@@ -903,19 +903,19 @@ object Clusters {
   }
 
   object TimeFormatLocalization {
-    const val ID = 0x002Cu
+    val ID = ClusterId(0x002Cu)
 
     object Attributes {
       object HourFormat {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object ActiveCalendarType {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object SupportedCalendarTypes {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
     }
 
@@ -927,15 +927,15 @@ object Clusters {
   }
 
   object UnitLocalization {
-    const val ID = 0x002Du
+    val ID = ClusterId(0x002Du)
 
     object Attributes {
       object TemperatureUnit {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object SupportedTemperatureUnits {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
@@ -947,11 +947,11 @@ object Clusters {
   }
 
   object PowerSourceConfiguration {
-    const val ID = 0x002Eu
+    val ID = ClusterId(0x002Eu)
 
     object Attributes {
       object Sources {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
     }
 
@@ -963,135 +963,135 @@ object Clusters {
   }
 
   object PowerSource {
-    const val ID = 0x002Fu
+    val ID = ClusterId(0x002Fu)
 
     object Attributes {
       object Status {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object Order {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object Description {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object WiredAssessedInputVoltage {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object WiredAssessedInputFrequency {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object WiredCurrentType {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object WiredAssessedCurrent {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object WiredNominalVoltage {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object WiredMaximumCurrent {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object WiredPresent {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object ActiveWiredFaults {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object BatVoltage {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
 
       object BatPercentRemaining {
-        const val ID = 0x000Cu
+        val ID = AttributeId(0x000Cu)
       }
 
       object BatTimeRemaining {
-        const val ID = 0x000Du
+        val ID = AttributeId(0x000Du)
       }
 
       object BatChargeLevel {
-        const val ID = 0x000Eu
+        val ID = AttributeId(0x000Eu)
       }
 
       object BatReplacementNeeded {
-        const val ID = 0x000Fu
+        val ID = AttributeId(0x000Fu)
       }
 
       object BatReplaceability {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object BatPresent {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object ActiveBatFaults {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
 
       object BatReplacementDescription {
-        const val ID = 0x0013u
+        val ID = AttributeId(0x0013u)
       }
 
       object BatCommonDesignation {
-        const val ID = 0x0014u
+        val ID = AttributeId(0x0014u)
       }
 
       object BatANSIDesignation {
-        const val ID = 0x0015u
+        val ID = AttributeId(0x0015u)
       }
 
       object BatIECDesignation {
-        const val ID = 0x0016u
+        val ID = AttributeId(0x0016u)
       }
 
       object BatApprovedChemistry {
-        const val ID = 0x0017u
+        val ID = AttributeId(0x0017u)
       }
 
       object BatCapacity {
-        const val ID = 0x0018u
+        val ID = AttributeId(0x0018u)
       }
 
       object BatQuantity {
-        const val ID = 0x0019u
+        val ID = AttributeId(0x0019u)
       }
 
       object BatChargeState {
-        const val ID = 0x001Au
+        val ID = AttributeId(0x001Au)
       }
 
       object BatTimeToFullCharge {
-        const val ID = 0x001Bu
+        val ID = AttributeId(0x001Bu)
       }
 
       object BatFunctionalWhileCharging {
-        const val ID = 0x001Cu
+        val ID = AttributeId(0x001Cu)
       }
 
       object BatChargingCurrent {
-        const val ID = 0x001Du
+        val ID = AttributeId(0x001Du)
       }
 
       object ActiveBatChargeFaults {
-        const val ID = 0x001Eu
+        val ID = AttributeId(0x001Eu)
       }
 
       object EndpointList {
-        const val ID = 0x001Fu
+        val ID = AttributeId(0x001Fu)
       }
     }
 
@@ -1101,109 +1101,109 @@ object Clusters {
 
     object Events {
       object WiredFaultChange {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object BatFaultChange {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object BatChargeFaultChange {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
     }
   }
 
   object GeneralCommissioning {
-    const val ID = 0x0030u
+    val ID = ClusterId(0x0030u)
 
     object Attributes {
       object Breadcrumb {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object BasicCommissioningInfo {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object RegulatoryConfig {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object LocationCapability {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object SupportsConcurrentConnection {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object TCAcceptedVersion {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object TCMinRequiredVersion {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object TCAcknowledgements {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object TCAcknowledgementsRequired {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object TCUpdateDeadline {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object RecoveryIdentifier {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object NetworkRecoveryReason {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
 
       object IsCommissioningWithoutPower {
-        const val ID = 0x000Cu
+        val ID = AttributeId(0x000Cu)
       }
     }
 
     object CommandsIncoming {
       object ArmFailSafe {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object SetRegulatoryConfig {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object CommissioningComplete {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object SetTCAcknowledgements {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
     }
 
     object CommandsOutgoing {
       object ArmFailSafeResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object SetRegulatoryConfigResponse {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object CommissioningCompleteResponse {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object SetTCAcknowledgementsResponse {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
     }
 
@@ -1211,91 +1211,91 @@ object Clusters {
   }
 
   object NetworkCommissioning {
-    const val ID = 0x0031u
+    val ID = ClusterId(0x0031u)
 
     object Attributes {
       object MaxNetworks {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object Networks {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object ScanMaxTimeSeconds {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object ConnectMaxTimeSeconds {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object InterfaceEnabled {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object LastNetworkingStatus {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object LastNetworkID {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object LastConnectErrorValue {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object SupportedWiFiBands {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object SupportedThreadFeatures {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object ThreadVersion {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
     }
 
     object CommandsIncoming {
       object ScanNetworks {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object AddOrUpdateWiFiNetwork {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object AddOrUpdateThreadNetwork {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object RemoveNetwork {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object ConnectNetwork {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object ReorderNetwork {
-        const val ID = 0x0008u
+        val ID = CommandId(0x0008u)
       }
     }
 
     object CommandsOutgoing {
       object ScanNetworksResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object NetworkConfigResponse {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object ConnectNetworkResponse {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
     }
 
@@ -1303,19 +1303,19 @@ object Clusters {
   }
 
   object DiagnosticLogs {
-    const val ID = 0x0032u
+    val ID = ClusterId(0x0032u)
 
     object Attributes {}
 
     object CommandsIncoming {
       object RetrieveLogsRequest {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
     object CommandsOutgoing {
       object RetrieveLogsResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
@@ -1323,121 +1323,121 @@ object Clusters {
   }
 
   object GeneralDiagnostics {
-    const val ID = 0x0033u
+    val ID = ClusterId(0x0033u)
 
     object Attributes {
       object NetworkInterfaces {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object RebootCount {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object UpTime {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object TotalOperationalHours {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object BootReason {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object ActiveHardwareFaults {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object ActiveRadioFaults {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object ActiveNetworkFaults {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object TestEventTriggersEnabled {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object DoNotUse {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object DeviceLoadStatus {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
     }
 
     object CommandsIncoming {
       object TestEventTrigger {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object TimeSnapshot {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object PayloadTestRequest {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
     }
 
     object CommandsOutgoing {
       object TimeSnapshotResponse {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object PayloadTestResponse {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
     }
 
     object Events {
       object HardwareFaultChange {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object RadioFaultChange {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object NetworkFaultChange {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
 
       object BootReason {
-        const val ID = 0x0003u
+        val ID = EventId(0x0003u)
       }
     }
   }
 
   object SoftwareDiagnostics {
-    const val ID = 0x0034u
+    val ID = ClusterId(0x0034u)
 
     object Attributes {
       object ThreadMetrics {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentHeapFree {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object CurrentHeapUsed {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object CurrentHeapHighWatermark {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
     object CommandsIncoming {
       object ResetWatermarks {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
@@ -1445,279 +1445,279 @@ object Clusters {
 
     object Events {
       object SoftwareFault {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
     }
   }
 
   object ThreadNetworkDiagnostics {
-    const val ID = 0x0035u
+    val ID = ClusterId(0x0035u)
 
     object Attributes {
       object Channel {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object RoutingRole {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object NetworkName {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object PanId {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object ExtendedPanId {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object MeshLocalPrefix {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object OverrunCount {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object NeighborTable {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object RouteTable {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object PartitionId {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object Weighting {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object DataVersion {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
 
       object StableDataVersion {
-        const val ID = 0x000Cu
+        val ID = AttributeId(0x000Cu)
       }
 
       object LeaderRouterId {
-        const val ID = 0x000Du
+        val ID = AttributeId(0x000Du)
       }
 
       object DetachedRoleCount {
-        const val ID = 0x000Eu
+        val ID = AttributeId(0x000Eu)
       }
 
       object ChildRoleCount {
-        const val ID = 0x000Fu
+        val ID = AttributeId(0x000Fu)
       }
 
       object RouterRoleCount {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object LeaderRoleCount {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object AttachAttemptCount {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
 
       object PartitionIdChangeCount {
-        const val ID = 0x0013u
+        val ID = AttributeId(0x0013u)
       }
 
       object BetterPartitionAttachAttemptCount {
-        const val ID = 0x0014u
+        val ID = AttributeId(0x0014u)
       }
 
       object ParentChangeCount {
-        const val ID = 0x0015u
+        val ID = AttributeId(0x0015u)
       }
 
       object TxTotalCount {
-        const val ID = 0x0016u
+        val ID = AttributeId(0x0016u)
       }
 
       object TxUnicastCount {
-        const val ID = 0x0017u
+        val ID = AttributeId(0x0017u)
       }
 
       object TxBroadcastCount {
-        const val ID = 0x0018u
+        val ID = AttributeId(0x0018u)
       }
 
       object TxAckRequestedCount {
-        const val ID = 0x0019u
+        val ID = AttributeId(0x0019u)
       }
 
       object TxAckedCount {
-        const val ID = 0x001Au
+        val ID = AttributeId(0x001Au)
       }
 
       object TxNoAckRequestedCount {
-        const val ID = 0x001Bu
+        val ID = AttributeId(0x001Bu)
       }
 
       object TxDataCount {
-        const val ID = 0x001Cu
+        val ID = AttributeId(0x001Cu)
       }
 
       object TxDataPollCount {
-        const val ID = 0x001Du
+        val ID = AttributeId(0x001Du)
       }
 
       object TxBeaconCount {
-        const val ID = 0x001Eu
+        val ID = AttributeId(0x001Eu)
       }
 
       object TxBeaconRequestCount {
-        const val ID = 0x001Fu
+        val ID = AttributeId(0x001Fu)
       }
 
       object TxOtherCount {
-        const val ID = 0x0020u
+        val ID = AttributeId(0x0020u)
       }
 
       object TxRetryCount {
-        const val ID = 0x0021u
+        val ID = AttributeId(0x0021u)
       }
 
       object TxDirectMaxRetryExpiryCount {
-        const val ID = 0x0022u
+        val ID = AttributeId(0x0022u)
       }
 
       object TxIndirectMaxRetryExpiryCount {
-        const val ID = 0x0023u
+        val ID = AttributeId(0x0023u)
       }
 
       object TxErrCcaCount {
-        const val ID = 0x0024u
+        val ID = AttributeId(0x0024u)
       }
 
       object TxErrAbortCount {
-        const val ID = 0x0025u
+        val ID = AttributeId(0x0025u)
       }
 
       object TxErrBusyChannelCount {
-        const val ID = 0x0026u
+        val ID = AttributeId(0x0026u)
       }
 
       object RxTotalCount {
-        const val ID = 0x0027u
+        val ID = AttributeId(0x0027u)
       }
 
       object RxUnicastCount {
-        const val ID = 0x0028u
+        val ID = AttributeId(0x0028u)
       }
 
       object RxBroadcastCount {
-        const val ID = 0x0029u
+        val ID = AttributeId(0x0029u)
       }
 
       object RxDataCount {
-        const val ID = 0x002Au
+        val ID = AttributeId(0x002Au)
       }
 
       object RxDataPollCount {
-        const val ID = 0x002Bu
+        val ID = AttributeId(0x002Bu)
       }
 
       object RxBeaconCount {
-        const val ID = 0x002Cu
+        val ID = AttributeId(0x002Cu)
       }
 
       object RxBeaconRequestCount {
-        const val ID = 0x002Du
+        val ID = AttributeId(0x002Du)
       }
 
       object RxOtherCount {
-        const val ID = 0x002Eu
+        val ID = AttributeId(0x002Eu)
       }
 
       object RxAddressFilteredCount {
-        const val ID = 0x002Fu
+        val ID = AttributeId(0x002Fu)
       }
 
       object RxDestAddrFilteredCount {
-        const val ID = 0x0030u
+        val ID = AttributeId(0x0030u)
       }
 
       object RxDuplicatedCount {
-        const val ID = 0x0031u
+        val ID = AttributeId(0x0031u)
       }
 
       object RxErrNoFrameCount {
-        const val ID = 0x0032u
+        val ID = AttributeId(0x0032u)
       }
 
       object RxErrUnknownNeighborCount {
-        const val ID = 0x0033u
+        val ID = AttributeId(0x0033u)
       }
 
       object RxErrInvalidSrcAddrCount {
-        const val ID = 0x0034u
+        val ID = AttributeId(0x0034u)
       }
 
       object RxErrSecCount {
-        const val ID = 0x0035u
+        val ID = AttributeId(0x0035u)
       }
 
       object RxErrFcsCount {
-        const val ID = 0x0036u
+        val ID = AttributeId(0x0036u)
       }
 
       object RxErrOtherCount {
-        const val ID = 0x0037u
+        val ID = AttributeId(0x0037u)
       }
 
       object ActiveTimestamp {
-        const val ID = 0x0038u
+        val ID = AttributeId(0x0038u)
       }
 
       object PendingTimestamp {
-        const val ID = 0x0039u
+        val ID = AttributeId(0x0039u)
       }
 
       object Delay {
-        const val ID = 0x003Au
+        val ID = AttributeId(0x003Au)
       }
 
       object SecurityPolicy {
-        const val ID = 0x003Bu
+        val ID = AttributeId(0x003Bu)
       }
 
       object ChannelPage0Mask {
-        const val ID = 0x003Cu
+        val ID = AttributeId(0x003Cu)
       }
 
       object OperationalDatasetComponents {
-        const val ID = 0x003Du
+        val ID = AttributeId(0x003Du)
       }
 
       object ActiveNetworkFaultsList {
-        const val ID = 0x003Eu
+        val ID = AttributeId(0x003Eu)
       }
 
       object ExtAddress {
-        const val ID = 0x003Fu
+        val ID = AttributeId(0x003Fu)
       }
 
       object Rloc16 {
-        const val ID = 0x0040u
+        val ID = AttributeId(0x0040u)
       }
     }
 
     object CommandsIncoming {
       object ResetCounts {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
@@ -1725,75 +1725,75 @@ object Clusters {
 
     object Events {
       object ConnectionStatus {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object NetworkFaultChange {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
     }
   }
 
   object WiFiNetworkDiagnostics {
-    const val ID = 0x0036u
+    val ID = ClusterId(0x0036u)
 
     object Attributes {
       object BSSID {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object SecurityType {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object WiFiVersion {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object ChannelNumber {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object RSSI {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object BeaconLostCount {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object BeaconRxCount {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object PacketMulticastRxCount {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object PacketMulticastTxCount {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object PacketUnicastRxCount {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object PacketUnicastTxCount {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object CurrentMaxRate {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
 
       object OverrunCount {
-        const val ID = 0x000Cu
+        val ID = AttributeId(0x000Cu)
       }
     }
 
     object CommandsIncoming {
       object ResetCounts {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
@@ -1801,63 +1801,63 @@ object Clusters {
 
     object Events {
       object Disconnection {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object AssociationFailure {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object ConnectionStatus {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
     }
   }
 
   object EthernetNetworkDiagnostics {
-    const val ID = 0x0037u
+    val ID = ClusterId(0x0037u)
 
     object Attributes {
       object PHYRate {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object FullDuplex {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object PacketRxCount {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object PacketTxCount {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object TxErrCount {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object CollisionCount {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object OverrunCount {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object CarrierDetect {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object TimeSinceReset {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
     }
 
     object CommandsIncoming {
       object ResetCounts {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
@@ -1867,217 +1867,217 @@ object Clusters {
   }
 
   object TimeSynchronization {
-    const val ID = 0x0038u
+    val ID = ClusterId(0x0038u)
 
     object Attributes {
       object UTCTime {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object Granularity {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object TimeSource {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object TrustedTimeSource {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object DefaultNTP {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object TimeZone {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object DSTOffset {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object LocalTime {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object TimeZoneDatabase {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object NTPServerAvailable {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object TimeZoneListMaxSize {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object DSTOffsetListMaxSize {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
 
       object SupportsDNSResolve {
-        const val ID = 0x000Cu
+        val ID = AttributeId(0x000Cu)
       }
     }
 
     object CommandsIncoming {
       object SetUTCTime {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object SetTrustedTimeSource {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object SetTimeZone {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object SetDSTOffset {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object SetDefaultNTP {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
     }
 
     object CommandsOutgoing {
       object SetTimeZoneResponse {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
     }
 
     object Events {
       object DSTTableEmpty {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object DSTStatus {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object TimeZoneStatus {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
 
       object TimeFailure {
-        const val ID = 0x0003u
+        val ID = EventId(0x0003u)
       }
 
       object MissingTrustedTimeSource {
-        const val ID = 0x0004u
+        val ID = EventId(0x0004u)
       }
     }
   }
 
   object BridgedDeviceBasicInformation {
-    const val ID = 0x0039u
+    val ID = ClusterId(0x0039u)
 
     object Attributes {
       object DataModelRevision {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object VendorName {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object VendorID {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object ProductName {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object ProductID {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object NodeLabel {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object Location {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object HardwareVersion {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object HardwareVersionString {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object SoftwareVersion {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object SoftwareVersionString {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object ManufacturingDate {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
 
       object PartNumber {
-        const val ID = 0x000Cu
+        val ID = AttributeId(0x000Cu)
       }
 
       object ProductURL {
-        const val ID = 0x000Du
+        val ID = AttributeId(0x000Du)
       }
 
       object ProductLabel {
-        const val ID = 0x000Eu
+        val ID = AttributeId(0x000Eu)
       }
 
       object SerialNumber {
-        const val ID = 0x000Fu
+        val ID = AttributeId(0x000Fu)
       }
 
       object LocalConfigDisabled {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object Reachable {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object UniqueID {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
 
       object CapabilityMinima {
-        const val ID = 0x0013u
+        val ID = AttributeId(0x0013u)
       }
 
       object ProductAppearance {
-        const val ID = 0x0014u
+        val ID = AttributeId(0x0014u)
       }
 
       object SpecificationVersion {
-        const val ID = 0x0015u
+        val ID = AttributeId(0x0015u)
       }
 
       object MaxPathsPerInvoke {
-        const val ID = 0x0016u
+        val ID = AttributeId(0x0016u)
       }
 
       object ConfigurationVersion {
-        const val ID = 0x0018u
+        val ID = AttributeId(0x0018u)
       }
     }
 
     object CommandsIncoming {
       object KeepActive {
-        const val ID = 0x0080u
+        val ID = CommandId(0x0080u)
       }
     }
 
@@ -2085,41 +2085,41 @@ object Clusters {
 
     object Events {
       object StartUp {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object ShutDown {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object Leave {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
 
       object ReachableChanged {
-        const val ID = 0x0003u
+        val ID = EventId(0x0003u)
       }
 
       object ActiveChanged {
-        const val ID = 0x0080u
+        val ID = EventId(0x0080u)
       }
     }
   }
 
   object Switch {
-    const val ID = 0x003Bu
+    val ID = ClusterId(0x003Bu)
 
     object Attributes {
       object NumberOfPositions {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentPosition {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MultiPressMax {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
     }
 
@@ -2129,63 +2129,63 @@ object Clusters {
 
     object Events {
       object SwitchLatched {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object InitialPress {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object LongPress {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
 
       object ShortRelease {
-        const val ID = 0x0003u
+        val ID = EventId(0x0003u)
       }
 
       object LongRelease {
-        const val ID = 0x0004u
+        val ID = EventId(0x0004u)
       }
 
       object MultiPressOngoing {
-        const val ID = 0x0005u
+        val ID = EventId(0x0005u)
       }
 
       object MultiPressComplete {
-        const val ID = 0x0006u
+        val ID = EventId(0x0006u)
       }
     }
   }
 
   object AdministratorCommissioning {
-    const val ID = 0x003Cu
+    val ID = ClusterId(0x003Cu)
 
     object Attributes {
       object WindowStatus {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object AdminFabricIndex {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object AdminVendorId {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
     }
 
     object CommandsIncoming {
       object OpenCommissioningWindow {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object OpenBasicCommissioningWindow {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object RevokeCommissioning {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
     }
 
@@ -2195,95 +2195,95 @@ object Clusters {
   }
 
   object OperationalCredentials {
-    const val ID = 0x003Eu
+    val ID = ClusterId(0x003Eu)
 
     object Attributes {
       object NOCs {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object Fabrics {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object SupportedFabrics {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object CommissionedFabrics {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object TrustedRootCertificates {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object CurrentFabricIndex {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
     }
 
     object CommandsIncoming {
       object AttestationRequest {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object CertificateChainRequest {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object CSRRequest {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object AddNOC {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object UpdateNOC {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
 
       object UpdateFabricLabel {
-        const val ID = 0x0009u
+        val ID = CommandId(0x0009u)
       }
 
       object RemoveFabric {
-        const val ID = 0x000Au
+        val ID = CommandId(0x000Au)
       }
 
       object AddTrustedRootCertificate {
-        const val ID = 0x000Bu
+        val ID = CommandId(0x000Bu)
       }
 
       object SetVIDVerificationStatement {
-        const val ID = 0x000Cu
+        val ID = CommandId(0x000Cu)
       }
 
       object SignVIDVerificationRequest {
-        const val ID = 0x000Du
+        val ID = CommandId(0x000Du)
       }
     }
 
     object CommandsOutgoing {
       object AttestationResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object CertificateChainResponse {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object CSRResponse {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object NOCResponse {
-        const val ID = 0x0008u
+        val ID = CommandId(0x0008u)
       }
 
       object SignVIDVerificationResponse {
-        const val ID = 0x000Eu
+        val ID = CommandId(0x000Eu)
       }
     }
 
@@ -2291,55 +2291,55 @@ object Clusters {
   }
 
   object GroupKeyManagement {
-    const val ID = 0x003Fu
+    val ID = ClusterId(0x003Fu)
 
     object Attributes {
       object GroupKeyMap {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object GroupTable {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxGroupsPerFabric {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object MaxGroupKeysPerFabric {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object GroupcastAdoption {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
     }
 
     object CommandsIncoming {
       object KeySetWrite {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object KeySetRead {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object KeySetRemove {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object KeySetReadAllIndices {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
     }
 
     object CommandsOutgoing {
       object KeySetReadResponse {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object KeySetReadAllIndicesResponse {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
     }
 
@@ -2347,11 +2347,11 @@ object Clusters {
   }
 
   object FixedLabel {
-    const val ID = 0x0040u
+    val ID = ClusterId(0x0040u)
 
     object Attributes {
       object LabelList {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
     }
 
@@ -2363,11 +2363,11 @@ object Clusters {
   }
 
   object UserLabel {
-    const val ID = 0x0041u
+    val ID = ClusterId(0x0041u)
 
     object Attributes {
       object LabelList {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
     }
 
@@ -2379,11 +2379,11 @@ object Clusters {
   }
 
   object ProxyConfiguration {
-    const val ID = 0x0042u
+    val ID = ClusterId(0x0042u)
 
     object Attributes {
       object ConfigurationList {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
     }
 
@@ -2395,19 +2395,19 @@ object Clusters {
   }
 
   object ProxyDiscovery {
-    const val ID = 0x0043u
+    val ID = ClusterId(0x0043u)
 
     object Attributes {}
 
     object CommandsIncoming {
       object ProxyDiscoverRequest {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
     object CommandsOutgoing {
       object ProxyDiscoverResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
@@ -2415,23 +2415,23 @@ object Clusters {
   }
 
   object ValidProxies {
-    const val ID = 0x0044u
+    val ID = ClusterId(0x0044u)
 
     object Attributes {
       object ValidProxyList {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
     }
 
     object CommandsIncoming {
       object GetValidProxiesRequest {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
     object CommandsOutgoing {
       object GetValidProxiesResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
@@ -2439,11 +2439,11 @@ object Clusters {
   }
 
   object BooleanState {
-    const val ID = 0x0045u
+    val ID = ClusterId(0x0045u)
 
     object Attributes {
       object StateValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
     }
 
@@ -2453,77 +2453,77 @@ object Clusters {
 
     object Events {
       object StateChange {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
     }
   }
 
   object ICDManagement {
-    const val ID = 0x0046u
+    val ID = ClusterId(0x0046u)
 
     object Attributes {
       object IdleModeDuration {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object ActiveModeDuration {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object ActiveModeThreshold {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object RegisteredClients {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object ICDCounter {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object ClientsSupportedPerFabric {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object UserActiveModeTriggerHint {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object UserActiveModeTriggerInstruction {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object OperatingMode {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object MaximumCheckInBackoff {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
     }
 
     object CommandsIncoming {
       object RegisterClient {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object UnregisterClient {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object StayActiveRequest {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
     }
 
     object CommandsOutgoing {
       object RegisterClientResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object StayActiveResponse {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
     }
 
@@ -2531,7 +2531,7 @@ object Clusters {
   }
 
   object OvenCavityOperationalState {
-    const val ID = 0x0048u
+    val ID = ClusterId(0x0048u)
 
     object Attributes {}
 
@@ -2539,23 +2539,23 @@ object Clusters {
 
     object CommandsOutgoing {
       object Pause {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object Stop {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object Start {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object Resume {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object OperationalCommandResponse {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
     }
 
@@ -2563,23 +2563,23 @@ object Clusters {
   }
 
   object OvenMode {
-    const val ID = 0x0049u
+    val ID = ClusterId(0x0049u)
 
     object Attributes {
       object SupportedModes {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentMode {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object StartUpMode {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object OnMode {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
@@ -2591,15 +2591,15 @@ object Clusters {
   }
 
   object LaundryDryerControls {
-    const val ID = 0x004Au
+    val ID = ClusterId(0x004Au)
 
     object Attributes {
       object SupportedDrynessLevels {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object SelectedDrynessLevel {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
@@ -2611,47 +2611,47 @@ object Clusters {
   }
 
   object ModeSelect {
-    const val ID = 0x0050u
+    val ID = ClusterId(0x0050u)
 
     object Attributes {
       object Description {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object StandardNamespace {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object SupportedModes {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object CurrentMode {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object StartUpMode {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object OnMode {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
     }
 
     object CommandsIncoming {
       object ChangeToMode {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object ChangeToModeWithStatus {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
     object CommandsOutgoing {
       object ChangeToModeResponse {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
     }
 
@@ -2659,23 +2659,23 @@ object Clusters {
   }
 
   object LaundryWasherMode {
-    const val ID = 0x0051u
+    val ID = ClusterId(0x0051u)
 
     object Attributes {
       object SupportedModes {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentMode {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object StartUpMode {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object OnMode {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
@@ -2687,23 +2687,23 @@ object Clusters {
   }
 
   object RefrigeratorAndTemperatureControlledCabinetMode {
-    const val ID = 0x0052u
+    val ID = ClusterId(0x0052u)
 
     object Attributes {
       object SupportedModes {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentMode {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object StartUpMode {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object OnMode {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
@@ -2715,23 +2715,23 @@ object Clusters {
   }
 
   object LaundryWasherControls {
-    const val ID = 0x0053u
+    val ID = ClusterId(0x0053u)
 
     object Attributes {
       object SpinSpeeds {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object SpinSpeedCurrent {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object NumberOfRinses {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object SupportedRinses {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
@@ -2743,23 +2743,23 @@ object Clusters {
   }
 
   object RVCRunMode {
-    const val ID = 0x0054u
+    val ID = ClusterId(0x0054u)
 
     object Attributes {
       object SupportedModes {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentMode {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object StartUpMode {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object OnMode {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
@@ -2771,23 +2771,23 @@ object Clusters {
   }
 
   object RVCCleanMode {
-    const val ID = 0x0055u
+    val ID = ClusterId(0x0055u)
 
     object Attributes {
       object SupportedModes {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentMode {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object StartUpMode {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object OnMode {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
@@ -2799,37 +2799,37 @@ object Clusters {
   }
 
   object TemperatureControl {
-    const val ID = 0x0056u
+    val ID = ClusterId(0x0056u)
 
     object Attributes {
       object TemperatureSetpoint {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinTemperature {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxTemperature {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object Step {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object SelectedTemperatureLevel {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object SupportedTemperatureLevels {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
     }
 
     object CommandsIncoming {
       object SetTemperature {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
@@ -2839,7 +2839,7 @@ object Clusters {
   }
 
   object RefrigeratorAlarm {
-    const val ID = 0x0057u
+    val ID = ClusterId(0x0057u)
 
     object Attributes {}
 
@@ -2847,7 +2847,7 @@ object Clusters {
 
     object CommandsOutgoing {
       object ModifyEnabledAlarms {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
@@ -2855,23 +2855,23 @@ object Clusters {
   }
 
   object DishwasherMode {
-    const val ID = 0x0059u
+    val ID = ClusterId(0x0059u)
 
     object Attributes {
       object SupportedModes {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentMode {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object StartUpMode {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object OnMode {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
@@ -2883,11 +2883,11 @@ object Clusters {
   }
 
   object AirQuality {
-    const val ID = 0x005Bu
+    val ID = ClusterId(0x005Bu)
 
     object Attributes {
       object AirQuality {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
     }
 
@@ -2899,69 +2899,69 @@ object Clusters {
   }
 
   object SmokeCOAlarm {
-    const val ID = 0x005Cu
+    val ID = ClusterId(0x005Cu)
 
     object Attributes {
       object ExpressedState {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object SmokeState {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object COState {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object BatteryAlert {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object DeviceMuted {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object TestInProgress {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object HardwareFaultAlert {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object EndOfServiceAlert {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object InterconnectSmokeAlarm {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object InterconnectCOAlarm {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object ContaminationState {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object SmokeSensitivityLevel {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
 
       object ExpiryDate {
-        const val ID = 0x000Cu
+        val ID = AttributeId(0x000Cu)
       }
 
       object Unmounted {
-        const val ID = 0x000Du
+        val ID = AttributeId(0x000Du)
       }
     }
 
     object CommandsIncoming {
       object SelfTestRequest {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
@@ -2969,53 +2969,53 @@ object Clusters {
 
     object Events {
       object SmokeAlarm {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object COAlarm {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object LowBattery {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
 
       object HardwareFault {
-        const val ID = 0x0003u
+        val ID = EventId(0x0003u)
       }
 
       object EndOfService {
-        const val ID = 0x0004u
+        val ID = EventId(0x0004u)
       }
 
       object SelfTestComplete {
-        const val ID = 0x0005u
+        val ID = EventId(0x0005u)
       }
 
       object AlarmMuted {
-        const val ID = 0x0006u
+        val ID = EventId(0x0006u)
       }
 
       object MuteEnded {
-        const val ID = 0x0007u
+        val ID = EventId(0x0007u)
       }
 
       object InterconnectSmokeAlarm {
-        const val ID = 0x0008u
+        val ID = EventId(0x0008u)
       }
 
       object InterconnectCOAlarm {
-        const val ID = 0x0009u
+        val ID = EventId(0x0009u)
       }
 
       object AllClear {
-        const val ID = 0x000Au
+        val ID = EventId(0x000Au)
       }
     }
   }
 
   object DishwasherAlarm {
-    const val ID = 0x005Du
+    val ID = ClusterId(0x005Du)
 
     object Attributes {}
 
@@ -3027,23 +3027,23 @@ object Clusters {
   }
 
   object MicrowaveOvenMode {
-    const val ID = 0x005Eu
+    val ID = ClusterId(0x005Eu)
 
     object Attributes {
       object SupportedModes {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentMode {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object StartUpMode {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object OnMode {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
@@ -3051,11 +3051,11 @@ object Clusters {
 
     object CommandsOutgoing {
       object ChangeToMode {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object ChangeToModeResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
@@ -3063,53 +3063,53 @@ object Clusters {
   }
 
   object MicrowaveOvenControl {
-    const val ID = 0x005Fu
+    val ID = ClusterId(0x005Fu)
 
     object Attributes {
       object CookTime {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MaxCookTime {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object PowerSetting {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object MinPower {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object MaxPower {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object PowerStep {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object SupportedWatts {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object SelectedWattIndex {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object WattRating {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
     }
 
     object CommandsIncoming {
       object SetCookingParameters {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object AddMoreTime {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
@@ -3119,99 +3119,99 @@ object Clusters {
   }
 
   object OperationalState {
-    const val ID = 0x0060u
+    val ID = ClusterId(0x0060u)
 
     object Attributes {
       object PhaseList {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentPhase {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object CountdownTime {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object OperationalStateList {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object OperationalState {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object OperationalError {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
     }
 
     object CommandsIncoming {
       object Pause {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object Stop {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object Start {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object Resume {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
     }
 
     object CommandsOutgoing {
       object OperationalCommandResponse {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
     }
 
     object Events {
       object OperationalError {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object OperationCompletion {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
     }
   }
 
   object RVCOperationalState {
-    const val ID = 0x0061u
+    val ID = ClusterId(0x0061u)
 
     object Attributes {}
 
     object CommandsIncoming {
       object GoHome {
-        const val ID = 0x0080u
+        val ID = CommandId(0x0080u)
       }
     }
 
     object CommandsOutgoing {
       object Pause {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object Stop {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object Start {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object Resume {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object OperationalCommandResponse {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
     }
 
@@ -3219,83 +3219,83 @@ object Clusters {
   }
 
   object ScenesManagement {
-    const val ID = 0x0062u
+    val ID = ClusterId(0x0062u)
 
     object Attributes {
       object DoNotUse {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object SceneTableSize {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object FabricSceneInfo {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
     }
 
     object CommandsIncoming {
       object AddScene {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object ViewScene {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object RemoveScene {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object RemoveAllScenes {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object StoreScene {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object RecallScene {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object GetSceneMembership {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object CopyScene {
-        const val ID = 0x0040u
+        val ID = CommandId(0x0040u)
       }
     }
 
     object CommandsOutgoing {
       object AddSceneResponse {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object ViewSceneResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object RemoveSceneResponse {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object RemoveAllScenesResponse {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object StoreSceneResponse {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object GetSceneMembershipResponse {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object CopySceneResponse {
-        const val ID = 0x0040u
+        val ID = CommandId(0x0040u)
       }
     }
 
@@ -3303,37 +3303,37 @@ object Clusters {
   }
 
   object TemperatureAlarm {
-    const val ID = 0x0064u
+    val ID = ClusterId(0x0064u)
 
     object Attributes {
       object CriticalOverTemperatureThreshold {
-        const val ID = 0x0080u
+        val ID = AttributeId(0x0080u)
       }
 
       object MajorOverTemperatureThreshold {
-        const val ID = 0x0081u
+        val ID = AttributeId(0x0081u)
       }
 
       object MinorOverTemperatureThreshold {
-        const val ID = 0x0082u
+        val ID = AttributeId(0x0082u)
       }
 
       object MinorUnderTemperatureThreshold {
-        const val ID = 0x0083u
+        val ID = AttributeId(0x0083u)
       }
 
       object MajorUnderTemperatureThreshold {
-        const val ID = 0x0084u
+        val ID = AttributeId(0x0084u)
       }
 
       object CriticalUnderTemperatureThreshold {
-        const val ID = 0x0085u
+        val ID = AttributeId(0x0085u)
       }
     }
 
     object CommandsIncoming {
       object SetTemperatureAlarmThresholds {
-        const val ID = 0x0080u
+        val ID = CommandId(0x0080u)
       }
     }
 
@@ -3343,97 +3343,97 @@ object Clusters {
   }
 
   object Groupcast {
-    const val ID = 0x0065u
+    val ID = ClusterId(0x0065u)
 
     object Attributes {
       object Membership {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MaxMembershipCount {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMcastAddrCount {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object UsedMcastAddrCount {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object FabricUnderTest {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
     }
 
     object CommandsIncoming {
       object JoinGroup {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object LeaveGroup {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object UpdateGroupKey {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object ConfigureAuxiliaryACL {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object GroupcastTesting {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
     }
 
     object CommandsOutgoing {
       object LeaveGroupResponse {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
     }
 
     object Events {
       object GroupcastTesting {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
     }
   }
 
   object HEPAFilterMonitoring {
-    const val ID = 0x0071u
+    val ID = ClusterId(0x0071u)
 
     object Attributes {
       object Condition {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object DegradationDirection {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object ChangeIndication {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object InPlaceIndicator {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object LastChangedTime {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object ReplacementProductList {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
     }
 
     object CommandsIncoming {
       object ResetCondition {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
@@ -3443,37 +3443,37 @@ object Clusters {
   }
 
   object ActivatedCarbonFilterMonitoring {
-    const val ID = 0x0072u
+    val ID = ClusterId(0x0072u)
 
     object Attributes {
       object Condition {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object DegradationDirection {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object ChangeIndication {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object InPlaceIndicator {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object LastChangedTime {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object ReplacementProductList {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
     }
 
     object CommandsIncoming {
       object ResetCondition {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
@@ -3483,37 +3483,37 @@ object Clusters {
   }
 
   object WaterTankLevelMonitoring {
-    const val ID = 0x0079u
+    val ID = ClusterId(0x0079u)
 
     object Attributes {
       object Condition {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object DegradationDirection {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object ChangeIndication {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object InPlaceIndicator {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object LastChangedTime {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object ReplacementProductList {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
     }
 
     object CommandsIncoming {
       object ResetCondition {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
@@ -3523,49 +3523,49 @@ object Clusters {
   }
 
   object BooleanStateConfiguration {
-    const val ID = 0x0080u
+    val ID = ClusterId(0x0080u)
 
     object Attributes {
       object CurrentSensitivityLevel {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object SupportedSensitivityLevels {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object DefaultSensitivityLevel {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object AlarmsActive {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object AlarmsSuppressed {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object AlarmsEnabled {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object AlarmsSupported {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object SensorFault {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
     }
 
     object CommandsIncoming {
       object SuppressAlarm {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object EnableDisableAlarm {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
@@ -3573,71 +3573,71 @@ object Clusters {
 
     object Events {
       object AlarmsStateChanged {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object SensorFault {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
     }
   }
 
   object ValveConfigurationandControl {
-    const val ID = 0x0081u
+    val ID = ClusterId(0x0081u)
 
     object Attributes {
       object OpenDuration {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object DefaultOpenDuration {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object AutoCloseTime {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object RemainingDuration {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object CurrentState {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object TargetState {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object CurrentLevel {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object TargetLevel {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object DefaultOpenLevel {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object ValveFault {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object LevelStep {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
     }
 
     object CommandsIncoming {
       object Open {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object Close {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
@@ -3645,93 +3645,93 @@ object Clusters {
 
     object Events {
       object ValveStateChanged {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object ValveFault {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
     }
   }
 
   object ElectricalPowerMeasurement {
-    const val ID = 0x0090u
+    val ID = ClusterId(0x0090u)
 
     object Attributes {
       object PowerMode {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object NumberOfMeasurementTypes {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object Accuracy {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object Ranges {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object Voltage {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object ActiveCurrent {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object ReactiveCurrent {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object ApparentCurrent {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object ActivePower {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object ReactivePower {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object ApparentPower {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object RMSVoltage {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
 
       object RMSCurrent {
-        const val ID = 0x000Cu
+        val ID = AttributeId(0x000Cu)
       }
 
       object RMSPower {
-        const val ID = 0x000Du
+        val ID = AttributeId(0x000Du)
       }
 
       object Frequency {
-        const val ID = 0x000Eu
+        val ID = AttributeId(0x000Eu)
       }
 
       object HarmonicCurrents {
-        const val ID = 0x000Fu
+        val ID = AttributeId(0x000Fu)
       }
 
       object HarmonicPhases {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object PowerFactor {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object NeutralCurrent {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
     }
 
@@ -3741,37 +3741,37 @@ object Clusters {
 
     object Events {
       object MeasurementPeriodRanges {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
     }
   }
 
   object ElectricalEnergyMeasurement {
-    const val ID = 0x0091u
+    val ID = ClusterId(0x0091u)
 
     object Attributes {
       object Accuracy {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CumulativeEnergyImported {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object CumulativeEnergyExported {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object PeriodicEnergyImported {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object PeriodicEnergyExported {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object CumulativeEnergyReset {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
     }
 
@@ -3781,51 +3781,51 @@ object Clusters {
 
     object Events {
       object CumulativeEnergyMeasured {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object PeriodicEnergyMeasured {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
     }
   }
 
   object WaterHeaterManagement {
-    const val ID = 0x0094u
+    val ID = ClusterId(0x0094u)
 
     object Attributes {
       object HeaterTypes {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object HeatDemand {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object TankVolume {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object EstimatedHeatRequired {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object TankPercentage {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object BoostState {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
     }
 
     object CommandsIncoming {
       object Boost {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object CancelBoost {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
@@ -3833,83 +3833,83 @@ object Clusters {
 
     object Events {
       object BoostStarted {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object BoostEnded {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
     }
   }
 
   object CommodityPrice {
-    const val ID = 0x0095u
+    val ID = ClusterId(0x0095u)
 
     object Attributes {
       object TariffUnit {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object Currency {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object CurrentPrice {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object PriceForecast {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
     object CommandsIncoming {
       object GetDetailedPriceRequest {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object GetDetailedForecastRequest {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
     }
 
     object CommandsOutgoing {
       object GetDetailedPriceResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object GetDetailedForecastResponse {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
     }
 
     object Events {
       object PriceChange {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
     }
   }
 
   object Messages {
-    const val ID = 0x0097u
+    val ID = ClusterId(0x0097u)
 
     object Attributes {
       object Messages {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object ActiveMessageIDs {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
     object CommandsIncoming {
       object PresentMessagesRequest {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object CancelMessagesRequest {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
@@ -3917,87 +3917,87 @@ object Clusters {
 
     object Events {
       object MessageQueued {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object MessagePresented {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object MessageComplete {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
     }
   }
 
   object DeviceEnergyManagement {
-    const val ID = 0x0098u
+    val ID = ClusterId(0x0098u)
 
     object Attributes {
       object ESAType {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object ESACanGenerate {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object ESAState {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object AbsMinPower {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object AbsMaxPower {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object PowerAdjustmentCapability {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object Forecast {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object OptOutState {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
     }
 
     object CommandsIncoming {
       object PowerAdjustRequest {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object CancelPowerAdjustRequest {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object StartTimeAdjustRequest {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object PauseRequest {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object ResumeRequest {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object ModifyForecastRequest {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object RequestConstraintBasedForecast {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object CancelRequest {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
     }
 
@@ -4005,205 +4005,205 @@ object Clusters {
 
     object Events {
       object PowerAdjustStart {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object PowerAdjustEnd {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object Paused {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
 
       object Resumed {
-        const val ID = 0x0003u
+        val ID = EventId(0x0003u)
       }
     }
   }
 
   object EnergyEVSE {
-    const val ID = 0x0099u
+    val ID = ClusterId(0x0099u)
 
     object Attributes {
       object State {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object SupplyState {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object FaultState {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object ChargingEnabledUntil {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object DischargingEnabledUntil {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object CircuitCapacity {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object MinimumChargeCurrent {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object MaximumChargeCurrent {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object MaximumDischargeCurrent {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object UserMaximumChargeCurrent {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object RandomizationDelayWindow {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object NextChargeStartTime {
-        const val ID = 0x0023u
+        val ID = AttributeId(0x0023u)
       }
 
       object NextChargeTargetTime {
-        const val ID = 0x0024u
+        val ID = AttributeId(0x0024u)
       }
 
       object NextChargeRequiredEnergy {
-        const val ID = 0x0025u
+        val ID = AttributeId(0x0025u)
       }
 
       object NextChargeTargetSoC {
-        const val ID = 0x0026u
+        val ID = AttributeId(0x0026u)
       }
 
       object ApproximateEVEfficiency {
-        const val ID = 0x0027u
+        val ID = AttributeId(0x0027u)
       }
 
       object StateOfCharge {
-        const val ID = 0x0030u
+        val ID = AttributeId(0x0030u)
       }
 
       object BatteryCapacity {
-        const val ID = 0x0031u
+        val ID = AttributeId(0x0031u)
       }
 
       object VehicleID {
-        const val ID = 0x0032u
+        val ID = AttributeId(0x0032u)
       }
 
       object SessionID {
-        const val ID = 0x0040u
+        val ID = AttributeId(0x0040u)
       }
 
       object SessionDuration {
-        const val ID = 0x0041u
+        val ID = AttributeId(0x0041u)
       }
 
       object SessionEnergyCharged {
-        const val ID = 0x0042u
+        val ID = AttributeId(0x0042u)
       }
 
       object SessionEnergyDischarged {
-        const val ID = 0x0043u
+        val ID = AttributeId(0x0043u)
       }
     }
 
     object CommandsIncoming {
       object Disable {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object EnableCharging {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object EnableDischarging {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object StartDiagnostics {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object SetTargets {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object GetTargets {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object ClearTargets {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
     }
 
     object CommandsOutgoing {
       object GetTargetsResponse {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
     object Events {
       object EVConnected {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object EVNotDetected {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object EnergyTransferStarted {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
 
       object EnergyTransferStopped {
-        const val ID = 0x0003u
+        val ID = EventId(0x0003u)
       }
 
       object Fault {
-        const val ID = 0x0004u
+        val ID = EventId(0x0004u)
       }
 
       object RFID {
-        const val ID = 0x0005u
+        val ID = EventId(0x0005u)
       }
     }
   }
 
   object EnergyPreference {
-    const val ID = 0x009Bu
+    val ID = ClusterId(0x009Bu)
 
     object Attributes {
       object EnergyBalances {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentEnergyBalance {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object EnergyPriorities {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object LowPowerModeSensitivities {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object CurrentLowPowerModeSensitivity {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
     }
 
@@ -4215,15 +4215,15 @@ object Clusters {
   }
 
   object PowerTopology {
-    const val ID = 0x009Cu
+    val ID = ClusterId(0x009Cu)
 
     object Attributes {
       object AvailableEndpoints {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object ActiveEndpoints {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
@@ -4235,23 +4235,23 @@ object Clusters {
   }
 
   object EnergyEVSEMode {
-    const val ID = 0x009Du
+    val ID = ClusterId(0x009Du)
 
     object Attributes {
       object SupportedModes {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentMode {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object StartUpMode {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object OnMode {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
@@ -4263,23 +4263,23 @@ object Clusters {
   }
 
   object WaterHeaterMode {
-    const val ID = 0x009Eu
+    val ID = ClusterId(0x009Eu)
 
     object Attributes {
       object SupportedModes {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentMode {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object StartUpMode {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object OnMode {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
@@ -4291,23 +4291,23 @@ object Clusters {
   }
 
   object DeviceEnergyManagementMode {
-    const val ID = 0x009Fu
+    val ID = ClusterId(0x009Fu)
 
     object Attributes {
       object SupportedModes {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentMode {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object StartUpMode {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object OnMode {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
@@ -4319,19 +4319,19 @@ object Clusters {
   }
 
   object ElectricalGridConditions {
-    const val ID = 0x00A0u
+    val ID = ClusterId(0x00A0u)
 
     object Attributes {
       object LocalGenerationAvailable {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentConditions {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object ForecastConditions {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
     }
 
@@ -4341,599 +4341,599 @@ object Clusters {
 
     object Events {
       object CurrentConditionsChanged {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
     }
   }
 
   object DoorLock {
-    const val ID = 0x0101u
+    val ID = ClusterId(0x0101u)
 
     object Attributes {
       object LockState {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object LockType {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object ActuatorEnabled {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object DoorState {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object DoorOpenEvents {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object DoorClosedEvents {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object OpenPeriod {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object NumberOfLogRecordsSupported {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object NumberOfTotalUsersSupported {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object NumberOfPINUsersSupported {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
 
       object NumberOfRFIDUsersSupported {
-        const val ID = 0x0013u
+        val ID = AttributeId(0x0013u)
       }
 
       object NumberOfWeekDaySchedulesSupportedPerUser {
-        const val ID = 0x0014u
+        val ID = AttributeId(0x0014u)
       }
 
       object NumberOfYearDaySchedulesSupportedPerUser {
-        const val ID = 0x0015u
+        val ID = AttributeId(0x0015u)
       }
 
       object NumberOfHolidaySchedulesSupported {
-        const val ID = 0x0016u
+        val ID = AttributeId(0x0016u)
       }
 
       object MaxPINCodeLength {
-        const val ID = 0x0017u
+        val ID = AttributeId(0x0017u)
       }
 
       object MinPINCodeLength {
-        const val ID = 0x0018u
+        val ID = AttributeId(0x0018u)
       }
 
       object MaxRFIDCodeLength {
-        const val ID = 0x0019u
+        val ID = AttributeId(0x0019u)
       }
 
       object MinRFIDCodeLength {
-        const val ID = 0x001Au
+        val ID = AttributeId(0x001Au)
       }
 
       object CredentialRulesSupport {
-        const val ID = 0x001Bu
+        val ID = AttributeId(0x001Bu)
       }
 
       object NumberOfCredentialsSupportedPerUser {
-        const val ID = 0x001Cu
+        val ID = AttributeId(0x001Cu)
       }
 
       object EnableLogging {
-        const val ID = 0x0020u
+        val ID = AttributeId(0x0020u)
       }
 
       object Language {
-        const val ID = 0x0021u
+        val ID = AttributeId(0x0021u)
       }
 
       object LEDSettings {
-        const val ID = 0x0022u
+        val ID = AttributeId(0x0022u)
       }
 
       object AutoRelockTime {
-        const val ID = 0x0023u
+        val ID = AttributeId(0x0023u)
       }
 
       object SoundVolume {
-        const val ID = 0x0024u
+        val ID = AttributeId(0x0024u)
       }
 
       object OperatingMode {
-        const val ID = 0x0025u
+        val ID = AttributeId(0x0025u)
       }
 
       object SupportedOperatingModes {
-        const val ID = 0x0026u
+        val ID = AttributeId(0x0026u)
       }
 
       object DefaultConfigurationRegister {
-        const val ID = 0x0027u
+        val ID = AttributeId(0x0027u)
       }
 
       object EnableLocalProgramming {
-        const val ID = 0x0028u
+        val ID = AttributeId(0x0028u)
       }
 
       object EnableOneTouchLocking {
-        const val ID = 0x0029u
+        val ID = AttributeId(0x0029u)
       }
 
       object EnableInsideStatusLED {
-        const val ID = 0x002Au
+        val ID = AttributeId(0x002Au)
       }
 
       object EnablePrivacyModeButton {
-        const val ID = 0x002Bu
+        val ID = AttributeId(0x002Bu)
       }
 
       object LocalProgrammingFeatures {
-        const val ID = 0x002Cu
+        val ID = AttributeId(0x002Cu)
       }
 
       object WrongCodeEntryLimit {
-        const val ID = 0x0030u
+        val ID = AttributeId(0x0030u)
       }
 
       object UserCodeTemporaryDisableTime {
-        const val ID = 0x0031u
+        val ID = AttributeId(0x0031u)
       }
 
       object SendPINOverTheAir {
-        const val ID = 0x0032u
+        val ID = AttributeId(0x0032u)
       }
 
       object RequirePINforRemoteOperation {
-        const val ID = 0x0033u
+        val ID = AttributeId(0x0033u)
       }
 
       object SecurityLevel {
-        const val ID = 0x0034u
+        val ID = AttributeId(0x0034u)
       }
 
       object ExpiringUserTimeout {
-        const val ID = 0x0035u
+        val ID = AttributeId(0x0035u)
       }
 
       object AlarmMask {
-        const val ID = 0x0040u
+        val ID = AttributeId(0x0040u)
       }
 
       object KeypadOperationEventMask {
-        const val ID = 0x0041u
+        val ID = AttributeId(0x0041u)
       }
 
       object RemoteOperationEventMask {
-        const val ID = 0x0042u
+        val ID = AttributeId(0x0042u)
       }
 
       object ManualOperationEventMask {
-        const val ID = 0x0043u
+        val ID = AttributeId(0x0043u)
       }
 
       object RFIDOperationEventMask {
-        const val ID = 0x0044u
+        val ID = AttributeId(0x0044u)
       }
 
       object KeypadProgrammingEventMask {
-        const val ID = 0x0045u
+        val ID = AttributeId(0x0045u)
       }
 
       object RemoteProgrammingEventMask {
-        const val ID = 0x0046u
+        val ID = AttributeId(0x0046u)
       }
 
       object RFIDProgrammingEventMask {
-        const val ID = 0x0047u
+        val ID = AttributeId(0x0047u)
       }
 
       object AliroReaderVerificationKey {
-        const val ID = 0x0080u
+        val ID = AttributeId(0x0080u)
       }
 
       object AliroReaderGroupIdentifier {
-        const val ID = 0x0081u
+        val ID = AttributeId(0x0081u)
       }
 
       object AliroReaderGroupSubIdentifier {
-        const val ID = 0x0082u
+        val ID = AttributeId(0x0082u)
       }
 
       object AliroExpeditedTransactionSupportedProtocolVersions {
-        const val ID = 0x0083u
+        val ID = AttributeId(0x0083u)
       }
 
       object AliroGroupResolvingKey {
-        const val ID = 0x0084u
+        val ID = AttributeId(0x0084u)
       }
 
       object AliroSupportedBLEUWBProtocolVersions {
-        const val ID = 0x0085u
+        val ID = AttributeId(0x0085u)
       }
 
       object AliroBLEAdvertisingVersion {
-        const val ID = 0x0086u
+        val ID = AttributeId(0x0086u)
       }
 
       object NumberOfAliroCredentialIssuerKeysSupported {
-        const val ID = 0x0087u
+        val ID = AttributeId(0x0087u)
       }
 
       object NumberOfAliroEndpointKeysSupported {
-        const val ID = 0x0088u
+        val ID = AttributeId(0x0088u)
       }
     }
 
     object CommandsIncoming {
       object LockDoor {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object UnlockDoor {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object Toggle {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object UnlockWithTimeout {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object GetLogRecord {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object SetPINCode {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object GetPINCode {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object ClearPINCode {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
 
       object ClearAllPINCodes {
-        const val ID = 0x0008u
+        val ID = CommandId(0x0008u)
       }
 
       object SetUserStatus {
-        const val ID = 0x0009u
+        val ID = CommandId(0x0009u)
       }
 
       object GetUserStatus {
-        const val ID = 0x000Au
+        val ID = CommandId(0x000Au)
       }
 
       object SetWeekDaySchedule {
-        const val ID = 0x000Bu
+        val ID = CommandId(0x000Bu)
       }
 
       object GetWeekDaySchedule {
-        const val ID = 0x000Cu
+        val ID = CommandId(0x000Cu)
       }
 
       object ClearWeekDaySchedule {
-        const val ID = 0x000Du
+        val ID = CommandId(0x000Du)
       }
 
       object SetYearDaySchedule {
-        const val ID = 0x000Eu
+        val ID = CommandId(0x000Eu)
       }
 
       object GetYearDaySchedule {
-        const val ID = 0x000Fu
+        val ID = CommandId(0x000Fu)
       }
 
       object ClearYearDaySchedule {
-        const val ID = 0x0010u
+        val ID = CommandId(0x0010u)
       }
 
       object SetHolidaySchedule {
-        const val ID = 0x0011u
+        val ID = CommandId(0x0011u)
       }
 
       object GetHolidaySchedule {
-        const val ID = 0x0012u
+        val ID = CommandId(0x0012u)
       }
 
       object ClearHolidaySchedule {
-        const val ID = 0x0013u
+        val ID = CommandId(0x0013u)
       }
 
       object SetUserType {
-        const val ID = 0x0014u
+        val ID = CommandId(0x0014u)
       }
 
       object GetUserType {
-        const val ID = 0x0015u
+        val ID = CommandId(0x0015u)
       }
 
       object SetRFIDCode {
-        const val ID = 0x0016u
+        val ID = CommandId(0x0016u)
       }
 
       object GetRFIDCode {
-        const val ID = 0x0017u
+        val ID = CommandId(0x0017u)
       }
 
       object ClearRFIDCode {
-        const val ID = 0x0018u
+        val ID = CommandId(0x0018u)
       }
 
       object ClearAllRFIDCodes {
-        const val ID = 0x0019u
+        val ID = CommandId(0x0019u)
       }
 
       object SetUser {
-        const val ID = 0x001Au
+        val ID = CommandId(0x001Au)
       }
 
       object GetUser {
-        const val ID = 0x001Bu
+        val ID = CommandId(0x001Bu)
       }
 
       object ClearUser {
-        const val ID = 0x001Du
+        val ID = CommandId(0x001Du)
       }
 
       object SetCredential {
-        const val ID = 0x0022u
+        val ID = CommandId(0x0022u)
       }
 
       object GetCredentialStatus {
-        const val ID = 0x0024u
+        val ID = CommandId(0x0024u)
       }
 
       object ClearCredential {
-        const val ID = 0x0026u
+        val ID = CommandId(0x0026u)
       }
 
       object UnboltDoor {
-        const val ID = 0x0027u
+        val ID = CommandId(0x0027u)
       }
 
       object SetAliroReaderConfig {
-        const val ID = 0x0028u
+        val ID = CommandId(0x0028u)
       }
 
       object ClearAliroReaderConfig {
-        const val ID = 0x0029u
+        val ID = CommandId(0x0029u)
       }
     }
 
     object CommandsOutgoing {
       object GetLogRecordResponse {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object GetPINCodeResponse {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object GetUserStatusResponse {
-        const val ID = 0x000Au
+        val ID = CommandId(0x000Au)
       }
 
       object GetWeekDayScheduleResponse {
-        const val ID = 0x000Cu
+        val ID = CommandId(0x000Cu)
       }
 
       object GetYearDayScheduleResponse {
-        const val ID = 0x000Fu
+        val ID = CommandId(0x000Fu)
       }
 
       object GetHolidayScheduleResponse {
-        const val ID = 0x0012u
+        val ID = CommandId(0x0012u)
       }
 
       object GetUserTypeResponse {
-        const val ID = 0x0015u
+        val ID = CommandId(0x0015u)
       }
 
       object GetRFIDCodeResponse {
-        const val ID = 0x0017u
+        val ID = CommandId(0x0017u)
       }
 
       object GetUserResponse {
-        const val ID = 0x001Cu
+        val ID = CommandId(0x001Cu)
       }
 
       object OperatingEventNotification {
-        const val ID = 0x0020u
+        val ID = CommandId(0x0020u)
       }
 
       object ProgrammingEventNotification {
-        const val ID = 0x0021u
+        val ID = CommandId(0x0021u)
       }
 
       object SetCredentialResponse {
-        const val ID = 0x0023u
+        val ID = CommandId(0x0023u)
       }
 
       object GetCredentialStatusResponse {
-        const val ID = 0x0025u
+        val ID = CommandId(0x0025u)
       }
     }
 
     object Events {
       object DoorLockAlarm {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object DoorStateChange {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object LockOperation {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
 
       object LockOperationError {
-        const val ID = 0x0003u
+        val ID = EventId(0x0003u)
       }
 
       object LockUserChange {
-        const val ID = 0x0004u
+        val ID = EventId(0x0004u)
       }
     }
   }
 
   object WindowCovering {
-    const val ID = 0x0102u
+    val ID = ClusterId(0x0102u)
 
     object Attributes {
       object Type {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object PhysicalClosedLimitLift {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object PhysicalClosedLimitTilt {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object CurrentPositionLift {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object CurrentPositionTilt {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object NumberOfActuationsLift {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object NumberOfActuationsTilt {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object ConfigStatus {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object CurrentPositionLiftPercentage {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object CurrentPositionTiltPercentage {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object OperationalStatus {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object TargetPositionLiftPercent100ths {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
 
       object TargetPositionTiltPercent100ths {
-        const val ID = 0x000Cu
+        val ID = AttributeId(0x000Cu)
       }
 
       object EndProductType {
-        const val ID = 0x000Du
+        val ID = AttributeId(0x000Du)
       }
 
       object CurrentPositionLiftPercent100ths {
-        const val ID = 0x000Eu
+        val ID = AttributeId(0x000Eu)
       }
 
       object CurrentPositionTiltPercent100ths {
-        const val ID = 0x000Fu
+        val ID = AttributeId(0x000Fu)
       }
 
       object InstalledOpenLimitLift {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object InstalledClosedLimitLift {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object InstalledOpenLimitTilt {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
 
       object InstalledClosedLimitTilt {
-        const val ID = 0x0013u
+        val ID = AttributeId(0x0013u)
       }
 
       object VelocityLift {
-        const val ID = 0x0014u
+        val ID = AttributeId(0x0014u)
       }
 
       object AccelerationTimeLift {
-        const val ID = 0x0015u
+        val ID = AttributeId(0x0015u)
       }
 
       object DecelerationTimeLift {
-        const val ID = 0x0016u
+        val ID = AttributeId(0x0016u)
       }
 
       object Mode {
-        const val ID = 0x0017u
+        val ID = AttributeId(0x0017u)
       }
 
       object IntermediateSetpointsLift {
-        const val ID = 0x0018u
+        val ID = AttributeId(0x0018u)
       }
 
       object IntermediateSetpointsTilt {
-        const val ID = 0x0019u
+        val ID = AttributeId(0x0019u)
       }
 
       object SafetyStatus {
-        const val ID = 0x001Au
+        val ID = AttributeId(0x001Au)
       }
     }
 
     object CommandsIncoming {
       object UpOrOpen {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object DownOrClose {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object StopMotion {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object GoToLiftValue {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object GoToLiftPercentage {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object GoToTiltValue {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
 
       object GoToTiltPercentage {
-        const val ID = 0x0008u
+        val ID = CommandId(0x0008u)
       }
     }
 
@@ -4943,45 +4943,45 @@ object Clusters {
   }
 
   object ClosureControl {
-    const val ID = 0x0104u
+    val ID = ClusterId(0x0104u)
 
     object Attributes {
       object CountdownTime {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MainState {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object CurrentErrorList {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object OverallCurrentState {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object OverallTargetState {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object LatchControlModes {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
     }
 
     object CommandsIncoming {
       object Stop {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object MoveTo {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object Calibrate {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
     }
 
@@ -4989,83 +4989,83 @@ object Clusters {
 
     object Events {
       object OperationalError {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object MovementCompleted {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object EngageStateChanged {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
 
       object SecureStateChanged {
-        const val ID = 0x0003u
+        val ID = EventId(0x0003u)
       }
     }
   }
 
   object ClosureDimension {
-    const val ID = 0x0105u
+    val ID = ClusterId(0x0105u)
 
     object Attributes {
       object CurrentState {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object TargetState {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object Resolution {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object StepValue {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object Unit {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object UnitRange {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object LimitRange {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object TranslationDirection {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object RotationAxis {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object Overflow {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object ModulationType {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object LatchControlModes {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
     }
 
     object CommandsIncoming {
       object SetTarget {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object Step {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
@@ -5075,51 +5075,51 @@ object Clusters {
   }
 
   object ServiceArea {
-    const val ID = 0x0150u
+    val ID = ClusterId(0x0150u)
 
     object Attributes {
       object SupportedAreas {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object SupportedMaps {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object SelectedAreas {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object CurrentArea {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object EstimatedEndTime {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object Progress {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
     }
 
     object CommandsIncoming {
       object SelectAreas {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object SkipArea {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
     }
 
     object CommandsOutgoing {
       object SelectAreasResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object SkipAreaResponse {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
     }
 
@@ -5127,103 +5127,103 @@ object Clusters {
   }
 
   object PumpConfigurationandControl {
-    const val ID = 0x0200u
+    val ID = ClusterId(0x0200u)
 
     object Attributes {
       object MaxPressure {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MaxSpeed {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxFlow {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object MinConstPressure {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object MaxConstPressure {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object MinCompPressure {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object MaxCompPressure {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object MinConstSpeed {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object MaxConstSpeed {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object MinConstFlow {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object MaxConstFlow {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object MinConstTemp {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
 
       object MaxConstTemp {
-        const val ID = 0x000Cu
+        val ID = AttributeId(0x000Cu)
       }
 
       object PumpStatus {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object EffectiveOperationMode {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object EffectiveControlMode {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
 
       object Capacity {
-        const val ID = 0x0013u
+        val ID = AttributeId(0x0013u)
       }
 
       object Speed {
-        const val ID = 0x0014u
+        val ID = AttributeId(0x0014u)
       }
 
       object LifetimeRunningHours {
-        const val ID = 0x0015u
+        val ID = AttributeId(0x0015u)
       }
 
       object Power {
-        const val ID = 0x0016u
+        val ID = AttributeId(0x0016u)
       }
 
       object LifetimeEnergyConsumed {
-        const val ID = 0x0017u
+        val ID = AttributeId(0x0017u)
       }
 
       object OperationMode {
-        const val ID = 0x0020u
+        val ID = AttributeId(0x0020u)
       }
 
       object ControlMode {
-        const val ID = 0x0021u
+        val ID = AttributeId(0x0021u)
       }
 
       object AlarmMask {
-        const val ID = 0x0022u
+        val ID = AttributeId(0x0022u)
       }
     }
 
@@ -5233,483 +5233,483 @@ object Clusters {
 
     object Events {
       object SupplyVoltageLow {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object SupplyVoltageHigh {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object PowerMissingPhase {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
 
       object SystemPressureLow {
-        const val ID = 0x0003u
+        val ID = EventId(0x0003u)
       }
 
       object SystemPressureHigh {
-        const val ID = 0x0004u
+        val ID = EventId(0x0004u)
       }
 
       object DryRunning {
-        const val ID = 0x0005u
+        val ID = EventId(0x0005u)
       }
 
       object MotorTemperatureHigh {
-        const val ID = 0x0006u
+        val ID = EventId(0x0006u)
       }
 
       object PumpMotorFatalFailure {
-        const val ID = 0x0007u
+        val ID = EventId(0x0007u)
       }
 
       object ElectronicTemperatureHigh {
-        const val ID = 0x0008u
+        val ID = EventId(0x0008u)
       }
 
       object PumpBlocked {
-        const val ID = 0x0009u
+        val ID = EventId(0x0009u)
       }
 
       object SensorFailure {
-        const val ID = 0x000Au
+        val ID = EventId(0x000Au)
       }
 
       object ElectronicNonFatalFailure {
-        const val ID = 0x000Bu
+        val ID = EventId(0x000Bu)
       }
 
       object ElectronicFatalFailure {
-        const val ID = 0x000Cu
+        val ID = EventId(0x000Cu)
       }
 
       object GeneralFault {
-        const val ID = 0x000Du
+        val ID = EventId(0x000Du)
       }
 
       object Leakage {
-        const val ID = 0x000Eu
+        val ID = EventId(0x000Eu)
       }
 
       object AirDetection {
-        const val ID = 0x000Fu
+        val ID = EventId(0x000Fu)
       }
 
       object TurbineOperation {
-        const val ID = 0x0010u
+        val ID = EventId(0x0010u)
       }
     }
   }
 
   object Thermostat {
-    const val ID = 0x0201u
+    val ID = ClusterId(0x0201u)
 
     object Attributes {
       object LocalTemperature {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object OutdoorTemperature {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object Occupancy {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object AbsMinHeatSetpointLimit {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object AbsMaxHeatSetpointLimit {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object AbsMinCoolSetpointLimit {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object AbsMaxCoolSetpointLimit {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object PICoolingDemand {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object PIHeatingDemand {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object HVACSystemTypeConfiguration {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object LocalTemperatureCalibration {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object OccupiedCoolingSetpoint {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object OccupiedHeatingSetpoint {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
 
       object UnoccupiedCoolingSetpoint {
-        const val ID = 0x0013u
+        val ID = AttributeId(0x0013u)
       }
 
       object UnoccupiedHeatingSetpoint {
-        const val ID = 0x0014u
+        val ID = AttributeId(0x0014u)
       }
 
       object MinHeatSetpointLimit {
-        const val ID = 0x0015u
+        val ID = AttributeId(0x0015u)
       }
 
       object MaxHeatSetpointLimit {
-        const val ID = 0x0016u
+        val ID = AttributeId(0x0016u)
       }
 
       object MinCoolSetpointLimit {
-        const val ID = 0x0017u
+        val ID = AttributeId(0x0017u)
       }
 
       object MaxCoolSetpointLimit {
-        const val ID = 0x0018u
+        val ID = AttributeId(0x0018u)
       }
 
       object MinSetpointDeadBand {
-        const val ID = 0x0019u
+        val ID = AttributeId(0x0019u)
       }
 
       object RemoteSensing {
-        const val ID = 0x001Au
+        val ID = AttributeId(0x001Au)
       }
 
       object ControlSequenceOfOperation {
-        const val ID = 0x001Bu
+        val ID = AttributeId(0x001Bu)
       }
 
       object SystemMode {
-        const val ID = 0x001Cu
+        val ID = AttributeId(0x001Cu)
       }
 
       object AlarmMask {
-        const val ID = 0x001Du
+        val ID = AttributeId(0x001Du)
       }
 
       object ThermostatRunningMode {
-        const val ID = 0x001Eu
+        val ID = AttributeId(0x001Eu)
       }
 
       object StartOfWeek {
-        const val ID = 0x0020u
+        val ID = AttributeId(0x0020u)
       }
 
       object NumberOfWeeklyTransitions {
-        const val ID = 0x0021u
+        val ID = AttributeId(0x0021u)
       }
 
       object NumberOfDailyTransitions {
-        const val ID = 0x0022u
+        val ID = AttributeId(0x0022u)
       }
 
       object TemperatureSetpointHold {
-        const val ID = 0x0023u
+        val ID = AttributeId(0x0023u)
       }
 
       object TemperatureSetpointHoldDuration {
-        const val ID = 0x0024u
+        val ID = AttributeId(0x0024u)
       }
 
       object ThermostatProgrammingOperationMode {
-        const val ID = 0x0025u
+        val ID = AttributeId(0x0025u)
       }
 
       object ThermostatRunningState {
-        const val ID = 0x0029u
+        val ID = AttributeId(0x0029u)
       }
 
       object SetpointChangeSource {
-        const val ID = 0x0030u
+        val ID = AttributeId(0x0030u)
       }
 
       object SetpointChangeAmount {
-        const val ID = 0x0031u
+        val ID = AttributeId(0x0031u)
       }
 
       object SetpointChangeSourceTimestamp {
-        const val ID = 0x0032u
+        val ID = AttributeId(0x0032u)
       }
 
       object OccupiedSetback {
-        const val ID = 0x0034u
+        val ID = AttributeId(0x0034u)
       }
 
       object OccupiedSetbackMin {
-        const val ID = 0x0035u
+        val ID = AttributeId(0x0035u)
       }
 
       object OccupiedSetbackMax {
-        const val ID = 0x0036u
+        val ID = AttributeId(0x0036u)
       }
 
       object UnoccupiedSetback {
-        const val ID = 0x0037u
+        val ID = AttributeId(0x0037u)
       }
 
       object UnoccupiedSetbackMin {
-        const val ID = 0x0038u
+        val ID = AttributeId(0x0038u)
       }
 
       object UnoccupiedSetbackMax {
-        const val ID = 0x0039u
+        val ID = AttributeId(0x0039u)
       }
 
       object EmergencyHeatDelta {
-        const val ID = 0x003Au
+        val ID = AttributeId(0x003Au)
       }
 
       object ACType {
-        const val ID = 0x0040u
+        val ID = AttributeId(0x0040u)
       }
 
       object ACCapacity {
-        const val ID = 0x0041u
+        val ID = AttributeId(0x0041u)
       }
 
       object ACRefrigerantType {
-        const val ID = 0x0042u
+        val ID = AttributeId(0x0042u)
       }
 
       object ACCompressorType {
-        const val ID = 0x0043u
+        val ID = AttributeId(0x0043u)
       }
 
       object ACErrorCode {
-        const val ID = 0x0044u
+        val ID = AttributeId(0x0044u)
       }
 
       object ACLouverPosition {
-        const val ID = 0x0045u
+        val ID = AttributeId(0x0045u)
       }
 
       object ACCoilTemperature {
-        const val ID = 0x0046u
+        val ID = AttributeId(0x0046u)
       }
 
       object ACCapacityFormat {
-        const val ID = 0x0047u
+        val ID = AttributeId(0x0047u)
       }
 
       object PresetTypes {
-        const val ID = 0x0048u
+        val ID = AttributeId(0x0048u)
       }
 
       object ScheduleTypes {
-        const val ID = 0x0049u
+        val ID = AttributeId(0x0049u)
       }
 
       object NumberOfPresets {
-        const val ID = 0x004Au
+        val ID = AttributeId(0x004Au)
       }
 
       object NumberOfSchedules {
-        const val ID = 0x004Bu
+        val ID = AttributeId(0x004Bu)
       }
 
       object NumberOfScheduleTransitions {
-        const val ID = 0x004Cu
+        val ID = AttributeId(0x004Cu)
       }
 
       object NumberOfScheduleTransitionPerDay {
-        const val ID = 0x004Du
+        val ID = AttributeId(0x004Du)
       }
 
       object ActivePresetHandle {
-        const val ID = 0x004Eu
+        val ID = AttributeId(0x004Eu)
       }
 
       object ActiveScheduleHandle {
-        const val ID = 0x004Fu
+        val ID = AttributeId(0x004Fu)
       }
 
       object Presets {
-        const val ID = 0x0050u
+        val ID = AttributeId(0x0050u)
       }
 
       object Schedules {
-        const val ID = 0x0051u
+        val ID = AttributeId(0x0051u)
       }
 
       object SetpointHoldExpiryTimestamp {
-        const val ID = 0x0052u
+        val ID = AttributeId(0x0052u)
       }
 
       object MaxThermostatSuggestions {
-        const val ID = 0x0053u
+        val ID = AttributeId(0x0053u)
       }
 
       object ThermostatSuggestions {
-        const val ID = 0x0054u
+        val ID = AttributeId(0x0054u)
       }
 
       object CurrentThermostatSuggestion {
-        const val ID = 0x0055u
+        val ID = AttributeId(0x0055u)
       }
 
       object ThermostatSuggestionNotFollowingReason {
-        const val ID = 0x0056u
+        val ID = AttributeId(0x0056u)
       }
     }
 
     object CommandsIncoming {
       object SetpointRaiseLower {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object SetWeeklySchedule {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object GetWeeklySchedule {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object ClearWeeklySchedule {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object GetRelayStatusLog {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object SetActiveScheduleRequest {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object SetActivePresetRequest {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object AddThermostatSuggestion {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
 
       object RemoveThermostatSuggestion {
-        const val ID = 0x0008u
+        val ID = CommandId(0x0008u)
       }
     }
 
     object CommandsOutgoing {
       object GetWeeklyScheduleResponse {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object GetRelayStatusLogResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object AddThermostatSuggestionResponse {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
     }
 
     object Events {
       object SystemModeChange {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object LocalTemperatureChange {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
 
       object OccupancyChange {
-        const val ID = 0x0002u
+        val ID = EventId(0x0002u)
       }
 
       object SetpointChange {
-        const val ID = 0x0003u
+        val ID = EventId(0x0003u)
       }
 
       object RunningStateChange {
-        const val ID = 0x0004u
+        val ID = EventId(0x0004u)
       }
 
       object RunningModeChange {
-        const val ID = 0x0005u
+        val ID = EventId(0x0005u)
       }
 
       object ActiveScheduleChange {
-        const val ID = 0x0006u
+        val ID = EventId(0x0006u)
       }
 
       object ActivePresetChange {
-        const val ID = 0x0007u
+        val ID = EventId(0x0007u)
       }
     }
   }
 
   object FanControl {
-    const val ID = 0x0202u
+    val ID = ClusterId(0x0202u)
 
     object Attributes {
       object FanMode {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object FanModeSequence {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object PercentSetting {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object PercentCurrent {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object SpeedMax {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object SpeedSetting {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object SpeedCurrent {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object RockSupport {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object RockSetting {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object WindSupport {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object WindSetting {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object AirflowDirection {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
     }
 
     object CommandsIncoming {
       object Step {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
@@ -5719,19 +5719,19 @@ object Clusters {
   }
 
   object ThermostatUserInterfaceConfiguration {
-    const val ID = 0x0204u
+    val ID = ClusterId(0x0204u)
 
     object Attributes {
       object TemperatureDisplayMode {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object KeypadLockout {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object ScheduleProgrammingVisibility {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
     }
 
@@ -5743,293 +5743,293 @@ object Clusters {
   }
 
   object ColorControl {
-    const val ID = 0x0300u
+    val ID = ClusterId(0x0300u)
 
     object Attributes {
       object CurrentHue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentSaturation {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object RemainingTime {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object CurrentX {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object CurrentY {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object DriftCompensation {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object CompensationText {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object ColorTemperatureMireds {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object ColorMode {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object Options {
-        const val ID = 0x000Fu
+        val ID = AttributeId(0x000Fu)
       }
 
       object NumberOfPrimaries {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object Primary1X {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object Primary1Y {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
 
       object Primary1Intensity {
-        const val ID = 0x0013u
+        val ID = AttributeId(0x0013u)
       }
 
       object Primary2X {
-        const val ID = 0x0015u
+        val ID = AttributeId(0x0015u)
       }
 
       object Primary2Y {
-        const val ID = 0x0016u
+        val ID = AttributeId(0x0016u)
       }
 
       object Primary2Intensity {
-        const val ID = 0x0017u
+        val ID = AttributeId(0x0017u)
       }
 
       object Primary3X {
-        const val ID = 0x0019u
+        val ID = AttributeId(0x0019u)
       }
 
       object Primary3Y {
-        const val ID = 0x001Au
+        val ID = AttributeId(0x001Au)
       }
 
       object Primary3Intensity {
-        const val ID = 0x001Bu
+        val ID = AttributeId(0x001Bu)
       }
 
       object Primary4X {
-        const val ID = 0x0020u
+        val ID = AttributeId(0x0020u)
       }
 
       object Primary4Y {
-        const val ID = 0x0021u
+        val ID = AttributeId(0x0021u)
       }
 
       object Primary4Intensity {
-        const val ID = 0x0022u
+        val ID = AttributeId(0x0022u)
       }
 
       object Primary5X {
-        const val ID = 0x0024u
+        val ID = AttributeId(0x0024u)
       }
 
       object Primary5Y {
-        const val ID = 0x0025u
+        val ID = AttributeId(0x0025u)
       }
 
       object Primary5Intensity {
-        const val ID = 0x0026u
+        val ID = AttributeId(0x0026u)
       }
 
       object Primary6X {
-        const val ID = 0x0028u
+        val ID = AttributeId(0x0028u)
       }
 
       object Primary6Y {
-        const val ID = 0x0029u
+        val ID = AttributeId(0x0029u)
       }
 
       object Primary6Intensity {
-        const val ID = 0x002Au
+        val ID = AttributeId(0x002Au)
       }
 
       object WhitePointX {
-        const val ID = 0x0030u
+        val ID = AttributeId(0x0030u)
       }
 
       object WhitePointY {
-        const val ID = 0x0031u
+        val ID = AttributeId(0x0031u)
       }
 
       object ColorPointRX {
-        const val ID = 0x0032u
+        val ID = AttributeId(0x0032u)
       }
 
       object ColorPointRY {
-        const val ID = 0x0033u
+        val ID = AttributeId(0x0033u)
       }
 
       object ColorPointRIntensity {
-        const val ID = 0x0034u
+        val ID = AttributeId(0x0034u)
       }
 
       object ColorPointGX {
-        const val ID = 0x0036u
+        val ID = AttributeId(0x0036u)
       }
 
       object ColorPointGY {
-        const val ID = 0x0037u
+        val ID = AttributeId(0x0037u)
       }
 
       object ColorPointGIntensity {
-        const val ID = 0x0038u
+        val ID = AttributeId(0x0038u)
       }
 
       object ColorPointBX {
-        const val ID = 0x003Au
+        val ID = AttributeId(0x003Au)
       }
 
       object ColorPointBY {
-        const val ID = 0x003Bu
+        val ID = AttributeId(0x003Bu)
       }
 
       object ColorPointBIntensity {
-        const val ID = 0x003Cu
+        val ID = AttributeId(0x003Cu)
       }
 
       object EnhancedCurrentHue {
-        const val ID = 0x4000u
+        val ID = AttributeId(0x4000u)
       }
 
       object EnhancedColorMode {
-        const val ID = 0x4001u
+        val ID = AttributeId(0x4001u)
       }
 
       object ColorLoopActive {
-        const val ID = 0x4002u
+        val ID = AttributeId(0x4002u)
       }
 
       object ColorLoopDirection {
-        const val ID = 0x4003u
+        val ID = AttributeId(0x4003u)
       }
 
       object ColorLoopTime {
-        const val ID = 0x4004u
+        val ID = AttributeId(0x4004u)
       }
 
       object ColorLoopStartEnhancedHue {
-        const val ID = 0x4005u
+        val ID = AttributeId(0x4005u)
       }
 
       object ColorLoopStoredEnhancedHue {
-        const val ID = 0x4006u
+        val ID = AttributeId(0x4006u)
       }
 
       object ColorCapabilities {
-        const val ID = 0x400Au
+        val ID = AttributeId(0x400Au)
       }
 
       object ColorTempPhysicalMinMireds {
-        const val ID = 0x400Bu
+        val ID = AttributeId(0x400Bu)
       }
 
       object ColorTempPhysicalMaxMireds {
-        const val ID = 0x400Cu
+        val ID = AttributeId(0x400Cu)
       }
 
       object CoupleColorTempToLevelMinMireds {
-        const val ID = 0x400Du
+        val ID = AttributeId(0x400Du)
       }
 
       object StartUpColorTemperatureMireds {
-        const val ID = 0x4010u
+        val ID = AttributeId(0x4010u)
       }
     }
 
     object CommandsIncoming {
       object MoveToHue {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object MoveHue {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object StepHue {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object MoveToSaturation {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object MoveSaturation {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object StepSaturation {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object MoveToHueAndSaturation {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object MoveToColor {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
 
       object MoveColor {
-        const val ID = 0x0008u
+        val ID = CommandId(0x0008u)
       }
 
       object StepColor {
-        const val ID = 0x0009u
+        val ID = CommandId(0x0009u)
       }
 
       object MoveToColorTemperature {
-        const val ID = 0x000Au
+        val ID = CommandId(0x000Au)
       }
 
       object EnhancedMoveToHue {
-        const val ID = 0x0040u
+        val ID = CommandId(0x0040u)
       }
 
       object EnhancedMoveHue {
-        const val ID = 0x0041u
+        val ID = CommandId(0x0041u)
       }
 
       object EnhancedStepHue {
-        const val ID = 0x0042u
+        val ID = CommandId(0x0042u)
       }
 
       object EnhancedMoveToHueAndSaturation {
-        const val ID = 0x0043u
+        val ID = CommandId(0x0043u)
       }
 
       object ColorLoopSet {
-        const val ID = 0x0044u
+        val ID = CommandId(0x0044u)
       }
 
       object StopMoveStep {
-        const val ID = 0x0047u
+        val ID = CommandId(0x0047u)
       }
 
       object MoveColorTemperature {
-        const val ID = 0x004Bu
+        val ID = CommandId(0x004Bu)
       }
 
       object StepColorTemperature {
-        const val ID = 0x004Cu
+        val ID = CommandId(0x004Cu)
       }
     }
 
@@ -6039,71 +6039,71 @@ object Clusters {
   }
 
   object BallastConfiguration {
-    const val ID = 0x0301u
+    val ID = ClusterId(0x0301u)
 
     object Attributes {
       object PhysicalMinLevel {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object PhysicalMaxLevel {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object BallastStatus {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object MinLevel {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object MaxLevel {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object PowerOnLevel {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
 
       object PowerOnFadeTime {
-        const val ID = 0x0013u
+        val ID = AttributeId(0x0013u)
       }
 
       object IntrinsicBallastFactor {
-        const val ID = 0x0014u
+        val ID = AttributeId(0x0014u)
       }
 
       object BallastFactorAdjustment {
-        const val ID = 0x0015u
+        val ID = AttributeId(0x0015u)
       }
 
       object LampQuantity {
-        const val ID = 0x0020u
+        val ID = AttributeId(0x0020u)
       }
 
       object LampType {
-        const val ID = 0x0030u
+        val ID = AttributeId(0x0030u)
       }
 
       object LampManufacturer {
-        const val ID = 0x0031u
+        val ID = AttributeId(0x0031u)
       }
 
       object LampRatedHours {
-        const val ID = 0x0032u
+        val ID = AttributeId(0x0032u)
       }
 
       object LampBurnHours {
-        const val ID = 0x0033u
+        val ID = AttributeId(0x0033u)
       }
 
       object LampAlarmMode {
-        const val ID = 0x0034u
+        val ID = AttributeId(0x0034u)
       }
 
       object LampBurnHoursTripPoint {
-        const val ID = 0x0035u
+        val ID = AttributeId(0x0035u)
       }
     }
 
@@ -6115,27 +6115,27 @@ object Clusters {
   }
 
   object IlluminanceMeasurement {
-    const val ID = 0x0400u
+    val ID = ClusterId(0x0400u)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object Tolerance {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object LightSensorType {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
     }
 
@@ -6147,23 +6147,23 @@ object Clusters {
   }
 
   object TemperatureMeasurement {
-    const val ID = 0x0402u
+    val ID = ClusterId(0x0402u)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object Tolerance {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
@@ -6175,43 +6175,43 @@ object Clusters {
   }
 
   object PressureMeasurement {
-    const val ID = 0x0403u
+    val ID = ClusterId(0x0403u)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object Tolerance {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object ScaledValue {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object MinScaledValue {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object MaxScaledValue {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
 
       object ScaledTolerance {
-        const val ID = 0x0013u
+        val ID = AttributeId(0x0013u)
       }
 
       object Scale {
-        const val ID = 0x0014u
+        val ID = AttributeId(0x0014u)
       }
     }
 
@@ -6223,23 +6223,23 @@ object Clusters {
   }
 
   object FlowMeasurement {
-    const val ID = 0x0404u
+    val ID = ClusterId(0x0404u)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object Tolerance {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
@@ -6251,23 +6251,23 @@ object Clusters {
   }
 
   object RelativeHumidityMeasurement {
-    const val ID = 0x0405u
+    val ID = ClusterId(0x0405u)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object Tolerance {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
@@ -6279,63 +6279,63 @@ object Clusters {
   }
 
   object OccupancySensing {
-    const val ID = 0x0406u
+    val ID = ClusterId(0x0406u)
 
     object Attributes {
       object Occupancy {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object OccupancySensorType {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object OccupancySensorTypeBitmap {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object HoldTime {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object HoldTimeLimits {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object PIROccupiedToUnoccupiedDelay {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object PIRUnoccupiedToOccupiedDelay {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object PIRUnoccupiedToOccupiedThreshold {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
 
       object UltrasonicOccupiedToUnoccupiedDelay {
-        const val ID = 0x0020u
+        val ID = AttributeId(0x0020u)
       }
 
       object UltrasonicUnoccupiedToOccupiedDelay {
-        const val ID = 0x0021u
+        val ID = AttributeId(0x0021u)
       }
 
       object UltrasonicUnoccupiedToOccupiedThreshold {
-        const val ID = 0x0022u
+        val ID = AttributeId(0x0022u)
       }
 
       object PhysicalContactOccupiedToUnoccupiedDelay {
-        const val ID = 0x0030u
+        val ID = AttributeId(0x0030u)
       }
 
       object PhysicalContactUnoccupiedToOccupiedDelay {
-        const val ID = 0x0031u
+        val ID = AttributeId(0x0031u)
       }
 
       object PhysicalContactUnoccupiedToOccupiedThreshold {
-        const val ID = 0x0032u
+        val ID = AttributeId(0x0032u)
       }
     }
 
@@ -6345,29 +6345,29 @@ object Clusters {
 
     object Events {
       object OccupancyChanged {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
     }
   }
 
   object LeafWetnessMeasurement {
-    const val ID = 0x0407u
+    val ID = ClusterId(0x0407u)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object Tolerance {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
@@ -6379,23 +6379,23 @@ object Clusters {
   }
 
   object SoilMoistureMeasurement {
-    const val ID = 0x0408u
+    val ID = ClusterId(0x0408u)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object Tolerance {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
@@ -6407,51 +6407,51 @@ object Clusters {
   }
 
   object CarbonMonoxideConcentrationMeasurement {
-    const val ID = 0x040Cu
+    val ID = ClusterId(0x040Cu)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object PeakMeasuredValue {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object PeakMeasuredValueWindow {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object AverageMeasuredValue {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object AverageMeasuredValueWindow {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object Uncertainty {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object MeasurementUnit {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object MeasurementMedium {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object LevelValue {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
     }
 
@@ -6463,51 +6463,51 @@ object Clusters {
   }
 
   object CarbonDioxideConcentrationMeasurement {
-    const val ID = 0x040Du
+    val ID = ClusterId(0x040Du)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object PeakMeasuredValue {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object PeakMeasuredValueWindow {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object AverageMeasuredValue {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object AverageMeasuredValueWindow {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object Uncertainty {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object MeasurementUnit {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object MeasurementMedium {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object LevelValue {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
     }
 
@@ -6519,51 +6519,51 @@ object Clusters {
   }
 
   object NitrogenDioxideConcentrationMeasurement {
-    const val ID = 0x0413u
+    val ID = ClusterId(0x0413u)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object PeakMeasuredValue {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object PeakMeasuredValueWindow {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object AverageMeasuredValue {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object AverageMeasuredValueWindow {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object Uncertainty {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object MeasurementUnit {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object MeasurementMedium {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object LevelValue {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
     }
 
@@ -6575,51 +6575,51 @@ object Clusters {
   }
 
   object OzoneConcentrationMeasurement {
-    const val ID = 0x0415u
+    val ID = ClusterId(0x0415u)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object PeakMeasuredValue {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object PeakMeasuredValueWindow {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object AverageMeasuredValue {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object AverageMeasuredValueWindow {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object Uncertainty {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object MeasurementUnit {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object MeasurementMedium {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object LevelValue {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
     }
 
@@ -6631,51 +6631,51 @@ object Clusters {
   }
 
   object PM25ConcentrationMeasurement {
-    const val ID = 0x042Au
+    val ID = ClusterId(0x042Au)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object PeakMeasuredValue {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object PeakMeasuredValueWindow {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object AverageMeasuredValue {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object AverageMeasuredValueWindow {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object Uncertainty {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object MeasurementUnit {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object MeasurementMedium {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object LevelValue {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
     }
 
@@ -6687,51 +6687,51 @@ object Clusters {
   }
 
   object FormaldehydeConcentrationMeasurement {
-    const val ID = 0x042Bu
+    val ID = ClusterId(0x042Bu)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object PeakMeasuredValue {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object PeakMeasuredValueWindow {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object AverageMeasuredValue {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object AverageMeasuredValueWindow {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object Uncertainty {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object MeasurementUnit {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object MeasurementMedium {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object LevelValue {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
     }
 
@@ -6743,51 +6743,51 @@ object Clusters {
   }
 
   object PM1ConcentrationMeasurement {
-    const val ID = 0x042Cu
+    val ID = ClusterId(0x042Cu)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object PeakMeasuredValue {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object PeakMeasuredValueWindow {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object AverageMeasuredValue {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object AverageMeasuredValueWindow {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object Uncertainty {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object MeasurementUnit {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object MeasurementMedium {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object LevelValue {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
     }
 
@@ -6799,51 +6799,51 @@ object Clusters {
   }
 
   object PM10ConcentrationMeasurement {
-    const val ID = 0x042Du
+    val ID = ClusterId(0x042Du)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object PeakMeasuredValue {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object PeakMeasuredValueWindow {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object AverageMeasuredValue {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object AverageMeasuredValueWindow {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object Uncertainty {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object MeasurementUnit {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object MeasurementMedium {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object LevelValue {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
     }
 
@@ -6855,51 +6855,51 @@ object Clusters {
   }
 
   object TotalVolatileOrganicCompoundsConcentrationMeasurement {
-    const val ID = 0x042Eu
+    val ID = ClusterId(0x042Eu)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object PeakMeasuredValue {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object PeakMeasuredValueWindow {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object AverageMeasuredValue {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object AverageMeasuredValueWindow {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object Uncertainty {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object MeasurementUnit {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object MeasurementMedium {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object LevelValue {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
     }
 
@@ -6911,51 +6911,51 @@ object Clusters {
   }
 
   object RadonConcentrationMeasurement {
-    const val ID = 0x042Fu
+    val ID = ClusterId(0x042Fu)
 
     object Attributes {
       object MeasuredValue {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MinMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxMeasuredValue {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object PeakMeasuredValue {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object PeakMeasuredValueWindow {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object AverageMeasuredValue {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object AverageMeasuredValueWindow {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object Uncertainty {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object MeasurementUnit {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object MeasurementMedium {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object LevelValue {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
     }
 
@@ -6967,15 +6967,15 @@ object Clusters {
   }
 
   object SoilMeasurement {
-    const val ID = 0x0430u
+    val ID = ClusterId(0x0430u)
 
     object Attributes {
       object SoilMoistureMeasurementLimits {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object SoilMoistureMeasuredValue {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
@@ -6987,55 +6987,55 @@ object Clusters {
   }
 
   object AmbientContextSensing {
-    const val ID = 0x0431u
+    val ID = ClusterId(0x0431u)
 
     object Attributes {
       object HumanActivityDetected {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object ObjectIdentified {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object AudioContextDetected {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object AmbientContextType {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object AmbientContextTypeSupported {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object ObjectCountReached {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object ObjectCountConfig {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object ObjectCount {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object SimultaneousDetectionLimit {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object HoldTime {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object HoldTimeLimits {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object PredictedActivity {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
     }
 
@@ -7045,37 +7045,37 @@ object Clusters {
 
     object Events {
       object AmbientContextDetectStarted {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object AmbientContextDetectEnded {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
     }
   }
 
   object WiFiNetworkManagement {
-    const val ID = 0x0451u
+    val ID = ClusterId(0x0451u)
 
     object Attributes {
       object SSID {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object PassphraseSurrogate {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
     object CommandsIncoming {
       object NetworkPassphraseRequest {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
     object CommandsOutgoing {
       object NetworkPassphraseResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
@@ -7083,55 +7083,55 @@ object Clusters {
   }
 
   object ThreadBorderRouterManagement {
-    const val ID = 0x0452u
+    val ID = ClusterId(0x0452u)
 
     object Attributes {
       object BorderRouterName {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object BorderAgentID {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object ThreadVersion {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object InterfaceEnabled {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object ActiveDatasetTimestamp {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object PendingDatasetTimestamp {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
     }
 
     object CommandsIncoming {
       object GetActiveDatasetRequest {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object GetPendingDatasetRequest {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object SetActiveDatasetRequest {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object SetPendingDatasetRequest {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
     }
 
     object CommandsOutgoing {
       object DatasetResponse {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
     }
 
@@ -7139,39 +7139,39 @@ object Clusters {
   }
 
   object ThreadNetworkDirectory {
-    const val ID = 0x0453u
+    val ID = ClusterId(0x0453u)
 
     object Attributes {
       object PreferredExtendedPanID {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object ThreadNetworks {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object ThreadNetworkTableSize {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
     }
 
     object CommandsIncoming {
       object AddNetwork {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object RemoveNetwork {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object GetOperationalDataset {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
     }
 
     object CommandsOutgoing {
       object OperationalDatasetResponse {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
     }
 
@@ -7179,15 +7179,15 @@ object Clusters {
   }
 
   object WakeOnLAN {
-    const val ID = 0x0503u
+    val ID = ClusterId(0x0503u)
 
     object Attributes {
       object MACAddress {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object LinkLocalAddress {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
@@ -7199,55 +7199,55 @@ object Clusters {
   }
 
   object Channel {
-    const val ID = 0x0504u
+    val ID = ClusterId(0x0504u)
 
     object Attributes {
       object ChannelList {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object Lineup {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object CurrentChannel {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
     }
 
     object CommandsIncoming {
       object ChangeChannel {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object ChangeChannelByNumber {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object SkipChannel {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object GetProgramGuide {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object RecordProgram {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object CancelRecordProgram {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
     }
 
     object CommandsOutgoing {
       object ChangeChannelResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object ProgramGuideResponse {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
     }
 
@@ -7255,185 +7255,185 @@ object Clusters {
   }
 
   object TargetNavigator {
-    const val ID = 0x0505u
+    val ID = ClusterId(0x0505u)
 
     object Attributes {
       object TargetList {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentTarget {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
     object CommandsIncoming {
       object NavigateTarget {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
     object CommandsOutgoing {
       object NavigateTargetResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
     object Events {
       object TargetUpdated {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
     }
   }
 
   object MediaPlayback {
-    const val ID = 0x0506u
+    val ID = ClusterId(0x0506u)
 
     object Attributes {
       object CurrentState {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object StartTime {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object Duration {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object SampledPosition {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object PlaybackSpeed {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object SeekRangeEnd {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object SeekRangeStart {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object ActiveAudioTrack {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object AvailableAudioTracks {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object ActiveTextTrack {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object AvailableTextTracks {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
     }
 
     object CommandsIncoming {
       object Play {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object Pause {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object Stop {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object StartOver {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object Previous {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object Next {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object Rewind {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object FastForward {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
 
       object SkipForward {
-        const val ID = 0x0008u
+        val ID = CommandId(0x0008u)
       }
 
       object SkipBackward {
-        const val ID = 0x0009u
+        val ID = CommandId(0x0009u)
       }
 
       object Seek {
-        const val ID = 0x000Bu
+        val ID = CommandId(0x000Bu)
       }
 
       object ActivateAudioTrack {
-        const val ID = 0x000Cu
+        val ID = CommandId(0x000Cu)
       }
 
       object ActivateTextTrack {
-        const val ID = 0x000Du
+        val ID = CommandId(0x000Du)
       }
 
       object DeactivateTextTrack {
-        const val ID = 0x000Eu
+        val ID = CommandId(0x000Eu)
       }
     }
 
     object CommandsOutgoing {
       object PlaybackResponse {
-        const val ID = 0x000Au
+        val ID = CommandId(0x000Au)
       }
     }
 
     object Events {
       object StateChanged {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
     }
   }
 
   object MediaInput {
-    const val ID = 0x0507u
+    val ID = ClusterId(0x0507u)
 
     object Attributes {
       object InputList {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentInput {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
     object CommandsIncoming {
       object SelectInput {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object ShowInputStatus {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object HideInputStatus {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object RenameInput {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
     }
 
@@ -7443,13 +7443,13 @@ object Clusters {
   }
 
   object LowPower {
-    const val ID = 0x0508u
+    val ID = ClusterId(0x0508u)
 
     object Attributes {}
 
     object CommandsIncoming {
       object Sleep {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
@@ -7459,19 +7459,19 @@ object Clusters {
   }
 
   object KeypadInput {
-    const val ID = 0x0509u
+    val ID = ClusterId(0x0509u)
 
     object Attributes {}
 
     object CommandsIncoming {
       object SendKey {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
     object CommandsOutgoing {
       object SendKeyResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
@@ -7479,31 +7479,31 @@ object Clusters {
   }
 
   object ContentLauncher {
-    const val ID = 0x050Au
+    val ID = ClusterId(0x050Au)
 
     object Attributes {
       object AcceptHeader {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object SupportedStreamingProtocols {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
     object CommandsIncoming {
       object LaunchContent {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object LaunchURL {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
     object CommandsOutgoing {
       object LauncherResponse {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
     }
 
@@ -7511,25 +7511,25 @@ object Clusters {
   }
 
   object AudioOutput {
-    const val ID = 0x050Bu
+    val ID = ClusterId(0x050Bu)
 
     object Attributes {
       object OutputList {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentOutput {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
     object CommandsIncoming {
       object SelectOutput {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object RenameOutput {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
@@ -7539,35 +7539,35 @@ object Clusters {
   }
 
   object ApplicationLauncher {
-    const val ID = 0x050Cu
+    val ID = ClusterId(0x050Cu)
 
     object Attributes {
       object CatalogList {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentApp {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
     object CommandsIncoming {
       object LaunchApp {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object StopApp {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object HideApp {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
     }
 
     object CommandsOutgoing {
       object LauncherResponse {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
     }
 
@@ -7575,39 +7575,39 @@ object Clusters {
   }
 
   object ApplicationBasic {
-    const val ID = 0x050Du
+    val ID = ClusterId(0x050Du)
 
     object Attributes {
       object VendorName {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object VendorID {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object ApplicationName {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object ProductID {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object Application {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object Status {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object ApplicationVersion {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object AllowedVendorList {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
     }
 
@@ -7619,183 +7619,183 @@ object Clusters {
   }
 
   object AccountLogin {
-    const val ID = 0x050Eu
+    val ID = ClusterId(0x050Eu)
 
     object Attributes {}
 
     object CommandsIncoming {
       object GetSetupPIN {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object Login {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object Logout {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
     }
 
     object CommandsOutgoing {
       object GetSetupPINResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
     object Events {
       object LoggedOut {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
     }
   }
 
   object ContentControl {
-    const val ID = 0x050Fu
+    val ID = ClusterId(0x050Fu)
 
     object Attributes {
       object Enabled {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object OnDemandRatings {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object OnDemandRatingThreshold {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object ScheduledContentRatings {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object ScheduledContentRatingThreshold {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object ScreenDailyTime {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object RemainingScreenTime {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object BlockUnrated {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object BlockChannelList {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object BlockApplicationList {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object BlockContentTimeWindow {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
     }
 
     object CommandsIncoming {
       object UpdatePIN {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object ResetPIN {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object Enable {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object Disable {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object AddBonusTime {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object SetScreenDailyTime {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object BlockUnratedContent {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
 
       object UnblockUnratedContent {
-        const val ID = 0x0008u
+        val ID = CommandId(0x0008u)
       }
 
       object SetOnDemandRatingThreshold {
-        const val ID = 0x0009u
+        val ID = CommandId(0x0009u)
       }
 
       object SetScheduledContentRatingThreshold {
-        const val ID = 0x000Au
+        val ID = CommandId(0x000Au)
       }
 
       object AddBlockChannels {
-        const val ID = 0x000Bu
+        val ID = CommandId(0x000Bu)
       }
 
       object RemoveBlockChannels {
-        const val ID = 0x000Cu
+        val ID = CommandId(0x000Cu)
       }
 
       object AddBlockApplications {
-        const val ID = 0x000Du
+        val ID = CommandId(0x000Du)
       }
 
       object RemoveBlockApplications {
-        const val ID = 0x000Eu
+        val ID = CommandId(0x000Eu)
       }
 
       object SetBlockContentTimeWindow {
-        const val ID = 0x000Fu
+        val ID = CommandId(0x000Fu)
       }
 
       object RemoveBlockContentTimeWindow {
-        const val ID = 0x0010u
+        val ID = CommandId(0x0010u)
       }
     }
 
     object CommandsOutgoing {
       object ResetPINResponse {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
     }
 
     object Events {
       object RemainingScreenTimeExpired {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object EnteringBlockContentTimeWindow {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
     }
   }
 
   object ContentAppObserver {
-    const val ID = 0x0510u
+    val ID = ClusterId(0x0510u)
 
     object Attributes {}
 
     object CommandsIncoming {
       object ContentAppMessage {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
     object CommandsOutgoing {
       object ContentAppMessageResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
@@ -7803,307 +7803,307 @@ object Clusters {
   }
 
   object ZoneManagement {
-    const val ID = 0x0550u
+    val ID = ClusterId(0x0550u)
 
     object Attributes {
       object MaxUserDefinedZones {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MaxZones {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object Zones {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object Triggers {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object SensitivityMax {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object Sensitivity {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object TwoDCartesianMax {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
     }
 
     object CommandsIncoming {
       object CreateTwoDCartesianZone {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object UpdateTwoDCartesianZone {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object RemoveZone {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object CreateOrUpdateTrigger {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object RemoveTrigger {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
     }
 
     object CommandsOutgoing {
       object CreateTwoDCartesianZoneResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
     object Events {
       object ZoneTriggered {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object ZoneStopped {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
     }
   }
 
   object CameraAVStreamManagement {
-    const val ID = 0x0551u
+    val ID = ClusterId(0x0551u)
 
     object Attributes {
       object MaxConcurrentEncoders {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MaxEncodedPixelRate {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object VideoSensorParams {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object NightVisionUsesInfrared {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object MinViewportResolution {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object RateDistortionTradeOffPoints {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object MaxContentBufferSize {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object MicrophoneCapabilities {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object SpeakerCapabilities {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object TwoWayTalkSupport {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object SnapshotCapabilities {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object MaxNetworkBandwidth {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
 
       object CurrentFrameRate {
-        const val ID = 0x000Cu
+        val ID = AttributeId(0x000Cu)
       }
 
       object HDRModeEnabled {
-        const val ID = 0x000Du
+        val ID = AttributeId(0x000Du)
       }
 
       object SupportedStreamUsages {
-        const val ID = 0x000Eu
+        val ID = AttributeId(0x000Eu)
       }
 
       object AllocatedVideoStreams {
-        const val ID = 0x000Fu
+        val ID = AttributeId(0x000Fu)
       }
 
       object AllocatedAudioStreams {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object AllocatedSnapshotStreams {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object StreamUsagePriorities {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
 
       object SoftRecordingPrivacyModeEnabled {
-        const val ID = 0x0013u
+        val ID = AttributeId(0x0013u)
       }
 
       object SoftLivestreamPrivacyModeEnabled {
-        const val ID = 0x0014u
+        val ID = AttributeId(0x0014u)
       }
 
       object HardPrivacyModeOn {
-        const val ID = 0x0015u
+        val ID = AttributeId(0x0015u)
       }
 
       object NightVision {
-        const val ID = 0x0016u
+        val ID = AttributeId(0x0016u)
       }
 
       object NightVisionIllum {
-        const val ID = 0x0017u
+        val ID = AttributeId(0x0017u)
       }
 
       object Viewport {
-        const val ID = 0x0018u
+        val ID = AttributeId(0x0018u)
       }
 
       object SpeakerMuted {
-        const val ID = 0x0019u
+        val ID = AttributeId(0x0019u)
       }
 
       object SpeakerVolumeLevel {
-        const val ID = 0x001Au
+        val ID = AttributeId(0x001Au)
       }
 
       object SpeakerMaxLevel {
-        const val ID = 0x001Bu
+        val ID = AttributeId(0x001Bu)
       }
 
       object SpeakerMinLevel {
-        const val ID = 0x001Cu
+        val ID = AttributeId(0x001Cu)
       }
 
       object MicrophoneMuted {
-        const val ID = 0x001Du
+        val ID = AttributeId(0x001Du)
       }
 
       object MicrophoneVolumeLevel {
-        const val ID = 0x001Eu
+        val ID = AttributeId(0x001Eu)
       }
 
       object MicrophoneMaxLevel {
-        const val ID = 0x001Fu
+        val ID = AttributeId(0x001Fu)
       }
 
       object MicrophoneMinLevel {
-        const val ID = 0x0020u
+        val ID = AttributeId(0x0020u)
       }
 
       object MicrophoneAGCEnabled {
-        const val ID = 0x0021u
+        val ID = AttributeId(0x0021u)
       }
 
       object ImageRotation {
-        const val ID = 0x0022u
+        val ID = AttributeId(0x0022u)
       }
 
       object ImageFlipHorizontal {
-        const val ID = 0x0023u
+        val ID = AttributeId(0x0023u)
       }
 
       object ImageFlipVertical {
-        const val ID = 0x0024u
+        val ID = AttributeId(0x0024u)
       }
 
       object LocalVideoRecordingEnabled {
-        const val ID = 0x0025u
+        val ID = AttributeId(0x0025u)
       }
 
       object LocalSnapshotRecordingEnabled {
-        const val ID = 0x0026u
+        val ID = AttributeId(0x0026u)
       }
 
       object StatusLightEnabled {
-        const val ID = 0x0027u
+        val ID = AttributeId(0x0027u)
       }
 
       object StatusLightBrightness {
-        const val ID = 0x0028u
+        val ID = AttributeId(0x0028u)
       }
 
       object ImageRotationDiscreteAngles {
-        const val ID = 0x0029u
+        val ID = AttributeId(0x0029u)
       }
     }
 
     object CommandsIncoming {
       object AudioStreamAllocate {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object AudioStreamDeallocate {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object VideoStreamAllocate {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object VideoStreamModify {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object VideoStreamDeallocate {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object SnapshotStreamAllocate {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
 
       object SnapshotStreamModify {
-        const val ID = 0x0009u
+        val ID = CommandId(0x0009u)
       }
 
       object SnapshotStreamDeallocate {
-        const val ID = 0x000Au
+        val ID = CommandId(0x000Au)
       }
 
       object SetStreamPriorities {
-        const val ID = 0x000Bu
+        val ID = CommandId(0x000Bu)
       }
 
       object CaptureSnapshot {
-        const val ID = 0x000Cu
+        val ID = CommandId(0x000Cu)
       }
     }
 
     object CommandsOutgoing {
       object AudioStreamAllocateResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object VideoStreamAllocateResponse {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object SnapshotStreamAllocateResponse {
-        const val ID = 0x0008u
+        val ID = CommandId(0x0008u)
       }
 
       object CaptureSnapshotResponse {
-        const val ID = 0x000Du
+        val ID = CommandId(0x000Du)
       }
     }
 
@@ -8111,77 +8111,77 @@ object Clusters {
   }
 
   object CameraAVSettingsUserLevelManagement {
-    const val ID = 0x0552u
+    val ID = ClusterId(0x0552u)
 
     object Attributes {
       object MPTZPosition {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MaxPresets {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MPTZPresets {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object DPTZStreams {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object ZoomMax {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object TiltMin {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object TiltMax {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object PanMin {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object PanMax {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object MovementState {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
     }
 
     object CommandsIncoming {
       object MPTZSetPosition {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object MPTZRelativeMove {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object MPTZMoveToPreset {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object MPTZSavePreset {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object MPTZRemovePreset {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object DPTZSetViewport {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object DPTZRelativeMove {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
     }
 
@@ -8191,43 +8191,43 @@ object Clusters {
   }
 
   object WebRTCTransportProvider {
-    const val ID = 0x0553u
+    val ID = ClusterId(0x0553u)
 
     object Attributes {
       object CurrentSessions {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
     }
 
     object CommandsIncoming {
       object SolicitOffer {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object ProvideOffer {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object ProvideAnswer {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object ProvideICECandidates {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object EndSession {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
     }
 
     object CommandsOutgoing {
       object SolicitOfferResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object ProvideOfferResponse {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
     }
 
@@ -8235,29 +8235,29 @@ object Clusters {
   }
 
   object WebRTCTransportRequestor {
-    const val ID = 0x0554u
+    val ID = ClusterId(0x0554u)
 
     object Attributes {
       object CurrentSessions {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
     }
 
     object CommandsIncoming {
       object Offer {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object Answer {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object ICECandidates {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object End {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
     }
 
@@ -8267,85 +8267,85 @@ object Clusters {
   }
 
   object PushAVStreamTransport {
-    const val ID = 0x0555u
+    val ID = ClusterId(0x0555u)
 
     object Attributes {
       object SupportedFormats {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object CurrentConnections {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
     object CommandsIncoming {
       object AllocatePushTransport {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object DeallocatePushTransport {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object ModifyPushTransport {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object SetTransportStatus {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object ManuallyTriggerTransport {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object FindTransport {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
     }
 
     object CommandsOutgoing {
       object AllocatePushTransportResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object FindTransportResponse {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
     }
 
     object Events {
       object PushTransportBegin {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
 
       object PushTransportEnd {
-        const val ID = 0x0001u
+        val ID = EventId(0x0001u)
       }
     }
   }
 
   object Chime {
-    const val ID = 0x0556u
+    val ID = ClusterId(0x0556u)
 
     object Attributes {
       object InstalledChimeSounds {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object SelectedChime {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object Enabled {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
     }
 
     object CommandsIncoming {
       object PlayChimeSound {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
     }
 
@@ -8353,109 +8353,109 @@ object Clusters {
 
     object Events {
       object ChimeStartedPlaying {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
     }
   }
 
   object CommodityTariff {
-    const val ID = 0x0700u
+    val ID = ClusterId(0x0700u)
 
     object Attributes {
       object TariffInfo {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object TariffUnit {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object StartDate {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object DayEntries {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object DayPatterns {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object CalendarPeriods {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object IndividualDays {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object CurrentDay {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object NextDay {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object CurrentDayEntry {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object CurrentDayEntryDate {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object NextDayEntry {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
 
       object NextDayEntryDate {
-        const val ID = 0x000Cu
+        val ID = AttributeId(0x000Cu)
       }
 
       object TariffComponents {
-        const val ID = 0x000Du
+        val ID = AttributeId(0x000Du)
       }
 
       object TariffPeriods {
-        const val ID = 0x000Eu
+        val ID = AttributeId(0x000Eu)
       }
 
       object CurrentTariffComponents {
-        const val ID = 0x000Fu
+        val ID = AttributeId(0x000Fu)
       }
 
       object NextTariffComponents {
-        const val ID = 0x0010u
+        val ID = AttributeId(0x0010u)
       }
 
       object DefaultRandomizationOffset {
-        const val ID = 0x0011u
+        val ID = AttributeId(0x0011u)
       }
 
       object DefaultRandomizationType {
-        const val ID = 0x0012u
+        val ID = AttributeId(0x0012u)
       }
     }
 
     object CommandsIncoming {
       object GetTariffComponent {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object GetDayEntry {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
     object CommandsOutgoing {
       object GetTariffComponentResponse {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object GetDayEntryResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
@@ -8463,15 +8463,15 @@ object Clusters {
   }
 
   object EcosystemInformation {
-    const val ID = 0x0750u
+    val ID = ClusterId(0x0750u)
 
     object Attributes {
       object DeviceDirectory {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object LocationDirectory {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
@@ -8483,177 +8483,177 @@ object Clusters {
   }
 
   object CommissionerControl {
-    const val ID = 0x0751u
+    val ID = ClusterId(0x0751u)
 
     object Attributes {
       object SupportedDeviceCategories {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
     }
 
     object CommandsIncoming {
       object RequestCommissioningApproval {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object CommissionNode {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
     }
 
     object CommandsOutgoing {
       object ReverseOpenCommissioningWindow {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
     }
 
     object Events {
       object CommissioningRequestResult {
-        const val ID = 0x0000u
+        val ID = EventId(0x0000u)
       }
     }
   }
 
   object JointFabricDatastore {
-    const val ID = 0x0752u
+    val ID = ClusterId(0x0752u)
 
     object Attributes {
       object AnchorRootCA {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object AnchorNodeID {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object AnchorVendorID {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object FriendlyName {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object GroupKeySetList {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
 
       object GroupList {
-        const val ID = 0x0005u
+        val ID = AttributeId(0x0005u)
       }
 
       object NodeList {
-        const val ID = 0x0006u
+        val ID = AttributeId(0x0006u)
       }
 
       object AdminList {
-        const val ID = 0x0007u
+        val ID = AttributeId(0x0007u)
       }
 
       object Status {
-        const val ID = 0x0008u
+        val ID = AttributeId(0x0008u)
       }
 
       object EndpointGroupIDList {
-        const val ID = 0x0009u
+        val ID = AttributeId(0x0009u)
       }
 
       object EndpointBindingList {
-        const val ID = 0x000Au
+        val ID = AttributeId(0x000Au)
       }
 
       object NodeKeySetList {
-        const val ID = 0x000Bu
+        val ID = AttributeId(0x000Bu)
       }
 
       object NodeACLList {
-        const val ID = 0x000Cu
+        val ID = AttributeId(0x000Cu)
       }
 
       object NodeEndpointList {
-        const val ID = 0x000Du
+        val ID = AttributeId(0x000Du)
       }
     }
 
     object CommandsIncoming {
       object AddKeySet {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object UpdateKeySet {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object RemoveKeySet {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object AddGroup {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object UpdateGroup {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object RemoveGroup {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object AddAdmin {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object UpdateAdmin {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
 
       object RemoveAdmin {
-        const val ID = 0x0008u
+        val ID = CommandId(0x0008u)
       }
 
       object AddPendingNode {
-        const val ID = 0x0009u
+        val ID = CommandId(0x0009u)
       }
 
       object RefreshNode {
-        const val ID = 0x000Au
+        val ID = CommandId(0x000Au)
       }
 
       object UpdateNode {
-        const val ID = 0x000Bu
+        val ID = CommandId(0x000Bu)
       }
 
       object RemoveNode {
-        const val ID = 0x000Cu
+        val ID = CommandId(0x000Cu)
       }
 
       object UpdateEndpointForNode {
-        const val ID = 0x000Du
+        val ID = CommandId(0x000Du)
       }
 
       object AddGroupIDToEndpointForNode {
-        const val ID = 0x000Eu
+        val ID = CommandId(0x000Eu)
       }
 
       object RemoveGroupIDFromEndpointForNode {
-        const val ID = 0x000Fu
+        val ID = CommandId(0x000Fu)
       }
 
       object AddBindingToEndpointForNode {
-        const val ID = 0x0010u
+        val ID = CommandId(0x0010u)
       }
 
       object RemoveBindingFromEndpointForNode {
-        const val ID = 0x0011u
+        val ID = CommandId(0x0011u)
       }
 
       object AddACLToNode {
-        const val ID = 0x0012u
+        val ID = CommandId(0x0012u)
       }
 
       object RemoveACLFromNode {
-        const val ID = 0x0013u
+        val ID = CommandId(0x0013u)
       }
     }
 
@@ -8663,51 +8663,51 @@ object Clusters {
   }
 
   object JointFabricAdministrator {
-    const val ID = 0x0753u
+    val ID = ClusterId(0x0753u)
 
     object Attributes {
       object AdministratorFabricIndex {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
     }
 
     object CommandsIncoming {
       object ICACCSRRequest {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object AddICAC {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object OpenJointCommissioningWindow {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object TransferAnchorRequest {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object TransferAnchorComplete {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
 
       object AnnounceJointFabricAdministrator {
-        const val ID = 0x0008u
+        val ID = CommandId(0x0008u)
       }
     }
 
     object CommandsOutgoing {
       object ICACCSRResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object ICACResponse {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object TransferAnchorResponse {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
     }
 
@@ -8715,87 +8715,87 @@ object Clusters {
   }
 
   object TLSCertificateManagement {
-    const val ID = 0x0801u
+    val ID = ClusterId(0x0801u)
 
     object Attributes {
       object MaxRootCertificates {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object ProvisionedRootCertificates {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MaxClientCertificates {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object ProvisionedClientCertificates {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 
     object CommandsIncoming {
       object ProvisionRootCertificate {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object FindRootCertificate {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object LookupRootCertificate {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
 
       object RemoveRootCertificate {
-        const val ID = 0x0006u
+        val ID = CommandId(0x0006u)
       }
 
       object ClientCSR {
-        const val ID = 0x0007u
+        val ID = CommandId(0x0007u)
       }
 
       object ProvisionClientCertificate {
-        const val ID = 0x0009u
+        val ID = CommandId(0x0009u)
       }
 
       object FindClientCertificate {
-        const val ID = 0x000Au
+        val ID = CommandId(0x000Au)
       }
 
       object LookupClientCertificate {
-        const val ID = 0x000Cu
+        val ID = CommandId(0x000Cu)
       }
 
       object RemoveClientCertificate {
-        const val ID = 0x000Eu
+        val ID = CommandId(0x000Eu)
       }
     }
 
     object CommandsOutgoing {
       object ProvisionRootCertificateResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object FindRootCertificateResponse {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
 
       object LookupRootCertificateResponse {
-        const val ID = 0x0005u
+        val ID = CommandId(0x0005u)
       }
 
       object ClientCSRResponse {
-        const val ID = 0x0008u
+        val ID = CommandId(0x0008u)
       }
 
       object FindClientCertificateResponse {
-        const val ID = 0x000Bu
+        val ID = CommandId(0x000Bu)
       }
 
       object LookupClientCertificateResponse {
-        const val ID = 0x000Du
+        val ID = CommandId(0x000Du)
       }
     }
 
@@ -8803,39 +8803,39 @@ object Clusters {
   }
 
   object TLSClientManagement {
-    const val ID = 0x0802u
+    val ID = ClusterId(0x0802u)
 
     object Attributes {
       object MaxProvisioned {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object ProvisionedEndpoints {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
     }
 
     object CommandsIncoming {
       object ProvisionEndpoint {
-        const val ID = 0x0000u
+        val ID = CommandId(0x0000u)
       }
 
       object FindEndpoint {
-        const val ID = 0x0002u
+        val ID = CommandId(0x0002u)
       }
 
       object RemoveEndpoint {
-        const val ID = 0x0004u
+        val ID = CommandId(0x0004u)
       }
     }
 
     object CommandsOutgoing {
       object ProvisionEndpointResponse {
-        const val ID = 0x0001u
+        val ID = CommandId(0x0001u)
       }
 
       object FindEndpointResponse {
-        const val ID = 0x0003u
+        val ID = CommandId(0x0003u)
       }
     }
 
@@ -8843,27 +8843,27 @@ object Clusters {
   }
 
   object MeterIdentification {
-    const val ID = 0x0B06u
+    val ID = ClusterId(0x0B06u)
 
     object Attributes {
       object MeterType {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object PointOfDelivery {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object MeterSerialNumber {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object ProtocolVersion {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
 
       object PowerThreshold {
-        const val ID = 0x0004u
+        val ID = AttributeId(0x0004u)
       }
     }
 
@@ -8875,23 +8875,23 @@ object Clusters {
   }
 
   object CommodityMetering {
-    const val ID = 0x0B07u
+    val ID = ClusterId(0x0B07u)
 
     object Attributes {
       object MeteredQuantity {
-        const val ID = 0x0000u
+        val ID = AttributeId(0x0000u)
       }
 
       object MeteredQuantityTimestamp {
-        const val ID = 0x0001u
+        val ID = AttributeId(0x0001u)
       }
 
       object TariffUnit {
-        const val ID = 0x0002u
+        val ID = AttributeId(0x0002u)
       }
 
       object MaximumMeteredQuantities {
-        const val ID = 0x0003u
+        val ID = AttributeId(0x0003u)
       }
     }
 

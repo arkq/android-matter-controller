@@ -27,8 +27,6 @@ import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.matter.CLUSTERS
 import io.aether.android.matter.DEVICES
-import io.aether.android.matter.ClusterId
-import io.aether.android.matter.DeviceTypeId
 
 @Composable
 internal fun BreadcrumbBar(

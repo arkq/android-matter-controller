@@ -6,12 +6,12 @@
 package io.aether.android.matter
 
 val CLUSTERS_1_4 =
-    mapOf<UInt, ClusterInfo>(
+    mapOf<ClusterId, ClusterInfo>(
         Clusters.WaterTankLevelMonitoring.ID to
             ClusterInfo(
                 name = "Water Tank Level Monitoring",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.WaterTankLevelMonitoring.Attributes.Condition.ID to
                             AttributeInfo(
                                 name = "Condition",
@@ -51,7 +51,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.WaterTankLevelMonitoring.CommandsIncoming.ResetCondition.ID to
                             CommandInfo(
                                 name = "ResetCondition",
@@ -59,14 +59,14 @@ val CLUSTERS_1_4 =
                                 parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
-                events = mapOf<UInt, EventInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.WaterHeaterManagement.ID to
             ClusterInfo(
                 name = "Water Heater Management",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.WaterHeaterManagement.Attributes.HeaterTypes.ID to
                             AttributeInfo(
                                 name = "HeaterTypes",
@@ -105,7 +105,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.WaterHeaterManagement.CommandsIncoming.Boost.ID to
                             CommandInfo(
                                 name = "Boost",
@@ -126,9 +126,9 @@ val CLUSTERS_1_4 =
                                 parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
                 events =
-                    mapOf<UInt, EventInfo>(
+                    mapOf<EventId, EventInfo>(
                         Clusters.WaterHeaterManagement.Events.BoostStarted.ID to
                             EventInfo(
                                 name = "BoostStarted",
@@ -143,7 +143,7 @@ val CLUSTERS_1_4 =
             ClusterInfo(
                 name = "Water Heater Mode",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.WaterHeaterMode.Attributes.SupportedModes.ID to
                             AttributeInfo(
                                 name = "SupportedModes",
@@ -165,15 +165,15 @@ val CLUSTERS_1_4 =
                                 type = DataType.UNKNOWN,
                             ),
                     ),
-                commandsIncoming = mapOf<UInt, CommandInfo>(),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
-                events = mapOf<UInt, EventInfo>(),
+                commandsIncoming = mapOf<CommandId, CommandInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.ServiceArea.ID to
             ClusterInfo(
                 name = "Service Area",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.ServiceArea.Attributes.SupportedAreas.ID to
                             AttributeInfo(
                                 name = "SupportedAreas",
@@ -212,7 +212,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.ServiceArea.CommandsIncoming.SelectAreas.ID to
                             CommandInfo(
                                 name = "SelectAreas",
@@ -241,7 +241,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.ServiceArea.CommandsOutgoing.SelectAreasResponse.ID to
                             CommandInfo(
                                 name = "SelectAreasResponse",
@@ -277,13 +277,13 @@ val CLUSTERS_1_4 =
                                     ),
                             ),
                     ),
-                events = mapOf<UInt, EventInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.WiFiNetworkManagement.ID to
             ClusterInfo(
                 name = "Wi-Fi Network Management",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.WiFiNetworkManagement.Attributes.SSID.ID to
                             AttributeInfo(
                                 name = "SSID",
@@ -298,7 +298,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.WiFiNetworkManagement.CommandsIncoming.NetworkPassphraseRequest
                             .ID to
                             CommandInfo(
@@ -308,7 +308,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.WiFiNetworkManagement.CommandsOutgoing.NetworkPassphraseResponse
                             .ID to
                             CommandInfo(
@@ -323,13 +323,13 @@ val CLUSTERS_1_4 =
                                     ),
                             ),
                     ),
-                events = mapOf<UInt, EventInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.ThreadBorderRouterManagement.ID to
             ClusterInfo(
                 name = "Thread Border Router Management",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.ThreadBorderRouterManagement.Attributes.BorderRouterName.ID to
                             AttributeInfo(
                                 name = "BorderRouterName",
@@ -370,7 +370,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.ThreadBorderRouterManagement.CommandsIncoming
                             .GetActiveDatasetRequest
                             .ID to
@@ -424,7 +424,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.ThreadBorderRouterManagement.CommandsOutgoing.DatasetResponse.ID to
                             CommandInfo(
                                 name = "DatasetResponse",
@@ -438,13 +438,13 @@ val CLUSTERS_1_4 =
                                     ),
                             ),
                     ),
-                events = mapOf<UInt, EventInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.ThreadNetworkDirectory.ID to
             ClusterInfo(
                 name = "Thread Network Directory",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.ThreadNetworkDirectory.Attributes.PreferredExtendedPanID.ID to
                             AttributeInfo(
                                 name = "PreferredExtendedPanID",
@@ -466,7 +466,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.ThreadNetworkDirectory.CommandsIncoming.AddNetwork.ID to
                             CommandInfo(
                                 name = "AddNetwork",
@@ -508,7 +508,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.ThreadNetworkDirectory.CommandsOutgoing.OperationalDatasetResponse
                             .ID to
                             CommandInfo(
@@ -523,13 +523,13 @@ val CLUSTERS_1_4 =
                                     ),
                             ),
                     ),
-                events = mapOf<UInt, EventInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.EcosystemInformation.ID to
             ClusterInfo(
                 name = "Ecosystem Information",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.EcosystemInformation.Attributes.DeviceDirectory.ID to
                             AttributeInfo(
                                 name = "DeviceDirectory",
@@ -543,15 +543,15 @@ val CLUSTERS_1_4 =
                                 readPrivilege = Privilege.MANAGE,
                             ),
                     ),
-                commandsIncoming = mapOf<UInt, CommandInfo>(),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
-                events = mapOf<UInt, EventInfo>(),
+                commandsIncoming = mapOf<CommandId, CommandInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.CommissionerControl.ID to
             ClusterInfo(
                 name = "Commissioner Control",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.CommissionerControl.Attributes.SupportedDeviceCategories.ID to
                             AttributeInfo(
                                 name = "SupportedDeviceCategories",
@@ -560,7 +560,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.CommissionerControl.CommandsIncoming.RequestCommissioningApproval
                             .ID to
                             CommandInfo(
@@ -610,7 +610,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.CommissionerControl.CommandsOutgoing.ReverseOpenCommissioningWindow
                             .ID to
                             CommandInfo(
@@ -646,7 +646,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 events =
-                    mapOf<UInt, EventInfo>(
+                    mapOf<EventId, EventInfo>(
                         Clusters.CommissionerControl.Events.CommissioningRequestResult.ID to
                             EventInfo(
                                 name = "CommissioningRequestResult",
@@ -657,7 +657,7 @@ val CLUSTERS_1_4 =
             ClusterInfo(
                 name = "Joint Fabric Datastore",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.JointFabricDatastore.Attributes.AnchorRootCA.ID to
                             AttributeInfo(
                                 name = "AnchorRootCA",
@@ -744,7 +744,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.JointFabricDatastore.CommandsIncoming.AddKeySet.ID to
                             CommandInfo(
                                 name = "AddKeySet",
@@ -1164,14 +1164,14 @@ val CLUSTERS_1_4 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
-                events = mapOf<UInt, EventInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.JointFabricAdministrator.ID to
             ClusterInfo(
                 name = "Joint Fabric Administrator",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.JointFabricAdministrator.Attributes.AdministratorFabricIndex.ID to
                             AttributeInfo(
                                 name = "AdministratorFabricIndex",
@@ -1180,7 +1180,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.JointFabricAdministrator.CommandsIncoming.ICACCSRRequest.ID to
                             CommandInfo(
                                 name = "ICACCSRRequest",
@@ -1278,7 +1278,7 @@ val CLUSTERS_1_4 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.JointFabricAdministrator.CommandsOutgoing.ICACCSRResponse.ID to
                             CommandInfo(
                                 name = "ICACCSRResponse",
@@ -1324,6 +1324,6 @@ val CLUSTERS_1_4 =
                                     ),
                             ),
                     ),
-                events = mapOf<UInt, EventInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
     )

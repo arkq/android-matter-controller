@@ -3,21 +3,15 @@
 
 package io.aether.android.screens.device.settings.explorer
 
-import io.aether.android.matter.CLUSTERS
-import io.aether.android.matter.DataType
-import io.aether.android.matter.GENERIC_ATTRIBUTES
-import io.aether.android.matter.Privilege
-import io.aether.android.chip.DataModelLoader
 import io.aether.android.matter.AttributeId
+import io.aether.android.matter.CLUSTERS
 import io.aether.android.matter.ClusterId
 import io.aether.android.matter.CommandId
+import io.aether.android.matter.DataType
 import io.aether.android.matter.EventId
-import io.aether.android.matter.MatterDataModel
-import io.aether.android.matter.MatterPrivilege
+import io.aether.android.matter.GENERIC_ATTRIBUTES
 import io.aether.android.matter.MatterType
-import io.aether.android.matter.toAttributeId
-import io.aether.android.matter.toClusterId
-import io.aether.android.matter.toCommandId
+import io.aether.android.matter.Privilege
 
 data class ExplorerAttributeDefinition(
     val id: AttributeId,

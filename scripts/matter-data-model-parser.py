@@ -414,29 +414,29 @@ with open(args.out_dir / "Clusters.kt", "w") as f:
     f.write("object Clusters {\n")
     for cluster in sorted(clusters.values(), key=lambda x: x.id):
         f.write(f"  object {_to_camel(cluster.name)} {{\n")
-        f.write(f"    const val ID = 0x{cluster.id:04X}u\n")
+        f.write(f"    val ID = ClusterId(0x{cluster.id:04X}u)\n")
         f.write("    object Attributes {\n")
         for attr in sorted(cluster.attributes.values(), key=lambda x: x.id):
             f.write(f"      object {_to_camel(attr.name)} {{\n")
-            f.write(f"        const val ID = 0x{attr.id:04X}u\n")
+            f.write(f"        val ID = AttributeId(0x{attr.id:04X}u)\n")
             f.write("      }\n")
         f.write("    }\n")
         f.write("    object CommandsIncoming {\n")
         for cmd in sorted(cluster.commands_in.values(), key=lambda x: x.id):
             f.write(f"      object {_to_camel(cmd.name)} {{\n")
-            f.write(f"        const val ID = 0x{cmd.id:04X}u\n")
+            f.write(f"        val ID = CommandId(0x{cmd.id:04X}u)\n")
             f.write("      }\n")
         f.write("    }\n")
         f.write("    object CommandsOutgoing {\n")
         for cmd in sorted(cluster.commands_out.values(), key=lambda x: x.id):
             f.write(f"      object {_to_camel(cmd.name)} {{\n")
-            f.write(f"        const val ID = 0x{cmd.id:04X}u\n")
+            f.write(f"        val ID = CommandId(0x{cmd.id:04X}u)\n")
             f.write("      }\n")
         f.write("    }\n")
         f.write("    object Events {\n")
         for event in sorted(cluster.events.values(), key=lambda x: x.id):
             f.write(f"      object {_to_camel(event.name)} {{\n")
-            f.write(f"        const val ID = 0x{event.id:04X}u\n")
+            f.write(f"        val ID = EventId(0x{event.id:04X}u)\n")
             f.write("      }\n")
         f.write("    }\n")
         f.write("  }\n")
@@ -459,12 +459,12 @@ with open(args.out_dir / "Devices.kt", "w") as f:
     f.write("object Devices {\n")
     for id, device in sorted(devices.items()):
         f.write(f"  object {_to_camel(device.name)} {{\n")
-        f.write(f"    const val ID = 0x{id:04X}u\n")
+        f.write(f"    val ID = DeviceId(0x{id:04X}u)\n")
         f.write("  }\n")
     f.write("}\n")
     f.write("\n")
     f.write("val DEVICES =\n")
-    f.write("    mapOf<UInt, String>(\n")
+    f.write("    mapOf<DeviceId, String>(\n")
     for id, device in sorted(devices.items()):
         f.write(f'        Devices.{_to_camel(device.name)}.ID to "{device.name}",\n')
     f.write("    )\n")
@@ -475,12 +475,12 @@ def write_cluster_registry(clusters: dict[int, Cluster], path: Path, version: st
     with open(path, "w") as f:
         f.write(HEADER)
         f.write(f"val CLUSTERS_{version.replace('.', '_')} =\n")
-        f.write("    mapOf<UInt, ClusterInfo>(\n")
+        f.write("    mapOf<ClusterId, ClusterInfo>(\n")
         for cluster in sorted(clusters.values(), key=lambda x: x.id):
             cluster_namespace = f"Clusters.{_to_camel(cluster.name)}"
             f.write(f"    {cluster_namespace}.ID to ClusterInfo(\n")
             f.write(f'      name = "{cluster.name}",\n')
-            f.write("      attributes = mapOf<UInt, AttributeInfo>(\n")
+            f.write("      attributes = mapOf<AttributeId, AttributeInfo>(\n")
             for attr in sorted(cluster.attributes.values(), key=lambda x: x.id):
                 attr_namespace = f"{cluster_namespace}.Attributes.{_to_camel(attr.name)}"
                 f.write(f"        {attr_namespace}.ID to AttributeInfo(\n")
@@ -494,7 +494,7 @@ def write_cluster_registry(clusters: dict[int, Cluster], path: Path, version: st
                     f.write(f"          writePrivilege = {priv},\n")
                 f.write("        ),\n")
             f.write("      ),\n")
-            f.write("      commandsIncoming = mapOf<UInt, CommandInfo>(\n")
+            f.write("      commandsIncoming = mapOf<CommandId, CommandInfo>(\n")
             for cmd in sorted(cluster.commands_in.values(), key=lambda x: x.id):
                 cmd_namespace = f"{cluster_namespace}.CommandsIncoming.{_to_camel(cmd.name)}"
                 f.write(f"        {cmd_namespace}.ID to CommandInfo(\n")
@@ -510,7 +510,7 @@ def write_cluster_registry(clusters: dict[int, Cluster], path: Path, version: st
                 f.write("          ),\n")
                 f.write("        ),\n")
             f.write("      ),\n")
-            f.write("      commandsOutgoing = mapOf<UInt, CommandInfo>(\n")
+            f.write("      commandsOutgoing = mapOf<CommandId, CommandInfo>(\n")
             for cmd in sorted(cluster.commands_out.values(), key=lambda x: x.id):
                 cmd_namespace = f"{cluster_namespace}.CommandsOutgoing.{_to_camel(cmd.name)}"
                 f.write(f"        {cmd_namespace}.ID to CommandInfo(\n")
@@ -526,7 +526,7 @@ def write_cluster_registry(clusters: dict[int, Cluster], path: Path, version: st
                 f.write("          ),\n")
                 f.write("        ),\n")
             f.write("      ),\n")
-            f.write("      events = mapOf<UInt, EventInfo>(\n")
+            f.write("      events = mapOf<EventId, EventInfo>(\n")
             for event in sorted(cluster.events.values(), key=lambda x: x.id):
                 event_namespace = f"{cluster_namespace}.Events.{_to_camel(event.name)}"
                 f.write(f"        {event_namespace}.ID to EventInfo(\n")

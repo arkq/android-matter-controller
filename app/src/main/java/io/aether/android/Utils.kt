@@ -12,8 +12,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import com.google.protobuf.Timestamp
 import io.aether.android.Device.DeviceType
-import io.aether.android.matter.Devices
 import io.aether.android.matter.DeviceTypeId
+import io.aether.android.matter.Devices
 import java.io.File
 import java.lang.Long.max
 import java.security.SecureRandom

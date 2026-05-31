@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.matter.DEVICES
-import io.aether.android.matter.DeviceTypeId
 import io.aether.android.screens.common.SearchTextField
 
 @Composable

@@ -6,14 +6,14 @@
 package io.aether.android.matter
 
 val CLUSTERS_1_3 =
-    mapOf<UInt, ClusterInfo>(
+    mapOf<ClusterId, ClusterInfo>(
         Clusters.OvenCavityOperationalState.ID to
             ClusterInfo(
                 name = "Oven Cavity Operational State",
-                attributes = mapOf<UInt, AttributeInfo>(),
-                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                attributes = mapOf<AttributeId, AttributeInfo>(),
+                commandsIncoming = mapOf<CommandId, CommandInfo>(),
                 commandsOutgoing =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.OvenCavityOperationalState.CommandsOutgoing.Pause.ID to
                             CommandInfo(
                                 name = "Pause",
@@ -42,13 +42,13 @@ val CLUSTERS_1_3 =
                                 parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                events = mapOf<UInt, EventInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.OvenMode.ID to
             ClusterInfo(
                 name = "Oven Mode",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.OvenMode.Attributes.SupportedModes.ID to
                             AttributeInfo(
                                 name = "SupportedModes",
@@ -70,15 +70,15 @@ val CLUSTERS_1_3 =
                                 type = DataType.UNKNOWN,
                             ),
                     ),
-                commandsIncoming = mapOf<UInt, CommandInfo>(),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
-                events = mapOf<UInt, EventInfo>(),
+                commandsIncoming = mapOf<CommandId, CommandInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.LaundryDryerControls.ID to
             ClusterInfo(
                 name = "Laundry Dryer Controls",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.LaundryDryerControls.Attributes.SupportedDrynessLevels.ID to
                             AttributeInfo(
                                 name = "SupportedDrynessLevels",
@@ -93,15 +93,15 @@ val CLUSTERS_1_3 =
                                 writePrivilege = Privilege.OPERATE,
                             ),
                     ),
-                commandsIncoming = mapOf<UInt, CommandInfo>(),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
-                events = mapOf<UInt, EventInfo>(),
+                commandsIncoming = mapOf<CommandId, CommandInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.MicrowaveOvenMode.ID to
             ClusterInfo(
                 name = "Microwave Oven Mode",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.MicrowaveOvenMode.Attributes.SupportedModes.ID to
                             AttributeInfo(
                                 name = "SupportedModes",
@@ -123,9 +123,9 @@ val CLUSTERS_1_3 =
                                 type = DataType.UNKNOWN,
                             ),
                     ),
-                commandsIncoming = mapOf<UInt, CommandInfo>(),
+                commandsIncoming = mapOf<CommandId, CommandInfo>(),
                 commandsOutgoing =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.MicrowaveOvenMode.CommandsOutgoing.ChangeToMode.ID to
                             CommandInfo(
                                 name = "ChangeToMode",
@@ -137,13 +137,13 @@ val CLUSTERS_1_3 =
                                 parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                events = mapOf<UInt, EventInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.MicrowaveOvenControl.ID to
             ClusterInfo(
                 name = "Microwave Oven Control",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.MicrowaveOvenControl.Attributes.CookTime.ID to
                             AttributeInfo(
                                 name = "CookTime",
@@ -200,7 +200,7 @@ val CLUSTERS_1_3 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.MicrowaveOvenControl.CommandsIncoming.SetCookingParameters.ID to
                             CommandInfo(
                                 name = "SetCookingParameters",
@@ -248,14 +248,14 @@ val CLUSTERS_1_3 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
-                events = mapOf<UInt, EventInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.ScenesManagement.ID to
             ClusterInfo(
                 name = "Scenes Management",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.ScenesManagement.Attributes.DoNotUse.ID to
                             AttributeInfo(
                                 name = "DoNotUse",
@@ -276,7 +276,7 @@ val CLUSTERS_1_3 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.ScenesManagement.CommandsIncoming.AddScene.ID to
                             CommandInfo(
                                 name = "AddScene",
@@ -448,7 +448,7 @@ val CLUSTERS_1_3 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.ScenesManagement.CommandsOutgoing.AddSceneResponse.ID to
                             CommandInfo(
                                 name = "AddSceneResponse",
@@ -619,13 +619,13 @@ val CLUSTERS_1_3 =
                                     ),
                             ),
                     ),
-                events = mapOf<UInt, EventInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.BooleanStateConfiguration.ID to
             ClusterInfo(
                 name = "Boolean State Configuration",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.BooleanStateConfiguration.Attributes.CurrentSensitivityLevel.ID to
                             AttributeInfo(
                                 name = "CurrentSensitivityLevel",
@@ -678,7 +678,7 @@ val CLUSTERS_1_3 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.BooleanStateConfiguration.CommandsIncoming.SuppressAlarm.ID to
                             CommandInfo(
                                 name = "SuppressAlarm",
@@ -706,9 +706,9 @@ val CLUSTERS_1_3 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
                 events =
-                    mapOf<UInt, EventInfo>(
+                    mapOf<EventId, EventInfo>(
                         Clusters.BooleanStateConfiguration.Events.AlarmsStateChanged.ID to
                             EventInfo(
                                 name = "AlarmsStateChanged",
@@ -723,7 +723,7 @@ val CLUSTERS_1_3 =
             ClusterInfo(
                 name = "Valve Configuration and Control",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.ValveConfigurationandControl.Attributes.OpenDuration.ID to
                             AttributeInfo(
                                 name = "OpenDuration",
@@ -794,7 +794,7 @@ val CLUSTERS_1_3 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.ValveConfigurationandControl.CommandsIncoming.Open.ID to
                             CommandInfo(
                                 name = "Open",
@@ -820,9 +820,9 @@ val CLUSTERS_1_3 =
                                 parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
                 events =
-                    mapOf<UInt, EventInfo>(
+                    mapOf<EventId, EventInfo>(
                         Clusters.ValveConfigurationandControl.Events.ValveStateChanged.ID to
                             EventInfo(
                                 name = "ValveStateChanged",
@@ -837,7 +837,7 @@ val CLUSTERS_1_3 =
             ClusterInfo(
                 name = "Electrical Power Measurement",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.ElectricalPowerMeasurement.Attributes.PowerMode.ID to
                             AttributeInfo(
                                 name = "PowerMode",
@@ -954,10 +954,10 @@ val CLUSTERS_1_3 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<UInt, CommandInfo>(),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                commandsIncoming = mapOf<CommandId, CommandInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
                 events =
-                    mapOf<UInt, EventInfo>(
+                    mapOf<EventId, EventInfo>(
                         Clusters.ElectricalPowerMeasurement.Events.MeasurementPeriodRanges.ID to
                             EventInfo(
                                 name = "MeasurementPeriodRanges",
@@ -968,7 +968,7 @@ val CLUSTERS_1_3 =
             ClusterInfo(
                 name = "Electrical Energy Measurement",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.ElectricalEnergyMeasurement.Attributes.Accuracy.ID to
                             AttributeInfo(
                                 name = "Accuracy",
@@ -1008,10 +1008,10 @@ val CLUSTERS_1_3 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<UInt, CommandInfo>(),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                commandsIncoming = mapOf<CommandId, CommandInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
                 events =
-                    mapOf<UInt, EventInfo>(
+                    mapOf<EventId, EventInfo>(
                         Clusters.ElectricalEnergyMeasurement.Events.CumulativeEnergyMeasured.ID to
                             EventInfo(
                                 name = "CumulativeEnergyMeasured",
@@ -1026,7 +1026,7 @@ val CLUSTERS_1_3 =
             ClusterInfo(
                 name = "Messages",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.Messages.Attributes.Messages.ID to
                             AttributeInfo(
                                 name = "Messages",
@@ -1041,7 +1041,7 @@ val CLUSTERS_1_3 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.Messages.CommandsIncoming.PresentMessagesRequest.ID to
                             CommandInfo(
                                 name = "PresentMessagesRequest",
@@ -1099,9 +1099,9 @@ val CLUSTERS_1_3 =
                                     ),
                             ),
                     ),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
                 events =
-                    mapOf<UInt, EventInfo>(
+                    mapOf<EventId, EventInfo>(
                         Clusters.Messages.Events.MessageQueued.ID to
                             EventInfo(
                                 name = "MessageQueued",
@@ -1120,7 +1120,7 @@ val CLUSTERS_1_3 =
             ClusterInfo(
                 name = "Device Energy Management",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.DeviceEnergyManagement.Attributes.ESAType.ID to
                             AttributeInfo(
                                 name = "ESAType",
@@ -1171,7 +1171,7 @@ val CLUSTERS_1_3 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.DeviceEnergyManagement.CommandsIncoming.PowerAdjustRequest.ID to
                             CommandInfo(
                                 name = "PowerAdjustRequest",
@@ -1295,9 +1295,9 @@ val CLUSTERS_1_3 =
                                 parameters = mapOf<UInt, ParameterInfo>(),
                             ),
                     ),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
                 events =
-                    mapOf<UInt, EventInfo>(
+                    mapOf<EventId, EventInfo>(
                         Clusters.DeviceEnergyManagement.Events.PowerAdjustStart.ID to
                             EventInfo(
                                 name = "PowerAdjustStart",
@@ -1320,7 +1320,7 @@ val CLUSTERS_1_3 =
             ClusterInfo(
                 name = "Energy EVSE",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.EnergyEVSE.Attributes.State.ID to
                             AttributeInfo(
                                 name = "State",
@@ -1464,7 +1464,7 @@ val CLUSTERS_1_3 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.EnergyEVSE.CommandsIncoming.Disable.ID to
                             CommandInfo(
                                 name = "Disable",
@@ -1546,7 +1546,7 @@ val CLUSTERS_1_3 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.EnergyEVSE.CommandsOutgoing.GetTargetsResponse.ID to
                             CommandInfo(
                                 name = "GetTargetsResponse",
@@ -1562,7 +1562,7 @@ val CLUSTERS_1_3 =
                             ),
                     ),
                 events =
-                    mapOf<UInt, EventInfo>(
+                    mapOf<EventId, EventInfo>(
                         Clusters.EnergyEVSE.Events.EVConnected.ID to
                             EventInfo(
                                 name = "EVConnected",
@@ -1593,7 +1593,7 @@ val CLUSTERS_1_3 =
             ClusterInfo(
                 name = "Energy Preference",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.EnergyPreference.Attributes.EnergyBalances.ID to
                             AttributeInfo(
                                 name = "EnergyBalances",
@@ -1627,15 +1627,15 @@ val CLUSTERS_1_3 =
                                 writePrivilege = Privilege.OPERATE,
                             ),
                     ),
-                commandsIncoming = mapOf<UInt, CommandInfo>(),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
-                events = mapOf<UInt, EventInfo>(),
+                commandsIncoming = mapOf<CommandId, CommandInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.PowerTopology.ID to
             ClusterInfo(
                 name = "Power Topology",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.PowerTopology.Attributes.AvailableEndpoints.ID to
                             AttributeInfo(
                                 name = "AvailableEndpoints",
@@ -1649,15 +1649,15 @@ val CLUSTERS_1_3 =
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
-                commandsIncoming = mapOf<UInt, CommandInfo>(),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
-                events = mapOf<UInt, EventInfo>(),
+                commandsIncoming = mapOf<CommandId, CommandInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.EnergyEVSEMode.ID to
             ClusterInfo(
                 name = "Energy EVSE Mode",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.EnergyEVSEMode.Attributes.SupportedModes.ID to
                             AttributeInfo(
                                 name = "SupportedModes",
@@ -1679,15 +1679,15 @@ val CLUSTERS_1_3 =
                                 type = DataType.UNKNOWN,
                             ),
                     ),
-                commandsIncoming = mapOf<UInt, CommandInfo>(),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
-                events = mapOf<UInt, EventInfo>(),
+                commandsIncoming = mapOf<CommandId, CommandInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.DeviceEnergyManagementMode.ID to
             ClusterInfo(
                 name = "Device Energy Management Mode",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.DeviceEnergyManagementMode.Attributes.SupportedModes.ID to
                             AttributeInfo(
                                 name = "SupportedModes",
@@ -1709,15 +1709,15 @@ val CLUSTERS_1_3 =
                                 type = DataType.UNKNOWN,
                             ),
                     ),
-                commandsIncoming = mapOf<UInt, CommandInfo>(),
-                commandsOutgoing = mapOf<UInt, CommandInfo>(),
-                events = mapOf<UInt, EventInfo>(),
+                commandsIncoming = mapOf<CommandId, CommandInfo>(),
+                commandsOutgoing = mapOf<CommandId, CommandInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
         Clusters.ContentControl.ID to
             ClusterInfo(
                 name = "Content Control",
                 attributes =
-                    mapOf<UInt, AttributeInfo>(
+                    mapOf<AttributeId, AttributeInfo>(
                         Clusters.ContentControl.Attributes.Enabled.ID to
                             AttributeInfo(
                                 name = "Enabled",
@@ -1786,7 +1786,7 @@ val CLUSTERS_1_3 =
                             ),
                     ),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.ContentControl.CommandsIncoming.UpdatePIN.ID to
                             CommandInfo(
                                 name = "UpdatePIN",
@@ -1973,7 +1973,7 @@ val CLUSTERS_1_3 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.ContentControl.CommandsOutgoing.ResetPINResponse.ID to
                             CommandInfo(
                                 name = "ResetPINResponse",
@@ -1988,7 +1988,7 @@ val CLUSTERS_1_3 =
                             ),
                     ),
                 events =
-                    mapOf<UInt, EventInfo>(
+                    mapOf<EventId, EventInfo>(
                         Clusters.ContentControl.Events.RemainingScreenTimeExpired.ID to
                             EventInfo(
                                 name = "RemainingScreenTimeExpired",
@@ -2002,9 +2002,9 @@ val CLUSTERS_1_3 =
         Clusters.ContentAppObserver.ID to
             ClusterInfo(
                 name = "Content App Observer",
-                attributes = mapOf<UInt, AttributeInfo>(),
+                attributes = mapOf<AttributeId, AttributeInfo>(),
                 commandsIncoming =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.ContentAppObserver.CommandsIncoming.ContentAppMessage.ID to
                             CommandInfo(
                                 name = "ContentAppMessage",
@@ -2025,7 +2025,7 @@ val CLUSTERS_1_3 =
                             ),
                     ),
                 commandsOutgoing =
-                    mapOf<UInt, CommandInfo>(
+                    mapOf<CommandId, CommandInfo>(
                         Clusters.ContentAppObserver.CommandsOutgoing.ContentAppMessageResponse.ID to
                             CommandInfo(
                                 name = "ContentAppMessageResponse",
@@ -2049,6 +2049,6 @@ val CLUSTERS_1_3 =
                                     ),
                             ),
                     ),
-                events = mapOf<UInt, EventInfo>(),
+                events = mapOf<EventId, EventInfo>(),
             ),
     )

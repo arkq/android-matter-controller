@@ -13,14 +13,13 @@ import chip.devicecontroller.model.ChipEventPath
 import chip.devicecontroller.model.InvokeElement
 import chip.devicecontroller.model.NodeState
 import io.aether.android.CommissioningWindowStatus
-import io.aether.android.formatNodeId
-import io.aether.android.matter.Clusters
-import io.aether.android.matter.GenericAttributes
 import io.aether.android.matter.AttributeId
 import io.aether.android.matter.ClusterId
+import io.aether.android.matter.Clusters
 import io.aether.android.matter.CommandId
 import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.EventId
+import io.aether.android.matter.GenericAttributes
 import io.aether.android.matter.VendorId
 import io.aether.android.matter.toAttributeId
 import io.aether.android.matter.toClusterId
@@ -138,7 +137,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
             endpoint = endpoint,
             clusterId = clusterId.toLong(),
             globalAttributeId = GenericAttributes.EventList.ID,
-          )
+        )
         .map { it.toEventId() }
   }
 
