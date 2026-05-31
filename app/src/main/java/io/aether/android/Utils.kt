@@ -5,10 +5,8 @@ package io.aether.android
 
 import android.content.Context
 import android.content.Intent
-import android.content.IntentSender
 import android.os.Looper
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import com.google.protobuf.Timestamp
 import io.aether.android.matter.DEVICES
@@ -54,31 +52,17 @@ sealed class TaskStatus {
   class Completed(val statusMessage: String) : TaskStatus()
 }
 
-/** Enumeration of actions to take a background work alert dialog. */
-sealed class BackgroundWorkAlertDialogAction {
-  /** Background work has started, show the dialog. */
-  class Show(val title: String, val message: String) : BackgroundWorkAlertDialogAction()
-
-  /** Background work has completed, hide the dialog. */
-  object Hide : BackgroundWorkAlertDialogAction()
-}
-
-/** Useful when investigating lifecycle events in logcat. */
-fun lifeCycleEvent(event: String): String {
-  return "[*** LifeCycle ***] $event"
-}
-
 // -----------------------------------------------------------------------------
 // Matter Device Type Display Icon
 
-fun getDeviceTypeIconId(deviceTypeId: Long): Int {
+fun getDeviceTypeIconId(deviceTypeId: DeviceTypeId): Int {
   return when (deviceTypeId) {
-    Devices.OnOffLight.ID.toLong(),
-    Devices.DimmableLight.ID.toLong(),
-    Devices.ColorTemperatureLight.ID.toLong(),
-    Devices.ExtendedColorLight.ID.toLong(),
-    Devices.OnOffLightSwitch.ID.toLong() -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
-    Devices.OnOffPluginUnit.ID.toLong() -> R.drawable.ic_baseline_outlet_24
+    Devices.OnOffLight.ID,
+    Devices.DimmableLight.ID,
+    Devices.ColorTemperatureLight.ID,
+    Devices.ExtendedColorLight.ID,
+    Devices.OnOffLightSwitch.ID -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
+    Devices.OnOffPluginUnit.ID -> R.drawable.ic_baseline_outlet_24
     else -> R.drawable.ic_baseline_device_unknown_24
   }
 }
@@ -90,24 +74,6 @@ fun getDeviceTypeDisplayStringId(deviceTypeId: DeviceTypeId): String {
 /** Converts the "isOn" boolean into a proper string for the UI. */
 fun isOnDisplayString(isOn: Boolean): String {
   return if (isOn) "ON" else "OFF"
-}
-
-fun stringToBoolean(s: String): Boolean {
-  val boolValue =
-      when (s) {
-        "true",
-        "True",
-        "TRUE" -> true
-        else -> false
-      }
-  return boolValue
-}
-
-fun intentSenderToString(intentSender: IntentSender?): String {
-  if (intentSender == null) {
-    return "null"
-  }
-  return "creatorPackage [${intentSender.creatorPackage}]"
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -159,22 +125,6 @@ fun formatTimestamp(context: Context, timestamp: Timestamp): String {
   return "${dateFormatter.format(date)} ${timeFormatter.format(date)}"
 }
 
-/**
- * Used in the context of StateFlow with MutableLists to ensure changes to the mutable lists trigger
- * data changes for observers. See
- * https://stackoverflow.com/questions/70905480/mutablestateflow-not-working-with-mutablelist
- */
-fun <T> MutableList<T>.mapButReplace(targetItem: T, newItem: T) = map {
-  Timber.d("mapButReplace targetItem [${targetItem}] newItem [${newItem}]")
-  if (it == targetItem) {
-    Timber.d("setting newItem for [${it}] to [${newItem}]")
-    newItem
-  } else {
-    Timber.d("setting newItem")
-    it
-  }
-}
-
 /** Generates a random number to be used as a device identifier during device commissioning */
 fun generateNextDeviceId(): Long {
   val secureRandom =
@@ -221,19 +171,6 @@ const val SHARED_DEVICE_ROOM_PREFIX = "Room-"
 
 // Temporary device name used when commissioning the device to the 3P fabric.
 const val REAL_DEVICE_NAME_PREFIX = "Real-"
-
-// -------------------------------------------------------------------------------------------------
-// Dialogs
-
-fun showAlertDialog(alertDialog: AlertDialog, title: String?, message: String?) {
-  if (title != null) {
-    alertDialog.setTitle(title)
-  }
-  if (message != null) {
-    alertDialog.setMessage(message)
-  }
-  alertDialog.show()
-}
 
 // -------------------------------------------------------------------------------------------------
 // Device Sharing constants

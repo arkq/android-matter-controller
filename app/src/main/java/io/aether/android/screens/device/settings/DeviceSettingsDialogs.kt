@@ -24,8 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.aether.android.R
 import io.aether.android.getDeviceTypeDisplayStringId
+import io.aether.android.matter.DEVICES
 import io.aether.android.matter.DeviceTypeId
-import io.aether.android.matter.Devices
 
 @Composable
 internal fun RenameDialog(
@@ -65,16 +65,7 @@ internal fun DeviceTypeDialog(
     onConfirm: (DeviceTypeId) -> Unit,
     onDismiss: () -> Unit,
 ) {
-  val types =
-      listOf(
-          Devices.OnOffLight.ID,
-          Devices.DimmableLight.ID,
-          Devices.ColorTemperatureLight.ID,
-          Devices.ExtendedColorLight.ID,
-          Devices.OnOffLightSwitch.ID,
-          Devices.OnOffPluginUnit.ID,
-          DeviceTypeId(0u),
-      )
+  val types = DEVICES.keys.toList()
   var expanded by remember { mutableStateOf(false) }
   var selectedType by remember(currentType) { mutableStateOf(currentType) }
 

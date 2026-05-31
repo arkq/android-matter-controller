@@ -94,6 +94,7 @@ import io.aether.android.getDeviceTypeIconId
 import io.aether.android.isMultiAdminCommissioning
 import io.aether.android.isOnDisplayString
 import io.aether.android.matter.NodeId
+import io.aether.android.matter.toDeviceTypeId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.thread.getActivity
@@ -406,7 +407,7 @@ private fun DeviceItem(
       if (isOnline && isOn) MaterialTheme.colorScheme.onSurfaceVariant
       else MaterialTheme.colorScheme.onSurface
   val text = isOnDisplayString(isOn)
-  val iconId = getDeviceTypeIconId(deviceTypeId)
+  val iconId = getDeviceTypeIconId(deviceTypeId.toDeviceTypeId())
   val onCheckedChange: (value: Boolean) -> Unit = { onOnOffClick(nodeId, it) }
 
   Surface(
