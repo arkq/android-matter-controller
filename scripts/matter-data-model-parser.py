@@ -459,12 +459,12 @@ with open(args.out_dir / "Devices.kt", "w") as f:
     f.write("object Devices {\n")
     for id, device in sorted(devices.items()):
         f.write(f"  object {_to_camel(device.name)} {{\n")
-        f.write(f"    val ID = DeviceId(0x{id:04X}u)\n")
+        f.write(f"    val ID = DeviceTypeId(0x{id:04X}u)\n")
         f.write("  }\n")
     f.write("}\n")
     f.write("\n")
     f.write("val DEVICES =\n")
-    f.write("    mapOf<DeviceId, String>(\n")
+    f.write("    mapOf<DeviceTypeId, String>(\n")
     for id, device in sorted(devices.items()):
         f.write(f'        Devices.{_to_camel(device.name)}.ID to "{device.name}",\n')
     f.write("    )\n")

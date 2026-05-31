@@ -353,12 +353,6 @@ enum class OpenCommissioningWindowApi {
   AdministratorCommissioningCluster,
 }
 
-// Which method should be used to generate identifiers for devices being commissioned
-enum class DeviceIdGenerator {
-  Random,
-  Incremental,
-}
-
 /**
  * Indicates the status of a node's commissioning window. Useful in the context of "multi-admin"
  * when a temporary commissioning window must be open for a target commissioner. That's because

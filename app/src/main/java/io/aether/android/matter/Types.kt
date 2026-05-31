@@ -13,9 +13,7 @@ internal val hexFormat = HexFormat {
   number.prefix = "0x"
 }
 
-/**
- * A Matter Fabric ID (uint64 per spec).
- */
+/** A Matter Fabric ID (uint64 per spec). */
 @JvmInline
 value class FabricId(val value: ULong) : Comparable<FabricId> {
   override fun toString(): String = value.toHexString(hexFormat)
@@ -25,9 +23,7 @@ value class FabricId(val value: ULong) : Comparable<FabricId> {
   fun toLong(): Long = value.toLong()
 }
 
-/**
- * A Matter Node ID (uint64 per spec).
- */
+/** A Matter Node ID (uint64 per spec). */
 @JvmInline
 value class NodeId(val value: ULong) : Comparable<NodeId> {
   override fun toString(): String = value.toHexString(hexFormat)
@@ -131,24 +127,6 @@ value class DeviceTypeId(val value: UInt) : Comparable<DeviceTypeId> {
   fun toUInt(): UInt = value
 }
 
-/** A Matter Device ID (uint32 per spec). */
-@JvmInline
-value class DeviceId(val value: UInt) : Comparable<DeviceId> {
-  override fun toString(): String =
-      when {
-        value <= 0xFFFFu -> value.toUShort().toHexString(hexFormat)
-        else -> value.toHexString(hexFormat)
-      }
-
-  override fun compareTo(other: DeviceId): Int = value.compareTo(other.value)
-
-  fun toLong(): Long = value.toLong()
-
-  fun toInt(): Int = value.toInt()
-
-  fun toUInt(): UInt = value
-}
-
 /** A Matter Vendor ID (uint16 per spec). */
 @JvmInline
 value class VendorId(val value: UShort) : Comparable<VendorId> {
@@ -193,15 +171,9 @@ fun Long.toEventId(): EventId = EventId(toUInt())
 
 fun Long.toDeviceTypeId(): DeviceTypeId = DeviceTypeId(toUInt())
 
-fun Long.toDeviceId(): DeviceId = DeviceId(toUInt())
-
 fun Int.toVendorId(): VendorId = VendorId(toUShort())
 
 fun Int.toProductId(): ProductId = ProductId(toUShort())
-
-fun DeviceTypeId.toDeviceId(): DeviceId = DeviceId(value)
-
-fun DeviceId.toDeviceTypeId(): DeviceTypeId = DeviceTypeId(value)
 
 /** Data class representing Matter cluster from data model. */
 data class ClusterInfo(

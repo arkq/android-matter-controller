@@ -7,376 +7,376 @@ package io.aether.android.matter
 
 object Devices {
   object DoorLock {
-    val ID = DeviceId(0x000Au)
+    val ID = DeviceTypeId(0x000Au)
   }
 
   object DoorLockController {
-    val ID = DeviceId(0x000Bu)
+    val ID = DeviceTypeId(0x000Bu)
   }
 
   object Aggregator {
-    val ID = DeviceId(0x000Eu)
+    val ID = DeviceTypeId(0x000Eu)
   }
 
   object GenericSwitch {
-    val ID = DeviceId(0x000Fu)
+    val ID = DeviceTypeId(0x000Fu)
   }
 
   object PowerSource {
-    val ID = DeviceId(0x0011u)
+    val ID = DeviceTypeId(0x0011u)
   }
 
   object OTARequestor {
-    val ID = DeviceId(0x0012u)
+    val ID = DeviceTypeId(0x0012u)
   }
 
   object BridgedNode {
-    val ID = DeviceId(0x0013u)
+    val ID = DeviceTypeId(0x0013u)
   }
 
   object OTAProvider {
-    val ID = DeviceId(0x0014u)
+    val ID = DeviceTypeId(0x0014u)
   }
 
   object ContactSensor {
-    val ID = DeviceId(0x0015u)
+    val ID = DeviceTypeId(0x0015u)
   }
 
   object RootNode {
-    val ID = DeviceId(0x0016u)
+    val ID = DeviceTypeId(0x0016u)
   }
 
   object SolarPower {
-    val ID = DeviceId(0x0017u)
+    val ID = DeviceTypeId(0x0017u)
   }
 
   object BatteryStorage {
-    val ID = DeviceId(0x0018u)
+    val ID = DeviceTypeId(0x0018u)
   }
 
   object SecondaryNetworkInterface {
-    val ID = DeviceId(0x0019u)
+    val ID = DeviceTypeId(0x0019u)
   }
 
   object Speaker {
-    val ID = DeviceId(0x0022u)
+    val ID = DeviceTypeId(0x0022u)
   }
 
   object CastingVideoPlayer {
-    val ID = DeviceId(0x0023u)
+    val ID = DeviceTypeId(0x0023u)
   }
 
   object ContentApp {
-    val ID = DeviceId(0x0024u)
+    val ID = DeviceTypeId(0x0024u)
   }
 
   object ModeSelect {
-    val ID = DeviceId(0x0027u)
+    val ID = DeviceTypeId(0x0027u)
   }
 
   object BasicVideoPlayer {
-    val ID = DeviceId(0x0028u)
+    val ID = DeviceTypeId(0x0028u)
   }
 
   object CastingVideoClient {
-    val ID = DeviceId(0x0029u)
+    val ID = DeviceTypeId(0x0029u)
   }
 
   object VideoRemoteControl {
-    val ID = DeviceId(0x002Au)
+    val ID = DeviceTypeId(0x002Au)
   }
 
   object Fan {
-    val ID = DeviceId(0x002Bu)
+    val ID = DeviceTypeId(0x002Bu)
   }
 
   object AirQualitySensor {
-    val ID = DeviceId(0x002Cu)
+    val ID = DeviceTypeId(0x002Cu)
   }
 
   object AirPurifier {
-    val ID = DeviceId(0x002Du)
+    val ID = DeviceTypeId(0x002Du)
   }
 
   object IrrigationSystem {
-    val ID = DeviceId(0x0040u)
+    val ID = DeviceTypeId(0x0040u)
   }
 
   object WaterFreezeDetector {
-    val ID = DeviceId(0x0041u)
+    val ID = DeviceTypeId(0x0041u)
   }
 
   object WaterValve {
-    val ID = DeviceId(0x0042u)
+    val ID = DeviceTypeId(0x0042u)
   }
 
   object WaterLeakDetector {
-    val ID = DeviceId(0x0043u)
+    val ID = DeviceTypeId(0x0043u)
   }
 
   object RainSensor {
-    val ID = DeviceId(0x0044u)
+    val ID = DeviceTypeId(0x0044u)
   }
 
   object SoilSensor {
-    val ID = DeviceId(0x0045u)
+    val ID = DeviceTypeId(0x0045u)
   }
 
   object Refrigerator {
-    val ID = DeviceId(0x0070u)
+    val ID = DeviceTypeId(0x0070u)
   }
 
   object TemperatureControlledCabinet {
-    val ID = DeviceId(0x0071u)
+    val ID = DeviceTypeId(0x0071u)
   }
 
   object RoomAirConditioner {
-    val ID = DeviceId(0x0072u)
+    val ID = DeviceTypeId(0x0072u)
   }
 
   object LaundryWasher {
-    val ID = DeviceId(0x0073u)
+    val ID = DeviceTypeId(0x0073u)
   }
 
   object RoboticVacuumCleaner {
-    val ID = DeviceId(0x0074u)
+    val ID = DeviceTypeId(0x0074u)
   }
 
   object Dishwasher {
-    val ID = DeviceId(0x0075u)
+    val ID = DeviceTypeId(0x0075u)
   }
 
   object SmokeCOAlarm {
-    val ID = DeviceId(0x0076u)
+    val ID = DeviceTypeId(0x0076u)
   }
 
   object CookSurface {
-    val ID = DeviceId(0x0077u)
+    val ID = DeviceTypeId(0x0077u)
   }
 
   object Cooktop {
-    val ID = DeviceId(0x0078u)
+    val ID = DeviceTypeId(0x0078u)
   }
 
   object MicrowaveOven {
-    val ID = DeviceId(0x0079u)
+    val ID = DeviceTypeId(0x0079u)
   }
 
   object ExtractorHood {
-    val ID = DeviceId(0x007Au)
+    val ID = DeviceTypeId(0x007Au)
   }
 
   object Oven {
-    val ID = DeviceId(0x007Bu)
+    val ID = DeviceTypeId(0x007Bu)
   }
 
   object LaundryDryer {
-    val ID = DeviceId(0x007Cu)
+    val ID = DeviceTypeId(0x007Cu)
   }
 
   object NetworkInfrastructureManager {
-    val ID = DeviceId(0x0090u)
+    val ID = DeviceTypeId(0x0090u)
   }
 
   object ThreadBorderRouter {
-    val ID = DeviceId(0x0091u)
+    val ID = DeviceTypeId(0x0091u)
   }
 
   object OnOffLight {
-    val ID = DeviceId(0x0100u)
+    val ID = DeviceTypeId(0x0100u)
   }
 
   object DimmableLight {
-    val ID = DeviceId(0x0101u)
+    val ID = DeviceTypeId(0x0101u)
   }
 
   object OnOffLightSwitch {
-    val ID = DeviceId(0x0103u)
+    val ID = DeviceTypeId(0x0103u)
   }
 
   object DimmerSwitch {
-    val ID = DeviceId(0x0104u)
+    val ID = DeviceTypeId(0x0104u)
   }
 
   object ColorDimmerSwitch {
-    val ID = DeviceId(0x0105u)
+    val ID = DeviceTypeId(0x0105u)
   }
 
   object LightSensor {
-    val ID = DeviceId(0x0106u)
+    val ID = DeviceTypeId(0x0106u)
   }
 
   object OccupancySensor {
-    val ID = DeviceId(0x0107u)
+    val ID = DeviceTypeId(0x0107u)
   }
 
   object OnOffPluginUnit {
-    val ID = DeviceId(0x010Au)
+    val ID = DeviceTypeId(0x010Au)
   }
 
   object DimmablePlugInUnit {
-    val ID = DeviceId(0x010Bu)
+    val ID = DeviceTypeId(0x010Bu)
   }
 
   object ColorTemperatureLight {
-    val ID = DeviceId(0x010Cu)
+    val ID = DeviceTypeId(0x010Cu)
   }
 
   object ExtendedColorLight {
-    val ID = DeviceId(0x010Du)
+    val ID = DeviceTypeId(0x010Du)
   }
 
   object MountedOnOffControl {
-    val ID = DeviceId(0x010Fu)
+    val ID = DeviceTypeId(0x010Fu)
   }
 
   object MountedDimmableLoadControl {
-    val ID = DeviceId(0x0110u)
+    val ID = DeviceTypeId(0x0110u)
   }
 
   object JointFabricAdministrator {
-    val ID = DeviceId(0x0130u)
+    val ID = DeviceTypeId(0x0130u)
   }
 
   object Intercom {
-    val ID = DeviceId(0x0140u)
+    val ID = DeviceTypeId(0x0140u)
   }
 
   object AudioDoorbell {
-    val ID = DeviceId(0x0141u)
+    val ID = DeviceTypeId(0x0141u)
   }
 
   object Camera {
-    val ID = DeviceId(0x0142u)
+    val ID = DeviceTypeId(0x0142u)
   }
 
   object VideoDoorbell {
-    val ID = DeviceId(0x0143u)
+    val ID = DeviceTypeId(0x0143u)
   }
 
   object FloodlightCamera {
-    val ID = DeviceId(0x0144u)
+    val ID = DeviceTypeId(0x0144u)
   }
 
   object SnapshotCamera {
-    val ID = DeviceId(0x0145u)
+    val ID = DeviceTypeId(0x0145u)
   }
 
   object Chime {
-    val ID = DeviceId(0x0146u)
+    val ID = DeviceTypeId(0x0146u)
   }
 
   object CameraController {
-    val ID = DeviceId(0x0147u)
+    val ID = DeviceTypeId(0x0147u)
   }
 
   object Doorbell {
-    val ID = DeviceId(0x0148u)
+    val ID = DeviceTypeId(0x0148u)
   }
 
   object WindowCovering {
-    val ID = DeviceId(0x0202u)
+    val ID = DeviceTypeId(0x0202u)
   }
 
   object WindowCoveringController {
-    val ID = DeviceId(0x0203u)
+    val ID = DeviceTypeId(0x0203u)
   }
 
   object Closure {
-    val ID = DeviceId(0x0230u)
+    val ID = DeviceTypeId(0x0230u)
   }
 
   object ClosurePanel {
-    val ID = DeviceId(0x0231u)
+    val ID = DeviceTypeId(0x0231u)
   }
 
   object ClosureController {
-    val ID = DeviceId(0x023Eu)
+    val ID = DeviceTypeId(0x023Eu)
   }
 
   object HeatingCoolingUnit {
-    val ID = DeviceId(0x0300u)
+    val ID = DeviceTypeId(0x0300u)
   }
 
   object Thermostat {
-    val ID = DeviceId(0x0301u)
+    val ID = DeviceTypeId(0x0301u)
   }
 
   object TemperatureSensor {
-    val ID = DeviceId(0x0302u)
+    val ID = DeviceTypeId(0x0302u)
   }
 
   object Pump {
-    val ID = DeviceId(0x0303u)
+    val ID = DeviceTypeId(0x0303u)
   }
 
   object PumpController {
-    val ID = DeviceId(0x0304u)
+    val ID = DeviceTypeId(0x0304u)
   }
 
   object PressureSensor {
-    val ID = DeviceId(0x0305u)
+    val ID = DeviceTypeId(0x0305u)
   }
 
   object FlowSensor {
-    val ID = DeviceId(0x0306u)
+    val ID = DeviceTypeId(0x0306u)
   }
 
   object HumiditySensor {
-    val ID = DeviceId(0x0307u)
+    val ID = DeviceTypeId(0x0307u)
   }
 
   object HeatPump {
-    val ID = DeviceId(0x0309u)
+    val ID = DeviceTypeId(0x0309u)
   }
 
   object ThermostatController {
-    val ID = DeviceId(0x030Au)
+    val ID = DeviceTypeId(0x030Au)
   }
 
   object EnergyEVSE {
-    val ID = DeviceId(0x050Cu)
+    val ID = DeviceTypeId(0x050Cu)
   }
 
   object DeviceEnergyManagement {
-    val ID = DeviceId(0x050Du)
+    val ID = DeviceTypeId(0x050Du)
   }
 
   object WaterHeater {
-    val ID = DeviceId(0x050Fu)
+    val ID = DeviceTypeId(0x050Fu)
   }
 
   object ElectricalSensor {
-    val ID = DeviceId(0x0510u)
+    val ID = DeviceTypeId(0x0510u)
   }
 
   object ElectricalUtilityMeter {
-    val ID = DeviceId(0x0511u)
+    val ID = DeviceTypeId(0x0511u)
   }
 
   object MeterReferencePoint {
-    val ID = DeviceId(0x0512u)
+    val ID = DeviceTypeId(0x0512u)
   }
 
   object ElectricalEnergyTariff {
-    val ID = DeviceId(0x0513u)
+    val ID = DeviceTypeId(0x0513u)
   }
 
   object ElectricalMeter {
-    val ID = DeviceId(0x0514u)
+    val ID = DeviceTypeId(0x0514u)
   }
 
   object ControlBridge {
-    val ID = DeviceId(0x0840u)
+    val ID = DeviceTypeId(0x0840u)
   }
 
   object OnOffSensor {
-    val ID = DeviceId(0x0850u)
+    val ID = DeviceTypeId(0x0850u)
   }
 }
 
 val DEVICES =
-    mapOf<DeviceId, String>(
+    mapOf<DeviceTypeId, String>(
         Devices.DoorLock.ID to "Door Lock",
         Devices.DoorLockController.ID to "Door Lock Controller",
         Devices.Aggregator.ID to "Aggregator",

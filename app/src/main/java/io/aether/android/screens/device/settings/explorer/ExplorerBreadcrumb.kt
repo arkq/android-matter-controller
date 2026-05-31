@@ -27,7 +27,6 @@ import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.matter.CLUSTERS
 import io.aether.android.matter.DEVICES
-import io.aether.android.matter.toDeviceId
 
 @Composable
 internal fun BreadcrumbBar(
@@ -93,8 +92,7 @@ private fun breadcrumbLabelFor(
                 ?.types
                 .orEmpty()
                 .map { typeId ->
-                  DEVICES[typeId.toDeviceId()]
-                      ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
+                  DEVICES[typeId] ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
                 }
                 .joinToString(" & ")
         formatEndpointLabel(level.endpointId, endpointName)
