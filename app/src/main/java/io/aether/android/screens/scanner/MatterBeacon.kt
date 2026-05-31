@@ -5,7 +5,6 @@ package io.aether.android.screens.scanner
 
 import io.aether.android.matter.ProductId
 import io.aether.android.matter.VendorId
-import io.aether.android.matter.toInt
 import java.util.*
 
 /**

@@ -7,7 +7,19 @@ SPDX-License-Identifier: Apache-2.0
 
 ## General Rules
 
-### 1. Simplicity First
+### 1. Architectural Consistency
+
+- Before writing any code, review the existing codebase to understand the
+  architectural patterns and conventions in use.
+- Consider the existing architecture as a baseline for your changes
+- For cleanup/refactor tasks, check whether current architectural patterns are
+  optimal or if they can be improved. If improvement is possible, choose the
+  best architecture for overall code health rather than strictly adhering to
+  existing patterns and adding more legacy code to the codebase.
+- Prefer more changes over fewer when improving architecture, but do not make
+  speculative changes that are not directly related to the task at hand.
+
+### 2. Simplicity First
 
 - Minimal change that solves the problem. Nothing speculative.
 - No features beyond what was asked.

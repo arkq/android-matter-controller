@@ -11,8 +11,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import com.google.protobuf.Timestamp
-import io.aether.android.Device.DeviceType
+import io.aether.android.matter.DEVICES
 import io.aether.android.matter.DeviceTypeId
+import io.aether.android.matter.Devices
 import java.io.File
 import java.lang.Long.max
 import java.security.SecureRandom
@@ -68,89 +69,27 @@ fun lifeCycleEvent(event: String): String {
 }
 
 // -----------------------------------------------------------------------------
-// Matter Device Type Display String
-
-/** Set the strings for DeviceType. */
-lateinit var DeviceTypeStrings: MutableMap<DeviceType, String>
-
-fun setDeviceTypeStrings(unspecified: String, light: String, outlet: String, unknown: String) {
-  DeviceTypeStrings =
-      mutableMapOf(
-          DeviceType.TYPE_UNSPECIFIED to unspecified,
-          DeviceType.TYPE_LIGHT to light,
-          DeviceType.TYPE_OUTLET to outlet,
-          DeviceType.TYPE_UNKNOWN to unknown,
-      )
-}
-
-/** Converts the Device.DeviceType enum to a string used in the UI. */
-fun DeviceType.displayString(): String {
-  return DeviceTypeStrings[this]!!
-}
-
-// -----------------------------------------------------------------------------
 // Matter Device Type Display Icon
 
-fun getDeviceTypeIconId(deviceType: DeviceType): Int {
-  return when (deviceType) {
-    DeviceType.TYPE_UNSPECIFIED -> R.drawable.ic_baseline_device_unknown_24
-    DeviceType.TYPE_UNKNOWN -> R.drawable.ic_baseline_device_unknown_24
-    DeviceType.TYPE_LIGHT -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
-    DeviceType.TYPE_OUTLET -> R.drawable.ic_baseline_outlet_24
-    DeviceType.TYPE_DIMMABLE_LIGHT -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
-    DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
-    DeviceType.TYPE_EXTENDED_COLOR_LIGHT -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
-    DeviceType.TYPE_LIGHT_SWITCH -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
-    DeviceType.UNRECOGNIZED -> R.drawable.ic_baseline_device_unknown_24
+fun getDeviceTypeIconId(deviceTypeId: Long): Int {
+  return when (deviceTypeId) {
+    Devices.OnOffLight.ID.toLong(),
+    Devices.DimmableLight.ID.toLong(),
+    Devices.ColorTemperatureLight.ID.toLong(),
+    Devices.ExtendedColorLight.ID.toLong(),
+    Devices.OnOffLightSwitch.ID.toLong() -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
+    Devices.OnOffPluginUnit.ID.toLong() -> R.drawable.ic_baseline_outlet_24
+    else -> R.drawable.ic_baseline_device_unknown_24
   }
 }
 
-fun getDeviceTypeDisplayStringId(deviceType: DeviceType): Int {
-  return when (deviceType) {
-    DeviceType.TYPE_UNSPECIFIED -> R.string.device_type_unspecified
-    DeviceType.TYPE_UNKNOWN -> R.string.device_type_unknown
-    DeviceType.TYPE_LIGHT -> R.string.device_type_light
-    DeviceType.TYPE_OUTLET -> R.string.device_type_outlet
-    DeviceType.TYPE_DIMMABLE_LIGHT -> R.string.device_type_dimmable_light
-    DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT -> R.string.device_type_color_temperature_light
-    DeviceType.TYPE_EXTENDED_COLOR_LIGHT -> R.string.device_type_extended_color_light
-    DeviceType.TYPE_LIGHT_SWITCH -> R.string.device_type_light_switch
-    DeviceType.UNRECOGNIZED -> R.string.device_type_unrecognized
-  }
-}
-
-// -----------------------------------------------------------------------------
-// Misc
-
-fun convertToAppDeviceType(matterDeviceType: DeviceTypeId): DeviceType {
-  return when (matterDeviceType.value) {
-    256u -> DeviceType.TYPE_LIGHT // 0x0100 On/Off Light
-    257u -> DeviceType.TYPE_DIMMABLE_LIGHT // 0x0101 Dimmable Light
-    259u -> DeviceType.TYPE_LIGHT_SWITCH // 0x0103 On/Off Light Switch
-    266u -> DeviceType.TYPE_OUTLET // 0x010A (On/Off Plug-in Unit)
-    268u -> DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT // 0x010C Color Temperature Light
-    269u -> DeviceType.TYPE_EXTENDED_COLOR_LIGHT // 0x010D Extended Color Light
-    else -> DeviceType.TYPE_UNKNOWN
-  }
-}
-
-/** Converts the "isOnline" boolean into a proper string for the UI. */
-fun isOnlineDisplayString(isOnline: Boolean): String {
-  return if (isOnline) "Online" else "Offline"
+fun getDeviceTypeDisplayStringId(deviceTypeId: DeviceTypeId): String {
+  return DEVICES[deviceTypeId] ?: "Unknown (${deviceTypeId})"
 }
 
 /** Converts the "isOn" boolean into a proper string for the UI. */
 fun isOnDisplayString(isOn: Boolean): String {
   return if (isOn) "ON" else "OFF"
-}
-
-/** Converts the combo of "isOnline" and "isOn" into a proper string for the UI. */
-fun stateDisplayString(isOnline: Boolean, isOn: Boolean): String {
-  return if (!isOnline) {
-    "OFFLINE"
-  } else {
-    if (isOn) "ON" else "OFF"
-  }
 }
 
 fun stringToBoolean(s: String): Boolean {
@@ -348,12 +287,6 @@ const val DEVICE_SHARING_WITH_GPS = true
 enum class OpenCommissioningWindowApi {
   ChipDeviceController,
   AdministratorCommissioningCluster,
-}
-
-// Which method should be used to generate identifiers for devices being commissioned
-enum class DeviceIdGenerator {
-  Random,
-  Incremental,
 }
 
 /**

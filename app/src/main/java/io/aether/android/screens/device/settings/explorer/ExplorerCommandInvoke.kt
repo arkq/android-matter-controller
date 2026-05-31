@@ -18,13 +18,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import io.aether.android.R
-import io.aether.android.matter.MatterType
 import io.aether.android.screens.common.HighlightedOutlinedTextField
 
 @Composable
 internal fun CommandInvokeContent(
     command: ExplorerCommandUiItem,
-    typeLabelFor: (MatterType) -> String,
     invokeSuccessCount: Int,
     onInvoke: (Map<String, String>) -> Unit,
 ) {
@@ -52,7 +50,7 @@ internal fun CommandInvokeContent(
                   stringResource(
                       R.string.device_explorer_label_with_type,
                       argument.name,
-                      typeLabelFor(argument.type),
+                      argument.type.label,
                   )
               )
             },

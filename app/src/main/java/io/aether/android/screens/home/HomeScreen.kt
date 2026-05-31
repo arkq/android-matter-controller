@@ -63,6 +63,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.pm.PackageInfoCompat
@@ -85,18 +86,17 @@ import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_M
 import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_PRODUCT_ID
 import com.google.android.gms.home.matter.commissioning.SharedDeviceData.EXTRA_VENDOR_ID
 import com.google.android.material.textview.MaterialTextView
-import io.aether.android.Device
 import io.aether.android.MIN_COMMISSIONING_WINDOW_EXPIRATION_SECONDS
 import io.aether.android.R
 import io.aether.android.TaskStatus
 import io.aether.android.commissioning.AppCommissioningService
 import io.aether.android.getDeviceTypeIconId
 import io.aether.android.isMultiAdminCommissioning
-import io.aether.android.nodeIdFor
+import io.aether.android.isOnDisplayString
+import io.aether.android.matter.NodeId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.thread.getActivity
-import io.aether.android.stateDisplayString
 import timber.log.Timber
 
 /**
@@ -118,7 +118,7 @@ import timber.log.Timber
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeRoute(
-    navigateToDevice: (nodeId: Long) -> Unit,
+    navigateToDevice: (nodeId: NodeId) -> Unit,
     onMenuClick: () -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -156,10 +156,10 @@ internal fun HomeRoute(
 
   // Functions invoked when UI controls are clicked on a specific device in the list.
   val onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit = remember {
-    { navigateToDevice(nodeIdFor(it.device)) }
+    { navigateToDevice(it.nodeId) }
   }
-  val onOnOffClick: (deviceId: Long, value: Boolean) -> Unit = remember {
-    { deviceId, value -> homeViewModel.updateDeviceStateOn(deviceId, value) }
+  val onOnOffClick: (nodeId: NodeId, value: Boolean) -> Unit = remember {
+    { nodeId, value -> homeViewModel.updateDeviceStateOn(nodeId, value) }
   }
 
   // The device commissioning flow involves multiple steps as it is based on an Activity
@@ -282,7 +282,7 @@ private fun HomeScreen(
     onCommissionedDeviceNameCaptured: (name: String) -> Unit,
     onCommissionDevice: () -> Unit,
     onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit,
-    onOnOffClick: (deviceId: Long, value: Boolean) -> Unit,
+    onOnOffClick: (nodeId: NodeId, value: Boolean) -> Unit,
 ) {
 
   val context = LocalContext.current
@@ -340,9 +340,9 @@ private fun HomeScreen(
           this.items(devicesList) { device ->
             val onDeviceItemClick: () -> Unit = { onDeviceClick(device) }
             DeviceItem(
-                device.device.deviceId,
-                device.device.deviceType,
-                device.device.name,
+                device.nodeId,
+                device.deviceTypeId,
+                device.name,
                 device.isOnline,
                 device.isOn,
                 onOnOffClick,
@@ -391,12 +391,12 @@ fun openPlayServicesInStore(context: Context) {
 
 @Composable
 private fun DeviceItem(
-    deviceId: Long,
-    deviceType: Device.DeviceType,
+    nodeId: NodeId,
+    deviceTypeId: Long,
     name: String,
     isOnline: Boolean,
     isOn: Boolean,
-    onOnOffClick: (deviceId: Long, value: Boolean) -> Unit,
+    onOnOffClick: (nodeId: NodeId, value: Boolean) -> Unit,
     onDeviceClick: (() -> Unit),
 ) {
   val bgColor =
@@ -405,33 +405,46 @@ private fun DeviceItem(
   val contentColor =
       if (isOnline && isOn) MaterialTheme.colorScheme.onSurfaceVariant
       else MaterialTheme.colorScheme.onSurface
-  val text = stateDisplayString(isOnline, isOn)
-  val iconId = getDeviceTypeIconId(deviceType)
-  val onCheckedChange: (value: Boolean) -> Unit = { onOnOffClick(deviceId, it) }
+  val text = isOnDisplayString(isOn)
+  val iconId = getDeviceTypeIconId(deviceTypeId)
+  val onCheckedChange: (value: Boolean) -> Unit = { onOnOffClick(nodeId, it) }
 
   Surface(
-      modifier = Modifier.padding(top = 12.dp).padding(PaddingValues(horizontal = 12.dp)),
+      modifier =
+          Modifier.padding(top = dimensionResource(R.dimen.margin_small))
+              .padding(PaddingValues(horizontal = dimensionResource(R.dimen.margin_small))),
       border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
       contentColor = contentColor,
       color = bgColor,
       shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
       onClick = onDeviceClick,
   ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content)),
-    ) {
-      Icon(
-          painter = painterResource(id = iconId),
-          contentDescription = null, // decorative element
-      )
-      Column {
-        Text(text = name, style = MaterialTheme.typography.bodyLarge)
-        Text(text = text, style = MaterialTheme.typography.bodyLarge)
+    Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content))) {
+      Row(
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_small)),
+      ) {
+        Icon(
+            painter = painterResource(id = iconId),
+            contentDescription = null, // decorative element
+        )
+        Column {
+          Text(text = name, style = MaterialTheme.typography.bodyLarge)
+          Text(text = text, style = MaterialTheme.typography.bodyLarge)
+        }
+        Spacer(Modifier.weight(1f))
+        Switch(enabled = isOnline, checked = isOn, onCheckedChange = onCheckedChange)
       }
-      Spacer(Modifier.weight(1f))
-      Switch(enabled = isOnline, checked = isOn, onCheckedChange = onCheckedChange)
+      if (!isOnline) {
+        Text(
+            text = stringResource(R.string.device_offline_label),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.error,
+            textAlign = TextAlign.Center,
+            modifier =
+                Modifier.fillMaxWidth().padding(top = dimensionResource(R.dimen.margin_small)),
+        )
+      }
     }
   }
 }

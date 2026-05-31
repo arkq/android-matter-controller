@@ -6,11 +6,10 @@ package io.aether.android.screens.shared
 import io.aether.android.AppErrorNotifier
 import io.aether.android.R
 import io.aether.android.chip.ClustersHelper
+import io.aether.android.chip.isCommunicationTimeoutError
 import io.aether.android.data.DevicesRepository
+import io.aether.android.data.DevicesStateRepository
 import io.aether.android.matter.NodeId
-import io.aether.android.matter.toLong
-import io.aether.android.matter.toNodeId
-import io.aether.android.nodeIdFor
 import io.aether.android.screens.common.DialogInfo
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -47,6 +46,7 @@ class SetDeviceNameUseCase
 @Inject
 constructor(
     private val devicesRepository: DevicesRepository,
+    private val devicesStateRepository: DevicesStateRepository,
     private val clustersHelper: ClustersHelper,
     private val appErrorNotifier: AppErrorNotifier,
 ) {
@@ -62,7 +62,7 @@ constructor(
    * on-device write, so callers can update UI state immediately without waiting for the slower
    * network operation. Any exception thrown by [onLocalPersisted] propagates to the caller.
    *
-   * @param deviceId the device to update
+   * @param nodeId the device node to update
    * @param name the new name
    * @param onLocalPersisted optional callback invoked after local persistence succeeds
    * @return [SetDeviceNameResult.Success] when the local DataStore update succeeds (the NodeLabel
@@ -70,15 +70,13 @@ constructor(
    *   update fails. NodeLabel write failures are delivered asynchronously via [AppErrorNotifier].
    */
   suspend fun execute(
-      deviceId: Long,
+      nodeId: NodeId,
       name: String,
       onLocalPersisted: suspend () -> Unit = {},
   ): SetDeviceNameResult {
-    Timber.d("SetDeviceNameUseCase: deviceId [$deviceId] nameLength [${name.length}]")
-    val nodeId: NodeId
+    Timber.d("SetDeviceNameUseCase: nodeId [$nodeId] nameLength [${name.length}]")
     try {
-      val device = devicesRepository.getDevice(deviceId)
-      nodeId = nodeIdFor(device).toNodeId()
+      val device = devicesRepository.getDevice(nodeId)
       devicesRepository.updateDevice(device.toBuilder().setName(name).build())
     } catch (e: CancellationException) {
       throw e
@@ -90,9 +88,13 @@ constructor(
     scope.launch {
       try {
         clustersHelper.writeBasicClusterNodeLabelAttribute(nodeId.toLong(), name)
+        devicesStateRepository.updateNodeOnlineState(nodeId, isOnline = true)
       } catch (e: CancellationException) {
         throw e
       } catch (e: Exception) {
+        if (e.isCommunicationTimeoutError()) {
+          devicesStateRepository.updateNodeOnlineState(nodeId, isOnline = false)
+        }
         Timber.e(e, "SetDeviceNameUseCase: failed to write NodeLabel")
         appErrorNotifier.notify(
             DialogInfo(

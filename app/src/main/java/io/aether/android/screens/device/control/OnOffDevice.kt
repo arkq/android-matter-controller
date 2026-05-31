@@ -12,8 +12,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.dimensionResource
-import io.aether.android.DeviceState
 import io.aether.android.R
+import io.aether.android.data.DevicesStateRepository
+import io.aether.android.endpointIdTyped
 import io.aether.android.screens.device.cluster.OnOffClusterControl
 import io.aether.android.screens.home.DeviceUiModel
 
@@ -29,7 +30,7 @@ import io.aether.android.screens.home.DeviceUiModel
 @Composable
 internal fun OnOffDeviceControl(
     endpointModel: DeviceUiModel,
-    lastUpdatedDeviceState: DeviceState?,
+    lastUpdatedDeviceState: DevicesStateRepository.EndpointStateSnapshot?,
     onOnOffClick: (Boolean) -> Unit,
 ) {
   var isOnline by remember(endpointModel) { mutableStateOf(endpointModel.isOnline) }
@@ -37,7 +38,8 @@ internal fun OnOffDeviceControl(
 
   LaunchedEffect(endpointModel, lastUpdatedDeviceState) {
     when {
-      lastUpdatedDeviceState?.deviceId == endpointModel.device.deviceId -> {
+      lastUpdatedDeviceState?.nodeId == endpointModel.nodeId &&
+          lastUpdatedDeviceState.endpointId == endpointModel.endpoint.endpointIdTyped() -> {
         isOnline = lastUpdatedDeviceState.online
         isOn = lastUpdatedDeviceState.on
       }

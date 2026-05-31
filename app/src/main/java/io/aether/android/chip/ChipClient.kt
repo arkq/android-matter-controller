@@ -18,7 +18,6 @@ import chip.platform.PreferencesConfigurationManager
 import chip.platform.PreferencesKeyValueStoreManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.aether.android.matter.NodeId
-import io.aether.android.matter.toLong
 import io.aether.android.matter.toNodeId
 import io.aether.android.stripLinkLocalInIpAddress
 import java.util.concurrent.atomic.AtomicBoolean
@@ -68,8 +67,8 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
               continuation.resume(devicePointer)
             }
 
-            override fun onConnectionFailure(nodeId: Long, error: Exception) {
-              val errorMessage = "Unable to get connected device with nodeId ${nodeId.toNodeId()}."
+            override fun onConnectionFailure(id: Long, error: Exception) {
+              val errorMessage = "Unable to get connected device with nodeId ${id.toNodeId()}."
               Timber.e(errorMessage, error)
               continuation.resumeWithException(IllegalStateException(errorMessage))
             }
@@ -78,8 +77,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
     }
   }
 
-  suspend fun getConnectedDevicePointer(nodeId: Long): Long =
-      getConnectedDevicePointer(nodeId.toNodeId())
+  suspend fun getConnectedDevicePointer(id: Long): Long = getConnectedDevicePointer(id.toNodeId())
 
   /**
    * Removes the app's fabric from the device.
@@ -91,16 +89,16 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
       Timber.d("Calling chipDeviceController.unpair")
       val callback: UnpairDeviceCallback =
           object : UnpairDeviceCallback {
-            override fun onError(status: Int, nodeId: Long) {
+            override fun onError(status: Int, id: Long) {
               continuation.resumeWithException(
                   java.lang.IllegalStateException(
-                      "Failed unpairing device [$nodeId] with status [$status]"
+                      "Failed unpairing device [$id] with status [$status]"
                   )
               )
             }
 
-            override fun onSuccess(nodeId: Long) {
-              Timber.d("awaitUnpairDevice.onSuccess: deviceId [$nodeId]")
+            override fun onSuccess(id: Long) {
+              Timber.d("awaitUnpairDevice.onSuccess: deviceId [$id]")
               continuation.resume(Unit)
             }
           }
@@ -108,8 +106,8 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
     }
   }
 
-  suspend fun awaitUnpairDevice(nodeId: Long) {
-    awaitUnpairDevice(nodeId.toNodeId())
+  suspend fun awaitUnpairDevice(id: Long) {
+    awaitUnpairDevice(id.toNodeId())
   }
 
   fun computePaseVerifier(
@@ -166,8 +164,8 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
               continuation.resume(Unit)
             }
 
-            override fun onCommissioningStatusUpdate(nodeId: Long, stage: String?, errorCode: Int) {
-              super.onCommissioningStatusUpdate(nodeId, stage, errorCode)
+            override fun onCommissioningStatusUpdate(id: Long, stage: String?, errorCode: Int) {
+              super.onCommissioningStatusUpdate(id, stage, errorCode)
               continuation.resume(Unit)
             }
           }
@@ -190,8 +188,8 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
           object : BaseCompletionListener() {
             // Note that an error in processing is not necessarily communicated via onError().
             // onCommissioningComplete with an "errorCode != 0" also denotes an error in processing.
-            override fun onCommissioningComplete(nodeId: Long, errorCode: Int) {
-              super.onCommissioningComplete(nodeId, errorCode)
+            override fun onCommissioningComplete(id: Long, errorCode: Int) {
+              super.onCommissioningComplete(id, errorCode)
               if (errorCode != 0) {
                 continuation.resumeWithException(
                     IllegalStateException("Commissioning failed with error code [${errorCode}]")
@@ -264,8 +262,8 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
               continuation.resume(devicePointer)
             }
 
-            override fun onConnectionFailure(nodeId: Long, error: Exception) {
-              val errorMessage = "Unable to get connected device with nodeId ${nodeId.toNodeId()}"
+            override fun onConnectionFailure(id: Long, error: Exception) {
+              val errorMessage = "Unable to get connected device with nodeId ${id.toNodeId()}"
               Timber.e(errorMessage, error)
               continuation.resumeWithException(IllegalStateException(errorMessage))
             }
@@ -274,8 +272,8 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
     }
   }
 
-  suspend fun awaitGetConnectedDevicePointer(nodeId: Long): Long =
-      awaitGetConnectedDevicePointer(nodeId.toNodeId())
+  suspend fun awaitGetConnectedDevicePointer(id: Long): Long =
+      awaitGetConnectedDevicePointer(id.toNodeId())
 
   // ---------------------------------------------------------------------------
   // We use our own mDNS discovery code, but interesting to note that

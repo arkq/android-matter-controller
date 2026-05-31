@@ -30,11 +30,11 @@ SPDX-License-Identifier: Apache-2.0
     </string>
 
     <!-- Attribute Access Privileges -->
+    <string name="attr_access_privilege_none">None</string>
     <string name="attr_access_privilege_view">View</string>
     <string name="attr_access_privilege_operate">Operate</string>
     <string name="attr_access_privilege_manage">Manage</string>
     <string name="attr_access_privilege_administer">Administer</string>
-    <string name="attr_access_privilege_unknown">Unknown</string>
 
     <!-- Device Types -->
     <string name="device_type_unspecified">unspecified</string>
@@ -58,6 +58,7 @@ SPDX-License-Identifier: Apache-2.0
     <string name="rename_device_label">Device name</string>
     <string name="set_device_name_failed">Failed to set device name</string>
     <string name="loading_device_info">Loading device information…</string>
+    <string name="device_offline_label">device offline</string>
     <string name="add_device_to_repository_failed">Adding device to app\'s repository failed</string>
     <string name="write_node_label_failed">Failed to write NodeLabel</string>
     <string name="opening_pairing_window_title">Opening pairing window</string>

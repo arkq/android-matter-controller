@@ -44,7 +44,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import io.aether.android.R
-import io.aether.android.matter.toNodeId
+import io.aether.android.matter.NodeId
 import io.aether.android.matter.vendorLabel
 import io.aether.android.screens.common.LoadingIndicator
 
@@ -53,10 +53,10 @@ import io.aether.android.screens.common.LoadingIndicator
 @Composable
 fun FabricsRoute(
     onBackClick: () -> Unit,
-    nodeId: Long,
+    nodeId: NodeId,
     viewModel: FabricsViewModel = hiltViewModel(),
 ) {
-  val typedNodeId = nodeId.toNodeId()
+  val typedNodeId = nodeId
   LaunchedEffect(nodeId) { viewModel.loadFabrics(typedNodeId) }
 
   val uiState by viewModel.uiState.collectAsState()
