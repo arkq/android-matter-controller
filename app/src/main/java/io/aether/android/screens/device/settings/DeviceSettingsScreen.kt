@@ -15,7 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
@@ -38,16 +37,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import com.google.protobuf.Timestamp
 import io.aether.android.Device
 import io.aether.android.R
-import io.aether.android.chip.vendorLabel
-import io.aether.android.formatNodeId
-import io.aether.android.formatProductId
+import io.aether.android.chip.BasicInformationAttributes
 import io.aether.android.formatTimestamp
 import io.aether.android.getDeviceTypeDisplayStringId
-import io.aether.android.nodeIdFor
+import io.aether.android.matter.DeviceTypeId
+import io.aether.android.matter.NodeId
+import io.aether.android.matter.toVendorId
+import io.aether.android.matter.vendorLabel
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
@@ -63,22 +65,21 @@ import timber.log.Timber
 @Composable
 fun DeviceSettingsRoute(
     navigateToHome: () -> Unit,
-    navigateToDeviceDataModel: (nodeId: Long) -> Unit,
-    navigateToDeviceExplorer: (nodeId: Long) -> Unit,
-    navigateToDeviceFabrics: (nodeId: Long) -> Unit,
+    navigateToDeviceExplorer: (nodeId: NodeId) -> Unit,
+    navigateToDeviceFabrics: (nodeId: NodeId) -> Unit,
     onBackClick: () -> Unit,
-    nodeId: Long,
+    nodeId: NodeId,
     viewModel: DeviceSettingsViewModel = hiltViewModel(),
 ) {
   Timber.d("DeviceSettingsRoute: nodeId [$nodeId]")
+  val typedNodeId = nodeId
 
   val activity = LocalContext.current.getActivity()
 
   val device by viewModel.device.collectAsState()
-  val hardwareVersion by viewModel.hardwareVersion.collectAsState()
-  val softwareVersion by viewModel.softwareVersion.collectAsState()
-  val vendorName by viewModel.vendorName.collectAsState()
-  val vendorId by viewModel.vendorId.collectAsState()
+  val basicInformation by viewModel.basicInformation.collectAsState()
+  val isOnline by viewModel.isOnline.collectAsState()
+  val dateCommissioned by viewModel.dateCommissioned.collectAsState()
   val msgDialogInfo by viewModel.msgDialogInfo.collectAsState()
   val showRemoveDeviceAlertDialog by viewModel.showRemoveDeviceAlertDialog.collectAsState()
   val showConfirmDeviceRemovalAlertDialog by
@@ -125,7 +126,7 @@ fun DeviceSettingsRoute(
   }
 
   LifecycleResumeEffect(Unit) {
-    viewModel.loadDevice(nodeId)
+    viewModel.loadDevice(typedNodeId)
     onPauseOrDispose {}
   }
 
@@ -147,33 +148,31 @@ fun DeviceSettingsRoute(
     DeviceSettingsScreen(
         innerPadding = innerPadding,
         device = device,
-        vendorName = vendorName,
-        vendorId = vendorId,
-        hardwareVersion = hardwareVersion,
-        softwareVersion = softwareVersion,
+        basicInformation = basicInformation,
+        isOnline = isOnline,
+        dateCommissioned = dateCommissioned,
         msgDialogInfo = msgDialogInfo,
         showRemoveDeviceAlertDialog = showRemoveDeviceAlertDialog,
         showConfirmDeviceRemovalAlertDialog = showConfirmDeviceRemovalAlertDialog,
         onDismissMsgDialog = { viewModel.dismissMsgDialog() },
-        onRenameDevice = { newName -> viewModel.renameDevice(nodeId, newName) },
-        onChangeDeviceType = { type -> viewModel.changeDeviceType(nodeId, type) },
-        onShareDevice = { viewModel.openPairingWindow(nodeId) },
+        onRenameDevice = { newName -> viewModel.renameDevice(typedNodeId, newName) },
+        onChangeDeviceType = { type -> viewModel.changeDeviceType(typedNodeId, type) },
+        onShareDevice = { viewModel.openPairingWindow(typedNodeId) },
         onRemoveDeviceClick = { viewModel.showRemoveDeviceAlertDialog() },
         onRemoveDeviceOutcome = { doIt ->
           viewModel.dismissRemoveDeviceDialog()
           if (doIt) {
-            viewModel.removeDevice(nodeId)
+            viewModel.removeDevice(typedNodeId)
           }
         },
         onConfirmDeviceRemovalOutcome = { doIt ->
           viewModel.dismissConfirmDeviceRemovalDialog()
           if (doIt) {
-            viewModel.removeDeviceWithoutUnlink(nodeId)
+            viewModel.removeDeviceWithoutUnlink(typedNodeId)
           }
         },
-        onInspect = { device?.let { navigateToDeviceDataModel(nodeIdFor(it)) } },
-        onExplorer = { navigateToDeviceExplorer(nodeId) },
-        onManageControllers = { navigateToDeviceFabrics(nodeId) },
+        onExplorer = { navigateToDeviceExplorer(typedNodeId) },
+        onManageControllers = { navigateToDeviceFabrics(typedNodeId) },
     )
   }
 }
@@ -182,21 +181,19 @@ fun DeviceSettingsRoute(
 private fun DeviceSettingsScreen(
     innerPadding: PaddingValues,
     device: Device?,
-    vendorName: String?,
-    vendorId: Int?,
-    hardwareVersion: String?,
-    softwareVersion: String?,
+    basicInformation: BasicInformationAttributes?,
+    isOnline: Boolean,
+    dateCommissioned: Timestamp?,
     msgDialogInfo: DialogInfo?,
     showRemoveDeviceAlertDialog: Boolean,
     showConfirmDeviceRemovalAlertDialog: Boolean,
     onDismissMsgDialog: () -> Unit,
     onRenameDevice: (String) -> Unit,
-    onChangeDeviceType: (Device.DeviceType) -> Unit,
+    onChangeDeviceType: (DeviceTypeId) -> Unit,
     onShareDevice: () -> Unit,
     onRemoveDeviceClick: () -> Unit,
     onRemoveDeviceOutcome: (Boolean) -> Unit,
     onConfirmDeviceRemovalOutcome: (Boolean) -> Unit,
-    onInspect: () -> Unit,
     onExplorer: () -> Unit,
     onManageControllers: () -> Unit,
 ) {
@@ -237,7 +234,7 @@ private fun DeviceSettingsScreen(
 
   if (showTypeDialog && device != null) {
     DeviceTypeDialog(
-        currentType = device.deviceType,
+        currentType = device.deviceTypeId,
         onConfirm = { type ->
           onChangeDeviceType(type)
           showTypeDialog = false
@@ -259,56 +256,76 @@ private fun DeviceSettingsScreen(
               .padding(dimensionResource(R.dimen.margin_normal)),
       verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {
+    if (!isOnline) {
+      Text(
+          text = stringResource(R.string.device_offline_label),
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.error,
+          textAlign = TextAlign.Center,
+          modifier = Modifier.fillMaxWidth(),
+      )
+    }
+
     // Basic section
     SettingsSection(title = stringResource(R.string.device_settings_section_basic)) {
-      val displayedVendorName =
-          vendorName?.takeIf { it.isNotBlank() } ?: device.vendorName.takeIf { it.isNotBlank() }
-      val displayedVendorId = vendorId ?: device.vendorId.toInt()
+      val unknown = stringResource(R.string.device_type_unknown)
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_vendor),
-          value = vendorLabel(displayedVendorId, displayedVendorName),
+          value =
+              vendorLabel(
+                  basicInformation?.vendorId ?: (device.vendorId.toIntOrNull() ?: 0).toVendorId(),
+                  basicInformation?.vendorName?.takeIf { it.isNotBlank() }
+                      ?: device.vendorName.takeIf { it.isNotBlank() },
+              ),
       )
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_product),
           value =
               stringResource(
                   R.string.device_settings_basic_product_value,
-                  device.productName,
-                  formatProductId(device.productId.toInt()),
+                  basicInformation?.productName?.takeIf { it.isNotBlank() }
+                      ?: device.productName.takeIf { it.isNotBlank() }
+                      ?: unknown,
+                  basicInformation?.productId?.takeIf { it.toInt() != 0 }?.toString()
+                      ?: device.productId.toIntOrNull()?.takeIf { it != 0 }?.toString()
+                      ?: unknown,
               ),
       )
-      if (!hardwareVersion.isNullOrBlank()) {
-        SettingsInfoRow(
-            label = stringResource(R.string.device_settings_basic_hardware_version),
-            value = hardwareVersion,
-        )
-      }
-      if (!softwareVersion.isNullOrBlank()) {
-        SettingsInfoRow(
-            label = stringResource(R.string.device_settings_basic_software_version),
-            value = softwareVersion,
-        )
-      }
+      SettingsInfoRow(
+          label = stringResource(R.string.device_settings_basic_hardware_version),
+          value = basicInformation?.hardwareVersion?.takeIf { it.isNotBlank() } ?: unknown,
+      )
+      SettingsInfoRow(
+          label = stringResource(R.string.device_settings_basic_software_version),
+          value = basicInformation?.softwareVersion?.takeIf { it.isNotBlank() } ?: unknown,
+      )
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_added_on),
-          value = formatTimestamp(context, device.dateCommissioned),
+          value =
+              dateCommissioned
+                  ?.takeUnless { it.seconds == 0L && it.nanos == 0 }
+                  ?.let { formatTimestamp(context, it) } ?: unknown,
       )
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_node_id),
-          value = formatNodeId(nodeIdFor(device)),
+          value = device.nodeId.toString(),
       )
     }
 
     // General section
     SettingsSection(title = stringResource(R.string.device_settings_section_general)) {
+      val unknown = stringResource(R.string.device_type_unknown)
       SettingsClickableRow(
           label = stringResource(R.string.device_settings_general_name),
-          value = device.name,
+          value =
+              device.name.takeIf { it.isNotBlank() }
+                  ?: basicInformation?.nodeLabel?.takeIf { it.isNotBlank() }
+                  ?: unknown,
           onClick = { showRenameDialog = true },
       )
       SettingsClickableRow(
           label = stringResource(R.string.device_settings_general_type),
-          value = stringResource(getDeviceTypeDisplayStringId(device.deviceType)),
+          value = getDeviceTypeDisplayStringId(device.deviceTypeId),
           onClick = { showTypeDialog = true },
       )
     }
@@ -320,12 +337,6 @@ private fun DeviceSettingsScreen(
           label = stringResource(R.string.device_settings_admin_fabrics),
           subtitle = stringResource(R.string.device_settings_admin_fabrics_subtitle),
           onClick = onManageControllers,
-      )
-      SettingsActionRow(
-          icon = Icons.Outlined.Info,
-          label = stringResource(R.string.device_settings_admin_inspect),
-          subtitle = stringResource(R.string.device_settings_admin_inspect_subtitle),
-          onClick = onInspect,
       )
       SettingsActionRow(
           icon = Icons.Outlined.Search,

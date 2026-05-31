@@ -16,6 +16,8 @@ import android.content.Context.BLUETOOTH_SERVICE
 import android.os.ParcelUuid
 import android.os.SystemClock
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.aether.android.matter.ProductId
+import io.aether.android.matter.VendorId
 import io.aether.android.screens.scanner.MatterBeacon
 import io.aether.android.screens.scanner.MatterBeaconInject
 import io.aether.android.screens.scanner.MatterBeaconProducer
@@ -111,8 +113,9 @@ constructor(
 
     return MatterBeacon(
         name = device.address,
-        vendorId = ((data[10].toInt() or (data[11].toInt() shl 8)) and 0xFFFF),
-        productId = ((data[12].toInt() or (data[13].toInt() shl 8)) and 0xFFFF),
+        vendorId = VendorId(((data[10].toInt() or (data[11].toInt() shl 8)) and 0xFFFF).toUShort()),
+        productId =
+            ProductId(((data[12].toInt() or (data[13].toInt() shl 8)) and 0xFFFF).toUShort()),
         discriminator = ((data[8].toInt() or (data[9].toInt() shl 8)) and 0xFFF),
         Transport.Ble(device.address),
     )

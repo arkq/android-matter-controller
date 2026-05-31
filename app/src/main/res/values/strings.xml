@@ -30,11 +30,11 @@ SPDX-License-Identifier: Apache-2.0
     </string>
 
     <!-- Attribute Access Privileges -->
+    <string name="attr_access_privilege_none">None</string>
     <string name="attr_access_privilege_view">View</string>
     <string name="attr_access_privilege_operate">Operate</string>
     <string name="attr_access_privilege_manage">Manage</string>
     <string name="attr_access_privilege_administer">Administer</string>
-    <string name="attr_access_privilege_unknown">Unknown</string>
 
     <!-- Device Types -->
     <string name="device_type_unspecified">unspecified</string>
@@ -58,6 +58,7 @@ SPDX-License-Identifier: Apache-2.0
     <string name="rename_device_label">Device name</string>
     <string name="set_device_name_failed">Failed to set device name</string>
     <string name="loading_device_info">Loading device information…</string>
+    <string name="device_offline_label">device offline</string>
     <string name="add_device_to_repository_failed">Adding device to app\'s repository failed</string>
     <string name="write_node_label_failed">Failed to write NodeLabel</string>
     <string name="opening_pairing_window_title">Opening pairing window</string>
@@ -92,9 +93,7 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_settings_general_type">Type</string>
     <string name="device_settings_admin_fabrics">Fabrics</string>
     <string name="device_settings_admin_fabrics_subtitle">Control who can manage this device</string>
-    <string name="device_settings_admin_inspect">Data model</string>
-    <string name="device_settings_admin_inspect_subtitle">Endpoint hierarchy and supported clusters</string>
-    <string name="device_settings_admin_explorer">Explorer</string>
+    <string name="device_settings_admin_explorer">Data model explorer</string>
     <string name="device_settings_admin_explorer_subtitle">Read, write, and invoke on cluster data</string>
     <string name="device_settings_admin_share">Share</string>
     <string name="device_settings_admin_share_subtitle">Share this device with other controllers</string>
@@ -118,18 +117,6 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_fabric_remove_dialog_title">Remove fabric?</string>
     <string name="device_fabric_remove_dialog_body">This will remove the selected fabric from the device. The fabric will no longer be able to manage this device.</string>
     <string name="device_fabric_remove_dialog_yes">Yes, remove it</string>
-
-    <!-- Device Data Model Screen -->
-    <string name="device_data_model_loading">Loading data model…</string>
-    <string name="device_data_model_empty">Oops… We could not retrieve device data model information.</string>
-    <string name="device_data_model_endpoint_title">Endpoint %1$d</string>
-    <string name="device_data_model_endpoint_expand">Expand endpoint</string>
-    <string name="device_data_model_endpoint_collapse">Collapse endpoint</string>
-    <string name="device_data_model_device_types">Device Types</string>
-    <string name="device_data_model_server_clusters">Server Clusters</string>
-    <string name="device_data_model_client_clusters">Client Clusters</string>
-    <string name="device_data_model_none">None</string>
-    <string name="device_data_model_unknown">Unknown</string>
 
     <!-- Device Explorer Screen -->
     <string name="device_explorer_loading_endpoints">Loading endpoints…</string>

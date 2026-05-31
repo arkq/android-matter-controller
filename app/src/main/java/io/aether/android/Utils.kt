@@ -5,18 +5,17 @@ package io.aether.android
 
 import android.content.Context
 import android.content.Intent
-import android.content.IntentSender
 import android.os.Looper
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import com.google.protobuf.Timestamp
-import io.aether.android.Device.DeviceType
+import io.aether.android.matter.DEVICES
+import io.aether.android.matter.DeviceTypeId
+import io.aether.android.matter.Devices
 import java.io.File
 import java.lang.Long.max
 import java.security.SecureRandom
 import java.time.Instant
-import java.util.Locale
 import kotlin.math.abs
 import timber.log.Timber
 
@@ -53,90 +52,23 @@ sealed class TaskStatus {
   class Completed(val statusMessage: String) : TaskStatus()
 }
 
-/** Enumeration of actions to take a background work alert dialog. */
-sealed class BackgroundWorkAlertDialogAction {
-  /** Background work has started, show the dialog. */
-  class Show(val title: String, val message: String) : BackgroundWorkAlertDialogAction()
-
-  /** Background work has completed, hide the dialog. */
-  object Hide : BackgroundWorkAlertDialogAction()
-}
-
-/** Useful when investigating lifecycle events in logcat. */
-fun lifeCycleEvent(event: String): String {
-  return "[*** LifeCycle ***] $event"
-}
-
-// -----------------------------------------------------------------------------
-// Matter Device Type Display String
-
-/** Set the strings for DeviceType. */
-lateinit var DeviceTypeStrings: MutableMap<DeviceType, String>
-
-fun setDeviceTypeStrings(unspecified: String, light: String, outlet: String, unknown: String) {
-  DeviceTypeStrings =
-      mutableMapOf(
-          DeviceType.TYPE_UNSPECIFIED to unspecified,
-          DeviceType.TYPE_LIGHT to light,
-          DeviceType.TYPE_OUTLET to outlet,
-          DeviceType.TYPE_UNKNOWN to unknown,
-      )
-}
-
-/** Converts the Device.DeviceType enum to a string used in the UI. */
-fun DeviceType.displayString(): String {
-  return DeviceTypeStrings[this]!!
-}
-
 // -----------------------------------------------------------------------------
 // Matter Device Type Display Icon
 
-fun getDeviceTypeIconId(deviceType: DeviceType): Int {
-  return when (deviceType) {
-    DeviceType.TYPE_UNSPECIFIED -> R.drawable.ic_baseline_device_unknown_24
-    DeviceType.TYPE_UNKNOWN -> R.drawable.ic_baseline_device_unknown_24
-    DeviceType.TYPE_LIGHT -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
-    DeviceType.TYPE_OUTLET -> R.drawable.ic_baseline_outlet_24
-    DeviceType.TYPE_DIMMABLE_LIGHT -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
-    DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
-    DeviceType.TYPE_EXTENDED_COLOR_LIGHT -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
-    DeviceType.TYPE_LIGHT_SWITCH -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
-    DeviceType.UNRECOGNIZED -> R.drawable.ic_baseline_device_unknown_24
+fun getDeviceTypeIconId(deviceTypeId: DeviceTypeId): Int {
+  return when (deviceTypeId) {
+    Devices.OnOffLight.ID,
+    Devices.DimmableLight.ID,
+    Devices.ColorTemperatureLight.ID,
+    Devices.ExtendedColorLight.ID,
+    Devices.OnOffLightSwitch.ID -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
+    Devices.OnOffPluginUnit.ID -> R.drawable.ic_baseline_outlet_24
+    else -> R.drawable.ic_baseline_device_unknown_24
   }
 }
 
-fun getDeviceTypeDisplayStringId(deviceType: DeviceType): Int {
-  return when (deviceType) {
-    DeviceType.TYPE_UNSPECIFIED -> R.string.device_type_unspecified
-    DeviceType.TYPE_UNKNOWN -> R.string.device_type_unknown
-    DeviceType.TYPE_LIGHT -> R.string.device_type_light
-    DeviceType.TYPE_OUTLET -> R.string.device_type_outlet
-    DeviceType.TYPE_DIMMABLE_LIGHT -> R.string.device_type_dimmable_light
-    DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT -> R.string.device_type_color_temperature_light
-    DeviceType.TYPE_EXTENDED_COLOR_LIGHT -> R.string.device_type_extended_color_light
-    DeviceType.TYPE_LIGHT_SWITCH -> R.string.device_type_light_switch
-    DeviceType.UNRECOGNIZED -> R.string.device_type_unrecognized
-  }
-}
-
-// -----------------------------------------------------------------------------
-// Misc
-
-fun convertToAppDeviceType(matterDeviceType: Long): DeviceType {
-  return when (matterDeviceType) {
-    256L -> DeviceType.TYPE_LIGHT // 0x0100 On/Off Light
-    257L -> DeviceType.TYPE_DIMMABLE_LIGHT // 0x0101 Dimmable Light
-    259L -> DeviceType.TYPE_LIGHT_SWITCH // 0x0103 On/Off Light Switch
-    266L -> DeviceType.TYPE_OUTLET // 0x010A (On/Off Plug-in Unit)
-    268L -> DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT // 0x010C Color Temperature Light
-    269L -> DeviceType.TYPE_EXTENDED_COLOR_LIGHT // 0x010D Extended Color Light
-    else -> DeviceType.TYPE_UNKNOWN
-  }
-}
-
-/** Converts the "isOnline" boolean into a proper string for the UI. */
-fun isOnlineDisplayString(isOnline: Boolean): String {
-  return if (isOnline) "Online" else "Offline"
+fun getDeviceTypeDisplayStringId(deviceTypeId: DeviceTypeId): String {
+  return DEVICES[deviceTypeId] ?: "Unknown (${deviceTypeId})"
 }
 
 /** Converts the "isOn" boolean into a proper string for the UI. */
@@ -144,63 +76,11 @@ fun isOnDisplayString(isOn: Boolean): String {
   return if (isOn) "ON" else "OFF"
 }
 
-/** Converts the combo of "isOnline" and "isOn" into a proper string for the UI. */
-fun stateDisplayString(isOnline: Boolean, isOn: Boolean): String {
-  return if (!isOnline) {
-    "OFFLINE"
-  } else {
-    if (isOn) "ON" else "OFF"
-  }
-}
-
-fun stringToBoolean(s: String): Boolean {
-  val boolValue =
-      when (s) {
-        "true",
-        "True",
-        "TRUE" -> true
-        else -> false
-      }
-  return boolValue
-}
-
-fun intentSenderToString(intentSender: IntentSender?): String {
-  if (intentSender == null) {
-    return "null"
-  }
-  return "creatorPackage [${intentSender.creatorPackage}]"
-}
-
 // -------------------------------------------------------------------------------------------------
 // System helper functions
 
 fun isMultiAdminCommissioning(intent: Intent): Boolean {
   return intent.action == "com.google.android.gms.home.matter.ACTION_COMMISSION_DEVICE"
-}
-
-/** Formats a signed Kotlin Long as a full-width unsigned 64-bit hex value. */
-fun formatUint64Hex(value: Long): String {
-  return String.format(Locale.ROOT, "0x%016X", value)
-}
-
-/** Formats a Matter Vendor ID as unsigned 16-bit hex with leading zeroes. */
-fun formatVendorId(vendorId: Int): String {
-  return String.format(Locale.ROOT, "0x%04X", vendorId)
-}
-
-/** Formats a Matter Product ID as unsigned 16-bit hex with leading zeroes. */
-fun formatProductId(productId: Int): String {
-  return String.format(Locale.ROOT, "0x%04X", productId)
-}
-
-/** Formats a Matter Node ID as unsigned 64-bit hex with leading zeroes. */
-fun formatNodeId(nodeId: Long): String {
-  return formatUint64Hex(nodeId)
-}
-
-/** Formats a Matter Fabric ID as unsigned 64-bit hex with leading zeroes. */
-fun formatFabricId(fabricId: Long): String {
-  return formatUint64Hex(fabricId)
 }
 
 /**
@@ -243,22 +123,6 @@ fun formatTimestamp(context: Context, timestamp: Timestamp): String {
   val dateFormatter = android.text.format.DateFormat.getMediumDateFormat(context)
   val timeFormatter = android.text.format.DateFormat.getTimeFormat(context)
   return "${dateFormatter.format(date)} ${timeFormatter.format(date)}"
-}
-
-/**
- * Used in the context of StateFlow with MutableLists to ensure changes to the mutable lists trigger
- * data changes for observers. See
- * https://stackoverflow.com/questions/70905480/mutablestateflow-not-working-with-mutablelist
- */
-fun <T> MutableList<T>.mapButReplace(targetItem: T, newItem: T) = map {
-  Timber.d("mapButReplace targetItem [${targetItem}] newItem [${newItem}]")
-  if (it == targetItem) {
-    Timber.d("setting newItem for [${it}] to [${newItem}]")
-    newItem
-  } else {
-    Timber.d("setting newItem")
-    it
-  }
 }
 
 /** Generates a random number to be used as a device identifier during device commissioning */
@@ -307,19 +171,6 @@ const val SHARED_DEVICE_ROOM_PREFIX = "Room-"
 
 // Temporary device name used when commissioning the device to the 3P fabric.
 const val REAL_DEVICE_NAME_PREFIX = "Real-"
-
-// -------------------------------------------------------------------------------------------------
-// Dialogs
-
-fun showAlertDialog(alertDialog: AlertDialog, title: String?, message: String?) {
-  if (title != null) {
-    alertDialog.setTitle(title)
-  }
-  if (message != null) {
-    alertDialog.setMessage(message)
-  }
-  alertDialog.show()
-}
 
 // -------------------------------------------------------------------------------------------------
 // Device Sharing constants
@@ -373,12 +224,6 @@ const val DEVICE_SHARING_WITH_GPS = true
 enum class OpenCommissioningWindowApi {
   ChipDeviceController,
   AdministratorCommissioningCluster,
-}
-
-// Which method should be used to generate identifiers for devices being commissioned
-enum class DeviceIdGenerator {
-  Random,
-  Incremental,
 }
 
 /**

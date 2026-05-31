@@ -5,7 +5,6 @@ package io.aether.android.screens.device.control
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -15,17 +14,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import com.google.protobuf.Timestamp
-import io.aether.android.Device
-import io.aether.android.DeviceState
 import io.aether.android.R
+import io.aether.android.data.DevicesStateRepository
+import io.aether.android.endpointIdTyped
 import io.aether.android.screens.device.cluster.COLOR_TEMPERATURE_MAX
 import io.aether.android.screens.device.cluster.LEVEL_MAX
 import io.aether.android.screens.device.cluster.LevelClusterControl
 import io.aether.android.screens.device.cluster.OnOffClusterControl
 import io.aether.android.screens.home.DeviceUiModel
-import timber.log.Timber
 
 /**
  * Device-type control for endpoints that expose the **OnOff**, **Level Control**, and **Color
@@ -42,7 +38,7 @@ import timber.log.Timber
 @Composable
 internal fun ColorTemperatureDeviceControl(
     endpointModel: DeviceUiModel,
-    lastUpdatedDeviceState: DeviceState?,
+    lastUpdatedDeviceState: DevicesStateRepository.EndpointStateSnapshot?,
     onOnOffClick: (Boolean) -> Unit,
     onBrightnessChange: (Int) -> Unit,
     onColorTemperatureChange: (Int) -> Unit,
@@ -57,7 +53,8 @@ internal fun ColorTemperatureDeviceControl(
 
   LaunchedEffect(endpointModel, lastUpdatedDeviceState) {
     when {
-      lastUpdatedDeviceState?.deviceId == endpointModel.device.deviceId -> {
+      lastUpdatedDeviceState?.nodeId == endpointModel.nodeId &&
+          lastUpdatedDeviceState.endpointId == endpointModel.endpoint.endpointIdTyped() -> {
         isOnline = lastUpdatedDeviceState.online
         isOn = lastUpdatedDeviceState.on
         brightness = lastUpdatedDeviceState.level / LEVEL_MAX
@@ -98,39 +95,6 @@ internal fun ColorTemperatureDeviceControl(
         onLevelChangeFinished = {
           onColorTemperatureChange((colorTemperature * COLOR_TEMPERATURE_MAX).toInt())
         },
-    )
-  }
-}
-
-// -----------------------------------------------------------------------------------------------
-// Compose Previews
-
-@Preview(widthDp = 300)
-@Composable
-private fun ColorTemperatureDeviceControl_Online() {
-  val model =
-      DeviceUiModel(
-          device =
-              Device.newBuilder()
-                  .setDeviceId(1L)
-                  .setDeviceType(Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT)
-                  .setDateCommissioned(Timestamp.getDefaultInstance())
-                  .setName("CTLight")
-                  .setSupportsLevelControl(true)
-                  .setSupportsColorTemperature(true)
-                  .build(),
-          isOnline = true,
-          isOn = true,
-          level = 127,
-          colorTemperature = 833,
-      )
-  MaterialTheme {
-    ColorTemperatureDeviceControl(
-        endpointModel = model,
-        lastUpdatedDeviceState = null,
-        onOnOffClick = { Timber.d("onOff: $it") },
-        onBrightnessChange = { Timber.d("brightness: $it") },
-        onColorTemperatureChange = { Timber.d("colorTemp: $it") },
     )
   }
 }

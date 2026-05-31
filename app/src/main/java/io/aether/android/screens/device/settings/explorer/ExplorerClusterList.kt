@@ -8,34 +8,44 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
+import io.aether.android.matter.CLUSTERS
+import io.aether.android.matter.ClusterId
+import io.aether.android.matter.EndpointId
 import io.aether.android.screens.common.SearchTextField
 
 @Composable
 internal fun ClusterListContent(
-    endpoint: Int,
+    endpointId: EndpointId,
     infos: List<DeviceMatterInfo>,
-    clustersMap: Map<Long, String>,
-    knownClustersById: Map<Long, ExplorerClusterDefinition>,
+    knownClustersById: Map<ClusterId, ExplorerClusterDefinition>,
     showSearch: Boolean,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
-    onSelectCluster: (Long) -> Unit,
+    onSelectCluster: (ClusterId) -> Unit,
 ) {
-  val endpointInfo = infos.firstOrNull { it.endpoint == endpoint }
+  val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
+
+  val endpointInfo = infos.firstOrNull { it.endpointId == endpointId }
   val serverClusters = endpointInfo?.serverClusters.orEmpty().sorted()
   val clientClusters = endpointInfo?.clientClusters.orEmpty().sorted()
-  val clusterMatchesQuery: (Long) -> Boolean = { clusterId ->
-    matchesExplorerQuery(searchQuery, clustersMap[clusterId].orEmpty(), formatExplorerId(clusterId))
+  val clusterMatchesQuery: (ClusterId) -> Boolean = { clusterId ->
+    matchesExplorerQuery(
+        searchQuery,
+        CLUSTERS[clusterId]?.name.orEmpty(),
+        formatExplorerId(clusterId),
+    )
   }
   val filteredServerClusters = serverClusters.filter(clusterMatchesQuery)
   val filteredClientClusters = clientClusters.filter(clusterMatchesQuery)
@@ -63,7 +73,11 @@ internal fun ClusterListContent(
       return@Column
     }
 
-    LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.weight(1f),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
       item(key = "server-title") {
         Text(
             text = stringResource(R.string.device_explorer_server_clusters_section),
@@ -79,12 +93,12 @@ internal fun ClusterListContent(
           )
         }
       } else {
-        items(filteredServerClusters, key = { "s-$it" }) { clusterId ->
+        items(filteredServerClusters, key = { "s-${it.value}" }) { clusterId ->
           val name =
-              clustersMap[clusterId] ?: stringResource(R.string.device_explorer_cluster_unknown)
+              CLUSTERS[clusterId]?.name ?: stringResource(R.string.device_explorer_cluster_unknown)
           val known = knownClustersById[clusterId]
           ExplorerRow(
-              text = formatIdAndName(clusterId, name),
+              text = formatIdAndName(clusterId.value, name),
               secondaryText =
                   stringResource(
                       R.string.device_explorer_cluster_counts,
@@ -112,12 +126,12 @@ internal fun ClusterListContent(
           )
         }
       } else {
-        items(filteredClientClusters, key = { "c-$it" }) { clusterId ->
+        items(filteredClientClusters, key = { "c-${it.value}" }) { clusterId ->
           val name =
-              clustersMap[clusterId] ?: stringResource(R.string.device_explorer_cluster_unknown)
+              CLUSTERS[clusterId]?.name ?: stringResource(R.string.device_explorer_cluster_unknown)
           val known = knownClustersById[clusterId]
           ExplorerRow(
-              text = formatIdAndName(clusterId, name),
+              text = formatIdAndName(clusterId.value, name),
               secondaryText =
                   stringResource(
                       R.string.device_explorer_cluster_counts,

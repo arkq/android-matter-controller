@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -25,17 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import io.aether.android.R
-import io.aether.android.chip.labelRes
-import io.aether.android.matter.MatterType
 import io.aether.android.screens.common.HighlightedOutlinedTextField
 
 @Composable
 internal fun AttributeDetailContent(
     attribute: ExplorerAttributeUiItem,
     currentValue: String?,
-    typeLabelFor: (MatterType) -> String,
     readSuccessCount: Int,
     writeSuccessCount: Int,
     onRead: () -> Unit,
@@ -56,20 +51,9 @@ internal fun AttributeDetailContent(
               .padding(dimensionResource(R.dimen.margin_normal)),
       verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {
-    val keyboardOptions =
-        when (attribute.type.inputKind()) {
-          ExplorerInputKind.TEXT -> KeyboardOptions.Default
-          ExplorerInputKind.UNSIGNED_INTEGER,
-          ExplorerInputKind.SIGNED_INTEGER -> KeyboardOptions(keyboardType = KeyboardType.Ascii)
-          ExplorerInputKind.BITMAP -> KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
-        }
     HighlightedOutlinedTextField(
         value = editValue,
-        onValueChange = {
-          if (isValidInputForType(attribute.type, it)) {
-            editValue = it
-          }
-        },
+        onValueChange = { editValue = it },
         successTrigger = readSuccessCount + writeSuccessCount,
         resetKey = attribute.id,
         label = {
@@ -77,19 +61,18 @@ internal fun AttributeDetailContent(
               stringResource(
                   R.string.device_explorer_label_with_type,
                   stringResource(R.string.device_explorer_value),
-                  typeLabelFor(attribute.type),
+                  attribute.type.label,
               )
           )
         },
         modifier = Modifier.fillMaxWidth(),
-        keyboardOptions = keyboardOptions,
     )
 
     Text(
         text =
             stringResource(
                 R.string.device_explorer_attribute_read_privilege,
-                stringResource(attribute.readPrivilege.labelRes()),
+                attribute.readPrivilege.toLabel(),
             ),
         style = MaterialTheme.typography.bodyMedium,
     )
@@ -98,7 +81,7 @@ internal fun AttributeDetailContent(
         text =
             stringResource(
                 R.string.device_explorer_attribute_write_privilege,
-                stringResource(attribute.writePrivilege.labelRes()),
+                attribute.writePrivilege.toLabel(),
             ),
         style = MaterialTheme.typography.bodyMedium,
     )

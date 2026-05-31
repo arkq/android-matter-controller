@@ -21,10 +21,10 @@ import com.google.android.gms.home.matter.commissioning.CommissioningResult
 import com.google.android.gms.home.matter.commissioning.DeviceInfo
 import com.google.android.gms.home.matter.commissioning.SharedDeviceData.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.aether.android.Device
-import io.aether.android.Devices
-import io.aether.android.DevicesState
 import io.aether.android.MIN_COMMISSIONING_WINDOW_EXPIRATION_SECONDS
+import io.aether.android.MatterEndpoint
+import io.aether.android.MatterFabricState
+import io.aether.android.MatterNode
 import io.aether.android.PERIODIC_READ_INTERVAL_HOME_SCREEN_SECONDS
 import io.aether.android.R
 import io.aether.android.STATE_CHANGES_MONITORING_MODE
@@ -33,21 +33,18 @@ import io.aether.android.TaskStatus
 import io.aether.android.UserPreferences
 import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
-import io.aether.android.chip.DataModelLoader.Companion.ColorControlClusterId
-import io.aether.android.chip.DataModelLoader.Companion.ColorTemperatureAttribute
-import io.aether.android.chip.DataModelLoader.Companion.LevelAttribute
-import io.aether.android.chip.DataModelLoader.Companion.LevelControlClusterId
-import io.aether.android.chip.DataModelLoader.Companion.OnOffAttribute
-import io.aether.android.chip.DataModelLoader.Companion.OnOffClusterId
 import io.aether.android.chip.SubscriptionHelper
+import io.aether.android.chip.isCommunicationTimeoutError
 import io.aether.android.commissioning.AppCommissioningService
-import io.aether.android.convertToAppDeviceType
 import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.data.UserPreferencesRepository
-import io.aether.android.endpointFor
-import io.aether.android.getTimestampForNow
-import io.aether.android.nodeIdFor
+import io.aether.android.endpointIdTyped
+import io.aether.android.matter.Clusters
+import io.aether.android.matter.EndpointId
+import io.aether.android.matter.NodeId
+import io.aether.android.matter.toEndpointId
+import io.aether.android.matter.toNodeId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.supportsColorTemperature
 import io.aether.android.supportsLevelControl
@@ -70,7 +67,8 @@ import timber.log.Timber
  */
 data class DeviceUiModel(
     // Device information that is persisted in a Proto DataStore. See DevicesRepository.
-    val device: Device,
+    val node: MatterNode,
+    val endpoint: MatterEndpoint,
 
     // Device state information that is retrieved dynamically.
     // Whether the device is online or offline.
@@ -81,7 +79,16 @@ data class DeviceUiModel(
     var level: Int = 0,
     // Color temperature of device
     var colorTemperature: Int = 0,
-)
+) {
+  val nodeId: NodeId
+    get() = node.nodeId.toNodeId()
+
+  val name: String
+    get() = if (node.name.isNotBlank()) node.name else endpoint.label
+
+  val deviceTypeId: Long
+    get() = endpoint.deviceTypesList.firstOrNull()?.toLong() ?: 0L
+}
 
 /**
  * UI model that encapsulates the information about the devices to be displayed on the Home screen.
@@ -147,20 +154,18 @@ constructor(
     liveData { emit(userPreferencesRepository.getData()) }
   }
 
-  private val devicesFlow = devicesRepository.devicesFlow
   private val devicesStateFlow = devicesStateRepository.devicesStateFlow
   private val userPreferencesFlow = userPreferencesRepository.userPreferencesFlow
 
   // Every time the list of devices or user preferences are updated (emit is triggered),
   // we recreate the DevicesListUiModel
   private val devicesListUiModelFlow =
-      combine(devicesFlow, devicesStateFlow, userPreferencesFlow) {
-          devices: Devices,
-          devicesStates: DevicesState,
+      combine(devicesStateFlow, userPreferencesFlow) {
+          devicesStates: MatterFabricState,
           userPreferences: UserPreferences ->
         Timber.d("*** devicesListUiModelFlow changed ***")
         return@combine DevicesListUiModel(
-            devices = processDevices(devices, devicesStates, userPreferences),
+            devices = processDevices(devicesStates, userPreferences),
             showOfflineDevices = !userPreferences.hideOfflineDevices,
         )
       }
@@ -168,32 +173,42 @@ constructor(
   val devicesUiModelLiveData = devicesListUiModelFlow.asLiveData()
 
   private fun processDevices(
-      devices: Devices,
-      devicesStates: DevicesState,
+      devicesStates: MatterFabricState,
       userPreferences: UserPreferences,
   ): List<DeviceUiModel> {
     val devicesUiModel = ArrayList<DeviceUiModel>()
     // Show only one entry per physical node (grouped by nodeId).
     // Among endpoints for the same node, pick the one with the lowest endpoint number as
     // the representative shown on the home screen.
-    val seenNodes = mutableSetOf<Long>()
-    val sortedDevices =
-        devices.devicesList.sortedWith(compareBy({ nodeIdFor(it) }, { endpointFor(it) }))
-    sortedDevices.forEach { device ->
-      val nId = nodeIdFor(device)
-      if (!seenNodes.add(nId)) return@forEach // skip non-primary endpoints
-      Timber.d("processDevices() deviceId: [${device.deviceId}]}")
-      val state = devicesStates.devicesStateList.find { it.deviceId == device.deviceId }
+    val sortedNodes = devicesStates.nodesList.sortedBy { it.nodeId }
+    sortedNodes.forEach { node ->
+      val nId = node.nodeId.toNodeId()
+      Timber.d("processDevices() nodeId: [${nId}]}")
+      val endpointState = node.endpointsList.minByOrNull { it.endpointId }
       if (userPreferences.hideOfflineDevices) {
-        if (state?.online != true) return@forEach
+        if (!node.online) return@forEach
       }
-      if (state == null) {
-        Timber.d("    deviceId setting default value for state")
-        devicesUiModel.add(DeviceUiModel(device, isOnline = false, isOn = false))
-      } else {
-        Timber.d("    deviceId setting its own value for state")
+      if (endpointState == null) {
+        Timber.d("    nodeId setting default value for state")
         devicesUiModel.add(
-            DeviceUiModel(device, state.online, state.on, state.level, state.colorTemperature)
+            DeviceUiModel(
+                node = node,
+                endpoint = MatterEndpoint.getDefaultInstance(),
+                isOnline = node.online,
+                isOn = false,
+            )
+        )
+      } else {
+        Timber.d("    nodeId setting its own value for state")
+        devicesUiModel.add(
+            DeviceUiModel(
+                node = node,
+                endpoint = endpointState,
+                isOnline = node.online,
+                endpointState.on,
+                endpointState.level,
+                endpointState.colorTemperature,
+            )
         )
       }
     }
@@ -300,11 +315,11 @@ constructor(
   fun onCommissionedDeviceNameCaptured(deviceName: String) {
     _showNewDeviceNameAlertDialog.value = false
     viewModelScope.launch {
-      val nodeId = gpsCommissioningResult?.token?.toLong()!!
+      val nodeId = gpsCommissioningResult?.token?.toLong()?.toNodeId()!!
       // read device's vendor name and product name
       val vendorName =
           try {
-            clustersHelper.readBasicClusterVendorNameAttribute(nodeId)
+            clustersHelper.readBasicClusterVendorNameAttribute(nodeId.toLong())
           } catch (ex: Exception) {
             Timber.e(ex, "Failed to read VendorName attribute")
             ""
@@ -312,7 +327,7 @@ constructor(
 
       val productName =
           try {
-            clustersHelper.readBasicClusterProductNameAttribute(nodeId)
+            clustersHelper.readBasicClusterProductNameAttribute(nodeId.toLong())
           } catch (ex: Exception) {
             Timber.e(ex, "Failed to read ProductName attribute")
             ""
@@ -321,58 +336,59 @@ constructor(
       try {
         val deviceMatterInfoList = clustersHelper.fetchDeviceMatterInfo(nodeId)
         val appEndpoints = deviceMatterInfoList.filter { info ->
-          info.endpoint != 0 && info.serverClusters.contains(OnOffClusterId)
+          info.endpointId != EndpointId(0u) && info.serverClusters.contains(Clusters.OnOff.ID)
         }
 
-        devicesRepository.seedLastDeviceIdIfNeeded()
         if (appEndpoints.isEmpty()) {
           // Fallback for devices that expose no application endpoints with On/Off cluster
           // (e.g. legacy or non-standard devices). Fall back to first non-root endpoint.
-          val fallbackEndpointInfo = deviceMatterInfoList.firstOrNull { info -> info.endpoint != 0 }
-          val commissionedDeviceType =
-              fallbackEndpointInfo?.types?.firstOrNull()?.let { convertToAppDeviceType(it) }
-                  ?: Device.DeviceType.TYPE_UNKNOWN
+          val fallbackEndpointInfo = deviceMatterInfoList.firstOrNull { info ->
+            info.endpointId != EndpointId(0u)
+          }
+          val commissionedDeviceTypes = fallbackEndpointInfo?.types ?: emptyList()
           val supportsLevel =
-              fallbackEndpointInfo?.serverClusters?.contains(LevelControlClusterId) == true
+              fallbackEndpointInfo?.serverClusters?.contains(Clusters.LevelControl.ID) == true
           val supportsColorTemperature =
-              if (fallbackEndpointInfo?.serverClusters?.contains(ColorControlClusterId) == true) {
+              if (
+                  fallbackEndpointInfo?.serverClusters?.contains(Clusters.ColorControl.ID) == true
+              ) {
                 try {
                   clustersHelper
-                      .readColorControlClusterAttributeList(nodeId, fallbackEndpointInfo.endpoint)
-                      .contains(ColorTemperatureAttribute.attributeId)
+                      .readColorControlClusterAttributeList(
+                          nodeId,
+                          fallbackEndpointInfo.endpointId,
+                      )
+                      .contains(Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID)
                 } catch (e: Exception) {
                   Timber.w(
                       e,
-                      "Could not read Color Control attribute list for endpoint ${fallbackEndpointInfo.endpoint}; assuming color temperature unsupported",
+                      "Could not read Color Control attribute list for endpoint ${fallbackEndpointInfo.endpointId}; assuming color temperature unsupported",
                   )
                   false
                 }
               } else {
                 false
               }
-          val localDeviceId = devicesRepository.incrementAndReturnLastDeviceId()
           val device =
-              Device.newBuilder()
-                  .setName(deviceName)
-                  .setDeviceId(localDeviceId)
-                  .setNodeId(nodeId)
-                  .setEndpoint(fallbackEndpointInfo?.endpoint ?: 1)
+              MatterEndpoint.newBuilder()
+                  .setEndpointId(fallbackEndpointInfo?.endpointId?.toInt() ?: 1)
+                  .setLabel(deviceName)
                   .setSupportsLevelControl(supportsLevel)
                   .setSupportsColorTemperature(supportsColorTemperature)
-                  .setDateCommissioned(getTimestampForNow())
-                  .setVendorId(
-                      gpsCommissioningResult?.commissionedDeviceDescriptor?.vendorId.toString()
-                  )
-                  .setVendorName(vendorName)
-                  .setProductId(
-                      gpsCommissioningResult?.commissionedDeviceDescriptor?.productId.toString()
-                  )
-                  .setProductName(productName)
-                  .setDeviceType(commissionedDeviceType)
+                  .addAllDeviceTypes(commissionedDeviceTypes.map { it.toInt() })
                   .build()
-          devicesRepository.addDevice(device)
-          devicesStateRepository.addDeviceState(
-              localDeviceId,
+          devicesRepository.addOrUpdateEndpoint(
+              nodeId = nodeId,
+              nodeName = deviceName,
+              vendorId = gpsCommissioningResult?.commissionedDeviceDescriptor?.vendorId ?: 0,
+              vendorName = vendorName,
+              productId = gpsCommissioningResult?.commissionedDeviceDescriptor?.productId ?: 0,
+              productName = productName,
+              endpoint = device,
+          )
+          devicesStateRepository.addEndpointState(
+              nodeId,
+              device.endpointIdTyped(),
               isOnline = true,
               isOn = false,
               level = 0,
@@ -380,24 +396,20 @@ constructor(
           )
         } else {
           appEndpoints.forEach { info ->
-            val localDeviceId = devicesRepository.incrementAndReturnLastDeviceId()
             val endpointDisplayName = deviceName
-            val endpointType =
-                if (info.types.isNotEmpty()) convertToAppDeviceType(info.types.first())
-                else Device.DeviceType.TYPE_UNKNOWN
-            val supportsLevel = info.serverClusters.contains(LevelControlClusterId)
+            val supportsLevel = info.serverClusters.contains(Clusters.LevelControl.ID)
             // Check the Color Control cluster's AttributeList to confirm that the optional
             // color temperature attribute (id 7) is actually present, not just the cluster.
             val supportsColorTemperature =
-                if (info.serverClusters.contains(ColorControlClusterId)) {
+                if (info.serverClusters.contains(Clusters.ColorControl.ID)) {
                   try {
                     clustersHelper
-                        .readColorControlClusterAttributeList(nodeId, info.endpoint)
-                        .contains(ColorTemperatureAttribute.attributeId)
+                        .readColorControlClusterAttributeList(nodeId, info.endpointId)
+                        .contains(Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID)
                   } catch (e: Exception) {
                     Timber.w(
                         e,
-                        "Could not read Color Control attribute list for endpoint ${info.endpoint}; assuming color temperature unsupported",
+                        "Could not read Color Control attribute list for endpoint ${info.endpointId}; assuming color temperature unsupported",
                     )
                     false
                   }
@@ -406,27 +418,25 @@ constructor(
                 }
 
             val device =
-                Device.newBuilder()
-                    .setName(endpointDisplayName)
-                    .setDeviceId(localDeviceId)
-                    .setNodeId(nodeId)
-                    .setEndpoint(info.endpoint)
+                MatterEndpoint.newBuilder()
+                    .setEndpointId(info.endpointId.toInt())
+                    .setLabel(endpointDisplayName)
                     .setSupportsLevelControl(supportsLevel)
                     .setSupportsColorTemperature(supportsColorTemperature)
-                    .setDateCommissioned(getTimestampForNow())
-                    .setVendorId(
-                        gpsCommissioningResult?.commissionedDeviceDescriptor?.vendorId.toString()
-                    )
-                    .setVendorName(vendorName)
-                    .setProductId(
-                        gpsCommissioningResult?.commissionedDeviceDescriptor?.productId.toString()
-                    )
-                    .setProductName(productName)
-                    .setDeviceType(endpointType)
+                    .addAllDeviceTypes(info.types.map { it.toInt() })
                     .build()
-            devicesRepository.addDevice(device)
-            devicesStateRepository.addDeviceState(
-                localDeviceId,
+            devicesRepository.addOrUpdateEndpoint(
+                nodeId = nodeId,
+                nodeName = deviceName,
+                vendorId = gpsCommissioningResult?.commissionedDeviceDescriptor?.vendorId ?: 0,
+                vendorName = vendorName,
+                productId = gpsCommissioningResult?.commissionedDeviceDescriptor?.productId ?: 0,
+                productName = productName,
+                endpoint = device,
+            )
+            devicesStateRepository.addEndpointState(
+                nodeId,
+                device.endpointIdTyped(),
                 isOnline = true,
                 isOn = false,
                 level = 0,
@@ -442,7 +452,7 @@ constructor(
 
       // update device name
       try {
-        clustersHelper.writeBasicClusterNodeLabelAttribute(nodeId, deviceName)
+        clustersHelper.writeBasicClusterNodeLabelAttribute(nodeId.toLong(), deviceName)
       } catch (ex: Exception) {
         Timber.e(ex, "Failed to write NodeLabel")
         showMsgDialog(R.string.write_node_label_failed, ex.message ?: ex.toString())
@@ -462,27 +472,54 @@ constructor(
     showMsgDialog(title, "result code: $resultCode")
   }
 
-  fun updateDeviceStateOn(deviceId: Long, isOn: Boolean) {
-    Timber.d("updateDeviceStateOn: Device [${deviceId}]  isOn [${isOn}]")
+  fun updateDeviceStateOn(nodeId: NodeId, isOn: Boolean) {
+    Timber.d("updateDeviceStateOn: nodeId [${nodeId}]  isOn [${isOn}]")
     viewModelScope.launch {
-      val device = devicesRepository.getDevice(deviceId)
-      val nodeId = nodeIdFor(device)
-      val endpoint = endpointFor(device)
-      Timber.d("Handling real device nodeId [$nodeId] endpoint [$endpoint]")
-      clustersHelper.setOnOffDeviceStateOnOffCluster(nodeId, isOn, endpoint)
-      val level =
-          if (supportsLevelControl(device)) {
-            clustersHelper.getDeviceStateLevelControlCluster(nodeId, endpoint) ?: 0
-          } else {
-            0
-          }
-      val colorTemperature =
-          if (supportsColorTemperature(device)) {
-            clustersHelper.getColorTemperatureColorControlCluster(nodeId, endpoint) ?: 0
-          } else {
-            0
-          }
-      devicesStateRepository.updateDeviceState(deviceId, true, isOn, level, colorTemperature)
+      try {
+        val node =
+            devicesStateRepository.getAllDevicesState().nodesList.firstOrNull {
+              it.nodeId == nodeId.toLong()
+            } ?: return@launch
+        val endpointDevice = node.endpointsList.minByOrNull { it.endpointId } ?: return@launch
+        val endpoint = endpointDevice.endpointId
+        Timber.d("Handling real device nodeId [$nodeId] endpoint [$endpoint]")
+        clustersHelper.setOnOffDeviceStateOnOffCluster(
+            nodeId.toLong(),
+            isOn,
+            endpoint.toEndpointId(),
+        )
+        val level =
+            if (supportsLevelControl(endpointDevice)) {
+              clustersHelper.getDeviceStateLevelControlCluster(
+                  nodeId.toLong(),
+                  endpoint.toEndpointId(),
+              ) ?: 0
+            } else {
+              0
+            }
+        val colorTemperature =
+            if (supportsColorTemperature(endpointDevice)) {
+              clustersHelper.getColorTemperatureColorControlCluster(
+                  nodeId.toLong(),
+                  endpoint.toEndpointId(),
+              ) ?: 0
+            } else {
+              0
+            }
+        devicesStateRepository.upsertEndpointState(
+            nodeId,
+            endpoint.toEndpointId(),
+            true,
+            isOn,
+            level,
+            colorTemperature,
+        )
+      } catch (e: Exception) {
+        Timber.e(e, "Failed to update on/off for node [$nodeId]")
+        if (e.isCommunicationTimeoutError()) {
+          devicesStateRepository.updateNodeOnlineState(nodeId, isOnline = false)
+        }
+      }
     }
   }
 
@@ -520,94 +557,123 @@ constructor(
   private fun subscribeToDevicesPeriodicUpdates() {
     Timber.d("subscribeToDevicesPeriodicUpdates()")
     viewModelScope.launch {
-      // Only subscribe once per physical node (nodeId), using the primary endpoint device.
-      val devicesList = devicesRepository.getAllDevices().devicesList
-      val seenNodes = mutableSetOf<Long>()
-      devicesList
-          .sortedBy { endpointFor(it) }
-          .forEach { device ->
-            val nId = nodeIdFor(device)
-            if (!seenNodes.add(nId)) return@forEach // skip non-primary endpoints
-            val endpoint = endpointFor(device)
-            val reportCallback =
-                object : SubscriptionHelper.ReportCallbackForDevice(device.deviceId) {
-                  override fun onReport(nodeState: NodeState) {
-                    super.onReport(nodeState)
-                    val onOffState =
-                        subscriptionHelper.extractAttribute(nodeState, endpoint, OnOffAttribute)
-                            as Boolean?
-                    val levelState =
-                        subscriptionHelper.extractAttribute(nodeState, endpoint, LevelAttribute)
-                            as Int?
-                    val colorTemperatureState =
-                        subscriptionHelper.extractAttribute(
-                            nodeState,
-                            endpoint,
-                            ColorTemperatureAttribute,
-                        ) as Int?
-                    Timber.d("onOffState [${onOffState}]")
-                    if (onOffState == null) {
-                      Timber.e("onReport(): WARNING -> onOffState is NULL. Ignoring.")
-                      return
-                    }
-                    if (supportsLevelControl(device) && levelState == null) {
-                      Timber.e("onReport(): WARNING -> levelState is NULL. Ignoring.")
-                      return
-                    }
-                    if (supportsColorTemperature(device) && colorTemperatureState == null) {
-                      Timber.e("onReport(): WARNING -> colorTemperatureState is NULL. Ignoring.")
-                      return
-                    }
-                    val level = if (supportsLevelControl(device)) levelState!! else 0
-                    val colorTemperature =
-                        if (supportsColorTemperature(device)) colorTemperatureState!! else 0
-                    viewModelScope.launch {
-                      devicesStateRepository.updateDeviceState(
-                          device.deviceId,
-                          isOnline = true,
-                          isOn = onOffState,
-                          level = level,
-                          colorTemperature = colorTemperature,
-                      )
-                    }
+      // Subscribe once per physical node (deduplicated by nodeId).
+      val nodes = devicesStateRepository.getAllDevicesState().nodesList
+      nodes.forEach { node ->
+        val nId = node.nodeId.toNodeId()
+        val endpointDevice = node.endpointsList.minByOrNull { it.endpointId } ?: return@forEach
+        val endpoint = endpointDevice.endpointId
+        val reportCallback =
+            object : SubscriptionHelper.ReportCallbackForDevice(nId) {
+              override fun onError(
+                  attributePath: chip.devicecontroller.model.ChipAttributePath?,
+                  eventPath: chip.devicecontroller.model.ChipEventPath?,
+                  ex: Exception,
+              ) {
+                super.onError(attributePath, eventPath, ex)
+                if (ex.isCommunicationTimeoutError()) {
+                  viewModelScope.launch {
+                    devicesStateRepository.updateNodeOnlineState(nId, isOnline = false)
                   }
                 }
+              }
 
-            try {
-              val connectedDevicePointer = chipClient.getConnectedDevicePointer(nId)
-              subscriptionHelper.awaitSubscribeToPeriodicUpdates(
-                  connectedDevicePointer,
-                  SubscriptionHelper.SubscriptionEstablishedCallbackForDevice(device.deviceId),
-                  SubscriptionHelper.ResubscriptionAttemptCallbackForDevice(device.deviceId),
-                  reportCallback,
-              )
-            } catch (e: IllegalStateException) {
-              Timber.e("Can't get connectedDevicePointer for ${device.deviceId}.")
-              return@forEach
+              override fun onReport(nodeState: NodeState) {
+                super.onReport(nodeState)
+                val onOffState =
+                    subscriptionHelper.extractAttribute(
+                        nodeState,
+                        endpoint.toEndpointId(),
+                        Clusters.OnOff.ID,
+                        Clusters.OnOff.Attributes.OnOff.ID.toLong(),
+                    ) as Boolean?
+                val levelState =
+                    subscriptionHelper.extractAttribute(
+                        nodeState,
+                        endpoint.toEndpointId(),
+                        Clusters.LevelControl.ID,
+                        Clusters.LevelControl.Attributes.CurrentLevel.ID.toLong(),
+                    ) as Int?
+                val colorTemperatureState =
+                    subscriptionHelper.extractAttribute(
+                        nodeState,
+                        endpoint.toEndpointId(),
+                        Clusters.ColorControl.ID,
+                        Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID.toLong(),
+                    ) as Int?
+                Timber.d("onOffState [${onOffState}]")
+                if (onOffState == null) {
+                  Timber.e("onReport(): WARNING -> onOffState is NULL. Ignoring.")
+                  return
+                }
+                if (supportsLevelControl(endpointDevice) && levelState == null) {
+                  Timber.e("onReport(): WARNING -> levelState is NULL. Ignoring.")
+                  return
+                }
+                if (supportsColorTemperature(endpointDevice) && colorTemperatureState == null) {
+                  Timber.e("onReport(): WARNING -> colorTemperatureState is NULL. Ignoring.")
+                  return
+                }
+                val level = if (supportsLevelControl(endpointDevice)) levelState!! else 0
+                val colorTemperature =
+                    if (supportsColorTemperature(endpointDevice)) colorTemperatureState!! else 0
+                viewModelScope.launch {
+                  devicesStateRepository.upsertEndpointState(
+                      nId,
+                      endpoint.toEndpointId(),
+                      isOnline = true,
+                      isOn = onOffState,
+                      level = level,
+                      colorTemperature = colorTemperature,
+                  )
+                }
+              }
             }
+
+        try {
+          val connectedDevicePointer = chipClient.getConnectedDevicePointer(nId)
+          subscriptionHelper.awaitSubscribeToPeriodicUpdates(
+              connectedDevicePointer,
+              object : SubscriptionHelper.SubscriptionEstablishedCallbackForDevice(nId) {
+                override fun onSubscriptionEstablished(subscriptionId: Long) {
+                  super.onSubscriptionEstablished(subscriptionId)
+                  viewModelScope.launch {
+                    devicesStateRepository.updateNodeOnlineState(nId, isOnline = true)
+                  }
+                }
+              },
+              SubscriptionHelper.ResubscriptionAttemptCallbackForDevice(nId),
+              reportCallback,
+          )
+        } catch (e: IllegalStateException) {
+          Timber.e("Can't get connectedDevicePointer for nodeId=${nId}.")
+          if (e.isCommunicationTimeoutError()) {
+            devicesStateRepository.updateNodeOnlineState(nId, isOnline = false)
           }
+          return@forEach
+        }
+      }
     }
   }
 
   private fun unsubscribeToDevicesPeriodicUpdates() {
     Timber.d("unsubscribeToPeriodicUpdates()")
     viewModelScope.launch {
-      // Only unsubscribe once per physical node (nodeId).
-      val devicesList = devicesRepository.getAllDevices().devicesList
-      val seenNodes = mutableSetOf<Long>()
-      devicesList
-          .sortedBy { endpointFor(it) }
-          .forEach { device ->
-            val nId = nodeIdFor(device)
-            if (!seenNodes.add(nId)) return@forEach
-            try {
-              val connectedDevicePtr = chipClient.getConnectedDevicePointer(nId)
-              subscriptionHelper.awaitUnsubscribeToPeriodicUpdates(connectedDevicePtr)
-            } catch (e: IllegalStateException) {
-              Timber.e("Can't get connectedDevicePointer for ${device.deviceId}.")
-              return@forEach
-            }
+      // Unsubscribe once per physical node (deduplicated by nodeId).
+      val nodes = devicesStateRepository.getAllDevicesState().nodesList
+      nodes.forEach { node ->
+        val nId = node.nodeId.toNodeId()
+        try {
+          val connectedDevicePtr = chipClient.getConnectedDevicePointer(nId)
+          subscriptionHelper.awaitUnsubscribeToPeriodicUpdates(connectedDevicePtr)
+        } catch (e: IllegalStateException) {
+          Timber.e("Can't get connectedDevicePointer for nodeId=${nId}.")
+          if (e.isCommunicationTimeoutError()) {
+            devicesStateRepository.updateNodeOnlineState(nId, isOnline = false)
           }
+          return@forEach
+        }
+      }
     }
   }
 
@@ -628,61 +694,67 @@ constructor(
   private fun runDevicesPeriodicPing() {
     viewModelScope.launch {
       while (devicesPeriodicPingEnabled) {
-        // Only poll the primary device per physical node (deduplication by nodeId).
-        val devicesList = devicesRepository.getAllDevices().devicesList
-        val seenNodes = mutableSetOf<Long>()
-        devicesList
-            .sortedBy { endpointFor(it) }
-            .forEach { device ->
-              val nId = nodeIdFor(device)
-              if (!seenNodes.add(nId)) return@forEach
-              Timber.d("runDevicesPeriodicPing deviceId [${device.deviceId}]")
-              val endpoint = endpointFor(device)
-              val hasLevelControl = supportsLevelControl(device)
-              val hasColorTemperature = supportsColorTemperature(device)
-              var isOn = clustersHelper.getDeviceStateOnOffCluster(nId, endpoint)
-              val levelRead =
-                  if (hasLevelControl) {
-                    clustersHelper.getDeviceStateLevelControlCluster(nId, endpoint)
-                  } else {
-                    null
-                  }
-              val colorTemperatureRead =
-                  if (hasColorTemperature) {
-                    clustersHelper.getColorTemperatureColorControlCluster(nId, endpoint)
-                  } else {
-                    null
-                  }
-              var level: Int
-              var colorTemperature: Int
-              val isOnline: Boolean
-              if (
-                  isOn == null ||
-                      (hasLevelControl && levelRead == null) ||
-                      (hasColorTemperature && colorTemperatureRead == null)
-              ) {
-                Timber.e("runDevicesPeriodicUpdate: cannot get device state -> OFFLINE")
-                isOn = false
-                isOnline = false
-                level = 0
-                colorTemperature = 0
-              } else {
-                level = if (hasLevelControl) levelRead!! else 0
-                colorTemperature = if (hasColorTemperature) colorTemperatureRead!! else 0
-                isOnline = true
+        // Poll each endpoint entry.
+        val nodes = devicesStateRepository.getAllDevicesState().nodesList
+        nodes.forEach { node ->
+          val nId = node.nodeId.toNodeId()
+          Timber.d("runDevicesPeriodicPing nodeId [${nId}]")
+          node.endpointsList
+              .sortedBy { it.endpointId }
+              .forEach { endpointDevice ->
+                val endpoint = endpointDevice.endpointId
+                val hasLevelControl = supportsLevelControl(endpointDevice)
+                val hasColorTemperature = supportsColorTemperature(endpointDevice)
+                var isOn =
+                    clustersHelper.getDeviceStateOnOffCluster(nId.toLong(), endpoint.toEndpointId())
+                val levelRead =
+                    if (hasLevelControl) {
+                      clustersHelper.getDeviceStateLevelControlCluster(
+                          nId.toLong(),
+                          endpoint.toEndpointId(),
+                      )
+                    } else {
+                      null
+                    }
+                val colorTemperatureRead =
+                    if (hasColorTemperature) {
+                      clustersHelper.getColorTemperatureColorControlCluster(
+                          nId.toLong(),
+                          endpoint.toEndpointId(),
+                      )
+                    } else {
+                      null
+                    }
+                var level: Int
+                var colorTemperature: Int
+                val isOnline: Boolean
+                if (
+                    isOn == null ||
+                        (hasLevelControl && levelRead == null) ||
+                        (hasColorTemperature && colorTemperatureRead == null)
+                ) {
+                  Timber.e("runDevicesPeriodicUpdate: cannot get device state -> OFFLINE")
+                  isOn = false
+                  isOnline = false
+                  level = 0
+                  colorTemperature = 0
+                } else {
+                  level = if (hasLevelControl) levelRead!! else 0
+                  colorTemperature = if (hasColorTemperature) colorTemperatureRead!! else 0
+                  isOnline = true
+                }
+                Timber.d("runDevicesPeriodicPing nodeId [${nId}] [${isOnline}] [${isOn}]")
+                // TODO: only need to do it if state has changed
+                devicesStateRepository.upsertEndpointState(
+                    nId,
+                    endpoint.toEndpointId(),
+                    isOnline = isOnline,
+                    isOn = isOn,
+                    level = level,
+                    colorTemperature = colorTemperature,
+                )
               }
-              Timber.d(
-                  "runDevicesPeriodicPing deviceId [${device.deviceId}] [${isOnline}] [${isOn}]"
-              )
-              // TODO: only need to do it if state has changed
-              devicesStateRepository.updateDeviceState(
-                  device.deviceId,
-                  isOnline = isOnline,
-                  isOn = isOn,
-                  level = level,
-                  colorTemperature = colorTemperature,
-              )
-            }
+        }
         delay(PERIODIC_READ_INTERVAL_HOME_SCREEN_SECONDS * 1000L)
       }
     }

@@ -5,7 +5,7 @@ package io.aether.android.screens.device.settings.explorer
 
 import androidx.annotation.StringRes
 import io.aether.android.R
-import io.aether.android.matter.MatterType
+import io.aether.android.matter.DataType
 import java.io.ByteArrayOutputStream
 import java.nio.charset.StandardCharsets
 
@@ -56,16 +56,16 @@ internal object ExplorerTlvCodec {
   }
 
   fun encodeAnonymousValue(
-      type: MatterType,
+      type: DataType,
       rawValue: String,
       @StringRes invalidNumberMessageRes: Int,
   ): ByteArray? {
-    if (type == MatterType.TYPE_UNKNOWN || type == MatterType.UNRECOGNIZED) {
+    if (type == DataType.UNKNOWN) {
       return null
     }
     val out = ByteArrayOutputStream()
     when (type) {
-      MatterType.TYPE_BOOL -> {
+      DataType.BOOLEAN -> {
         val parsed = rawValue.trim().toBooleanStrictOrNull()
         when (parsed) {
           true -> out.write(TLV_ANON_BOOL_TRUE)
@@ -74,94 +74,78 @@ internal object ExplorerTlvCodec {
               throw ExplorerInputValidationException(R.string.device_explorer_error_invalid_boolean)
         }
       }
-      MatterType.TYPE_STRING,
-      MatterType.TYPE_OCTSTR,
-      MatterType.TYPE_IPV4ADR,
-      MatterType.TYPE_IPV6ADR,
-      MatterType.TYPE_IPV6PRE,
-      MatterType.TYPE_HWADR -> {
+      DataType.STRING,
+      DataType.OCTET_STRING,
+      DataType.I_PV6_ADDRESS,
+      DataType.I_PV6_PREFIX,
+      DataType.HARDWARE_ADDRESS -> {
         val bytes = rawValue.toByteArray(StandardCharsets.UTF_8)
         requireStringLength(bytes)
         out.write(TLV_ANON_STRING_1)
         out.write(bytes.size)
         out.write(bytes)
       }
-      MatterType.TYPE_UINT8,
-      MatterType.TYPE_ENUM8 ->
+      DataType.U_INT8,
+      DataType.ENUM8,
+      DataType.MAP8 ->
           writeAnonymousUnsigned(
               out,
               TLV_ANON_UNSIGNED_1,
               parseUnsigned(rawValue, 0xFF, invalidNumberMessageRes),
               1,
           )
-      MatterType.TYPE_MAP8 ->
-          writeAnonymousUnsigned(
-              out,
-              TLV_ANON_UNSIGNED_1,
-              parseBitmap(rawValue, 0xFF, invalidNumberMessageRes),
-              1,
-          )
-      MatterType.TYPE_UINT16,
-      MatterType.TYPE_ENUM16 ->
+      DataType.U_INT16,
+      DataType.ENUM16,
+      DataType.MAP16 ->
           writeAnonymousUnsigned(
               out,
               TLV_ANON_UNSIGNED_2,
               parseUnsigned(rawValue, 0xFFFF, invalidNumberMessageRes),
               2,
           )
-      MatterType.TYPE_MAP16 ->
-          writeAnonymousUnsigned(
-              out,
-              TLV_ANON_UNSIGNED_2,
-              parseBitmap(rawValue, 0xFFFF, invalidNumberMessageRes),
-              2,
-          )
-      MatterType.TYPE_UINT24,
-      MatterType.TYPE_UINT32,
-      MatterType.TYPE_CLUSTER_ID,
-      MatterType.TYPE_ATTRIBUTE_ID,
-      MatterType.TYPE_ENDPOINT_NO,
-      MatterType.TYPE_DEVTYPE_ID,
-      MatterType.TYPE_GROUP_ID,
-      MatterType.TYPE_VENDOR_ID,
-      MatterType.TYPE_MESSAGE_ID,
-      MatterType.TYPE_SNAPSHOT_STREAM_ID,
-      MatterType.TYPE_TLS_ENDPOINT_ID ->
+      DataType.U_INT24,
+      DataType.U_INT32,
+      DataType.CLUSTER_ID,
+      DataType.ENDPOINT_ID,
+      DataType.GROUP_ID,
+      DataType.VENDOR_ID,
+      DataType.MESSAGE_ID,
+      DataType.TLS_ENDPOINT_ID ->
           writeAnonymousUnsigned(
               out,
               TLV_ANON_UNSIGNED_4,
               parseUnsigned(rawValue, 0xFFFFFFFFL, invalidNumberMessageRes),
               4,
           )
-      MatterType.TYPE_UINT64,
-      MatterType.TYPE_EPOCH_S,
-      MatterType.TYPE_EPOCH_US,
-      MatterType.TYPE_FABRIC_IDX,
-      MatterType.TYPE_NODE_ID,
-      MatterType.TYPE_SUBJECT_ID,
-      MatterType.TYPE_TLSCAID,
-      MatterType.TYPE_TLSCCDID ->
+      DataType.U_INT64,
+      DataType.EPOCH_SECONDS,
+      DataType.EPOCH_MICROSECONDS,
+      DataType.FABRIC_INDEX,
+      DataType.NODE_ID,
+      DataType.SUBJECT_ID,
+      DataType.TLSCAID,
+      DataType.TLSCCDID ->
           writeAnonymousUnsigned(
               out,
               TLV_ANON_UNSIGNED_8,
               parseUnsigned64(rawValue, invalidNumberMessageRes),
               8,
           )
-      MatterType.TYPE_INT8 ->
+      DataType.INT8 ->
           writeAnonymousSigned(
               out,
               TLV_ANON_SIGNED_1,
               parseSigned(rawValue, -128, 127, invalidNumberMessageRes),
               1,
           )
-      MatterType.TYPE_INT16 ->
+      DataType.INT16 ->
           writeAnonymousSigned(
               out,
               TLV_ANON_SIGNED_2,
               parseSigned(rawValue, -32768, 32767, invalidNumberMessageRes),
               2,
           )
-      MatterType.TYPE_INT32 ->
+      DataType.INT32 ->
           writeAnonymousSigned(
               out,
               TLV_ANON_SIGNED_4,
@@ -173,7 +157,7 @@ internal object ExplorerTlvCodec {
               ),
               4,
           )
-      MatterType.TYPE_INT64 ->
+      DataType.INT64 ->
           writeAnonymousSigned(
               out,
               TLV_ANON_SIGNED_8,
@@ -193,7 +177,7 @@ internal object ExplorerTlvCodec {
   ) {
     val requiredValue = rawValue?.trim().orEmpty()
     when (definition.type) {
-      MatterType.TYPE_BOOL -> {
+      DataType.BOOLEAN -> {
         val parsed = requiredValue.toBooleanStrictOrNull()
         when (parsed) {
           true -> out.write(TLV_CONTEXT_BOOL_TRUE)
@@ -203,12 +187,11 @@ internal object ExplorerTlvCodec {
         }
         out.write(tag)
       }
-      MatterType.TYPE_STRING,
-      MatterType.TYPE_OCTSTR,
-      MatterType.TYPE_IPV4ADR,
-      MatterType.TYPE_IPV6ADR,
-      MatterType.TYPE_IPV6PRE,
-      MatterType.TYPE_HWADR -> {
+      DataType.STRING,
+      DataType.OCTET_STRING,
+      DataType.I_PV6_ADDRESS,
+      DataType.I_PV6_PREFIX,
+      DataType.HARDWARE_ADDRESS -> {
         val bytes = requiredValue.toByteArray(StandardCharsets.UTF_8)
         requireStringLength(bytes)
         out.write(TLV_CONTEXT_STRING_1)
@@ -216,8 +199,9 @@ internal object ExplorerTlvCodec {
         out.write(bytes.size)
         out.write(bytes)
       }
-      MatterType.TYPE_UINT8,
-      MatterType.TYPE_ENUM8 ->
+      DataType.U_INT8,
+      DataType.ENUM8,
+      DataType.MAP8 ->
           writeContextUnsigned(
               out,
               tag,
@@ -225,16 +209,9 @@ internal object ExplorerTlvCodec {
               parseUnsigned(requiredValue, 0xFF, R.string.device_explorer_error_invalid_number),
               1,
           )
-      MatterType.TYPE_MAP8 ->
-          writeContextUnsigned(
-              out,
-              tag,
-              TLV_CONTEXT_UNSIGNED_1,
-              parseBitmap(requiredValue, 0xFF, R.string.device_explorer_error_invalid_number),
-              1,
-          )
-      MatterType.TYPE_UINT16,
-      MatterType.TYPE_ENUM16 ->
+      DataType.U_INT16,
+      DataType.ENUM16,
+      DataType.MAP16 ->
           writeContextUnsigned(
               out,
               tag,
@@ -242,25 +219,14 @@ internal object ExplorerTlvCodec {
               parseUnsigned(requiredValue, 0xFFFF, R.string.device_explorer_error_invalid_number),
               2,
           )
-      MatterType.TYPE_MAP16 ->
-          writeContextUnsigned(
-              out,
-              tag,
-              TLV_CONTEXT_UNSIGNED_2,
-              parseBitmap(requiredValue, 0xFFFF, R.string.device_explorer_error_invalid_number),
-              2,
-          )
-      MatterType.TYPE_UINT24,
-      MatterType.TYPE_UINT32,
-      MatterType.TYPE_CLUSTER_ID,
-      MatterType.TYPE_ATTRIBUTE_ID,
-      MatterType.TYPE_ENDPOINT_NO,
-      MatterType.TYPE_DEVTYPE_ID,
-      MatterType.TYPE_GROUP_ID,
-      MatterType.TYPE_VENDOR_ID,
-      MatterType.TYPE_MESSAGE_ID,
-      MatterType.TYPE_SNAPSHOT_STREAM_ID,
-      MatterType.TYPE_TLS_ENDPOINT_ID ->
+      DataType.U_INT24,
+      DataType.U_INT32,
+      DataType.CLUSTER_ID,
+      DataType.ENDPOINT_ID,
+      DataType.GROUP_ID,
+      DataType.VENDOR_ID,
+      DataType.MESSAGE_ID,
+      DataType.TLS_ENDPOINT_ID ->
           writeContextUnsigned(
               out,
               tag,
@@ -272,14 +238,14 @@ internal object ExplorerTlvCodec {
               ),
               4,
           )
-      MatterType.TYPE_UINT64,
-      MatterType.TYPE_EPOCH_S,
-      MatterType.TYPE_EPOCH_US,
-      MatterType.TYPE_FABRIC_IDX,
-      MatterType.TYPE_NODE_ID,
-      MatterType.TYPE_SUBJECT_ID,
-      MatterType.TYPE_TLSCAID,
-      MatterType.TYPE_TLSCCDID ->
+      DataType.U_INT64,
+      DataType.EPOCH_SECONDS,
+      DataType.EPOCH_MICROSECONDS,
+      DataType.FABRIC_INDEX,
+      DataType.NODE_ID,
+      DataType.SUBJECT_ID,
+      DataType.TLSCAID,
+      DataType.TLSCCDID ->
           writeContextUnsigned(
               out,
               tag,
@@ -287,7 +253,7 @@ internal object ExplorerTlvCodec {
               parseUnsigned64(requiredValue, R.string.device_explorer_error_invalid_number),
               8,
           )
-      MatterType.TYPE_INT8 ->
+      DataType.INT8 ->
           writeContextSigned(
               out,
               tag,
@@ -300,7 +266,7 @@ internal object ExplorerTlvCodec {
               ),
               1,
           )
-      MatterType.TYPE_INT16 ->
+      DataType.INT16 ->
           writeContextSigned(
               out,
               tag,
@@ -313,7 +279,7 @@ internal object ExplorerTlvCodec {
               ),
               2,
           )
-      MatterType.TYPE_INT32 ->
+      DataType.INT32 ->
           writeContextSigned(
               out,
               tag,
@@ -326,7 +292,7 @@ internal object ExplorerTlvCodec {
               ),
               4,
           )
-      MatterType.TYPE_INT64 ->
+      DataType.INT64 ->
           writeContextSigned(
               out,
               tag,
@@ -409,7 +375,7 @@ internal object ExplorerTlvCodec {
                   ?: throw ExplorerInputValidationException(invalidNumberMessageRes)
         }
     // Reinterpret the ULong bits as Long; writeLittleEndian uses ushr which correctly
-    // serialises all 8 bytes regardless of the sign bit.
+    // serializes all 8 bytes regardless of the sign bit.
     return ulong.toLong()
   }
 
@@ -433,22 +399,6 @@ internal object ExplorerTlvCodec {
   ): Long {
     val parsed = parseFlexibleLong(value, invalidNumberMessageRes)
     if (parsed < min || parsed > max) {
-      throw ExplorerInputValidationException(invalidNumberMessageRes)
-    }
-    return parsed
-  }
-
-  private fun parseBitmap(
-      value: String,
-      max: Long,
-      @StringRes invalidNumberMessageRes: Int,
-  ): Long {
-    if (!isBitmapBinaryValue(value)) {
-      throw ExplorerInputValidationException(invalidNumberMessageRes)
-    }
-    val parsed =
-        value.toLongOrNull(2) ?: throw ExplorerInputValidationException(invalidNumberMessageRes)
-    if (parsed > max) {
       throw ExplorerInputValidationException(invalidNumberMessageRes)
     }
     return parsed

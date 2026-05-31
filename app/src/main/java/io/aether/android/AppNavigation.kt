@@ -11,8 +11,9 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import io.aether.android.matter.NodeId
+import io.aether.android.matter.toNodeId
 import io.aether.android.screens.device.DeviceRoute
-import io.aether.android.screens.device.settings.DataModelRoute
 import io.aether.android.screens.device.settings.DeviceSettingsRoute
 import io.aether.android.screens.device.settings.FabricsRoute
 import io.aether.android.screens.device.settings.explorer.ExplorerRoute
@@ -29,19 +30,16 @@ const val ARG_NODE_ID = "nodeId"
 
 const val ROUTE_DEVICE = "device/{$ARG_NODE_ID}"
 const val ROUTE_DEVICE_SETTINGS = "device/{$ARG_NODE_ID}/settings"
-const val ROUTE_DEVICE_DATA_MODEL = "device/{$ARG_NODE_ID}/data-model"
 const val ROUTE_DEVICE_EXPLORER = "device/{$ARG_NODE_ID}/explorer"
 const val ROUTE_DEVICE_FABRICS = "device/{$ARG_NODE_ID}/fabrics"
 
-fun routeToDevice(nodeId: Long): String = "device/$nodeId"
+fun routeToDevice(nodeId: NodeId): String = "device/${nodeId.toLong()}"
 
-fun routeToDeviceSettings(nodeId: Long): String = "device/$nodeId/settings"
+fun routeToDeviceSettings(nodeId: NodeId): String = "device/${nodeId.toLong()}/settings"
 
-fun routeToDeviceDataModel(nodeId: Long): String = "device/$nodeId/data-model"
+fun routeToDeviceExplorer(nodeId: NodeId): String = "device/${nodeId.toLong()}/explorer"
 
-fun routeToDeviceExplorer(nodeId: Long): String = "device/$nodeId/explorer"
-
-fun routeToDeviceFabrics(nodeId: Long): String = "device/$nodeId/fabrics"
+fun routeToDeviceFabrics(nodeId: NodeId): String = "device/${nodeId.toLong()}/fabrics"
 
 @Composable
 fun AppNavigation(
@@ -53,19 +51,16 @@ fun AppNavigation(
   // as NavController is an unstable type. Indirection like a lambda should be used
   // as the compiler considers lambdas stable.]
   val navigateToHome: () -> Unit = remember { { navController.navigate(DEST_HOME) } }
-  val navigateToDevice: (nodeId: Long) -> Unit = remember {
+  val navigateToDevice: (nodeId: NodeId) -> Unit = remember {
     { nodeId -> navController.navigate(routeToDevice(nodeId)) }
   }
-  val navigateToDeviceDataModel: (nodeId: Long) -> Unit = remember {
-    { nodeId -> navController.navigate(routeToDeviceDataModel(nodeId)) }
-  }
-  val navigateToDeviceSettings: (nodeId: Long) -> Unit = remember {
+  val navigateToDeviceSettings: (nodeId: NodeId) -> Unit = remember {
     { nodeId -> navController.navigate(routeToDeviceSettings(nodeId)) }
   }
-  val navigateToDeviceExplorer: (nodeId: Long) -> Unit = remember {
+  val navigateToDeviceExplorer: (nodeId: NodeId) -> Unit = remember {
     { nodeId -> navController.navigate(routeToDeviceExplorer(nodeId)) }
   }
-  val navigateToDeviceFabrics: (nodeId: Long) -> Unit = remember {
+  val navigateToDeviceFabrics: (nodeId: NodeId) -> Unit = remember {
     { nodeId -> navController.navigate(routeToDeviceFabrics(nodeId)) }
   }
 
@@ -80,7 +75,7 @@ fun AppNavigation(
       DeviceRoute(
           navigateToDeviceSettings = navigateToDeviceSettings,
           onBackClick = { navController.popBackStack() },
-          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!,
+          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId(),
       )
     }
     // Device settings
@@ -90,21 +85,10 @@ fun AppNavigation(
     ) {
       DeviceSettingsRoute(
           navigateToHome = navigateToHome,
-          navigateToDeviceDataModel = navigateToDeviceDataModel,
           navigateToDeviceExplorer = navigateToDeviceExplorer,
           navigateToDeviceFabrics = navigateToDeviceFabrics,
           onBackClick = { navController.popBackStack() },
-          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!,
-      )
-    }
-    // Inspect device from Device Settings
-    composable(
-        ROUTE_DEVICE_DATA_MODEL,
-        arguments = listOf(navArgument(ARG_NODE_ID) { type = NavType.LongType }),
-    ) {
-      DataModelRoute(
-          onBackClick = { navController.popBackStack() },
-          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!,
+          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId(),
       )
     }
     // Explorer from Device Settings
@@ -114,7 +98,7 @@ fun AppNavigation(
     ) {
       ExplorerRoute(
           onBackClick = { navController.popBackStack() },
-          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!,
+          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId(),
       )
     }
     // Controllers
@@ -124,7 +108,7 @@ fun AppNavigation(
     ) {
       FabricsRoute(
           onBackClick = { navController.popBackStack() },
-          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!,
+          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId(),
       )
     }
     // Matter Device Scanner

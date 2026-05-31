@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -15,13 +16,12 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
-import io.aether.android.chip.labelRes
-import io.aether.android.matter.MatterType
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.SearchTextField
 
@@ -31,7 +31,6 @@ internal fun ClusterDetailContent(
     tab: ExplorerTab,
     isLoading: Boolean,
     details: ExplorerClusterDetails?,
-    typeLabelFor: (MatterType) -> String,
     showSearch: Boolean,
     attributeSearchQuery: String,
     commandSearchQuery: String,
@@ -43,6 +42,8 @@ internal fun ClusterDetailContent(
     onAttributeSelected: (ExplorerAttributeUiItem) -> Unit,
     onCommandSelected: (ExplorerCommandUiItem) -> Unit,
 ) {
+  val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
+
   Column(modifier = Modifier.fillMaxSize()) {
     PrimaryTabRow(selectedTabIndex = tab.ordinal) {
       ExplorerTab.entries.forEach { t ->
@@ -78,7 +79,7 @@ internal fun ClusterDetailContent(
                 matchesExplorerQuery(
                     attributeSearchQuery,
                     attr.name.orEmpty(),
-                    formatExplorerId(attr.id),
+                    formatExplorerId(attr.id.value),
                 )
               }
           val normalizedQuery = attributeSearchQuery.trim().lowercase()
@@ -93,14 +94,15 @@ internal fun ClusterDetailContent(
             )
           } else {
             LazyColumn(
+                state = listState,
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              items(filtered, key = { it.id }) { attribute ->
+              items(filtered, key = { "attr-${it.id}" }) { attribute ->
                 ExplorerRow(
                     text =
                         formatIdAndName(
-                            attribute.id,
+                            attribute.id.value,
                             attribute.name
                                 ?: stringResource(R.string.device_explorer_attribute_unknown),
                         ),
@@ -111,15 +113,15 @@ internal fun ClusterDetailContent(
                                   append(
                                       stringResource(
                                           R.string.device_explorer_attribute_privileges,
-                                          stringResource(attribute.readPrivilege.labelRes()),
-                                          stringResource(attribute.writePrivilege.labelRes()),
+                                          attribute.readPrivilege.toLabel(),
+                                          attribute.writePrivilege.toLabel(),
                                       )
                                   )
                                   append("\n")
                                   append(
                                       stringResource(
                                           R.string.device_explorer_attribute_type,
-                                          typeLabelFor(attribute.type),
+                                          attribute.type.label,
                                       )
                                   )
                                 },
@@ -151,7 +153,7 @@ internal fun ClusterDetailContent(
                 matchesExplorerQuery(
                     commandSearchQuery,
                     command.name.orEmpty(),
-                    formatExplorerId(command.id),
+                    formatExplorerId(command.id.value),
                 )
               }
           val normalizedQuery = commandSearchQuery.trim().lowercase()
@@ -166,14 +168,15 @@ internal fun ClusterDetailContent(
             )
           } else {
             LazyColumn(
+                state = listState,
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              items(filteredCommands, key = { it.id }) { command ->
+              items(filteredCommands, key = { "cmd-${it.id}" }) { command ->
                 ExplorerRow(
                     text =
                         formatIdAndName(
-                            command.id,
+                            command.id.value,
                             command.name
                                 ?: stringResource(R.string.device_explorer_command_unknown),
                         ),
@@ -212,7 +215,7 @@ internal fun ClusterDetailContent(
                 matchesExplorerQuery(
                     eventSearchQuery,
                     event.name.orEmpty(),
-                    formatExplorerId(event.id),
+                    formatExplorerId(event.id.value),
                 )
               }
           val normalizedQuery = eventSearchQuery.trim().lowercase()
@@ -227,14 +230,15 @@ internal fun ClusterDetailContent(
             )
           } else {
             LazyColumn(
+                state = listState,
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              items(filteredEvents, key = { it.id }) { event ->
+              items(filteredEvents, key = { "evt-${it.id}" }) { event ->
                 ExplorerRow(
                     text =
                         formatIdAndName(
-                            event.id,
+                            event.id.value,
                             event.name ?: stringResource(R.string.device_explorer_event_unknown),
                         ),
                 )

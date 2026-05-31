@@ -17,11 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
-import io.aether.android.stateDisplayString
-import timber.log.Timber
+import io.aether.android.isOnDisplayString
 
 /** Displays the on/off state of a single OnOff cluster and lets the user toggle it. */
 @Composable
@@ -47,24 +45,9 @@ internal fun OnOffClusterControl(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content)),
     ) {
-      Text(text = stateDisplayString(isOnline, isOn), style = MaterialTheme.typography.bodyLarge)
+      Text(text = isOnDisplayString(isOn), style = MaterialTheme.typography.bodyLarge)
       Spacer(Modifier.weight(1f))
       Switch(checked = isOn, onCheckedChange = onToggle)
     }
   }
-}
-
-// -----------------------------------------------------------------------------------------------
-// Compose Previews
-
-@Preview(widthDp = 300)
-@Composable
-private fun OnOffClusterControl_OnlineOn() {
-  MaterialTheme { OnOffClusterControl(isOnline = true, isOn = true) { Timber.d("toggle: $it") } }
-}
-
-@Preview(widthDp = 300)
-@Composable
-private fun OnOffClusterControl_Offline() {
-  MaterialTheme { OnOffClusterControl(isOnline = false, isOn = false) { Timber.d("toggle: $it") } }
 }

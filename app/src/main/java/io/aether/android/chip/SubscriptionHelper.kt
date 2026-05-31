@@ -11,6 +11,9 @@ import chip.devicecontroller.model.ChipAttributePath
 import chip.devicecontroller.model.ChipEventPath
 import chip.devicecontroller.model.ChipPathId
 import chip.devicecontroller.model.NodeState
+import io.aether.android.matter.ClusterId
+import io.aether.android.matter.EndpointId
+import io.aether.android.matter.NodeId
 import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -73,15 +76,16 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
   /** Endpoint [1] { Cluster [6] [OnOff] { [0] [OnOff] false } } */
   fun extractAttribute(
       nodeState: NodeState,
-      endpointId: Int,
-      clusterAttribute: ClusterAttribute,
+      endpointId: EndpointId,
+      clusterId: ClusterId,
+      attributeId: Long,
   ): Any? {
     nodeState.endpointStates.forEach { (_endpointId, endpointState) ->
-      if (_endpointId != endpointId) return@forEach
-      endpointState.clusterStates.forEach { (clusterId, clusterState) ->
-        if (clusterId != clusterAttribute.clusterId) return@forEach
-        clusterState.attributeStates.forEach { (attributeId, attributeState) ->
-          if (attributeId != clusterAttribute.attributeId) return@forEach
+      if (_endpointId != endpointId.toInt()) return@forEach
+      endpointState.clusterStates.forEach { (stateClusterId, clusterState) ->
+        if (stateClusterId != clusterId.toLong()) return@forEach
+        clusterState.attributeStates.forEach { (stateAttributeId, attributeState) ->
+          if (stateAttributeId != attributeId) return@forEach
           return attributeState.value
         }
       }
@@ -89,17 +93,17 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
     return null
   }
 
-  open class ReportCallbackForDevice(val deviceId: Long) : ReportCallback {
+  open class ReportCallbackForDevice(val nodeId: NodeId) : ReportCallback {
     override fun onError(
         attributePath: ChipAttributePath?,
         eventPath: ChipEventPath?,
         ex: Exception,
     ) {
       if (attributePath != null) {
-        Timber.e(ex, "reportCallback: error on device [${deviceId}] for [${attributePath}]")
+        Timber.e(ex, "reportCallback: error on node [${nodeId}] for [${attributePath}]")
       }
       if (eventPath != null) {
-        Timber.e(ex, "reportCallback: error on device [${deviceId}] for [${eventPath}]")
+        Timber.e(ex, "reportCallback: error on node [${nodeId}] for [${eventPath}]")
       }
     }
 
@@ -116,18 +120,18 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
     }
   }
 
-  open class SubscriptionEstablishedCallbackForDevice(val deviceId: Long) :
+  open class SubscriptionEstablishedCallbackForDevice(val nodeId: NodeId) :
       SubscriptionEstablishedCallback {
     override fun onSubscriptionEstablished(subscriptionId: Long) {
       Timber.d("onSubscriptionEstablished(): subscriptionId [${subscriptionId}]")
     }
   }
 
-  open class ResubscriptionAttemptCallbackForDevice(val deviceId: Long) :
+  open class ResubscriptionAttemptCallbackForDevice(val nodeId: NodeId) :
       ResubscriptionAttemptCallback {
     override fun onResubscriptionAttempt(terminationCause: Int, nextResubscribeIntervalMsec: Int) {
       Timber.d(
-          "onResubscriptionAttempt(): device [$deviceId] terminationCause [$terminationCause] nextResubscribeIntervalMsec [$nextResubscribeIntervalMsec]"
+          "onResubscriptionAttempt(): node [$nodeId] terminationCause [$terminationCause] nextResubscribeIntervalMsec [$nextResubscribeIntervalMsec]"
       )
     }
   }

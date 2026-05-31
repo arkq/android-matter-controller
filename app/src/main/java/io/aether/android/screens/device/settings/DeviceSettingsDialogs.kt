@@ -22,9 +22,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import io.aether.android.Device
 import io.aether.android.R
 import io.aether.android.getDeviceTypeDisplayStringId
+import io.aether.android.matter.DEVICES
+import io.aether.android.matter.DeviceTypeId
 
 @Composable
 internal fun RenameDialog(
@@ -60,20 +61,10 @@ internal fun RenameDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DeviceTypeDialog(
-    currentType: Device.DeviceType,
-    onConfirm: (Device.DeviceType) -> Unit,
+    currentType: DeviceTypeId,
+    onConfirm: (DeviceTypeId) -> Unit,
     onDismiss: () -> Unit,
 ) {
-  val types =
-      listOf(
-          Device.DeviceType.TYPE_LIGHT,
-          Device.DeviceType.TYPE_DIMMABLE_LIGHT,
-          Device.DeviceType.TYPE_COLOR_TEMPERATURE_LIGHT,
-          Device.DeviceType.TYPE_EXTENDED_COLOR_LIGHT,
-          Device.DeviceType.TYPE_LIGHT_SWITCH,
-          Device.DeviceType.TYPE_OUTLET,
-          Device.DeviceType.TYPE_UNKNOWN,
-      )
   var expanded by remember { mutableStateOf(false) }
   var selectedType by remember(currentType) { mutableStateOf(currentType) }
 
@@ -85,7 +76,7 @@ internal fun DeviceTypeDialog(
             onExpandedChange = { expanded = it },
         ) {
           OutlinedTextField(
-              value = stringResource(getDeviceTypeDisplayStringId(selectedType)),
+              value = getDeviceTypeDisplayStringId(selectedType),
               onValueChange = {},
               readOnly = true,
               trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -97,15 +88,17 @@ internal fun DeviceTypeDialog(
               expanded = expanded,
               onDismissRequest = { expanded = false },
           ) {
-            types.forEach { type ->
-              DropdownMenuItem(
-                  text = { Text(stringResource(getDeviceTypeDisplayStringId(type))) },
-                  onClick = {
-                    selectedType = type
-                    expanded = false
-                  },
-              )
-            }
+            DEVICES.toList()
+                .sortedBy { it.second }
+                .forEach { (typeId, typeName) ->
+                  DropdownMenuItem(
+                      text = { Text(typeName) },
+                      onClick = {
+                        selectedType = typeId
+                        expanded = false
+                      },
+                  )
+                }
           }
         }
       },

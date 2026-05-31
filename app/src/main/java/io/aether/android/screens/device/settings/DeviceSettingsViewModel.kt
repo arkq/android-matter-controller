@@ -6,6 +6,7 @@ package io.aether.android.screens.device.settings
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.protobuf.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.aether.android.DISCRIMINATOR
 import io.aether.android.Device
@@ -15,10 +16,16 @@ import io.aether.android.OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS
 import io.aether.android.OpenCommissioningWindowApi
 import io.aether.android.R
 import io.aether.android.SETUP_PIN_CODE
+import io.aether.android.chip.BasicInformationAttributes
 import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.data.DevicesRepository
-import io.aether.android.nodeIdFor
+import io.aether.android.data.DevicesStateRepository
+import io.aether.android.matter.DEVICES
+import io.aether.android.matter.DeviceTypeId
+import io.aether.android.matter.EndpointId
+import io.aether.android.matter.NodeId
+import io.aether.android.matter.VendorId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.shared.SetDeviceNameResult
 import io.aether.android.screens.shared.SetDeviceNameUseCase
@@ -27,6 +34,8 @@ import kotlin.random.Random
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -36,6 +45,7 @@ class DeviceSettingsViewModel
 @Inject
 constructor(
     private val devicesRepository: DevicesRepository,
+    private val devicesStateRepository: DevicesStateRepository,
     private val chipClient: ChipClient,
     private val clustersHelper: ClustersHelper,
     private val setDeviceNameUseCase: SetDeviceNameUseCase,
@@ -45,21 +55,36 @@ constructor(
   private var _device = MutableStateFlow<Device?>(null)
   val device: StateFlow<Device?> = _device.asStateFlow()
 
-  // Hardware version string fetched from the device (null when not yet loaded or unavailable).
-  private var _hardwareVersion = MutableStateFlow<String?>(null)
-  val hardwareVersion: StateFlow<String?> = _hardwareVersion.asStateFlow()
+  // Attributes fetched live from Basic Information cluster.
+  private var _basicInformation = MutableStateFlow<BasicInformationAttributes?>(null)
+  val basicInformation: StateFlow<BasicInformationAttributes?> = _basicInformation.asStateFlow()
 
-  // Software version string fetched from the device (null when not yet loaded or unavailable).
-  private var _softwareVersion = MutableStateFlow<String?>(null)
-  val softwareVersion: StateFlow<String?> = _softwareVersion.asStateFlow()
+  private var _isOnline = MutableStateFlow(true)
+  val isOnline: StateFlow<Boolean> = _isOnline.asStateFlow()
 
-  // Vendor name fetched from the device (null when not yet loaded or unavailable).
-  private var _vendorName = MutableStateFlow<String?>(null)
-  val vendorName: StateFlow<String?> = _vendorName.asStateFlow()
+  private var _dateCommissioned = MutableStateFlow<Timestamp?>(null)
+  val dateCommissioned: StateFlow<Timestamp?> = _dateCommissioned.asStateFlow()
+
+  init {
+    // Keep _isOnline in sync with the repository state as it changes.
+    kotlinx.coroutines.flow
+        .combine(_device, devicesStateRepository.devicesStateFlow) { device, state ->
+          val node =
+              device?.nodeId?.let { nodeId ->
+                state.nodesList.firstOrNull { it.nodeId == nodeId.toLong() }
+              }
+          (node?.online ?: false) to node?.dateCommissioned
+        }
+        .onEach { (isOnline, dateCommissioned) ->
+          _isOnline.value = isOnline
+          _dateCommissioned.value = dateCommissioned?.takeUnless { isDefaultTimestamp(it) }
+        }
+        .launchIn(viewModelScope)
+  }
 
   // Vendor ID fetched from the device (null when not yet loaded or unavailable).
-  private var _vendorId = MutableStateFlow<Int?>(null)
-  val vendorId: StateFlow<Int?> = _vendorId.asStateFlow()
+  private var _vendorId = MutableStateFlow<VendorId?>(null)
+  val vendorId: StateFlow<VendorId?> = _vendorId.asStateFlow()
 
   // Controls whether the "Message" AlertDialog should be shown in the UI.
   private var _msgDialogInfo = MutableStateFlow<DialogInfo?>(null)
@@ -86,12 +111,14 @@ constructor(
   // -----------------------------------------------------------------------------------------------
   // Load device
 
-  fun loadDevice(nodeId: Long) {
+  fun loadDevice(nodeId: NodeId) {
     Timber.d("loadDevice: nodeId [$nodeId]")
     viewModelScope.launch {
       val shouldBlockUiUntilLoaded = _device.value == null
       try {
-        val loadedDevice = devicesRepository.getDeviceByNodeId(nodeId)
+        val devicesForNode = devicesRepository.getDevicesByNodeId(nodeId)
+        val loadedDevice =
+            chooseBestDevice(devicesForNode) ?: devicesRepository.getDeviceByNodeId(nodeId)
         val basicInfo =
             try {
               clustersHelper.readBasicInformationAttributes(nodeId)
@@ -101,29 +128,42 @@ constructor(
             }
 
         _device.value = loadedDevice
-        _vendorName.value = basicInfo?.vendorName
-        _vendorId.value = basicInfo?.vendorId
-        _hardwareVersion.value = basicInfo?.hardwareVersion
-        _softwareVersion.value = basicInfo?.softwareVersion
+        _basicInformation.value = basicInfo
       } catch (e: Exception) {
         Timber.e(e, "loadDevice failed")
         if (shouldBlockUiUntilLoaded) {
           _device.value = null
         }
+        _basicInformation.value = null
         showMsgDialog(R.string.device_settings, R.string.device_settings_load_failed)
       }
     }
   }
 
+  private fun chooseBestDevice(candidates: List<Device>): Device? {
+    return candidates.maxByOrNull { candidate ->
+      var score = 0
+      if (candidate.deviceTypeId in DEVICES) score += 4
+      if (candidate.name.isNotBlank()) score += 2
+      if (candidate.productName.isNotBlank()) score += 2
+      if (candidate.productId.toIntOrNull()?.let { it != 0 } == true) score += 1
+      score
+    }
+  }
+
+  private fun isDefaultTimestamp(timestamp: Timestamp): Boolean {
+    return timestamp.seconds == 0L && timestamp.nanos == 0
+  }
+
   // -----------------------------------------------------------------------------------------------
   // Rename device
 
-  fun renameDevice(nodeId: Long, newName: String) {
+  fun renameDevice(nodeId: NodeId, newName: String) {
     Timber.d("renameDevice: nodeId [$nodeId] newName [$newName]")
     viewModelScope.launch {
       val device = devicesRepository.getDeviceByNodeId(nodeId)
       val result =
-          setDeviceNameUseCase.execute(device.deviceId, newName) {
+          setDeviceNameUseCase.execute(nodeId, newName) {
             // Immediately update local state so the UI reflects the new name.
             _device.value = _device.value?.toBuilder()?.setName(newName)?.build()
           }
@@ -136,13 +176,12 @@ constructor(
   // -----------------------------------------------------------------------------------------------
   // Change device type
 
-  fun changeDeviceType(nodeId: Long, deviceType: Device.DeviceType) {
-    Timber.d("changeDeviceType: nodeId [$nodeId] deviceType [$deviceType]")
+  fun changeDeviceType(nodeId: NodeId, deviceTypeId: DeviceTypeId) {
+    Timber.d("changeDeviceType: nodeId [$nodeId] deviceTypeId [$deviceTypeId]")
     viewModelScope.launch {
       try {
-        val device = devicesRepository.getDeviceByNodeId(nodeId)
-        devicesRepository.updateDeviceType(device.deviceId, deviceType)
-        _device.value = _device.value?.toBuilder()?.setDeviceType(deviceType)?.build()
+        devicesRepository.updateDeviceType(nodeId, deviceTypeId)
+        _device.value = _device.value?.toBuilder()?.setDeviceTypeId(deviceTypeId)?.build()
       } catch (e: Exception) {
         Timber.e(e, "changeDeviceType failed")
       }
@@ -186,7 +225,7 @@ constructor(
   // Share device
 
   // Open commissioning window for device sharing.
-  fun openPairingWindow(nodeId: Long) {
+  fun openPairingWindow(nodeId: NodeId) {
     Timber.d("ShareDevice: openPairingWindow")
     viewModelScope.launch {
       showMsgDialog(
@@ -217,7 +256,7 @@ constructor(
     }
   }
 
-  private suspend fun openCommissioningWindowUsingOpenPairingWindowWithPin(nodeId: Long) {
+  private suspend fun openCommissioningWindowUsingOpenPairingWindowWithPin(nodeId: NodeId) {
     Timber.d(
         "ShareDevice: chipClient.awaitOpenPairingWindowWithPIN " +
             "duration [${OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS}] iteration [${ITERATION}] " +
@@ -233,15 +272,15 @@ constructor(
     )
   }
 
-  private suspend fun openCommissioningWindowWithAdministratorCommissioningCluster(nodeId: Long) {
+  private suspend fun openCommissioningWindowWithAdministratorCommissioningCluster(nodeId: NodeId) {
     val salt = Random.nextBytes(32)
     val timedInvokeTimeoutMs = 10000
     val connectedDevicePointer = chipClient.awaitGetConnectedDevicePointer(nodeId)
     val verifier =
         chipClient.computePaseVerifier(connectedDevicePointer, SETUP_PIN_CODE, ITERATION, salt)
     clustersHelper.openCommissioningWindowAdministratorCommissioningCluster(
-        nodeId,
-        0,
+        nodeId.toLong(),
+        EndpointId(0u),
         OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS,
         verifier.pakeVerifier,
         DISCRIMINATOR,
@@ -254,7 +293,7 @@ constructor(
   // -----------------------------------------------------------------------------------------------
   // Remove device
 
-  fun removeDevice(nodeId: Long) {
+  fun removeDevice(nodeId: NodeId) {
     Timber.d("Removing device for nodeId [$nodeId]")
     showMsgDialog(R.string.unlinking_device_title, R.string.unlinking_device_body, false)
     viewModelScope.launch {
@@ -268,16 +307,16 @@ constructor(
       }
       Timber.d("removeDevice succeeded for nodeId [$nodeId]")
       dismissMsgDialog()
-      removeAllLogicalDevicesForNode(nodeId)
+      removePhysicalDevice(nodeId)
       _deviceRemovalCompleted.value = true
     }
   }
 
-  fun removeDeviceWithoutUnlink(nodeId: Long) {
+  fun removeDeviceWithoutUnlink(nodeId: NodeId) {
     Timber.d("removeDeviceWithoutUnlink: nodeId [$nodeId]")
     viewModelScope.launch {
       try {
-        removeAllLogicalDevicesForNode(nodeId)
+        removePhysicalDevice(nodeId)
         _deviceRemovalCompleted.value = true
       } catch (e: Exception) {
         Timber.e(e, "removeDeviceWithoutUnlink failed")
@@ -286,10 +325,8 @@ constructor(
     }
   }
 
-  private suspend fun removeAllLogicalDevicesForNode(nodeId: Long) {
-    val devicesForNode =
-        devicesRepository.getAllDevices().devicesList.filter { nodeIdFor(it) == nodeId }
-    devicesForNode.forEach { devicesRepository.removeDevice(it.deviceId) }
+  private suspend fun removePhysicalDevice(nodeId: NodeId) {
+    devicesRepository.removeDevice(nodeId)
   }
 
   // -----------------------------------------------------------------------------------------------

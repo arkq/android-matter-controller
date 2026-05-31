@@ -21,12 +21,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.R
+import io.aether.android.matter.NodeId
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
 
@@ -34,9 +36,10 @@ import io.aether.android.screens.common.MsgAlertDialog
 @Composable
 fun ExplorerRoute(
     onBackClick: () -> Unit,
-    nodeId: Long,
+    nodeId: NodeId,
     viewModel: ExplorerViewModel = hiltViewModel(),
 ) {
+  val typedNodeId = nodeId
   val deviceMatterInfoList by viewModel.deviceMatterInfoList.collectAsState()
   val navStack by viewModel.navStack.collectAsState()
   val endpointSearchQuery by viewModel.endpointSearchQuery.collectAsState()
@@ -51,17 +54,16 @@ fun ExplorerRoute(
   val attributeWriteSuccessCount by viewModel.attributeWriteSuccessCount.collectAsState()
   val commandInvokeSuccessCount by viewModel.commandInvokeSuccessCount.collectAsState()
   val msgDialogInfo by viewModel.msgDialogInfo.collectAsState()
-  val clustersMap = viewModel.clustersMap
-  val devicesMap = viewModel.devicesMap
   val knownClustersById by viewModel.knownClustersById.collectAsState()
 
   var showSearch by rememberSaveable { mutableStateOf(false) }
+  val saveableStateHolder = rememberSaveableStateHolder()
 
   val atRoot = navStack.size <= 1
   BackHandler(enabled = !atRoot) { viewModel.navigateBack() }
 
   LifecycleResumeEffect(nodeId) {
-    viewModel.loadExplorer(nodeId)
+    viewModel.loadExplorer(typedNodeId)
     onPauseOrDispose {}
   }
 
@@ -99,101 +101,100 @@ fun ExplorerRoute(
       BreadcrumbBar(
           navStack = navStack,
           deviceMatterInfoList = infos,
-          clustersMap = clustersMap,
-          devicesMap = devicesMap,
           onPopToIndex = viewModel::popToIndex,
       )
 
       when (val level = navStack.last()) {
         ExplorerLevel.EndpointList ->
-            EndpointListContent(
-                infos = infos,
-                devicesMap = devicesMap,
-                showSearch = showSearch,
-                searchQuery = endpointSearchQuery,
-                onSearchQueryChange = viewModel::onEndpointSearchQueryChange,
-                onSelectEndpoint = viewModel::selectEndpoint,
-            )
+            saveableStateHolder.SaveableStateProvider("endpoint-list") {
+              EndpointListContent(
+                  infos = infos,
+                  showSearch = showSearch,
+                  searchQuery = endpointSearchQuery,
+                  onSearchQueryChange = viewModel::onEndpointSearchQueryChange,
+                  onSelectEndpoint = viewModel::selectEndpoint,
+              )
+            }
         is ExplorerLevel.ClusterList ->
-            ClusterListContent(
-                endpoint = level.endpoint,
-                infos = infos,
-                clustersMap = clustersMap,
-                knownClustersById = knownClustersById,
+            saveableStateHolder.SaveableStateProvider("cluster-list-${level.endpointId}") {
+              ClusterListContent(
+                  endpointId = level.endpointId,
+                  infos = infos,
+                  knownClustersById = knownClustersById,
+                  showSearch = showSearch,
+                  searchQuery = clusterSearchQuery,
+                  onSearchQueryChange = viewModel::onClusterSearchQueryChange,
+                  onSelectCluster = { clusterId ->
+                    viewModel.selectCluster(typedNodeId, level.endpointId, clusterId)
+                  },
+              )
+            }
+        is ExplorerLevel.ClusterDetail -> {
+          val key = ExplorerClusterKey(level.endpointId, level.clusterId)
+          saveableStateHolder.SaveableStateProvider(
+              "cluster-detail-${level.endpointId}-${level.clusterId}-${level.tab}"
+          ) {
+            ClusterDetailContent(
+                tab = level.tab,
+                isLoading = loadingClusterKeys.contains(key),
+                details = clusterDetailsByKey[key],
                 showSearch = showSearch,
-                searchQuery = clusterSearchQuery,
-                onSearchQueryChange = viewModel::onClusterSearchQueryChange,
-                onSelectCluster = { clusterId ->
-                  viewModel.selectCluster(nodeId, level.endpoint, clusterId)
+                attributeSearchQuery = attributeSearchQuery,
+                commandSearchQuery = commandSearchQuery,
+                eventSearchQuery = eventSearchQuery,
+                onAttributeSearchQueryChange = viewModel::onAttributeSearchQueryChange,
+                onCommandSearchQueryChange = viewModel::onCommandSearchQueryChange,
+                onEventSearchQueryChange = viewModel::onEventSearchQueryChange,
+                onTabSelected = { tab ->
+                  viewModel.setClusterDetailTab(level.endpointId, level.clusterId, tab)
+                },
+                onAttributeSelected = { attribute ->
+                  viewModel.openAttributeDetail(level.endpointId, level.clusterId, attribute)
+                },
+                onCommandSelected = { command ->
+                  viewModel.openCommandInvoke(level.endpointId, level.clusterId, command)
                 },
             )
-        is ExplorerLevel.ClusterDetail -> {
-          val key = ExplorerClusterKey(level.endpoint, level.clusterId)
-          ClusterDetailContent(
-              tab = level.tab,
-              isLoading = loadingClusterKeys.contains(key),
-              details = clusterDetailsByKey[key],
-              typeLabelFor = viewModel::shortTypeLabel,
-              showSearch = showSearch,
-              attributeSearchQuery = attributeSearchQuery,
-              commandSearchQuery = commandSearchQuery,
-              eventSearchQuery = eventSearchQuery,
-              onAttributeSearchQueryChange = viewModel::onAttributeSearchQueryChange,
-              onCommandSearchQueryChange = viewModel::onCommandSearchQueryChange,
-              onEventSearchQueryChange = viewModel::onEventSearchQueryChange,
-              onTabSelected = { tab ->
-                viewModel.setClusterDetailTab(level.endpoint, level.clusterId, tab)
-              },
-              onAttributeSelected = { attribute ->
-                viewModel.openAttributeDetail(level.endpoint, level.clusterId, attribute)
-              },
-              onCommandSelected = { command ->
-                viewModel.openCommandInvoke(level.endpoint, level.clusterId, command)
-              },
-          )
+          }
         }
-        is ExplorerLevel.AttributeDetail -> {
-          val currentValue =
-              attributeValueByKey[
-                  viewModel.attributeKey(
-                      level.endpoint,
+        is ExplorerLevel.AttributeDetail ->
+            AttributeDetailContent(
+                attribute = level.attribute,
+                currentValue =
+                    attributeValueByKey[
+                        viewModel.attributeKey(
+                            level.endpointId,
+                            level.clusterId,
+                            level.attribute.id,
+                        )],
+                readSuccessCount = attributeReadSuccessCount,
+                writeSuccessCount = attributeWriteSuccessCount,
+                onRead = {
+                  viewModel.readAttribute(
+                      typedNodeId,
+                      level.endpointId,
                       level.clusterId,
                       level.attribute.id,
-                  )]
-          AttributeDetailContent(
-              attribute = level.attribute,
-              currentValue = currentValue,
-              typeLabelFor = viewModel::shortTypeLabel,
-              readSuccessCount = attributeReadSuccessCount,
-              writeSuccessCount = attributeWriteSuccessCount,
-              onRead = {
-                viewModel.readAttribute(
-                    nodeId,
-                    level.endpoint,
-                    level.clusterId,
-                    level.attribute.id,
-                )
-              },
-              onWrite = { value ->
-                viewModel.writeAttribute(
-                    nodeId,
-                    level.endpoint,
-                    level.clusterId,
-                    level.attribute.id,
-                    value,
-                )
-              },
-          )
-        }
+                  )
+                },
+                onWrite = { value ->
+                  viewModel.writeAttribute(
+                      typedNodeId,
+                      level.endpointId,
+                      level.clusterId,
+                      level.attribute.id,
+                      value,
+                  )
+                },
+            )
         is ExplorerLevel.CommandInvoke ->
             CommandInvokeContent(
                 command = level.command,
-                typeLabelFor = viewModel::shortTypeLabel,
                 invokeSuccessCount = commandInvokeSuccessCount,
                 onInvoke = { argumentValues ->
                   viewModel.invokeCommand(
-                      nodeId,
-                      level.endpoint,
+                      typedNodeId,
+                      level.endpointId,
                       level.clusterId,
                       level.command.id,
                       argumentValues,

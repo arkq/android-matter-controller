@@ -25,13 +25,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
+import io.aether.android.matter.CLUSTERS
+import io.aether.android.matter.DEVICES
 
 @Composable
 internal fun BreadcrumbBar(
     navStack: List<ExplorerLevel>,
     deviceMatterInfoList: List<DeviceMatterInfo>,
-    clustersMap: Map<Long, String>,
-    devicesMap: Map<Long, String>,
     onPopToIndex: (Int) -> Unit,
 ) {
   val scrollState = androidx.compose.foundation.rememberScrollState()
@@ -56,7 +56,7 @@ internal fun BreadcrumbBar(
           contentDescription = null,
           tint = MaterialTheme.colorScheme.onSurfaceVariant,
       )
-      val label = breadcrumbLabelFor(level, deviceMatterInfoList, clustersMap, devicesMap)
+      val label = breadcrumbLabelFor(level, deviceMatterInfoList)
       val isLast = index == navStack.size - 1
       if (isLast) {
         Text(
@@ -82,29 +82,28 @@ internal fun BreadcrumbBar(
 private fun breadcrumbLabelFor(
     level: ExplorerLevel,
     deviceMatterInfoList: List<DeviceMatterInfo>,
-    clustersMap: Map<Long, String>,
-    devicesMap: Map<Long, String>,
 ): String =
     when (level) {
       ExplorerLevel.EndpointList -> stringResource(R.string.device_explorer_root)
       is ExplorerLevel.ClusterList -> {
-        val info = deviceMatterInfoList.firstOrNull { it.endpoint == level.endpoint }
+        val info = deviceMatterInfoList.firstOrNull { it.endpointId == level.endpointId }
         val endpointName =
             info
                 ?.types
                 .orEmpty()
                 .map { typeId ->
-                  devicesMap[typeId]
-                      ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
+                  DEVICES[typeId] ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
                 }
                 .joinToString(" & ")
-        formatEndpointLabel(level.endpoint, endpointName)
+        formatEndpointLabel(level.endpointId, endpointName)
       }
       is ExplorerLevel.ClusterDetail -> {
         val name =
-            clustersMap[level.clusterId] ?: stringResource(R.string.device_explorer_cluster_unknown)
+            CLUSTERS[level.clusterId]?.name
+                ?: stringResource(R.string.device_explorer_cluster_unknown)
         formatIdAndName(level.clusterId, name)
       }
-      is ExplorerLevel.AttributeDetail -> formatIdAndName(level.attribute.id, level.attribute.name)
-      is ExplorerLevel.CommandInvoke -> formatIdAndName(level.command.id, level.command.name)
+      is ExplorerLevel.AttributeDetail ->
+          formatIdAndName(level.attribute.id.value, level.attribute.name)
+      is ExplorerLevel.CommandInvoke -> formatIdAndName(level.command.id.value, level.command.name)
     }

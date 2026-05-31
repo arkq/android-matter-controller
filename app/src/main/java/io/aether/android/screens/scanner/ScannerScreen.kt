@@ -32,7 +32,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import io.aether.android.R
@@ -122,27 +121,12 @@ fun MatterBeaconItem(beacon: MatterBeacon) {
           text =
               stringResource(
                   R.string.beacon_detail_text,
-                  beacon.vendorId,
-                  beacon.productId,
+                  beacon.vendorId.toInt(),
+                  beacon.productId.toInt(),
                   beacon.discriminator,
               ),
           style = MaterialTheme.typography.bodyMedium,
       )
     }
   }
-}
-
-// -----------------------------------------------------------------------------------------------
-// Composables Previews
-
-@Preview
-@Composable
-private fun ScannerScreenPreview() {
-  val beaconsList =
-      listOf(
-          MatterBeacon("Acme LightBulb", 1, 2, 3, Transport.Ble("address")),
-          MatterBeacon("Acme Plug", 1, 2, 3, Transport.Mdns("address", 5480, false)),
-          MatterBeacon("0AFE867DE", 1, 2, 3, Transport.Hotspot("onhub")),
-      )
-  MaterialTheme { ScannerScreen(PaddingValues(), beaconsList) }
 }

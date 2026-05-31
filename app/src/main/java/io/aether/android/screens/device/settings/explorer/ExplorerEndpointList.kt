@@ -8,30 +8,35 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
+import io.aether.android.matter.DEVICES
+import io.aether.android.matter.EndpointId
 import io.aether.android.screens.common.SearchTextField
 
 @Composable
 internal fun EndpointListContent(
     infos: List<DeviceMatterInfo>,
-    devicesMap: Map<Long, String>,
     showSearch: Boolean,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
-    onSelectEndpoint: (Int) -> Unit,
+    onSelectEndpoint: (EndpointId) -> Unit,
 ) {
+  val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
+
   val filteredInfos = infos.filter { info ->
-    val endpointText = formatEndpointId(info.endpoint)
-    val typeNames = info.types.joinToString(" ") { typeId -> devicesMap[typeId].orEmpty() }
+    val endpointText = formatEndpointId(info.endpointId)
+    val typeNames = info.types.joinToString(" ") { typeId -> DEVICES[typeId].orEmpty() }
     matchesExplorerQuery(searchQuery, endpointText, typeNames)
   }
   val normalizedQuery = searchQuery.trim().lowercase()
@@ -59,27 +64,34 @@ internal fun EndpointListContent(
       return@Column
     }
 
-    LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-      items(filteredInfos, key = { it.endpoint }) { info ->
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.weight(1f),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+      items(filteredInfos, key = { "e-${it.endpointId}" }) { info ->
         val deviceTypes =
             info.types
                 .map { typeId ->
                   val typeName =
-                      devicesMap[typeId]
+                      DEVICES[typeId]
                           ?: stringResource(R.string.device_explorer_endpoint_type_unknown)
                   typeId to typeName
                 }
                 .sortedBy { it.first }
         val titleName = deviceTypes.joinToString(" & ") { it.second }
         ExplorerRow(
-            text = formatEndpointLabel(info.endpoint, titleName),
+            text = formatEndpointLabel(info.endpointId, titleName),
             secondaryText =
                 buildString {
                   if (deviceTypes.size == 1) {
                     append(
                         stringResource(
                             R.string.device_explorer_device_type,
-                            formatIdAndName(deviceTypes.first().first, deviceTypes.first().second),
+                            formatIdAndName(
+                                deviceTypes.first().first.value,
+                                deviceTypes.first().second,
+                            ),
                         )
                     )
                     append("\n")
@@ -90,7 +102,7 @@ internal fun EndpointListContent(
                       append(
                           stringResource(
                               R.string.device_explorer_device_types_item,
-                              formatIdAndName(typeId, name),
+                              formatIdAndName(typeId.value, name),
                           )
                       )
                       append("\n")
@@ -104,7 +116,7 @@ internal fun EndpointListContent(
                       )
                   )
                 },
-            onClick = { onSelectEndpoint(info.endpoint) },
+            onClick = { onSelectEndpoint(info.endpointId) },
         )
       }
     }

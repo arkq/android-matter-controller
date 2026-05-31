@@ -5,7 +5,6 @@ package io.aether.android.screens.common
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -87,7 +86,6 @@ fun HighlightedOutlinedTextField(
     modifier: Modifier = Modifier,
     label: @Composable (() -> Unit)? = null,
     enabled: Boolean = true,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
   var lastSeen by remember(resetKey) { mutableIntStateOf(successTrigger) }
   var highlight by remember(resetKey) { mutableStateOf(FieldHighlight.STANDARD) }
@@ -110,7 +108,6 @@ fun HighlightedOutlinedTextField(
       modifier = modifier,
       label = label,
       enabled = enabled,
-      keyboardOptions = keyboardOptions,
       colors = fieldHighlightColors(highlight),
   )
 }

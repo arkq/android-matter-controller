@@ -10,6 +10,12 @@ import io.aether.android.R
 import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.data.DevicesRepository
+import io.aether.android.matter.FabricId
+import io.aether.android.matter.NodeId
+import io.aether.android.matter.VendorId
+import io.aether.android.matter.toFabricId
+import io.aether.android.matter.toNodeId
+import io.aether.android.matter.toVendorId
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,9 +26,9 @@ import timber.log.Timber
 data class ManagedFabric(
     val fabricIndex: Int,
     val rootPublicKey: ByteArray?,
-    val vendorId: Int?,
-    val fabricId: Long?,
-    val nodeId: Long?,
+    val vendorId: VendorId?,
+    val fabricId: FabricId?,
+    val nodeId: NodeId?,
     val label: String?,
     val isCurrentFabric: Boolean,
 )
@@ -48,7 +54,7 @@ constructor(
   private var _uiState = MutableStateFlow<UiState>(UiState.Loading)
   val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
-  fun loadFabrics(nodeId: Long) {
+  fun loadFabrics(nodeId: NodeId) {
     Timber.d("FabricsViewModel.loadFabrics: nodeId [$nodeId]")
     viewModelScope.launch {
       val previousState = _uiState.value
@@ -59,7 +65,7 @@ constructor(
     }
   }
 
-  fun removeFabric(nodeId: Long, fabricIndex: Int) {
+  fun removeFabric(nodeId: NodeId, fabricIndex: Int) {
     Timber.d("FabricsViewModel.removeFabric: nodeId [$nodeId] fabricIndex [$fabricIndex]")
     viewModelScope.launch {
       val currentState = _uiState.value
@@ -84,7 +90,7 @@ constructor(
     }
   }
 
-  private suspend fun refreshFabrics(nodeId: Long, fallbackState: UiState): UiState {
+  private suspend fun refreshFabrics(nodeId: NodeId, fallbackState: UiState): UiState {
     return try {
       devicesRepository.getDeviceByNodeId(nodeId)
       val fabrics = clustersHelper.readFabricsAttribute(nodeId)
@@ -107,9 +113,9 @@ constructor(
                   ManagedFabric(
                       fabricIndex = fabricIndex,
                       rootPublicKey = fabric?.rootPublicKey,
-                      vendorId = fabric?.vendorID,
-                      fabricId = fabric?.fabricID,
-                      nodeId = fabric?.nodeID,
+                      vendorId = fabric?.vendorID?.toVendorId(),
+                      fabricId = fabric?.fabricID?.toFabricId(),
+                      nodeId = fabric?.nodeID?.toNodeId(),
                       label = fabric?.label,
                       isCurrentFabric = isCurrentFabric,
                   )
