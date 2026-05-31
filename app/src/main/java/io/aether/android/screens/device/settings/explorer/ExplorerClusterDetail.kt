@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +16,7 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -40,6 +42,8 @@ internal fun ClusterDetailContent(
     onAttributeSelected: (ExplorerAttributeUiItem) -> Unit,
     onCommandSelected: (ExplorerCommandUiItem) -> Unit,
 ) {
+  val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
+
   Column(modifier = Modifier.fillMaxSize()) {
     PrimaryTabRow(selectedTabIndex = tab.ordinal) {
       ExplorerTab.entries.forEach { t ->
@@ -90,6 +94,7 @@ internal fun ClusterDetailContent(
             )
           } else {
             LazyColumn(
+                state = listState,
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
@@ -163,6 +168,7 @@ internal fun ClusterDetailContent(
             )
           } else {
             LazyColumn(
+                state = listState,
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
@@ -224,6 +230,7 @@ internal fun ClusterDetailContent(
             )
           } else {
             LazyColumn(
+                state = listState,
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {

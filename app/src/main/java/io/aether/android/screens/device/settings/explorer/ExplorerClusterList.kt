@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -33,6 +35,8 @@ internal fun ClusterListContent(
     onSearchQueryChange: (String) -> Unit,
     onSelectCluster: (ClusterId) -> Unit,
 ) {
+  val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
+
   val endpointInfo = infos.firstOrNull { it.endpointId == endpointId }
   val serverClusters = endpointInfo?.serverClusters.orEmpty().sorted()
   val clientClusters = endpointInfo?.clientClusters.orEmpty().sorted()
@@ -69,7 +73,11 @@ internal fun ClusterListContent(
       return@Column
     }
 
-    LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.weight(1f),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
       item(key = "server-title") {
         Text(
             text = stringResource(R.string.device_explorer_server_clusters_section),
