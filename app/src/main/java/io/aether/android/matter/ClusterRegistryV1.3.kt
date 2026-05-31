@@ -147,55 +147,55 @@ val CLUSTERS_1_3 =
                         Clusters.MicrowaveOvenControl.Attributes.CookTime.ID to
                             AttributeInfo(
                                 name = "CookTime",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.MicrowaveOvenControl.Attributes.MaxCookTime.ID to
                             AttributeInfo(
                                 name = "MaxCookTime",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.MicrowaveOvenControl.Attributes.PowerSetting.ID to
                             AttributeInfo(
                                 name = "PowerSetting",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.MicrowaveOvenControl.Attributes.MinPower.ID to
                             AttributeInfo(
                                 name = "MinPower",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.MicrowaveOvenControl.Attributes.MaxPower.ID to
                             AttributeInfo(
                                 name = "MaxPower",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.MicrowaveOvenControl.Attributes.PowerStep.ID to
                             AttributeInfo(
                                 name = "PowerStep",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.MicrowaveOvenControl.Attributes.SupportedWatts.ID to
                             AttributeInfo(
                                 name = "SupportedWatts",
-                                type = DataType.LIST_UINT16,
+                                type = DataType.LIST_U_INT16,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.MicrowaveOvenControl.Attributes.SelectedWattIndex.ID to
                             AttributeInfo(
                                 name = "SelectedWattIndex",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.MicrowaveOvenControl.Attributes.WattRating.ID to
                             AttributeInfo(
                                 name = "WattRating",
-                                type = DataType.UINT16,
+                                type = DataType.U_INT16,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -210,27 +210,27 @@ val CLUSTERS_1_3 =
                                         0u to
                                             ParameterInfo(
                                                 name = "CookMode",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                         1u to
                                             ParameterInfo(
                                                 name = "CookTime",
-                                                type = DataType.ELAPSED_S,
+                                                type = DataType.ELAPSED_SECONDS,
                                             ),
                                         2u to
                                             ParameterInfo(
                                                 name = "PowerSetting",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                         3u to
                                             ParameterInfo(
                                                 name = "WattSettingIndex",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                         4u to
                                             ParameterInfo(
                                                 name = "StartAfterSetting",
-                                                type = DataType.BOOL,
+                                                type = DataType.BOOLEAN,
                                             ),
                                     ),
                             ),
@@ -243,7 +243,7 @@ val CLUSTERS_1_3 =
                                         0u to
                                             ParameterInfo(
                                                 name = "TimeToAdd",
-                                                type = DataType.ELAPSED_S,
+                                                type = DataType.ELAPSED_SECONDS,
                                             ),
                                     ),
                             ),
@@ -265,7 +265,7 @@ val CLUSTERS_1_3 =
                         Clusters.ScenesManagement.Attributes.SceneTableSize.ID to
                             AttributeInfo(
                                 name = "SceneTableSize",
-                                type = DataType.UINT16,
+                                type = DataType.U_INT16,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ScenesManagement.Attributes.FabricSceneInfo.ID to
@@ -291,12 +291,12 @@ val CLUSTERS_1_3 =
                                         1u to
                                             ParameterInfo(
                                                 name = "SceneID",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                         2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
-                                                type = DataType.UINT32,
+                                                type = DataType.U_INT32,
                                             ),
                                         3u to
                                             ParameterInfo(
@@ -324,7 +324,7 @@ val CLUSTERS_1_3 =
                                         1u to
                                             ParameterInfo(
                                                 name = "SceneID",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                     ),
                             ),
@@ -342,7 +342,7 @@ val CLUSTERS_1_3 =
                                         1u to
                                             ParameterInfo(
                                                 name = "SceneID",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                     ),
                             ),
@@ -373,7 +373,7 @@ val CLUSTERS_1_3 =
                                         1u to
                                             ParameterInfo(
                                                 name = "SceneID",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                     ),
                             ),
@@ -391,12 +391,12 @@ val CLUSTERS_1_3 =
                                         1u to
                                             ParameterInfo(
                                                 name = "SceneID",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                         2u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
-                                                type = DataType.UINT32,
+                                                type = DataType.U_INT32,
                                             ),
                                     ),
                             ),
@@ -432,7 +432,7 @@ val CLUSTERS_1_3 =
                                         2u to
                                             ParameterInfo(
                                                 name = "SceneIdentifierFrom",
-                                                type = DataType.MAX_254,
+                                                type = DataType.MAX254,
                                             ),
                                         3u to
                                             ParameterInfo(
@@ -442,7 +442,7 @@ val CLUSTERS_1_3 =
                                         4u to
                                             ParameterInfo(
                                                 name = "SceneIdentifierTo",
-                                                type = DataType.MAX_254,
+                                                type = DataType.MAX254,
                                             ),
                                     ),
                             ),
@@ -467,7 +467,7 @@ val CLUSTERS_1_3 =
                                         2u to
                                             ParameterInfo(
                                                 name = "SceneID",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                     ),
                             ),
@@ -489,12 +489,12 @@ val CLUSTERS_1_3 =
                                         2u to
                                             ParameterInfo(
                                                 name = "SceneID",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                         3u to
                                             ParameterInfo(
                                                 name = "TransitionTime",
-                                                type = DataType.UINT32,
+                                                type = DataType.U_INT32,
                                             ),
                                         4u to
                                             ParameterInfo(
@@ -526,7 +526,7 @@ val CLUSTERS_1_3 =
                                         2u to
                                             ParameterInfo(
                                                 name = "SceneID",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                     ),
                             ),
@@ -565,7 +565,7 @@ val CLUSTERS_1_3 =
                                         2u to
                                             ParameterInfo(
                                                 name = "SceneID",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                     ),
                             ),
@@ -582,7 +582,7 @@ val CLUSTERS_1_3 =
                                         1u to
                                             ParameterInfo(
                                                 name = "Capacity",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                         2u to
                                             ParameterInfo(
@@ -592,7 +592,7 @@ val CLUSTERS_1_3 =
                                         3u to
                                             ParameterInfo(
                                                 name = "SceneList",
-                                                type = DataType.LIST_UINT8,
+                                                type = DataType.LIST_U_INT8,
                                             ),
                                     ),
                             ),
@@ -614,7 +614,7 @@ val CLUSTERS_1_3 =
                                         2u to
                                             ParameterInfo(
                                                 name = "SceneIdentifierFrom",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                     ),
                             ),
@@ -629,7 +629,7 @@ val CLUSTERS_1_3 =
                         Clusters.BooleanStateConfiguration.Attributes.CurrentSensitivityLevel.ID to
                             AttributeInfo(
                                 name = "CurrentSensitivityLevel",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
@@ -637,13 +637,13 @@ val CLUSTERS_1_3 =
                             .ID to
                             AttributeInfo(
                                 name = "SupportedSensitivityLevels",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.BooleanStateConfiguration.Attributes.DefaultSensitivityLevel.ID to
                             AttributeInfo(
                                 name = "DefaultSensitivityLevel",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.BooleanStateConfiguration.Attributes.AlarmsActive.ID to
@@ -727,26 +727,26 @@ val CLUSTERS_1_3 =
                         Clusters.ValveConfigurationandControl.Attributes.OpenDuration.ID to
                             AttributeInfo(
                                 name = "OpenDuration",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ValveConfigurationandControl.Attributes.DefaultOpenDuration.ID to
                             AttributeInfo(
                                 name = "DefaultOpenDuration",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
                         Clusters.ValveConfigurationandControl.Attributes.AutoCloseTime.ID to
                             AttributeInfo(
                                 name = "AutoCloseTime",
-                                type = DataType.EPOCH_US,
+                                type = DataType.EPOCH_MICROSECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ValveConfigurationandControl.Attributes.RemainingDuration.ID to
                             AttributeInfo(
                                 name = "RemainingDuration",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ValveConfigurationandControl.Attributes.CurrentState.ID to
@@ -789,7 +789,7 @@ val CLUSTERS_1_3 =
                         Clusters.ValveConfigurationandControl.Attributes.LevelStep.ID to
                             AttributeInfo(
                                 name = "LevelStep",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -804,7 +804,7 @@ val CLUSTERS_1_3 =
                                         0u to
                                             ParameterInfo(
                                                 name = "OpenDuration",
-                                                type = DataType.ELAPSED_S,
+                                                type = DataType.ELAPSED_SECONDS,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -848,7 +848,7 @@ val CLUSTERS_1_3 =
                             .ID to
                             AttributeInfo(
                                 name = "NumberOfMeasurementTypes",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ElectricalPowerMeasurement.Attributes.Accuracy.ID to
@@ -866,61 +866,61 @@ val CLUSTERS_1_3 =
                         Clusters.ElectricalPowerMeasurement.Attributes.Voltage.ID to
                             AttributeInfo(
                                 name = "Voltage",
-                                type = DataType.VOLTAGE_M_V,
+                                type = DataType.VOLTAGE_MILLIVOLTS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ElectricalPowerMeasurement.Attributes.ActiveCurrent.ID to
                             AttributeInfo(
                                 name = "ActiveCurrent",
-                                type = DataType.AMPERAGE_M_A,
+                                type = DataType.AMPERAGE_MILLIAMPERES,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ElectricalPowerMeasurement.Attributes.ReactiveCurrent.ID to
                             AttributeInfo(
                                 name = "ReactiveCurrent",
-                                type = DataType.AMPERAGE_M_A,
+                                type = DataType.AMPERAGE_MILLIAMPERES,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ElectricalPowerMeasurement.Attributes.ApparentCurrent.ID to
                             AttributeInfo(
                                 name = "ApparentCurrent",
-                                type = DataType.AMPERAGE_M_A,
+                                type = DataType.AMPERAGE_MILLIAMPERES,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ElectricalPowerMeasurement.Attributes.ActivePower.ID to
                             AttributeInfo(
                                 name = "ActivePower",
-                                type = DataType.POWER_M_W,
+                                type = DataType.POWER_MILLIWATTS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ElectricalPowerMeasurement.Attributes.ReactivePower.ID to
                             AttributeInfo(
                                 name = "ReactivePower",
-                                type = DataType.POWER_M_W,
+                                type = DataType.POWER_MILLIWATTS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ElectricalPowerMeasurement.Attributes.ApparentPower.ID to
                             AttributeInfo(
                                 name = "ApparentPower",
-                                type = DataType.POWER_M_W,
+                                type = DataType.POWER_MILLIWATTS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ElectricalPowerMeasurement.Attributes.RMSVoltage.ID to
                             AttributeInfo(
                                 name = "RMSVoltage",
-                                type = DataType.VOLTAGE_M_V,
+                                type = DataType.VOLTAGE_MILLIVOLTS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ElectricalPowerMeasurement.Attributes.RMSCurrent.ID to
                             AttributeInfo(
                                 name = "RMSCurrent",
-                                type = DataType.AMPERAGE_M_A,
+                                type = DataType.AMPERAGE_MILLIAMPERES,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ElectricalPowerMeasurement.Attributes.RMSPower.ID to
                             AttributeInfo(
                                 name = "RMSPower",
-                                type = DataType.POWER_M_W,
+                                type = DataType.POWER_MILLIWATTS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ElectricalPowerMeasurement.Attributes.Frequency.ID to
@@ -950,7 +950,7 @@ val CLUSTERS_1_3 =
                         Clusters.ElectricalPowerMeasurement.Attributes.NeutralCurrent.ID to
                             AttributeInfo(
                                 name = "NeutralCurrent",
-                                type = DataType.AMPERAGE_M_A,
+                                type = DataType.AMPERAGE_MILLIAMPERES,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -1066,12 +1066,12 @@ val CLUSTERS_1_3 =
                                         3u to
                                             ParameterInfo(
                                                 name = "StartTime",
-                                                type = DataType.EPOCH_S,
+                                                type = DataType.EPOCH_SECONDS,
                                             ),
                                         4u to
                                             ParameterInfo(
                                                 name = "Duration",
-                                                type = DataType.UINT64,
+                                                type = DataType.U_INT64,
                                             ),
                                         5u to
                                             ParameterInfo(
@@ -1130,7 +1130,7 @@ val CLUSTERS_1_3 =
                         Clusters.DeviceEnergyManagement.Attributes.ESACanGenerate.ID to
                             AttributeInfo(
                                 name = "ESACanGenerate",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.DeviceEnergyManagement.Attributes.ESAState.ID to
@@ -1142,13 +1142,13 @@ val CLUSTERS_1_3 =
                         Clusters.DeviceEnergyManagement.Attributes.AbsMinPower.ID to
                             AttributeInfo(
                                 name = "AbsMinPower",
-                                type = DataType.POWER_M_W,
+                                type = DataType.POWER_MILLIWATTS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.DeviceEnergyManagement.Attributes.AbsMaxPower.ID to
                             AttributeInfo(
                                 name = "AbsMaxPower",
-                                type = DataType.POWER_M_W,
+                                type = DataType.POWER_MILLIWATTS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.DeviceEnergyManagement.Attributes.PowerAdjustmentCapability.ID to
@@ -1181,12 +1181,12 @@ val CLUSTERS_1_3 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Power",
-                                                type = DataType.POWER_M_W,
+                                                type = DataType.POWER_MILLIWATTS,
                                             ),
                                         1u to
                                             ParameterInfo(
                                                 name = "Duration",
-                                                type = DataType.ELAPSED_S,
+                                                type = DataType.ELAPSED_SECONDS,
                                             ),
                                         2u to
                                             ParameterInfo(
@@ -1212,7 +1212,7 @@ val CLUSTERS_1_3 =
                                         0u to
                                             ParameterInfo(
                                                 name = "RequestedStartTime",
-                                                type = DataType.EPOCH_S,
+                                                type = DataType.EPOCH_SECONDS,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -1230,7 +1230,7 @@ val CLUSTERS_1_3 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Duration",
-                                                type = DataType.ELAPSED_S,
+                                                type = DataType.ELAPSED_SECONDS,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -1254,7 +1254,7 @@ val CLUSTERS_1_3 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ForecastID",
-                                                type = DataType.UINT32,
+                                                type = DataType.U_INT32,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -1342,69 +1342,69 @@ val CLUSTERS_1_3 =
                         Clusters.EnergyEVSE.Attributes.ChargingEnabledUntil.ID to
                             AttributeInfo(
                                 name = "ChargingEnabledUntil",
-                                type = DataType.EPOCH_S,
+                                type = DataType.EPOCH_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyEVSE.Attributes.DischargingEnabledUntil.ID to
                             AttributeInfo(
                                 name = "DischargingEnabledUntil",
-                                type = DataType.EPOCH_S,
+                                type = DataType.EPOCH_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyEVSE.Attributes.CircuitCapacity.ID to
                             AttributeInfo(
                                 name = "CircuitCapacity",
-                                type = DataType.AMPERAGE_M_A,
+                                type = DataType.AMPERAGE_MILLIAMPERES,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyEVSE.Attributes.MinimumChargeCurrent.ID to
                             AttributeInfo(
                                 name = "MinimumChargeCurrent",
-                                type = DataType.AMPERAGE_M_A,
+                                type = DataType.AMPERAGE_MILLIAMPERES,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyEVSE.Attributes.MaximumChargeCurrent.ID to
                             AttributeInfo(
                                 name = "MaximumChargeCurrent",
-                                type = DataType.AMPERAGE_M_A,
+                                type = DataType.AMPERAGE_MILLIAMPERES,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyEVSE.Attributes.MaximumDischargeCurrent.ID to
                             AttributeInfo(
                                 name = "MaximumDischargeCurrent",
-                                type = DataType.AMPERAGE_M_A,
+                                type = DataType.AMPERAGE_MILLIAMPERES,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyEVSE.Attributes.UserMaximumChargeCurrent.ID to
                             AttributeInfo(
                                 name = "UserMaximumChargeCurrent",
-                                type = DataType.AMPERAGE_M_A,
+                                type = DataType.AMPERAGE_MILLIAMPERES,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.MANAGE,
                             ),
                         Clusters.EnergyEVSE.Attributes.RandomizationDelayWindow.ID to
                             AttributeInfo(
                                 name = "RandomizationDelayWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.MANAGE,
                             ),
                         Clusters.EnergyEVSE.Attributes.NextChargeStartTime.ID to
                             AttributeInfo(
                                 name = "NextChargeStartTime",
-                                type = DataType.EPOCH_S,
+                                type = DataType.EPOCH_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyEVSE.Attributes.NextChargeTargetTime.ID to
                             AttributeInfo(
                                 name = "NextChargeTargetTime",
-                                type = DataType.EPOCH_S,
+                                type = DataType.EPOCH_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyEVSE.Attributes.NextChargeRequiredEnergy.ID to
                             AttributeInfo(
                                 name = "NextChargeRequiredEnergy",
-                                type = DataType.ENERGY_M_WH,
+                                type = DataType.ENERGY_MILLIWATT_HOURS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyEVSE.Attributes.NextChargeTargetSoC.ID to
@@ -1416,7 +1416,7 @@ val CLUSTERS_1_3 =
                         Clusters.EnergyEVSE.Attributes.ApproximateEVEfficiency.ID to
                             AttributeInfo(
                                 name = "ApproximateEVEfficiency",
-                                type = DataType.UINT16,
+                                type = DataType.U_INT16,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.MANAGE,
                             ),
@@ -1429,7 +1429,7 @@ val CLUSTERS_1_3 =
                         Clusters.EnergyEVSE.Attributes.BatteryCapacity.ID to
                             AttributeInfo(
                                 name = "BatteryCapacity",
-                                type = DataType.ENERGY_M_WH,
+                                type = DataType.ENERGY_MILLIWATT_HOURS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyEVSE.Attributes.VehicleID.ID to
@@ -1441,25 +1441,25 @@ val CLUSTERS_1_3 =
                         Clusters.EnergyEVSE.Attributes.SessionID.ID to
                             AttributeInfo(
                                 name = "SessionID",
-                                type = DataType.UINT32,
+                                type = DataType.U_INT32,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyEVSE.Attributes.SessionDuration.ID to
                             AttributeInfo(
                                 name = "SessionDuration",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyEVSE.Attributes.SessionEnergyCharged.ID to
                             AttributeInfo(
                                 name = "SessionEnergyCharged",
-                                type = DataType.ENERGY_M_WH,
+                                type = DataType.ENERGY_MILLIWATT_HOURS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyEVSE.Attributes.SessionEnergyDischarged.ID to
                             AttributeInfo(
                                 name = "SessionEnergyDischarged",
-                                type = DataType.ENERGY_M_WH,
+                                type = DataType.ENERGY_MILLIWATT_HOURS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -1480,17 +1480,17 @@ val CLUSTERS_1_3 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ChargingEnabledUntil",
-                                                type = DataType.EPOCH_S,
+                                                type = DataType.EPOCH_SECONDS,
                                             ),
                                         1u to
                                             ParameterInfo(
                                                 name = "MinimumChargeCurrent",
-                                                type = DataType.AMPERAGE_M_A,
+                                                type = DataType.AMPERAGE_MILLIAMPERES,
                                             ),
                                         2u to
                                             ParameterInfo(
                                                 name = "MaximumChargeCurrent",
-                                                type = DataType.AMPERAGE_M_A,
+                                                type = DataType.AMPERAGE_MILLIAMPERES,
                                             ),
                                     ),
                             ),
@@ -1503,12 +1503,12 @@ val CLUSTERS_1_3 =
                                         0u to
                                             ParameterInfo(
                                                 name = "DischargingEnabledUntil",
-                                                type = DataType.EPOCH_S,
+                                                type = DataType.EPOCH_SECONDS,
                                             ),
                                         1u to
                                             ParameterInfo(
                                                 name = "MaximumDischargeCurrent",
-                                                type = DataType.AMPERAGE_M_A,
+                                                type = DataType.AMPERAGE_MILLIAMPERES,
                                             ),
                                     ),
                             ),
@@ -1603,7 +1603,7 @@ val CLUSTERS_1_3 =
                         Clusters.EnergyPreference.Attributes.CurrentEnergyBalance.ID to
                             AttributeInfo(
                                 name = "CurrentEnergyBalance",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
@@ -1622,7 +1622,7 @@ val CLUSTERS_1_3 =
                         Clusters.EnergyPreference.Attributes.CurrentLowPowerModeSensitivity.ID to
                             AttributeInfo(
                                 name = "CurrentLowPowerModeSensitivity",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
@@ -1639,13 +1639,13 @@ val CLUSTERS_1_3 =
                         Clusters.PowerTopology.Attributes.AvailableEndpoints.ID to
                             AttributeInfo(
                                 name = "AvailableEndpoints",
-                                type = DataType.LIST_ENDPOINT_NO,
+                                type = DataType.LIST_ENDPOINT_ID,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PowerTopology.Attributes.ActiveEndpoints.ID to
                             AttributeInfo(
                                 name = "ActiveEndpoints",
-                                type = DataType.LIST_ENDPOINT_NO,
+                                type = DataType.LIST_ENDPOINT_ID,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -1721,7 +1721,7 @@ val CLUSTERS_1_3 =
                         Clusters.ContentControl.Attributes.Enabled.ID to
                             AttributeInfo(
                                 name = "Enabled",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ContentControl.Attributes.OnDemandRatings.ID to
@@ -1751,19 +1751,19 @@ val CLUSTERS_1_3 =
                         Clusters.ContentControl.Attributes.ScreenDailyTime.ID to
                             AttributeInfo(
                                 name = "ScreenDailyTime",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ContentControl.Attributes.RemainingScreenTime.ID to
                             AttributeInfo(
                                 name = "RemainingScreenTime",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ContentControl.Attributes.BlockUnrated.ID to
                             AttributeInfo(
                                 name = "BlockUnrated",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ContentControl.Attributes.BlockChannelList.ID to
@@ -1837,7 +1837,7 @@ val CLUSTERS_1_3 =
                                         1u to
                                             ParameterInfo(
                                                 name = "BonusTime",
-                                                type = DataType.ELAPSED_S,
+                                                type = DataType.ELAPSED_SECONDS,
                                             ),
                                     ),
                             ),
@@ -1850,7 +1850,7 @@ val CLUSTERS_1_3 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ScreenTime",
-                                                type = DataType.ELAPSED_S,
+                                                type = DataType.ELAPSED_SECONDS,
                                             ),
                                     ),
                             ),
@@ -1915,7 +1915,7 @@ val CLUSTERS_1_3 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ChannelIndexes",
-                                                type = DataType.LIST_UINT16,
+                                                type = DataType.LIST_U_INT16,
                                             ),
                                     ),
                             ),
@@ -1967,7 +1967,7 @@ val CLUSTERS_1_3 =
                                         0u to
                                             ParameterInfo(
                                                 name = "TimeWindowIndexes",
-                                                type = DataType.LIST_UINT16,
+                                                type = DataType.LIST_U_INT16,
                                             ),
                                     ),
                             ),

@@ -65,7 +65,7 @@ internal object ExplorerTlvCodec {
     }
     val out = ByteArrayOutputStream()
     when (type) {
-      DataType.BOOL -> {
+      DataType.BOOLEAN -> {
         val parsed = rawValue.trim().toBooleanStrictOrNull()
         when (parsed) {
           true -> out.write(TLV_ANON_BOOL_TRUE)
@@ -75,17 +75,17 @@ internal object ExplorerTlvCodec {
         }
       }
       DataType.STRING,
-      DataType.OCTSTR,
-      DataType.IPV6ADR,
-      DataType.IPV6PRE,
-      DataType.HWADR -> {
+      DataType.OCTET_STRING,
+      DataType.I_PV6_ADDRESS,
+      DataType.I_PV6_PREFIX,
+      DataType.HARDWARE_ADDRESS -> {
         val bytes = rawValue.toByteArray(StandardCharsets.UTF_8)
         requireStringLength(bytes)
         out.write(TLV_ANON_STRING_1)
         out.write(bytes.size)
         out.write(bytes)
       }
-      DataType.UINT8,
+      DataType.U_INT8,
       DataType.ENUM8,
       DataType.MAP8 ->
           writeAnonymousUnsigned(
@@ -94,7 +94,7 @@ internal object ExplorerTlvCodec {
               parseUnsigned(rawValue, 0xFF, invalidNumberMessageRes),
               1,
           )
-      DataType.UINT16,
+      DataType.U_INT16,
       DataType.ENUM16,
       DataType.MAP16 ->
           writeAnonymousUnsigned(
@@ -103,11 +103,10 @@ internal object ExplorerTlvCodec {
               parseUnsigned(rawValue, 0xFFFF, invalidNumberMessageRes),
               2,
           )
-      DataType.UINT24,
-      DataType.UINT32,
+      DataType.U_INT24,
+      DataType.U_INT32,
       DataType.CLUSTER_ID,
       DataType.ENDPOINT_ID,
-      DataType.ENDPOINT_NO,
       DataType.GROUP_ID,
       DataType.VENDOR_ID,
       DataType.MESSAGE_ID,
@@ -118,10 +117,10 @@ internal object ExplorerTlvCodec {
               parseUnsigned(rawValue, 0xFFFFFFFFL, invalidNumberMessageRes),
               4,
           )
-      DataType.UINT64,
-      DataType.EPOCH_S,
-      DataType.EPOCH_US,
-      DataType.FABRIC_IDX,
+      DataType.U_INT64,
+      DataType.EPOCH_SECONDS,
+      DataType.EPOCH_MICROSECONDS,
+      DataType.FABRIC_INDEX,
       DataType.NODE_ID,
       DataType.SUBJECT_ID,
       DataType.TLSCAID,
@@ -178,7 +177,7 @@ internal object ExplorerTlvCodec {
   ) {
     val requiredValue = rawValue?.trim().orEmpty()
     when (definition.type) {
-      DataType.BOOL -> {
+      DataType.BOOLEAN -> {
         val parsed = requiredValue.toBooleanStrictOrNull()
         when (parsed) {
           true -> out.write(TLV_CONTEXT_BOOL_TRUE)
@@ -189,10 +188,10 @@ internal object ExplorerTlvCodec {
         out.write(tag)
       }
       DataType.STRING,
-      DataType.OCTSTR,
-      DataType.IPV6ADR,
-      DataType.IPV6PRE,
-      DataType.HWADR -> {
+      DataType.OCTET_STRING,
+      DataType.I_PV6_ADDRESS,
+      DataType.I_PV6_PREFIX,
+      DataType.HARDWARE_ADDRESS -> {
         val bytes = requiredValue.toByteArray(StandardCharsets.UTF_8)
         requireStringLength(bytes)
         out.write(TLV_CONTEXT_STRING_1)
@@ -200,7 +199,7 @@ internal object ExplorerTlvCodec {
         out.write(bytes.size)
         out.write(bytes)
       }
-      DataType.UINT8,
+      DataType.U_INT8,
       DataType.ENUM8,
       DataType.MAP8 ->
           writeContextUnsigned(
@@ -210,7 +209,7 @@ internal object ExplorerTlvCodec {
               parseUnsigned(requiredValue, 0xFF, R.string.device_explorer_error_invalid_number),
               1,
           )
-      DataType.UINT16,
+      DataType.U_INT16,
       DataType.ENUM16,
       DataType.MAP16 ->
           writeContextUnsigned(
@@ -220,11 +219,10 @@ internal object ExplorerTlvCodec {
               parseUnsigned(requiredValue, 0xFFFF, R.string.device_explorer_error_invalid_number),
               2,
           )
-      DataType.UINT24,
-      DataType.UINT32,
+      DataType.U_INT24,
+      DataType.U_INT32,
       DataType.CLUSTER_ID,
       DataType.ENDPOINT_ID,
-      DataType.ENDPOINT_NO,
       DataType.GROUP_ID,
       DataType.VENDOR_ID,
       DataType.MESSAGE_ID,
@@ -240,10 +238,10 @@ internal object ExplorerTlvCodec {
               ),
               4,
           )
-      DataType.UINT64,
-      DataType.EPOCH_S,
-      DataType.EPOCH_US,
-      DataType.FABRIC_IDX,
+      DataType.U_INT64,
+      DataType.EPOCH_SECONDS,
+      DataType.EPOCH_MICROSECONDS,
+      DataType.FABRIC_INDEX,
       DataType.NODE_ID,
       DataType.SUBJECT_ID,
       DataType.TLSCAID,
@@ -377,7 +375,7 @@ internal object ExplorerTlvCodec {
                   ?: throw ExplorerInputValidationException(invalidNumberMessageRes)
         }
     // Reinterpret the ULong bits as Long; writeLittleEndian uses ushr which correctly
-    // serialises all 8 bytes regardless of the sign bit.
+    // serializes all 8 bytes regardless of the sign bit.
     return ulong.toLong()
   }
 

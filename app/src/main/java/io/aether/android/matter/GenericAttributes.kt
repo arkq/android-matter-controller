@@ -34,37 +34,37 @@ val GENERIC_ATTRIBUTES =
         GenericAttributes.GeneratedCommandList.ID to
             AttributeInfo(
                 name = "GeneratedCommandList",
-                type = DataType.LIST_UINT32,
+                type = DataType.LIST_U_INT32,
                 readPrivilege = Privilege.VIEW,
             ),
         GenericAttributes.AcceptedCommandList.ID to
             AttributeInfo(
                 name = "AcceptedCommandList",
-                type = DataType.LIST_UINT32,
+                type = DataType.LIST_U_INT32,
                 readPrivilege = Privilege.VIEW,
             ),
         GenericAttributes.EventList.ID to
             AttributeInfo(
                 name = "EventList",
-                type = DataType.LIST_UINT32,
+                type = DataType.LIST_U_INT32,
                 readPrivilege = Privilege.VIEW,
             ),
         GenericAttributes.AttributeList.ID to
             AttributeInfo(
                 name = "AttributeList",
-                type = DataType.LIST_UINT32,
+                type = DataType.LIST_U_INT32,
                 readPrivilege = Privilege.VIEW,
             ),
         GenericAttributes.FeatureMap.ID to
             AttributeInfo(
                 name = "FeatureMap",
-                type = DataType.UINT32,
+                type = DataType.MAP32,
                 readPrivilege = Privilege.VIEW,
             ),
         GenericAttributes.ClusterRevision.ID to
             AttributeInfo(
                 name = "ClusterRevision",
-                type = DataType.UINT16,
+                type = DataType.U_INT16,
                 readPrivilege = Privilege.VIEW,
             ),
     )

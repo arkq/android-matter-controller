@@ -15,19 +15,19 @@ val CLUSTERS_1_2 =
                         Clusters.ICDManagement.Attributes.IdleModeDuration.ID to
                             AttributeInfo(
                                 name = "IdleModeDuration",
-                                type = DataType.UINT32,
+                                type = DataType.U_INT32,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ICDManagement.Attributes.ActiveModeDuration.ID to
                             AttributeInfo(
                                 name = "ActiveModeDuration",
-                                type = DataType.UINT32,
+                                type = DataType.U_INT32,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ICDManagement.Attributes.ActiveModeThreshold.ID to
                             AttributeInfo(
                                 name = "ActiveModeThreshold",
-                                type = DataType.UINT16,
+                                type = DataType.U_INT16,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ICDManagement.Attributes.RegisteredClients.ID to
@@ -39,13 +39,13 @@ val CLUSTERS_1_2 =
                         Clusters.ICDManagement.Attributes.ICDCounter.ID to
                             AttributeInfo(
                                 name = "ICDCounter",
-                                type = DataType.UINT32,
+                                type = DataType.U_INT32,
                                 readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.ICDManagement.Attributes.ClientsSupportedPerFabric.ID to
                             AttributeInfo(
                                 name = "ClientsSupportedPerFabric",
-                                type = DataType.UINT16,
+                                type = DataType.U_INT16,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ICDManagement.Attributes.UserActiveModeTriggerHint.ID to
@@ -69,7 +69,7 @@ val CLUSTERS_1_2 =
                         Clusters.ICDManagement.Attributes.MaximumCheckInBackoff.ID to
                             AttributeInfo(
                                 name = "MaximumCheckInBackoff",
-                                type = DataType.UINT32,
+                                type = DataType.U_INT32,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -94,12 +94,12 @@ val CLUSTERS_1_2 =
                                         2u to
                                             ParameterInfo(
                                                 name = "Key",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                         3u to
                                             ParameterInfo(
                                                 name = "VerificationKey",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                         4u to
                                             ParameterInfo(
@@ -122,7 +122,7 @@ val CLUSTERS_1_2 =
                                         1u to
                                             ParameterInfo(
                                                 name = "VerificationKey",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -135,7 +135,7 @@ val CLUSTERS_1_2 =
                                         0u to
                                             ParameterInfo(
                                                 name = "StayActiveDuration",
-                                                type = DataType.UINT32,
+                                                type = DataType.U_INT32,
                                             ),
                                     ),
                             ),
@@ -150,7 +150,7 @@ val CLUSTERS_1_2 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ICDCounter",
-                                                type = DataType.UINT32,
+                                                type = DataType.U_INT32,
                                             ),
                                     ),
                             ),
@@ -162,7 +162,7 @@ val CLUSTERS_1_2 =
                                         0u to
                                             ParameterInfo(
                                                 name = "PromisedActiveDuration",
-                                                type = DataType.UINT32,
+                                                type = DataType.U_INT32,
                                             ),
                                     ),
                             ),
@@ -250,7 +250,7 @@ val CLUSTERS_1_2 =
                         Clusters.LaundryWasherControls.Attributes.SpinSpeedCurrent.ID to
                             AttributeInfo(
                                 name = "SpinSpeedCurrent",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
@@ -364,7 +364,7 @@ val CLUSTERS_1_2 =
                         Clusters.TemperatureControl.Attributes.SelectedTemperatureLevel.ID to
                             AttributeInfo(
                                 name = "SelectedTemperatureLevel",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.TemperatureControl.Attributes.SupportedTemperatureLevels.ID to
@@ -390,7 +390,7 @@ val CLUSTERS_1_2 =
                                         1u to
                                             ParameterInfo(
                                                 name = "TargetTemperatureLevel",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                     ),
                             ),
@@ -497,13 +497,13 @@ val CLUSTERS_1_2 =
                         Clusters.SmokeCOAlarm.Attributes.TestInProgress.ID to
                             AttributeInfo(
                                 name = "TestInProgress",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.SmokeCOAlarm.Attributes.HardwareFaultAlert.ID to
                             AttributeInfo(
                                 name = "HardwareFaultAlert",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.SmokeCOAlarm.Attributes.EndOfServiceAlert.ID to
@@ -540,13 +540,13 @@ val CLUSTERS_1_2 =
                         Clusters.SmokeCOAlarm.Attributes.ExpiryDate.ID to
                             AttributeInfo(
                                 name = "ExpiryDate",
-                                type = DataType.EPOCH_S,
+                                type = DataType.EPOCH_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.SmokeCOAlarm.Attributes.Unmounted.ID to
                             AttributeInfo(
                                 name = "Unmounted",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -630,13 +630,13 @@ val CLUSTERS_1_2 =
                         Clusters.OperationalState.Attributes.CurrentPhase.ID to
                             AttributeInfo(
                                 name = "CurrentPhase",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.OperationalState.Attributes.CountdownTime.ID to
                             AttributeInfo(
                                 name = "CountdownTime",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.OperationalState.Attributes.OperationalStateList.ID to
@@ -782,13 +782,13 @@ val CLUSTERS_1_2 =
                         Clusters.HEPAFilterMonitoring.Attributes.InPlaceIndicator.ID to
                             AttributeInfo(
                                 name = "InPlaceIndicator",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.HEPAFilterMonitoring.Attributes.LastChangedTime.ID to
                             AttributeInfo(
                                 name = "LastChangedTime",
-                                type = DataType.EPOCH_S,
+                                type = DataType.EPOCH_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
@@ -838,13 +838,13 @@ val CLUSTERS_1_2 =
                         Clusters.ActivatedCarbonFilterMonitoring.Attributes.InPlaceIndicator.ID to
                             AttributeInfo(
                                 name = "InPlaceIndicator",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ActivatedCarbonFilterMonitoring.Attributes.LastChangedTime.ID to
                             AttributeInfo(
                                 name = "LastChangedTime",
-                                type = DataType.EPOCH_S,
+                                type = DataType.EPOCH_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
@@ -907,7 +907,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "PeakMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CarbonMonoxideConcentrationMeasurement.Attributes
@@ -923,7 +923,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "AverageMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CarbonMonoxideConcentrationMeasurement.Attributes.Uncertainty.ID to
@@ -995,7 +995,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "PeakMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CarbonDioxideConcentrationMeasurement.Attributes
@@ -1011,7 +1011,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "AverageMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CarbonDioxideConcentrationMeasurement.Attributes.Uncertainty.ID to
@@ -1084,7 +1084,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "PeakMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.NitrogenDioxideConcentrationMeasurement.Attributes
@@ -1100,7 +1100,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "AverageMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.NitrogenDioxideConcentrationMeasurement.Attributes.Uncertainty
@@ -1169,7 +1169,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "PeakMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.OzoneConcentrationMeasurement.Attributes.AverageMeasuredValue.ID to
@@ -1182,7 +1182,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "AverageMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.OzoneConcentrationMeasurement.Attributes.Uncertainty.ID to
@@ -1247,7 +1247,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "PeakMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PM25ConcentrationMeasurement.Attributes.AverageMeasuredValue.ID to
@@ -1260,7 +1260,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "AverageMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PM25ConcentrationMeasurement.Attributes.Uncertainty.ID to
@@ -1329,7 +1329,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "PeakMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.FormaldehydeConcentrationMeasurement.Attributes
@@ -1345,7 +1345,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "AverageMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.FormaldehydeConcentrationMeasurement.Attributes.Uncertainty.ID to
@@ -1412,7 +1412,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "PeakMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PM1ConcentrationMeasurement.Attributes.AverageMeasuredValue.ID to
@@ -1425,7 +1425,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "AverageMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PM1ConcentrationMeasurement.Attributes.Uncertainty.ID to
@@ -1490,7 +1490,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "PeakMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PM10ConcentrationMeasurement.Attributes.AverageMeasuredValue.ID to
@@ -1503,7 +1503,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "AverageMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PM10ConcentrationMeasurement.Attributes.Uncertainty.ID to
@@ -1577,7 +1577,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "PeakMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.TotalVolatileOrganicCompoundsConcentrationMeasurement.Attributes
@@ -1593,7 +1593,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "AverageMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.TotalVolatileOrganicCompoundsConcentrationMeasurement.Attributes
@@ -1666,7 +1666,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "PeakMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.RadonConcentrationMeasurement.Attributes.AverageMeasuredValue.ID to
@@ -1679,7 +1679,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "AverageMeasuredValueWindow",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.RadonConcentrationMeasurement.Attributes.Uncertainty.ID to

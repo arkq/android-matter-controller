@@ -49,6 +49,95 @@ def _get_type(element: ET._Element) -> str:
         and (entry_type := _get_type(entry))
     ):
         return f"List<{entry_type}>"
+    match type:
+        case "fabric-idx":
+            return "FabricIndex"
+        case "cluster-id":
+            return "ClusterId"
+        case "endpoint-id" | "endpoint-no":
+            return "EndpointId"
+        case "group-id":
+            return "GroupId"
+        case "message-id":
+            return "MessageId"
+        case "subject-id":
+            return "SubjectId"
+        case "node-id":
+            return "NodeId"
+        case "vendor-id":
+            return "VendorId"
+        case "status":
+            return "Status"
+        case "single":
+            return "Single"
+        case "bool":
+            return "Boolean"
+        case "string":
+            return "String"
+        case "octstr":
+            return "OctetString"
+        case "int8":
+            return "Int8"
+        case "int16":
+            return "Int16"
+        case "int32":
+            return "Int32"
+        case "int64":
+            return "Int64"
+        case "uint8":
+            return "UInt8"
+        case "uint16":
+            return "UInt16"
+        case "uint24":
+            return "UInt24"
+        case "uint32":
+            return "UInt32"
+        case "uint64":
+            return "UInt64"
+        case "map8":
+            return "Map8"
+        case "map16":
+            return "Map16"
+        case "map32":
+            return "Map32"
+        case "enum8":
+            return "Enum8"
+        case "enum16":
+            return "Enum16"
+        case "hwadr":
+            return "HardwareAddress"
+        case "ipv6adr":
+            return "IPv6Address"
+        case "ipv6pre":
+            return "IPv6Prefix"
+        case "amperage-mA":
+            return "AmperageMilliamperes"
+        case "voltage-mV":
+            return "VoltageMillivolts"
+        case "energy-mWh":
+            return "EnergyMilliwattHours"
+        case "power-mW":
+            return "PowerMilliwatts"
+        case "elapsed-s":
+            return "ElapsedSeconds"
+        case "epoch-s":
+            return "EpochSeconds"
+        case "posix-ms":
+            return "PosixMilliseconds"
+        case "epoch-us":
+            return "EpochMicroseconds"
+        case "systime-ms":
+            return "SystemTimeMilliseconds"
+        case "systemtime-us":
+            return "SystemTimeMicroseconds"
+        case "percent":
+            return "Percent"
+        case "percent100ths":
+            return "Percent100ths"
+        case "temperature":
+            return "Temperature"
+        case "max 254":
+            return "Max254"
     return type
 
 

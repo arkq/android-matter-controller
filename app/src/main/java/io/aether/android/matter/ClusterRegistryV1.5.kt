@@ -109,7 +109,7 @@ val CLUSTERS_1_5 =
                         Clusters.ElectricalGridConditions.Attributes.LocalGenerationAvailable.ID to
                             AttributeInfo(
                                 name = "LocalGenerationAvailable",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
@@ -144,7 +144,7 @@ val CLUSTERS_1_5 =
                         Clusters.ClosureControl.Attributes.CountdownTime.ID to
                             AttributeInfo(
                                 name = "CountdownTime",
-                                type = DataType.ELAPSED_S,
+                                type = DataType.ELAPSED_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ClosureControl.Attributes.MainState.ID to
@@ -200,7 +200,7 @@ val CLUSTERS_1_5 =
                                         1u to
                                             ParameterInfo(
                                                 name = "Latch",
-                                                type = DataType.BOOL,
+                                                type = DataType.BOOLEAN,
                                             ),
                                         2u to
                                             ParameterInfo(
@@ -331,7 +331,7 @@ val CLUSTERS_1_5 =
                                         1u to
                                             ParameterInfo(
                                                 name = "Latch",
-                                                type = DataType.BOOL,
+                                                type = DataType.BOOLEAN,
                                             ),
                                         2u to
                                             ParameterInfo(
@@ -354,7 +354,7 @@ val CLUSTERS_1_5 =
                                         1u to
                                             ParameterInfo(
                                                 name = "NumberOfSteps",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         2u to
                                             ParameterInfo(
@@ -397,13 +397,13 @@ val CLUSTERS_1_5 =
                         Clusters.ZoneManagement.Attributes.MaxUserDefinedZones.ID to
                             AttributeInfo(
                                 name = "MaxUserDefinedZones",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ZoneManagement.Attributes.MaxZones.ID to
                             AttributeInfo(
                                 name = "MaxZones",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ZoneManagement.Attributes.Zones.ID to
@@ -421,13 +421,13 @@ val CLUSTERS_1_5 =
                         Clusters.ZoneManagement.Attributes.SensitivityMax.ID to
                             AttributeInfo(
                                 name = "SensitivityMax",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ZoneManagement.Attributes.Sensitivity.ID to
                             AttributeInfo(
                                 name = "Sensitivity",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
@@ -547,13 +547,13 @@ val CLUSTERS_1_5 =
                         Clusters.CameraAVStreamManagement.Attributes.MaxConcurrentEncoders.ID to
                             AttributeInfo(
                                 name = "MaxConcurrentEncoders",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.MaxEncodedPixelRate.ID to
                             AttributeInfo(
                                 name = "MaxEncodedPixelRate",
-                                type = DataType.UINT32,
+                                type = DataType.U_INT32,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.VideoSensorParams.ID to
@@ -565,7 +565,7 @@ val CLUSTERS_1_5 =
                         Clusters.CameraAVStreamManagement.Attributes.NightVisionUsesInfrared.ID to
                             AttributeInfo(
                                 name = "NightVisionUsesInfrared",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.MinViewportResolution.ID to
@@ -584,7 +584,7 @@ val CLUSTERS_1_5 =
                         Clusters.CameraAVStreamManagement.Attributes.MaxContentBufferSize.ID to
                             AttributeInfo(
                                 name = "MaxContentBufferSize",
-                                type = DataType.UINT32,
+                                type = DataType.U_INT32,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.MicrophoneCapabilities.ID to
@@ -614,19 +614,19 @@ val CLUSTERS_1_5 =
                         Clusters.CameraAVStreamManagement.Attributes.MaxNetworkBandwidth.ID to
                             AttributeInfo(
                                 name = "MaxNetworkBandwidth",
-                                type = DataType.UINT32,
+                                type = DataType.U_INT32,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.CurrentFrameRate.ID to
                             AttributeInfo(
                                 name = "CurrentFrameRate",
-                                type = DataType.UINT16,
+                                type = DataType.U_INT16,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.HDRModeEnabled.ID to
                             AttributeInfo(
                                 name = "HDRModeEnabled",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.MANAGE,
                                 writePrivilege = Privilege.MANAGE,
                             ),
@@ -664,7 +664,7 @@ val CLUSTERS_1_5 =
                             .ID to
                             AttributeInfo(
                                 name = "SoftRecordingPrivacyModeEnabled",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
@@ -673,14 +673,14 @@ val CLUSTERS_1_5 =
                             .ID to
                             AttributeInfo(
                                 name = "SoftLivestreamPrivacyModeEnabled",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.HardPrivacyModeOn.ID to
                             AttributeInfo(
                                 name = "HardPrivacyModeOn",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.NightVision.ID to
@@ -707,80 +707,80 @@ val CLUSTERS_1_5 =
                         Clusters.CameraAVStreamManagement.Attributes.SpeakerMuted.ID to
                             AttributeInfo(
                                 name = "SpeakerMuted",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.MANAGE,
                                 writePrivilege = Privilege.MANAGE,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.SpeakerVolumeLevel.ID to
                             AttributeInfo(
                                 name = "SpeakerVolumeLevel",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.MANAGE,
                                 writePrivilege = Privilege.MANAGE,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.SpeakerMaxLevel.ID to
                             AttributeInfo(
                                 name = "SpeakerMaxLevel",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.MANAGE,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.SpeakerMinLevel.ID to
                             AttributeInfo(
                                 name = "SpeakerMinLevel",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.MANAGE,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.MicrophoneMuted.ID to
                             AttributeInfo(
                                 name = "MicrophoneMuted",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.MANAGE,
                                 writePrivilege = Privilege.MANAGE,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.MicrophoneVolumeLevel.ID to
                             AttributeInfo(
                                 name = "MicrophoneVolumeLevel",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.MANAGE,
                                 writePrivilege = Privilege.MANAGE,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.MicrophoneMaxLevel.ID to
                             AttributeInfo(
                                 name = "MicrophoneMaxLevel",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.MANAGE,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.MicrophoneMinLevel.ID to
                             AttributeInfo(
                                 name = "MicrophoneMinLevel",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.MANAGE,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.MicrophoneAGCEnabled.ID to
                             AttributeInfo(
                                 name = "MicrophoneAGCEnabled",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.MANAGE,
                                 writePrivilege = Privilege.MANAGE,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.ImageRotation.ID to
                             AttributeInfo(
                                 name = "ImageRotation",
-                                type = DataType.UINT16,
+                                type = DataType.U_INT16,
                                 readPrivilege = Privilege.MANAGE,
                                 writePrivilege = Privilege.MANAGE,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.ImageFlipHorizontal.ID to
                             AttributeInfo(
                                 name = "ImageFlipHorizontal",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.MANAGE,
                                 writePrivilege = Privilege.MANAGE,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.ImageFlipVertical.ID to
                             AttributeInfo(
                                 name = "ImageFlipVertical",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.MANAGE,
                                 writePrivilege = Privilege.MANAGE,
                             ),
@@ -788,7 +788,7 @@ val CLUSTERS_1_5 =
                             .ID to
                             AttributeInfo(
                                 name = "LocalVideoRecordingEnabled",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.MANAGE,
                                 writePrivilege = Privilege.MANAGE,
                             ),
@@ -796,14 +796,14 @@ val CLUSTERS_1_5 =
                             .ID to
                             AttributeInfo(
                                 name = "LocalSnapshotRecordingEnabled",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.MANAGE,
                                 writePrivilege = Privilege.MANAGE,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.StatusLightEnabled.ID to
                             AttributeInfo(
                                 name = "StatusLightEnabled",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.MANAGE,
                                 writePrivilege = Privilege.MANAGE,
                             ),
@@ -818,7 +818,7 @@ val CLUSTERS_1_5 =
                             .ID to
                             AttributeInfo(
                                 name = "ImageRotationDiscreteAngles",
-                                type = DataType.UINT16,
+                                type = DataType.U_INT16,
                                 readPrivilege = Privilege.MANAGE,
                                 writePrivilege = Privilege.MANAGE,
                             ),
@@ -844,22 +844,22 @@ val CLUSTERS_1_5 =
                                         2u to
                                             ParameterInfo(
                                                 name = "ChannelCount",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                         3u to
                                             ParameterInfo(
                                                 name = "SampleRate",
-                                                type = DataType.UINT32,
+                                                type = DataType.U_INT32,
                                             ),
                                         4u to
                                             ParameterInfo(
                                                 name = "BitRate",
-                                                type = DataType.UINT32,
+                                                type = DataType.U_INT32,
                                             ),
                                         5u to
                                             ParameterInfo(
                                                 name = "BitDepth",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                     ),
                             ),
@@ -896,12 +896,12 @@ val CLUSTERS_1_5 =
                                         2u to
                                             ParameterInfo(
                                                 name = "MinFrameRate",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         3u to
                                             ParameterInfo(
                                                 name = "MaxFrameRate",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         4u to
                                             ParameterInfo(
@@ -916,27 +916,27 @@ val CLUSTERS_1_5 =
                                         6u to
                                             ParameterInfo(
                                                 name = "MinBitRate",
-                                                type = DataType.UINT32,
+                                                type = DataType.U_INT32,
                                             ),
                                         7u to
                                             ParameterInfo(
                                                 name = "MaxBitRate",
-                                                type = DataType.UINT32,
+                                                type = DataType.U_INT32,
                                             ),
                                         8u to
                                             ParameterInfo(
                                                 name = "KeyFrameInterval",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         9u to
                                             ParameterInfo(
                                                 name = "WatermarkEnabled",
-                                                type = DataType.BOOL,
+                                                type = DataType.BOOLEAN,
                                             ),
                                         10u to
                                             ParameterInfo(
                                                 name = "OSDEnabled",
-                                                type = DataType.BOOL,
+                                                type = DataType.BOOLEAN,
                                             ),
                                     ),
                             ),
@@ -954,12 +954,12 @@ val CLUSTERS_1_5 =
                                         1u to
                                             ParameterInfo(
                                                 name = "WatermarkEnabled",
-                                                type = DataType.BOOL,
+                                                type = DataType.BOOLEAN,
                                             ),
                                         2u to
                                             ParameterInfo(
                                                 name = "OSDEnabled",
-                                                type = DataType.BOOL,
+                                                type = DataType.BOOLEAN,
                                             ),
                                     ),
                             ),
@@ -992,7 +992,7 @@ val CLUSTERS_1_5 =
                                         1u to
                                             ParameterInfo(
                                                 name = "MaxFrameRate",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         2u to
                                             ParameterInfo(
@@ -1007,17 +1007,17 @@ val CLUSTERS_1_5 =
                                         4u to
                                             ParameterInfo(
                                                 name = "Quality",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                         5u to
                                             ParameterInfo(
                                                 name = "WatermarkEnabled",
-                                                type = DataType.BOOL,
+                                                type = DataType.BOOLEAN,
                                             ),
                                         6u to
                                             ParameterInfo(
                                                 name = "OSDEnabled",
-                                                type = DataType.BOOL,
+                                                type = DataType.BOOLEAN,
                                             ),
                                     ),
                             ),
@@ -1036,12 +1036,12 @@ val CLUSTERS_1_5 =
                                         1u to
                                             ParameterInfo(
                                                 name = "WatermarkEnabled",
-                                                type = DataType.BOOL,
+                                                type = DataType.BOOLEAN,
                                             ),
                                         2u to
                                             ParameterInfo(
                                                 name = "OSDEnabled",
-                                                type = DataType.BOOL,
+                                                type = DataType.BOOLEAN,
                                             ),
                                     ),
                             ),
@@ -1144,7 +1144,7 @@ val CLUSTERS_1_5 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Data",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -1175,7 +1175,7 @@ val CLUSTERS_1_5 =
                         Clusters.CameraAVSettingsUserLevelManagement.Attributes.MaxPresets.ID to
                             AttributeInfo(
                                 name = "MaxPresets",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CameraAVSettingsUserLevelManagement.Attributes.MPTZPresets.ID to
@@ -1193,7 +1193,7 @@ val CLUSTERS_1_5 =
                         Clusters.CameraAVSettingsUserLevelManagement.Attributes.ZoomMax.ID to
                             AttributeInfo(
                                 name = "ZoomMax",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CameraAVSettingsUserLevelManagement.Attributes.TiltMin.ID to
@@ -1250,7 +1250,7 @@ val CLUSTERS_1_5 =
                                         2u to
                                             ParameterInfo(
                                                 name = "Zoom",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                     ),
                             ),
@@ -1290,7 +1290,7 @@ val CLUSTERS_1_5 =
                                         0u to
                                             ParameterInfo(
                                                 name = "PresetID",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                     ),
                             ),
@@ -1304,7 +1304,7 @@ val CLUSTERS_1_5 =
                                         0u to
                                             ParameterInfo(
                                                 name = "PresetID",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -1324,7 +1324,7 @@ val CLUSTERS_1_5 =
                                         0u to
                                             ParameterInfo(
                                                 name = "PresetID",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                     ),
                             ),
@@ -1410,7 +1410,7 @@ val CLUSTERS_1_5 =
                                         1u to
                                             ParameterInfo(
                                                 name = "OriginatingEndpointID",
-                                                type = DataType.ENDPOINT_NO,
+                                                type = DataType.ENDPOINT_ID,
                                             ),
                                         2u to
                                             ParameterInfo(
@@ -1435,7 +1435,7 @@ val CLUSTERS_1_5 =
                                         6u to
                                             ParameterInfo(
                                                 name = "MetadataEnabled",
-                                                type = DataType.BOOL,
+                                                type = DataType.BOOLEAN,
                                             ),
                                         7u to
                                             ParameterInfo(
@@ -1478,7 +1478,7 @@ val CLUSTERS_1_5 =
                                         3u to
                                             ParameterInfo(
                                                 name = "OriginatingEndpointID",
-                                                type = DataType.ENDPOINT_NO,
+                                                type = DataType.ENDPOINT_ID,
                                             ),
                                         4u to
                                             ParameterInfo(
@@ -1503,7 +1503,7 @@ val CLUSTERS_1_5 =
                                         8u to
                                             ParameterInfo(
                                                 name = "MetadataEnabled",
-                                                type = DataType.BOOL,
+                                                type = DataType.BOOLEAN,
                                             ),
                                         9u to
                                             ParameterInfo(
@@ -1592,7 +1592,7 @@ val CLUSTERS_1_5 =
                                         1u to
                                             ParameterInfo(
                                                 name = "DeferredOffer",
-                                                type = DataType.BOOL,
+                                                type = DataType.BOOLEAN,
                                             ),
                                         2u to
                                             ParameterInfo(
@@ -1841,7 +1841,7 @@ val CLUSTERS_1_5 =
                                         3u to
                                             ParameterInfo(
                                                 name = "UserDefined",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -1914,14 +1914,14 @@ val CLUSTERS_1_5 =
                         Clusters.Chime.Attributes.SelectedChime.ID to
                             AttributeInfo(
                                 name = "SelectedChime",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
                         Clusters.Chime.Attributes.Enabled.ID to
                             AttributeInfo(
                                 name = "Enabled",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
@@ -1937,7 +1937,7 @@ val CLUSTERS_1_5 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ChimeID",
-                                                type = DataType.UINT8,
+                                                type = DataType.U_INT8,
                                             ),
                                     ),
                             ),
@@ -1971,7 +1971,7 @@ val CLUSTERS_1_5 =
                         Clusters.CommodityTariff.Attributes.StartDate.ID to
                             AttributeInfo(
                                 name = "StartDate",
-                                type = DataType.EPOCH_S,
+                                type = DataType.EPOCH_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CommodityTariff.Attributes.DayEntries.ID to
@@ -2019,7 +2019,7 @@ val CLUSTERS_1_5 =
                         Clusters.CommodityTariff.Attributes.CurrentDayEntryDate.ID to
                             AttributeInfo(
                                 name = "CurrentDayEntryDate",
-                                type = DataType.EPOCH_S,
+                                type = DataType.EPOCH_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CommodityTariff.Attributes.NextDayEntry.ID to
@@ -2031,7 +2031,7 @@ val CLUSTERS_1_5 =
                         Clusters.CommodityTariff.Attributes.NextDayEntryDate.ID to
                             AttributeInfo(
                                 name = "NextDayEntryDate",
-                                type = DataType.EPOCH_S,
+                                type = DataType.EPOCH_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CommodityTariff.Attributes.TariffComponents.ID to
@@ -2082,7 +2082,7 @@ val CLUSTERS_1_5 =
                                         0u to
                                             ParameterInfo(
                                                 name = "TariffComponentID",
-                                                type = DataType.UINT32,
+                                                type = DataType.U_INT32,
                                             ),
                                     ),
                             ),
@@ -2095,7 +2095,7 @@ val CLUSTERS_1_5 =
                                         0u to
                                             ParameterInfo(
                                                 name = "DayEntryID",
-                                                type = DataType.UINT32,
+                                                type = DataType.U_INT32,
                                             ),
                                     ),
                             ),
@@ -2115,7 +2115,7 @@ val CLUSTERS_1_5 =
                                         1u to
                                             ParameterInfo(
                                                 name = "DayEntryIDs",
-                                                type = DataType.LIST_UINT32,
+                                                type = DataType.LIST_U_INT32,
                                             ),
                                         2u to
                                             ParameterInfo(
@@ -2147,7 +2147,7 @@ val CLUSTERS_1_5 =
                         Clusters.TLSCertificateManagement.Attributes.MaxRootCertificates.ID to
                             AttributeInfo(
                                 name = "MaxRootCertificates",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.TLSCertificateManagement.Attributes.ProvisionedRootCertificates
@@ -2160,7 +2160,7 @@ val CLUSTERS_1_5 =
                         Clusters.TLSCertificateManagement.Attributes.MaxClientCertificates.ID to
                             AttributeInfo(
                                 name = "MaxClientCertificates",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.TLSCertificateManagement.Attributes.ProvisionedClientCertificates
@@ -2183,7 +2183,7 @@ val CLUSTERS_1_5 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Certificate",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -2215,7 +2215,7 @@ val CLUSTERS_1_5 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Fingerprint",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -2242,7 +2242,7 @@ val CLUSTERS_1_5 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Nonce",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -2267,12 +2267,12 @@ val CLUSTERS_1_5 =
                                         1u to
                                             ParameterInfo(
                                                 name = "ClientCertificate",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                         2u to
                                             ParameterInfo(
                                                 name = "IntermediateCertificates",
-                                                type = DataType.LIST_OCTSTR,
+                                                type = DataType.LIST_OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -2300,7 +2300,7 @@ val CLUSTERS_1_5 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Fingerprint",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -2376,12 +2376,12 @@ val CLUSTERS_1_5 =
                                         1u to
                                             ParameterInfo(
                                                 name = "CSR",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                         2u to
                                             ParameterInfo(
                                                 name = "NonceSignature",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -2426,7 +2426,7 @@ val CLUSTERS_1_5 =
                         Clusters.TLSClientManagement.Attributes.MaxProvisioned.ID to
                             AttributeInfo(
                                 name = "MaxProvisioned",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.TLSClientManagement.Attributes.ProvisionedEndpoints.ID to
@@ -2447,12 +2447,12 @@ val CLUSTERS_1_5 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Hostname",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                         1u to
                                             ParameterInfo(
                                                 name = "Port",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         2u to
                                             ParameterInfo(
@@ -2582,7 +2582,7 @@ val CLUSTERS_1_5 =
                         Clusters.CommodityMetering.Attributes.MeteredQuantityTimestamp.ID to
                             AttributeInfo(
                                 name = "MeteredQuantityTimestamp",
-                                type = DataType.EPOCH_S,
+                                type = DataType.EPOCH_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CommodityMetering.Attributes.TariffUnit.ID to
@@ -2594,7 +2594,7 @@ val CLUSTERS_1_5 =
                         Clusters.CommodityMetering.Attributes.MaximumMeteredQuantities.ID to
                             AttributeInfo(
                                 name = "MaximumMeteredQuantities",
-                                type = DataType.UINT16,
+                                type = DataType.U_INT16,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),

@@ -33,13 +33,13 @@ val CLUSTERS_1_4 =
                         Clusters.WaterTankLevelMonitoring.Attributes.InPlaceIndicator.ID to
                             AttributeInfo(
                                 name = "InPlaceIndicator",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.WaterTankLevelMonitoring.Attributes.LastChangedTime.ID to
                             AttributeInfo(
                                 name = "LastChangedTime",
-                                type = DataType.EPOCH_S,
+                                type = DataType.EPOCH_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
@@ -82,13 +82,13 @@ val CLUSTERS_1_4 =
                         Clusters.WaterHeaterManagement.Attributes.TankVolume.ID to
                             AttributeInfo(
                                 name = "TankVolume",
-                                type = DataType.UINT16,
+                                type = DataType.U_INT16,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.WaterHeaterManagement.Attributes.EstimatedHeatRequired.ID to
                             AttributeInfo(
                                 name = "EstimatedHeatRequired",
-                                type = DataType.ENERGY_M_WH,
+                                type = DataType.ENERGY_MILLIWATT_HOURS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.WaterHeaterManagement.Attributes.TankPercentage.ID to
@@ -189,19 +189,19 @@ val CLUSTERS_1_4 =
                         Clusters.ServiceArea.Attributes.SelectedAreas.ID to
                             AttributeInfo(
                                 name = "SelectedAreas",
-                                type = DataType.LIST_UINT32,
+                                type = DataType.LIST_U_INT32,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ServiceArea.Attributes.CurrentArea.ID to
                             AttributeInfo(
                                 name = "CurrentArea",
-                                type = DataType.UINT32,
+                                type = DataType.U_INT32,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ServiceArea.Attributes.EstimatedEndTime.ID to
                             AttributeInfo(
                                 name = "EstimatedEndTime",
-                                type = DataType.EPOCH_S,
+                                type = DataType.EPOCH_SECONDS,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ServiceArea.Attributes.Progress.ID to
@@ -222,7 +222,7 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "NewAreas",
-                                                type = DataType.LIST_UINT32,
+                                                type = DataType.LIST_U_INT32,
                                             ),
                                     ),
                             ),
@@ -235,7 +235,7 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "SkippedArea",
-                                                type = DataType.UINT32,
+                                                type = DataType.U_INT32,
                                             ),
                                     ),
                             ),
@@ -287,13 +287,13 @@ val CLUSTERS_1_4 =
                         Clusters.WiFiNetworkManagement.Attributes.SSID.ID to
                             AttributeInfo(
                                 name = "SSID",
-                                type = DataType.OCTSTR,
+                                type = DataType.OCTET_STRING,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.WiFiNetworkManagement.Attributes.PassphraseSurrogate.ID to
                             AttributeInfo(
                                 name = "PassphraseSurrogate",
-                                type = DataType.UINT64,
+                                type = DataType.U_INT64,
                                 readPrivilege = Privilege.MANAGE,
                             ),
                     ),
@@ -318,7 +318,7 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Passphrase",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -339,33 +339,33 @@ val CLUSTERS_1_4 =
                         Clusters.ThreadBorderRouterManagement.Attributes.BorderAgentID.ID to
                             AttributeInfo(
                                 name = "BorderAgentID",
-                                type = DataType.OCTSTR,
+                                type = DataType.OCTET_STRING,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ThreadBorderRouterManagement.Attributes.ThreadVersion.ID to
                             AttributeInfo(
                                 name = "ThreadVersion",
-                                type = DataType.UINT16,
+                                type = DataType.U_INT16,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ThreadBorderRouterManagement.Attributes.InterfaceEnabled.ID to
                             AttributeInfo(
                                 name = "InterfaceEnabled",
-                                type = DataType.BOOL,
+                                type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ThreadBorderRouterManagement.Attributes.ActiveDatasetTimestamp
                             .ID to
                             AttributeInfo(
                                 name = "ActiveDatasetTimestamp",
-                                type = DataType.UINT64,
+                                type = DataType.U_INT64,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ThreadBorderRouterManagement.Attributes.PendingDatasetTimestamp
                             .ID to
                             AttributeInfo(
                                 name = "PendingDatasetTimestamp",
-                                type = DataType.UINT64,
+                                type = DataType.U_INT64,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -398,12 +398,12 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ActiveDataset",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                         1u to
                                             ParameterInfo(
                                                 name = "Breadcrumb",
-                                                type = DataType.UINT64,
+                                                type = DataType.U_INT64,
                                             ),
                                     ),
                             ),
@@ -418,7 +418,7 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "PendingDataset",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -433,7 +433,7 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Dataset",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -448,7 +448,7 @@ val CLUSTERS_1_4 =
                         Clusters.ThreadNetworkDirectory.Attributes.PreferredExtendedPanID.ID to
                             AttributeInfo(
                                 name = "PreferredExtendedPanID",
-                                type = DataType.OCTSTR,
+                                type = DataType.OCTET_STRING,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.MANAGE,
                             ),
@@ -461,7 +461,7 @@ val CLUSTERS_1_4 =
                         Clusters.ThreadNetworkDirectory.Attributes.ThreadNetworkTableSize.ID to
                             AttributeInfo(
                                 name = "ThreadNetworkTableSize",
-                                type = DataType.UINT8,
+                                type = DataType.U_INT8,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -476,7 +476,7 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "OperationalDataset",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -489,7 +489,7 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ExtendedPanID",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -502,7 +502,7 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ExtendedPanID",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -518,7 +518,7 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "OperationalDataset",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -571,7 +571,7 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "RequestID",
-                                                type = DataType.UINT64,
+                                                type = DataType.U_INT64,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -581,7 +581,7 @@ val CLUSTERS_1_4 =
                                         2u to
                                             ParameterInfo(
                                                 name = "ProductID",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         3u to
                                             ParameterInfo(
@@ -599,12 +599,12 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "RequestID",
-                                                type = DataType.UINT64,
+                                                type = DataType.U_INT64,
                                             ),
                                         1u to
                                             ParameterInfo(
                                                 name = "ResponseTimeoutSeconds",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                     ),
                             ),
@@ -620,27 +620,27 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "CommissioningTimeout",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         1u to
                                             ParameterInfo(
                                                 name = "PAKEPasscodeVerifier",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                         2u to
                                             ParameterInfo(
                                                 name = "Discriminator",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         3u to
                                             ParameterInfo(
                                                 name = "Iterations",
-                                                type = DataType.UINT32,
+                                                type = DataType.U_INT32,
                                             ),
                                         4u to
                                             ParameterInfo(
                                                 name = "Salt",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -661,7 +661,7 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricDatastore.Attributes.AnchorRootCA.ID to
                             AttributeInfo(
                                 name = "AnchorRootCA",
-                                type = DataType.OCTSTR,
+                                type = DataType.OCTET_STRING,
                                 readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.JointFabricDatastore.Attributes.AnchorNodeID.ID to
@@ -780,7 +780,7 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "GroupKeySetID",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                     ),
                             ),
@@ -803,17 +803,17 @@ val CLUSTERS_1_4 =
                                         2u to
                                             ParameterInfo(
                                                 name = "GroupKeySetID",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         3u to
                                             ParameterInfo(
                                                 name = "GroupCAT",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         4u to
                                             ParameterInfo(
                                                 name = "GroupCATVersion",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         5u to
                                             ParameterInfo(
@@ -841,17 +841,17 @@ val CLUSTERS_1_4 =
                                         2u to
                                             ParameterInfo(
                                                 name = "GroupKeySetID",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         3u to
                                             ParameterInfo(
                                                 name = "GroupCAT",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         4u to
                                             ParameterInfo(
                                                 name = "GroupCATVersion",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         5u to
                                             ParameterInfo(
@@ -904,7 +904,7 @@ val CLUSTERS_1_4 =
                                         4u to
                                             ParameterInfo(
                                                 name = "ICAC",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -927,7 +927,7 @@ val CLUSTERS_1_4 =
                                         2u to
                                             ParameterInfo(
                                                 name = "ICAC",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -1113,7 +1113,7 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ListID",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -1154,7 +1154,7 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ListID",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -1175,7 +1175,7 @@ val CLUSTERS_1_4 =
                         Clusters.JointFabricAdministrator.Attributes.AdministratorFabricIndex.ID to
                             AttributeInfo(
                                 name = "AdministratorFabricIndex",
-                                type = DataType.FABRIC_IDX,
+                                type = DataType.FABRIC_INDEX,
                                 readPrivilege = Privilege.ADMINISTER,
                             ),
                     ),
@@ -1190,7 +1190,7 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ICACSR",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -1203,12 +1203,12 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ICACValue",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                         1u to
                                             ParameterInfo(
                                                 name = "ICACValue",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -1223,27 +1223,27 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "CommissioningTimeout",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         1u to
                                             ParameterInfo(
                                                 name = "PAKEPasscodeVerifier",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                         2u to
                                             ParameterInfo(
                                                 name = "Discriminator",
-                                                type = DataType.UINT16,
+                                                type = DataType.U_INT16,
                                             ),
                                         3u to
                                             ParameterInfo(
                                                 name = "Iterations",
-                                                type = DataType.UINT32,
+                                                type = DataType.U_INT32,
                                             ),
                                         4u to
                                             ParameterInfo(
                                                 name = "Salt",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
@@ -1272,7 +1272,7 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "EndpointID",
-                                                type = DataType.ENDPOINT_NO,
+                                                type = DataType.ENDPOINT_ID,
                                             ),
                                     ),
                             ),
@@ -1292,7 +1292,7 @@ val CLUSTERS_1_4 =
                                         1u to
                                             ParameterInfo(
                                                 name = "ICACCSR",
-                                                type = DataType.OCTSTR,
+                                                type = DataType.OCTET_STRING,
                                             ),
                                     ),
                             ),
