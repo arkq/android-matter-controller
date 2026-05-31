@@ -152,7 +152,7 @@ constructor(
     viewModelScope.launch {
       val isInitialLoad = _deviceMatterInfoList.value == null
       try {
-        val infos = clustersHelper.fetchDeviceMatterInfo(nodeId.toLong()).sortedBy { it.endpoint }
+        val infos = clustersHelper.fetchDeviceMatterInfo(nodeId).sortedBy { it.endpoint }
         _deviceMatterInfoList.value = infos
       } catch (e: Exception) {
         Timber.e(e, "loadExplorer failed")
@@ -253,7 +253,7 @@ constructor(
 
         val attributesFromDevice =
             runCatching {
-                  clustersHelper.readClusterAttributeList(nodeId.toLong(), endpoint, clusterId)
+                  clustersHelper.readClusterAttributeList(nodeId, endpoint, clusterId)
                 }
                 .getOrElse {
                   Timber.w(
@@ -267,7 +267,7 @@ constructor(
         val commandsFromDevice =
             runCatching {
                   clustersHelper.readClusterAcceptedCommandList(
-                      nodeId.toLong(),
+                  nodeId,
                       endpoint,
                       clusterId,
                   )
@@ -284,7 +284,7 @@ constructor(
         val generatedCommandsFromDevice =
             runCatching {
                   clustersHelper.readClusterGeneratedCommandList(
-                      nodeId.toLong(),
+                  nodeId,
                       endpoint,
                       clusterId,
                   )
@@ -300,7 +300,7 @@ constructor(
                 }
         val eventsFromDevice =
             runCatching {
-                  clustersHelper.readClusterEventList(nodeId.toLong(), endpoint, clusterId)
+                  clustersHelper.readClusterEventList(nodeId, endpoint, clusterId)
                 }
                 .getOrElse {
                   Timber.w(
@@ -364,7 +364,7 @@ constructor(
     viewModelScope.launch {
       try {
         val value =
-            clustersHelper.readAttributeValue(nodeId.toLong(), endpoint, clusterId, attributeId)
+          clustersHelper.readAttributeValue(nodeId, endpoint, clusterId, attributeId)
         _attributeValueByKey.update {
           it + (attributeKey(endpoint, clusterId, attributeId) to value)
         }
@@ -408,7 +408,7 @@ constructor(
                 }
 
         clustersHelper.writeGenericAttribute(
-            nodeId.toLong(),
+          nodeId,
             endpoint,
             clusterId,
             attributeId,
@@ -447,7 +447,7 @@ constructor(
                 .orEmpty()
         val payload = ExplorerTlvCodec.encodeCommandPayload(arguments, argumentValues)
         clustersHelper.invokeGenericCommand(
-            nodeId.toLong(),
+          nodeId,
             endpoint,
             clusterId,
             commandId,

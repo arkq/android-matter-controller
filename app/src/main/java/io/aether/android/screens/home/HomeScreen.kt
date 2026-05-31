@@ -94,6 +94,7 @@ import io.aether.android.getDeviceTypeIconId
 import io.aether.android.isMultiAdminCommissioning
 import io.aether.android.isOnDisplayString
 import io.aether.android.screens.common.DialogInfo
+import io.aether.android.matter.NodeId
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.thread.getActivity
 import timber.log.Timber
@@ -117,7 +118,7 @@ import timber.log.Timber
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeRoute(
-    navigateToDevice: (nodeId: Long) -> Unit,
+    navigateToDevice: (nodeId: NodeId) -> Unit,
     onMenuClick: () -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -157,7 +158,7 @@ internal fun HomeRoute(
   val onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit = remember {
     { navigateToDevice(it.nodeId) }
   }
-  val onOnOffClick: (nodeId: Long, value: Boolean) -> Unit = remember {
+  val onOnOffClick: (nodeId: NodeId, value: Boolean) -> Unit = remember {
     { nodeId, value -> homeViewModel.updateDeviceStateOn(nodeId, value) }
   }
 
@@ -281,7 +282,7 @@ private fun HomeScreen(
     onCommissionedDeviceNameCaptured: (name: String) -> Unit,
     onCommissionDevice: () -> Unit,
     onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit,
-    onOnOffClick: (nodeId: Long, value: Boolean) -> Unit,
+    onOnOffClick: (nodeId: NodeId, value: Boolean) -> Unit,
 ) {
 
   val context = LocalContext.current
@@ -390,12 +391,12 @@ fun openPlayServicesInStore(context: Context) {
 
 @Composable
 private fun DeviceItem(
-    nodeId: Long,
+  nodeId: NodeId,
     deviceTypeId: Long,
     name: String,
     isOnline: Boolean,
     isOn: Boolean,
-    onOnOffClick: (nodeId: Long, value: Boolean) -> Unit,
+  onOnOffClick: (nodeId: NodeId, value: Boolean) -> Unit,
     onDeviceClick: (() -> Unit),
 ) {
   val bgColor =

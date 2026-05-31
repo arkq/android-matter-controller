@@ -20,9 +20,9 @@ internal val hexFormat = HexFormat {
 value class FabricId(val value: ULong) : Comparable<FabricId> {
   override fun toString(): String = value.toHexString(hexFormat)
 
+  override fun compareTo(other: FabricId): Int = value.compareTo(other.value)
   fun toLong(): Long = value.toLong()
 
-  override fun compareTo(other: FabricId): Int = value.compareTo(other.value)
 }
 
 /**
@@ -32,9 +32,19 @@ value class FabricId(val value: ULong) : Comparable<FabricId> {
 value class NodeId(val value: ULong) : Comparable<NodeId> {
   override fun toString(): String = value.toHexString(hexFormat)
 
+  override fun compareTo(other: NodeId): Int = value.compareTo(other.value)
   fun toLong(): Long = value.toLong()
 
-  override fun compareTo(other: NodeId): Int = value.compareTo(other.value)
+}
+
+/**
+ * A Matter Endpoint ID (uint16 per spec). Formats as 4-digit uppercase hex, e.g. 0x0001.
+ */
+@JvmInline
+value class EndpointId(val value: UShort) : Comparable<EndpointId> {
+  override fun toString(): String = value.toHexString(hexFormat)
+  override fun compareTo(other: EndpointId): Int = value.compareTo(other.value)
+  fun toInt(): Int = value.toInt()
 }
 
 /** A Matter Cluster ID (uint32 per spec). Formats as 4-digit (≤0xFFFF) or 8-digit hex. */
@@ -127,6 +137,7 @@ value class DeviceId(val value: UInt) : Comparable<DeviceId> {
         value <= 0xFFFFu -> value.toUShort().toHexString(hexFormat)
         else -> value.toHexString(hexFormat)
       }
+  override fun compareTo(other: DeviceId): Int = value.compareTo(other.value)
 
   fun toLong(): Long = value.toLong()
 
@@ -134,7 +145,6 @@ value class DeviceId(val value: UInt) : Comparable<DeviceId> {
 
   fun toUInt(): UInt = value
 
-  override fun compareTo(other: DeviceId): Int = value.compareTo(other.value)
 }
 
 /** A Matter Vendor ID (uint16 per spec). Formats as 4-digit uppercase hex, e.g. 0x1011. */
@@ -142,9 +152,8 @@ value class DeviceId(val value: UInt) : Comparable<DeviceId> {
 value class VendorId(val value: UShort) : Comparable<VendorId> {
   override fun toString(): String = value.toHexString(hexFormat)
 
-  fun toInt(): Int = value.toInt()
-
   override fun compareTo(other: VendorId): Int = value.compareTo(other.value)
+  fun toInt(): Int = value.toInt()
 }
 
 /** A Matter Product ID (uint16 per spec). Formats as 4-digit uppercase hex, e.g. 0x8001. */
@@ -152,9 +161,9 @@ value class VendorId(val value: UShort) : Comparable<VendorId> {
 value class ProductId(val value: UShort) : Comparable<ProductId> {
   override fun toString(): String = value.toHexString(hexFormat)
 
+  override fun compareTo(other: ProductId): Int = value.compareTo(other.value)
   fun toInt(): Int = value.toInt()
 
-  override fun compareTo(other: ProductId): Int = value.compareTo(other.value)
 }
 
 // ---------------------------------------------------------------------------

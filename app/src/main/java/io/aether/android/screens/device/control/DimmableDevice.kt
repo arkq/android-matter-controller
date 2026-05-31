@@ -46,7 +46,7 @@ internal fun DimmableDeviceControl(
 
   LaunchedEffect(endpointModel, lastUpdatedDeviceState) {
     when {
-      lastUpdatedDeviceState?.nodeId == endpointModel.node.nodeId &&
+      lastUpdatedDeviceState?.nodeId == endpointModel.nodeId &&
           lastUpdatedDeviceState.endpointId == endpointFor(endpointModel.endpoint) -> {
         isOnline = lastUpdatedDeviceState.online
         isOn = lastUpdatedDeviceState.on

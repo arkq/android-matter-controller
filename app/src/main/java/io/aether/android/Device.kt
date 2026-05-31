@@ -3,10 +3,13 @@
 
 package io.aether.android
 
+import io.aether.android.matter.NodeId
+import io.aether.android.matter.toNodeId
+
 /** App-level device model used by UI/viewmodels, backed by node+endpoint proto state. */
 data class Device(
-    val nodeId: Long = 0L,
-    val endpoint: Int = 1,
+    val nodeId: NodeId = NodeId(0u),
+    val endpoint: Int = 0,
     val name: String = "",
     val vendorId: String = "",
     val vendorName: String = "",
@@ -34,7 +37,9 @@ data class Device(
   fun toBuilder(): Builder = Builder(this)
 
   class Builder internal constructor(private var device: Device = Device()) {
-    fun setNodeId(nodeId: Long) = apply { device = device.copy(nodeId = nodeId) }
+    fun setNodeId(nodeId: NodeId) = apply { device = device.copy(nodeId = nodeId) }
+
+    fun setNodeId(value: Long) = apply { device = device.copy(nodeId = value.toNodeId()) }
 
     fun setEndpoint(endpoint: Int) = apply { device = device.copy(endpoint = endpoint) }
 

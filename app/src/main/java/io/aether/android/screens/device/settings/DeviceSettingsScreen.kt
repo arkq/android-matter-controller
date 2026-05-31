@@ -46,6 +46,7 @@ import io.aether.android.R
 import io.aether.android.chip.BasicInformationAttributes
 import io.aether.android.formatTimestamp
 import io.aether.android.getDeviceTypeDisplayStringId
+import io.aether.android.matter.NodeId
 import io.aether.android.matter.toNodeId
 import io.aether.android.matter.toVendorId
 import io.aether.android.matter.vendorLabel
@@ -64,14 +65,14 @@ import timber.log.Timber
 @Composable
 fun DeviceSettingsRoute(
     navigateToHome: () -> Unit,
-    navigateToDeviceExplorer: (nodeId: Long) -> Unit,
-    navigateToDeviceFabrics: (nodeId: Long) -> Unit,
+    navigateToDeviceExplorer: (nodeId: NodeId) -> Unit,
+    navigateToDeviceFabrics: (nodeId: NodeId) -> Unit,
     onBackClick: () -> Unit,
-    nodeId: Long,
+    nodeId: NodeId,
     viewModel: DeviceSettingsViewModel = hiltViewModel(),
 ) {
   Timber.d("DeviceSettingsRoute: nodeId [$nodeId]")
-  val typedNodeId = nodeId.toNodeId()
+  val typedNodeId = nodeId
 
   val activity = LocalContext.current.getActivity()
 
@@ -170,8 +171,8 @@ fun DeviceSettingsRoute(
             viewModel.removeDeviceWithoutUnlink(typedNodeId)
           }
         },
-        onExplorer = { navigateToDeviceExplorer(typedNodeId.toLong()) },
-        onManageControllers = { navigateToDeviceFabrics(typedNodeId.toLong()) },
+        onExplorer = { navigateToDeviceExplorer(typedNodeId) },
+        onManageControllers = { navigateToDeviceFabrics(typedNodeId) },
     )
   }
 }

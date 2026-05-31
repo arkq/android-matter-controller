@@ -11,6 +11,7 @@ import chip.devicecontroller.model.ChipAttributePath
 import chip.devicecontroller.model.ChipEventPath
 import chip.devicecontroller.model.ChipPathId
 import chip.devicecontroller.model.NodeState
+import io.aether.android.matter.NodeId
 import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -90,7 +91,7 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
     return null
   }
 
-  open class ReportCallbackForDevice(val nodeId: Long) : ReportCallback {
+  open class ReportCallbackForDevice(val nodeId: NodeId) : ReportCallback {
     override fun onError(
         attributePath: ChipAttributePath?,
         eventPath: ChipEventPath?,
@@ -117,14 +118,14 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
     }
   }
 
-  open class SubscriptionEstablishedCallbackForDevice(val nodeId: Long) :
+  open class SubscriptionEstablishedCallbackForDevice(val nodeId: NodeId) :
       SubscriptionEstablishedCallback {
     override fun onSubscriptionEstablished(subscriptionId: Long) {
       Timber.d("onSubscriptionEstablished(): subscriptionId [${subscriptionId}]")
     }
   }
 
-  open class ResubscriptionAttemptCallbackForDevice(val nodeId: Long) :
+  open class ResubscriptionAttemptCallbackForDevice(val nodeId: NodeId) :
       ResubscriptionAttemptCallback {
     override fun onResubscriptionAttempt(terminationCause: Int, nextResubscribeIntervalMsec: Int) {
       Timber.d(

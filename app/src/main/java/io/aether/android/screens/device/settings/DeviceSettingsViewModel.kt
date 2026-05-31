@@ -67,7 +67,7 @@ constructor(
     kotlinx.coroutines.flow
         .combine(_device, devicesStateRepository.devicesStateFlow) { device, state ->
           val node =
-              device?.nodeId?.let { nodeId -> state.nodesList.firstOrNull { it.nodeId == nodeId } }
+              device?.nodeId?.let { nodeId -> state.nodesList.firstOrNull { it.nodeId == nodeId.toLong() } }
           (node?.online ?: false) to node?.dateCommissioned
         }
         .onEach { (isOnline, dateCommissioned) ->
@@ -116,7 +116,7 @@ constructor(
             chooseBestDevice(devicesForNode) ?: devicesRepository.getDeviceByNodeId(nodeId)
         val basicInfo =
             try {
-              clustersHelper.readBasicInformationAttributes(nodeId.toLong())
+              clustersHelper.readBasicInformationAttributes(nodeId)
             } catch (e: Exception) {
               Timber.w(e, "loadDevice: could not read basic information attributes")
               null
@@ -156,7 +156,7 @@ constructor(
   fun renameDevice(nodeId: NodeId, newName: String) {
     Timber.d("renameDevice: nodeId [$nodeId] newName [$newName]")
     viewModelScope.launch {
-      val device = devicesRepository.getDeviceByNodeId(nodeId.toLong())
+      val device = devicesRepository.getDeviceByNodeId(nodeId)
       val result =
           setDeviceNameUseCase.execute(nodeId, newName) {
             // Immediately update local state so the UI reflects the new name.
@@ -229,7 +229,7 @@ constructor(
           false,
       )
       try {
-        val devicePtr = chipClient.awaitGetConnectedDevicePointer(nodeId.toLong())
+        val devicePtr = chipClient.awaitGetConnectedDevicePointer(nodeId)
         val isCommissioningWindowOpen = clustersHelper.isCommissioningWindowOpen(devicePtr)
         if (isCommissioningWindowOpen) {
           Timber.d("ShareDevice: commissioning window is already open, closing it")
@@ -257,7 +257,7 @@ constructor(
             "duration [${OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS}] iteration [${ITERATION}] " +
             "discriminator [${DISCRIMINATOR}]"
     )
-    val connectedDevicePointer = chipClient.awaitGetConnectedDevicePointer(nodeId.toLong())
+    val connectedDevicePointer = chipClient.awaitGetConnectedDevicePointer(nodeId)
     chipClient.awaitOpenPairingWindowWithPIN(
         connectedDevicePointer,
         OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS,
@@ -270,7 +270,7 @@ constructor(
   private suspend fun openCommissioningWindowWithAdministratorCommissioningCluster(nodeId: NodeId) {
     val salt = Random.nextBytes(32)
     val timedInvokeTimeoutMs = 10000
-    val connectedDevicePointer = chipClient.awaitGetConnectedDevicePointer(nodeId.toLong())
+    val connectedDevicePointer = chipClient.awaitGetConnectedDevicePointer(nodeId)
     val verifier =
         chipClient.computePaseVerifier(connectedDevicePointer, SETUP_PIN_CODE, ITERATION, salt)
     clustersHelper.openCommissioningWindowAdministratorCommissioningCluster(
@@ -293,7 +293,7 @@ constructor(
     showMsgDialog(R.string.unlinking_device_title, R.string.unlinking_device_body, false)
     viewModelScope.launch {
       try {
-        chipClient.awaitUnpairDevice(nodeId.toLong())
+        chipClient.awaitUnpairDevice(nodeId)
       } catch (e: Exception) {
         Timber.e(e, "Unlinking the device failed.")
         dismissMsgDialog()
@@ -320,12 +320,8 @@ constructor(
     }
   }
 
-  private suspend fun removePhysicalDevice(nodeId: Long) {
-    devicesRepository.removeDevice(nodeId)
-  }
-
   private suspend fun removePhysicalDevice(nodeId: NodeId) {
-    removePhysicalDevice(nodeId.toLong())
+    devicesRepository.removeDevice(nodeId)
   }
 
   // -----------------------------------------------------------------------------------------------

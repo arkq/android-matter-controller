@@ -27,9 +27,9 @@ abstract class BaseCompletionListener : ChipDeviceController.CompletionListener 
     Timber.d("BaseCompletionListener onPairingDeleted(): code [${code}]")
   }
 
-  override fun onCommissioningComplete(nodeId: Long, errorCode: Int) {
+  override fun onCommissioningComplete(id: Long, errorCode: Int) {
     Timber.d(
-        "BaseCompletionListener onCommissioningComplete(): nodeId [${nodeId}] errorCode [${errorCode}]"
+        "BaseCompletionListener onCommissioningComplete(): nodeId [${id}] errorCode [${errorCode}]"
     )
   }
 
@@ -60,9 +60,9 @@ abstract class BaseCompletionListener : ChipDeviceController.CompletionListener 
     )
   }
 
-  override fun onCommissioningStatusUpdate(nodeId: Long, stage: String?, errorCode: Int) {
+  override fun onCommissioningStatusUpdate(id: Long, stage: String?, errorCode: Int) {
     Timber.d(
-        "onCommissioningStatusUpdate nodeId [${nodeId}]  stage [${stage}]  errorCode [${errorCode}]"
+        "onCommissioningStatusUpdate nodeId [${id}]  stage [${stage}]  errorCode [${errorCode}]"
     )
   }
 }

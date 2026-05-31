@@ -63,7 +63,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
       if (nodeIndex == -1) {
         val newNodeBuilder =
             MatterNode.newBuilder()
-                .setNodeId(device.nodeId)
+                .setNodeId(device.nodeId.toLong())
                 .setVendorId(device.vendorId.toIntOrNull() ?: 0)
                 .setVendorName(device.vendorName)
                 .setProductId(device.productId.toIntOrNull() ?: 0)
@@ -111,7 +111,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
   }
 
   suspend fun addOrUpdateEndpoint(
-      nodeId: Long,
+      nodeId: NodeId,
       nodeName: String,
       vendorId: Int,
       vendorName: String,
@@ -125,7 +125,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
       if (nodeIndex == -1) {
         val nodeBuilder =
             MatterNode.newBuilder()
-                .setNodeId(nodeId)
+              .setNodeId(nodeId.toLong())
                 .setName(nodeName)
                 .setVendorId(vendorId)
                 .setVendorName(vendorName)
@@ -161,17 +161,17 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
     Timber.d("updateDevice: device [${device}]")
     val nodeIndex = findNodeIndex(device.nodeId)
     if (nodeIndex == -1) {
-      throw Exception("Device not found: ${device.nodeId.toNodeId()}")
+      throw Exception("Device not found: ${device.nodeId}")
     }
     addDevice(device)
   }
 
-  suspend fun updateDeviceType(nodeId: Long, deviceType: Device.DeviceType) {
-    Timber.d("updateDeviceType: nodeId [${nodeId.toNodeId()}] deviceType [${deviceType}]")
+  suspend fun updateDeviceType(nodeId: NodeId, deviceType: Device.DeviceType) {
+    Timber.d("updateDeviceType: nodeId [${nodeId}] deviceType [${deviceType}]")
     val nodeIndex = findNodeIndex(nodeId)
     if (nodeIndex == -1) {
       Timber.e(
-          "Unable to get device information to update its type: nodeId [${nodeId.toNodeId()}] deviceType [${deviceType}]"
+          "Unable to get device information to update its type: nodeId [${nodeId}] deviceType [${deviceType}]"
       )
       return
     }
@@ -191,39 +191,25 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
     }
   }
 
-  suspend fun updateDeviceType(nodeId: NodeId, deviceType: Device.DeviceType) {
-    updateDeviceType(nodeId.toLong(), deviceType)
-  }
-
-  suspend fun removeDevice(nodeId: Long) {
-    Timber.d("removeDevice: nodeId [${nodeId.toNodeId()}]")
+  suspend fun removeDevice(nodeId: NodeId) {
+    Timber.d("removeDevice: nodeId [${nodeId}]")
     val nodeIndex = findNodeIndex(nodeId)
     if (nodeIndex == -1) {
-      throw Exception("Device not found: ${nodeId.toNodeId()}")
+      throw Exception("Device not found: ${nodeId}")
     }
     devicesStateDataStore.updateData { state -> state.toBuilder().removeNodes(nodeIndex).build() }
   }
 
-  suspend fun removeDevice(nodeId: NodeId) {
-    removeDevice(nodeId.toLong())
-  }
+  suspend fun getDevice(nodeId: NodeId): Device = getDeviceByNodeId(nodeId)
 
-  suspend fun getDevice(nodeId: Long): Device = getDeviceByNodeId(nodeId)
-
-  suspend fun getDevice(nodeId: NodeId): Device = getDevice(nodeId.toLong())
-
-  suspend fun getDeviceByNodeId(nodeId: Long): Device {
+  suspend fun getDeviceByNodeId(nodeId: NodeId): Device {
     return getAllDevices().devicesList.firstOrNull { it.nodeId == nodeId }
-        ?: throw Exception("Device not found for nodeId: ${nodeId.toNodeId()}")
+        ?: throw Exception("Device not found for nodeId: ${nodeId}")
   }
 
-  suspend fun getDeviceByNodeId(nodeId: NodeId): Device = getDeviceByNodeId(nodeId.toLong())
-
-  suspend fun getDevicesByNodeId(nodeId: Long): List<Device> {
+  suspend fun getDevicesByNodeId(nodeId: NodeId): List<Device> {
     return getAllDevices().devicesList.filter { it.nodeId == nodeId }
   }
-
-  suspend fun getDevicesByNodeId(nodeId: NodeId): List<Device> = getDevicesByNodeId(nodeId.toLong())
 
   suspend fun getAllDevices(): Devices {
     return devicesFlow.first()
@@ -233,15 +219,15 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
     devicesStateDataStore.updateData { state -> state.toBuilder().clearNodes().build() }
   }
 
-  private suspend fun findNodeIndex(nodeId: Long): Int {
+  private suspend fun findNodeIndex(nodeId: NodeId): Int {
     val state = devicesStateDataStore.data.first()
     return findNodeIndex(state, nodeId)
   }
 
-  private fun findNodeIndex(state: MatterFabricState, nodeId: Long): Int {
+  private fun findNodeIndex(state: MatterFabricState, nodeId: NodeId): Int {
     val nodesCount = state.nodesCount
     for (index in 0 until nodesCount) {
-      if (state.getNodes(index).nodeId == nodeId) {
+      if (state.getNodes(index).nodeId == nodeId.toLong()) {
         return index
       }
     }

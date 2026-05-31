@@ -40,6 +40,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.MatterFabricState
 import io.aether.android.R
 import io.aether.android.data.DevicesStateRepository
+import io.aether.android.matter.NodeId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
@@ -65,9 +66,9 @@ import timber.log.Timber
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DeviceRoute(
-    navigateToDeviceSettings: (nodeId: Long) -> Unit,
+    navigateToDeviceSettings: (nodeId: NodeId) -> Unit,
     onBackClick: () -> Unit,
-    nodeId: Long,
+    nodeId: NodeId,
     deviceViewModel: DeviceViewModel = hiltViewModel(),
 ) {
   Timber.d("DeviceRoute nodeId [$nodeId]")
@@ -90,7 +91,7 @@ internal fun DeviceRoute(
           initial = MatterFabricState.getDefaultInstance()
       )
   val isOnline =
-      devicesState.nodesList.firstOrNull { it.nodeId == nodeId }?.online
+      devicesState.nodesList.firstOrNull { it.nodeId == nodeId.toLong() }?.online
           ?: deviceUiModel?.isOnline
           ?: true
 

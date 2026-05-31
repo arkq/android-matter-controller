@@ -14,6 +14,7 @@ import io.aether.android.MatterFabricState
 import io.aether.android.MatterNode
 import io.aether.android.getTimestampForNow
 import io.aether.android.matter.NodeId
+import io.aether.android.matter.toNodeId
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -27,7 +28,7 @@ import timber.log.Timber
 class DevicesStateRepository @Inject constructor(@ApplicationContext context: Context) {
 
   data class EndpointStateSnapshot(
-      val nodeId: Long,
+      val nodeId: NodeId,
       val endpointId: Int,
       val dateCaptured: Timestamp,
       val online: Boolean,
@@ -57,7 +58,7 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
     get() = _lastUpdatedEndpointState
 
   suspend fun addEndpointState(
-      nodeId: Long,
+      nodeId: NodeId,
       endpointId: Int,
       isOnline: Boolean,
       isOn: Boolean,
@@ -68,7 +69,7 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
   }
 
   suspend fun upsertEndpointState(
-      nodeId: Long,
+      nodeId: NodeId,
       endpointId: Int,
       isOnline: Boolean,
       isOn: Boolean,
@@ -91,7 +92,7 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
                 .build()
         val nodeState =
             MatterNode.newBuilder()
-                .setNodeId(nodeId)
+            .setNodeId(nodeId.toLong())
                 .setDateCommissioned(capturedAt)
                 .setOnline(isOnline)
                 .addEndpoints(endpointState)
@@ -140,16 +141,16 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
         )
   }
 
-  suspend fun loadEndpointState(nodeId: Long, endpointId: Int): EndpointStateSnapshot? {
+  suspend fun loadEndpointState(nodeId: NodeId, endpointId: Int): EndpointStateSnapshot? {
     val normalizedEndpoint = normalizeEndpoint(endpointId)
     val devicesState = devicesStateFlow.first()
-    val nodeState = devicesState.nodesList.firstOrNull { it.nodeId == nodeId } ?: return null
+    val nodeState = devicesState.nodesList.firstOrNull { it.nodeId == nodeId.toLong() } ?: return null
     val endpointState =
         nodeState.endpointsList.firstOrNull {
           normalizeEndpoint(it.endpointId) == normalizedEndpoint
         } ?: return null
     return EndpointStateSnapshot(
-        nodeId = nodeState.nodeId,
+      nodeId = nodeState.nodeId.toNodeId(),
         endpointId = normalizedEndpoint,
         dateCaptured = getTimestampForNow(),
         online = nodeState.online,
@@ -163,7 +164,7 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
     return devicesStateFlow.first()
   }
 
-  suspend fun removeNodeState(nodeId: Long) {
+  suspend fun removeNodeState(nodeId: NodeId) {
     devicesStateDataStore.updateData { state ->
       val nodeIndex = findNodeIndex(state, nodeId)
       if (nodeIndex == -1) {
@@ -174,7 +175,7 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
     }
   }
 
-  suspend fun updateNodeOnlineState(nodeId: Long, isOnline: Boolean) {
+  suspend fun updateNodeOnlineState(nodeId: NodeId, isOnline: Boolean) {
     val capturedAt = getTimestampForNow()
     devicesStateDataStore.updateData { state ->
       val nodeIndex = findNodeIndex(state, nodeId)
@@ -192,12 +193,8 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
     }
   }
 
-  suspend fun updateNodeOnlineState(nodeId: NodeId, isOnline: Boolean) {
-    updateNodeOnlineState(nodeId.toLong(), isOnline)
-  }
-
-  private fun findNodeIndex(state: MatterFabricState, nodeId: Long): Int {
-    return (0 until state.nodesCount).firstOrNull { state.getNodes(it).nodeId == nodeId } ?: -1
+  private fun findNodeIndex(state: MatterFabricState, nodeId: NodeId): Int {
+    return (0 until state.nodesCount).firstOrNull { state.getNodes(it).nodeId == nodeId.toLong() } ?: -1
   }
 
   private fun findEndpointIndex(nodeState: MatterNode, endpoint: Int): Int {

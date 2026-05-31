@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.R
+import io.aether.android.matter.NodeId
 import io.aether.android.matter.toNodeId
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
@@ -35,10 +36,10 @@ import io.aether.android.screens.common.MsgAlertDialog
 @Composable
 fun ExplorerRoute(
     onBackClick: () -> Unit,
-    nodeId: Long,
+    nodeId: NodeId,
     viewModel: ExplorerViewModel = hiltViewModel(),
 ) {
-  val typedNodeId = nodeId.toNodeId()
+  val typedNodeId = nodeId
   val deviceMatterInfoList by viewModel.deviceMatterInfoList.collectAsState()
   val navStack by viewModel.navStack.collectAsState()
   val endpointSearchQuery by viewModel.endpointSearchQuery.collectAsState()
