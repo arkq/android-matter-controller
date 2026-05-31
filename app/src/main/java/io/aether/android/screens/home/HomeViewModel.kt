@@ -39,7 +39,7 @@ import io.aether.android.commissioning.AppCommissioningService
 import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.data.UserPreferencesRepository
-import io.aether.android.endpointFor
+import io.aether.android.endpointIdTyped
 import io.aether.android.matter.Clusters
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.toEndpointId
@@ -183,7 +183,7 @@ constructor(
     sortedNodes.forEach { node ->
       val nId = node.nodeId.toNodeId()
       Timber.d("processDevices() nodeId: [${nId}]}")
-      val endpointState = node.endpointsList.minByOrNull { endpointFor(it) }
+      val endpointState = node.endpointsList.minByOrNull { it.endpointId }
       if (userPreferences.hideOfflineDevices) {
         if (!node.online) return@forEach
       }
@@ -387,7 +387,7 @@ constructor(
           )
           devicesStateRepository.addEndpointState(
               nodeId,
-              endpointFor(device).toEndpointId(),
+              device.endpointIdTyped(),
               isOnline = true,
               isOn = false,
               level = 0,
@@ -435,7 +435,7 @@ constructor(
             )
             devicesStateRepository.addEndpointState(
                 nodeId,
-                endpointFor(device).toEndpointId(),
+                device.endpointIdTyped(),
                 isOnline = true,
                 isOn = false,
                 level = 0,
@@ -479,8 +479,8 @@ constructor(
             devicesStateRepository.getAllDevicesState().nodesList.firstOrNull {
               it.nodeId == nodeId.toLong()
             } ?: return@launch
-        val endpointDevice = node.endpointsList.minByOrNull { endpointFor(it) } ?: return@launch
-        val endpoint = endpointFor(endpointDevice)
+        val endpointDevice = node.endpointsList.minByOrNull { it.endpointId } ?: return@launch
+        val endpoint = endpointDevice.endpointId
         Timber.d("Handling real device nodeId [$nodeId] endpoint [$endpoint]")
         clustersHelper.setOnOffDeviceStateOnOffCluster(nodeId.toLong(), isOn, endpoint)
         val level =
@@ -550,8 +550,8 @@ constructor(
       val nodes = devicesStateRepository.getAllDevicesState().nodesList
       nodes.forEach { node ->
         val nId = node.nodeId.toNodeId()
-        val endpointDevice = node.endpointsList.minByOrNull { endpointFor(it) } ?: return@forEach
-        val endpoint = endpointFor(endpointDevice)
+        val endpointDevice = node.endpointsList.minByOrNull { it.endpointId } ?: return@forEach
+        val endpoint = endpointDevice.endpointId
         val reportCallback =
             object : SubscriptionHelper.ReportCallbackForDevice(nId) {
               override fun onError(
@@ -689,9 +689,9 @@ constructor(
           val nId = node.nodeId.toNodeId()
           Timber.d("runDevicesPeriodicPing nodeId [${nId}]")
           node.endpointsList
-              .sortedBy { endpointFor(it) }
+              .sortedBy { it.endpointId }
               .forEach { endpointDevice ->
-                val endpoint = endpointFor(endpointDevice)
+                val endpoint = endpointDevice.endpointId
                 val hasLevelControl = supportsLevelControl(endpointDevice)
                 val hasColorTemperature = supportsColorTemperature(endpointDevice)
                 var isOn = clustersHelper.getDeviceStateOnOffCluster(nId.toLong(), endpoint)

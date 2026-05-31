@@ -14,8 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.dimensionResource
 import io.aether.android.R
 import io.aether.android.data.DevicesStateRepository
-import io.aether.android.endpointFor
-import io.aether.android.matter.toEndpointId
+import io.aether.android.endpointIdTyped
 import io.aether.android.screens.device.cluster.OnOffClusterControl
 import io.aether.android.screens.home.DeviceUiModel
 
@@ -40,8 +39,7 @@ internal fun OnOffDeviceControl(
   LaunchedEffect(endpointModel, lastUpdatedDeviceState) {
     when {
       lastUpdatedDeviceState?.nodeId == endpointModel.nodeId &&
-          lastUpdatedDeviceState.endpointId ==
-              endpointFor(endpointModel.endpoint).toEndpointId() -> {
+          lastUpdatedDeviceState.endpointId == endpointModel.endpoint.endpointIdTyped() -> {
         isOnline = lastUpdatedDeviceState.online
         isOn = lastUpdatedDeviceState.on
       }

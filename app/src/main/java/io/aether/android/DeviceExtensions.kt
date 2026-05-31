@@ -4,9 +4,11 @@
 package io.aether.android
 
 import io.aether.android.matter.Devices
+import io.aether.android.matter.EndpointId
+import io.aether.android.matter.toEndpointId
 
-/** Returns the Matter endpoint number for [device], defaulting to 1 for legacy records. */
-fun endpointFor(device: MatterEndpoint): Int = if (device.endpointId != 0) device.endpointId else 1
+/** Returns [MatterEndpoint.endpointId] as the strongly typed [EndpointId]. */
+fun MatterEndpoint.endpointIdTyped(): EndpointId = endpointId.toEndpointId()
 
 /** Returns true if the device exposes a Level Control (dimmable) cluster. */
 fun supportsLevelControl(device: MatterEndpoint): Boolean {
