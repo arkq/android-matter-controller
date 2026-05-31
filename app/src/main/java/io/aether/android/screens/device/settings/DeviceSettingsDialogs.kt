@@ -65,7 +65,6 @@ internal fun DeviceTypeDialog(
     onConfirm: (DeviceTypeId) -> Unit,
     onDismiss: () -> Unit,
 ) {
-  val types = DEVICES.keys.toList()
   var expanded by remember { mutableStateOf(false) }
   var selectedType by remember(currentType) { mutableStateOf(currentType) }
 
@@ -89,15 +88,17 @@ internal fun DeviceTypeDialog(
               expanded = expanded,
               onDismissRequest = { expanded = false },
           ) {
-            types.forEach { type ->
-              DropdownMenuItem(
-                  text = { Text(getDeviceTypeDisplayStringId(type)) },
-                  onClick = {
-                    selectedType = type
-                    expanded = false
-                  },
-              )
-            }
+            DEVICES.toList()
+                .sortedBy { it.second }
+                .forEach { (typeId, typeName) ->
+                  DropdownMenuItem(
+                      text = { Text(typeName) },
+                      onClick = {
+                        selectedType = typeId
+                        expanded = false
+                      },
+                  )
+                }
           }
         }
       },
