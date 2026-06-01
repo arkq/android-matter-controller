@@ -45,7 +45,7 @@ internal fun ExplorerTypedValueField(
             successTrigger = successTrigger,
             resetKey = resetKey,
             label = label,
-            modifier = modifier,
+            modifier = modifier.fillMaxWidth(),
         )
     type.isNumeric() ->
         HighlightedOutlinedTextField(

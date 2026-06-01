@@ -243,6 +243,7 @@ fun DataType.isNumeric(): Boolean =
       DataType.INT64,
       DataType.INT8,
       DataType.MAP16,
+      DataType.MAP32,
       DataType.MAP8,
       DataType.MESSAGE_ID,
       DataType.NODE_ID,
