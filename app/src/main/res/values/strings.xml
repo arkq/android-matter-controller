@@ -37,15 +37,7 @@ SPDX-License-Identifier: Apache-2.0
     <string name="attr_access_privilege_administer">Administer</string>
 
     <!-- Device Types -->
-    <string name="device_type_unspecified">unspecified</string>
-    <string name="device_type_light">light</string>
-    <string name="device_type_outlet">outlet</string>
-    <string name="device_type_unknown">unknown</string>
-    <string name="device_type_dimmable_light">dimmable light</string>
-    <string name="device_type_color_temperature_light">color temperature light</string>
-    <string name="device_type_extended_color_light">extended color light</string>
-    <string name="device_type_light_switch">light switch</string>
-    <string name="device_type_unrecognized">unrecognized</string>
+    <string name="device_type_unknown">Unknown</string>
 
     <string name="empty_dashboard_title">No devices yet</string>
     <string name="empty_dashboard_subtitle">Start by adding your first Matter device</string>
@@ -167,6 +159,8 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_explorer_error_unsupported_command">This command is not supported in Explorer.</string>
     <string name="device_explorer_error_invalid_number">Please enter a valid number for %1$s.</string>
     <string name="device_explorer_error_invalid_boolean">Please enter true or false.</string>
+    <string name="device_explorer_boolean_true">True</string>
+    <string name="device_explorer_boolean_false">False</string>
 
     <!-- Device Share Dialog -->
     <string name="device_share_dialog_title">Share this device?</string>

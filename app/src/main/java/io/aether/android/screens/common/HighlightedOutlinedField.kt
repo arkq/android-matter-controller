@@ -5,9 +5,17 @@ package io.aether.android.screens.common
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,14 +31,14 @@ import kotlinx.coroutines.delay
 
 private const val SUCCESS_HIGHLIGHT_DURATION_MS = 2000L
 
-private enum class FieldHighlight {
+internal enum class FieldHighlight {
   STANDARD,
   EDITED,
   SUCCESS,
 }
 
 @Composable
-private fun fieldHighlightColors(highlight: FieldHighlight): TextFieldColors {
+internal fun highlightedFieldColors(highlight: FieldHighlight): TextFieldColors {
   val successColor = LocalAetherExtendedColors.current.success
   val editedColor = MaterialTheme.colorScheme.error
   val standardFocused = MaterialTheme.colorScheme.primary
@@ -67,6 +75,11 @@ private fun fieldHighlightColors(highlight: FieldHighlight): TextFieldColors {
   )
 }
 
+internal data class HighlightedOutlinedComboOption(
+    val value: String,
+    val label: String,
+)
+
 /**
  * An [OutlinedTextField] that visually signals interaction results via border color transitions:
  * - Turns **red** after the user has made local edits (resets on success or navigation).
@@ -86,6 +99,7 @@ fun HighlightedOutlinedTextField(
     modifier: Modifier = Modifier,
     label: @Composable (() -> Unit)? = null,
     enabled: Boolean = true,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
   var lastSeen by remember(resetKey) { mutableIntStateOf(successTrigger) }
   var highlight by remember(resetKey) { mutableStateOf(FieldHighlight.STANDARD) }
@@ -108,6 +122,68 @@ fun HighlightedOutlinedTextField(
       modifier = modifier,
       label = label,
       enabled = enabled,
-      colors = fieldHighlightColors(highlight),
+      keyboardOptions = keyboardOptions,
+      colors = highlightedFieldColors(highlight),
   )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun HighlightedOutlinedComboField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    options: List<HighlightedOutlinedComboOption>,
+    successTrigger: Int,
+    resetKey: Any,
+    modifier: Modifier = Modifier,
+    label: @Composable (() -> Unit)? = null,
+    enabled: Boolean = true,
+) {
+  var expanded by remember(resetKey) { mutableStateOf(false) }
+  var lastSeen by remember(resetKey) { mutableIntStateOf(successTrigger) }
+  var highlight by remember(resetKey) { mutableStateOf(FieldHighlight.STANDARD) }
+
+  LaunchedEffect(successTrigger) {
+    if (successTrigger > lastSeen) {
+      lastSeen = successTrigger
+      highlight = FieldHighlight.SUCCESS
+      delay(SUCCESS_HIGHLIGHT_DURATION_MS)
+      if (highlight == FieldHighlight.SUCCESS) highlight = FieldHighlight.STANDARD
+    }
+  }
+
+  val displayedValue = options.firstOrNull { it.value == value }?.label ?: value
+
+  ExposedDropdownMenuBox(
+      expanded = expanded,
+      onExpandedChange = { if (enabled) expanded = it },
+  ) {
+    OutlinedTextField(
+        value = displayedValue,
+        onValueChange = {},
+        readOnly = true,
+        enabled = enabled,
+        modifier =
+            modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable).fillMaxWidth(),
+        label = label,
+        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+        colors = highlightedFieldColors(highlight),
+    )
+
+    ExposedDropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false },
+    ) {
+      options.forEach { option ->
+        DropdownMenuItem(
+            text = { Text(option.label) },
+            onClick = {
+              onValueChange(option.value)
+              highlight = FieldHighlight.EDITED
+              expanded = false
+            },
+        )
+      }
+    }
+  }
 }
