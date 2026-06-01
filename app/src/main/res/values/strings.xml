@@ -167,6 +167,8 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_explorer_error_unsupported_command">This command is not supported in Explorer.</string>
     <string name="device_explorer_error_invalid_number">Please enter a valid number for %1$s.</string>
     <string name="device_explorer_error_invalid_boolean">Please enter true or false.</string>
+    <string name="device_explorer_boolean_true">True</string>
+    <string name="device_explorer_boolean_false">False</string>
 
     <!-- Device Share Dialog -->
     <string name="device_share_dialog_title">Share this device?</string>

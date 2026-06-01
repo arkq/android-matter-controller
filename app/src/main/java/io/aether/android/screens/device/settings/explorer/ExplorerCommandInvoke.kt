@@ -18,7 +18,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import io.aether.android.R
-import io.aether.android.screens.common.HighlightedOutlinedTextField
 
 @Composable
 internal fun CommandInvokeContent(
@@ -40,9 +39,10 @@ internal fun CommandInvokeContent(
     val focusManager = LocalFocusManager.current
     if (command.arguments.isNotEmpty()) {
       command.arguments.forEach { argument ->
-        HighlightedOutlinedTextField(
+        ExplorerTypedValueField(
             value = commandArguments[argument.key].orEmpty(),
             onValueChange = { commandArguments[argument.key] = it },
+            type = argument.type,
             successTrigger = invokeSuccessCount,
             resetKey = command.id,
             label = {

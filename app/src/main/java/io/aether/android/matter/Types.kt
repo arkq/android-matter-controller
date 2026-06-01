@@ -226,3 +226,35 @@ enum class Privilege(val label: UInt) {
     }
   }
 }
+
+/** Checks if the data type is numeric (e.g. should use numeric keyboard) */
+fun DataType.isNumeric(): Boolean =
+    when (this) {
+      DataType.CLUSTER_ID,
+      DataType.ENDPOINT_ID,
+      DataType.ENUM16,
+      DataType.ENUM8,
+      DataType.EPOCH_MICROSECONDS,
+      DataType.EPOCH_SECONDS,
+      DataType.FABRIC_INDEX,
+      DataType.GROUP_ID,
+      DataType.INT16,
+      DataType.INT32,
+      DataType.INT64,
+      DataType.INT8,
+      DataType.MAP16,
+      DataType.MAP8,
+      DataType.MESSAGE_ID,
+      DataType.NODE_ID,
+      DataType.SUBJECT_ID,
+      DataType.TLS_ENDPOINT_ID,
+      DataType.TLSCAID,
+      DataType.TLSCCDID,
+      DataType.U_INT16,
+      DataType.U_INT24,
+      DataType.U_INT32,
+      DataType.U_INT64,
+      DataType.U_INT8,
+      DataType.VENDOR_ID -> true
+      else -> false
+    }

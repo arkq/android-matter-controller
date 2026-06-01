@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import io.aether.android.R
-import io.aether.android.screens.common.HighlightedOutlinedTextField
 
 @Composable
 internal fun AttributeDetailContent(
@@ -51,9 +50,10 @@ internal fun AttributeDetailContent(
               .padding(dimensionResource(R.dimen.margin_normal)),
       verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
   ) {
-    HighlightedOutlinedTextField(
+    ExplorerTypedValueField(
         value = editValue,
         onValueChange = { editValue = it },
+        type = attribute.type,
         successTrigger = readSuccessCount + writeSuccessCount,
         resetKey = attribute.id,
         label = {

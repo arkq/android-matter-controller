@@ -22,21 +22,27 @@ jobs:
         with:
           repository: project-chip/connectedhomeip
           path: matter-sdk
-      - name: Install protocol buffer compiler
+      - name: Install script dependencies
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          packages: protobuf-compiler
-      - name: Install Python dependencies
-        run: pip install lxml protobuf
-      - name: Sync Matter data model assets
+          packages: python3-lxml
+      - name: Download Kotlin formatter
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: facebook/ktfmt
+          fileName: ktfmt-*-with-dependencies.jar
+          latest: true
+      - name: Sync Matter data model
+        run: scripts/matter-data-model-parser.py matter-sdk/data_model
+      - name: Format generated Kotlin files
         run: |
-          scripts/matter-data-model-parser.py matter-sdk/data_model
-          mv MatterDataModel.proto app/src/main/proto
+          java \
+            -jar ktfmt-*-with-dependencies.jar \
+            app/src/main/java/io/aether/android/matter/*.kt
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
         with:
           branch: chore/sync-matter-data-model
-          commit-message: "chore: Sync Matter data model assets"
+          commit-message: "chore: Sync Matter data model"
           add-paths: |
-            app/src/main/assets/matter/v*.bin
-            app/src/main/proto/MatterDataModel.proto
+            app/src/main/java/io/aether/android/matter/*.kt
