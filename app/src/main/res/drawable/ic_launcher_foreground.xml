@@ -4,36 +4,15 @@ SPDX-FileCopyrightText: 2026 The Authors
 SPDX-License-Identifier: Apache-2.0
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:aapt="http://schemas.android.com/aapt"
 	android:width="108dp"
 	android:height="108dp"
 	android:viewportWidth="1024"
 	android:viewportHeight="1024">
-
-	<!-- Æ Ligature -->
-	<path android:pathData="M320,680c0,-200 80,-360 192,-360"
-		android:strokeWidth="75" android:strokeColor="#FFFFFF" android:strokeLineCap="round" />
-	<path android:pathData="M512,320v360"
-		android:strokeWidth="85" android:strokeColor="#FFFFFF" android:strokeLineCap="round" />
-	<path android:pathData="M512,320h228"
-		android:strokeWidth="75" android:strokeColor="#FFFFFF" android:strokeLineCap="round" />
-	<path android:pathData="M400,500h300"
-		android:strokeWidth="75" android:strokeColor="#FFFFFF" android:strokeLineCap="round" />
-	<path android:pathData="M512,680h228"
-		android:strokeWidth="75" android:strokeColor="#FFFFFF" android:strokeLineCap="round" />
-
-	<!-- Orbital Rings -->
-	<path android:pathData="M320,680m-75,0a75,75 0,1 1,150 0a75,75 0,1 1,-150 0" android:strokeWidth="12" android:strokeColor="#99FFFFFF" />
-	<path android:pathData="M512,320m-75,0a75,75 0,1 1,150 0a75,75 0,1 1,-150 0" android:strokeWidth="12" android:strokeColor="#99FFFFFF" />
-	<path android:pathData="M512,680m-75,0a75,75 0,1 1,150 0a75,75 0,1 1,-150 0" android:strokeWidth="12" android:strokeColor="#99FFFFFF" />
-	<path android:pathData="M740,320m-75,0a75,75 0,1 1,150 0a75,75 0,1 1,-150 0" android:strokeWidth="12" android:strokeColor="#99FFFFFF" />
-	<path android:pathData="M700,500m-75,0a75,75 0,1 1,150 0a75,75 0,1 1,-150 0" android:strokeWidth="12" android:strokeColor="#99FFFFFF" />
-	<path android:pathData="M740,680m-75,0a75,75 0,1 1,150 0a75,75 0,1 1,-150 0" android:strokeWidth="12" android:strokeColor="#99FFFFFF" />
-
-	<!-- Nuclei -->
-	<path android:fillColor="#FFFFFF" android:pathData="M320,680m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
-	<path android:fillColor="#FFFFFF" android:pathData="M512,320m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
-	<path android:fillColor="#FFFFFF" android:pathData="M512,680m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
-	<path android:fillColor="#FFFFFF" android:pathData="M740,320m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
-	<path android:fillColor="#FFFFFF" android:pathData="M700,500m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
-	<path android:fillColor="#FFFFFF" android:pathData="M740,680m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
+	<!-- Main AE Ligature Path -->
+	<path
+		android:fillColor="#FFFFFF"
+		android:strokeColor="#FFFFFF"
+		android:strokeWidth="15"
+		android:pathData="m685.105,686.893a60.88,60.88 0 1 1 121.76,0 60.88,60.88 0 1 1 -121.76,0M673.446,512.006a60.88,60.88 0 1 1 121.76,0 60.88,60.88 0 1 1 -121.76,0m11.659,-174.887a60.88,60.88 0 1 1 121.76,0 60.88,60.88 0 1 1 -121.76,0M471.001,686.893a60.88,60.88 0 1 1 121.76,0 60.88,60.88 0 1 1 -121.76,0M427.523,337.119a60.88,60.88 0 1 1 121.76,0 60.88,60.88 0 1 1 -121.76,0M220.859,686.893a60.88,60.88 0 1 1 121.76,0 60.88,60.88 0 1 1 -121.76,0m531.513,-24.02q6.299,0 10.881,4.59 4.581,4.589 4.581,10.9v20.653q0,6.311 -4.581,10.9 -4.581,4.59 -10.881,4.59H521.011q-6.299,0 -10.881,-4.59 -4.581,-4.59 -4.581,-10.9V623.863H352.072l-44.669,76.301q-8.59,14.342 -22.334,14.342h-25.77q-5.154,0 -9.163,-3.442 -3.436,-4.016 -3.436,-9.179 0,-2.868 2.291,-6.884L463.171,331.855q5.154,-9.179 10.308,-13.769 5.154,-5.163 15.462,-5.163h258.849q6.299,0 10.881,4.59 4.581,4.59 4.581,10.9v20.653q0,6.311 -4.581,10.9 -4.581,4.59 -10.881,4.59h-187.838v121.048h175.239q6.299,0 10.881,4.59 4.581,4.59 4.581,10.9v20.653q0,6.311 -4.581,10.9 -4.581,4.59 -10.881,4.59H559.953V662.874ZM505.549,364.555L382.996,572.231h122.553z" />
 </vector>

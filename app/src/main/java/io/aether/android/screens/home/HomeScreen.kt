@@ -90,11 +90,11 @@ import io.aether.android.MIN_COMMISSIONING_WINDOW_EXPIRATION_SECONDS
 import io.aether.android.R
 import io.aether.android.TaskStatus
 import io.aether.android.commissioning.AppCommissioningService
-import io.aether.android.getDeviceTypeIconId
 import io.aether.android.isMultiAdminCommissioning
 import io.aether.android.isOnDisplayString
+import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.NodeId
-import io.aether.android.matter.toDeviceTypeId
+import io.aether.android.matter.getDeviceTypeIconId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.thread.getActivity
@@ -393,7 +393,7 @@ fun openPlayServicesInStore(context: Context) {
 @Composable
 private fun DeviceItem(
     nodeId: NodeId,
-    deviceTypeId: Long,
+    deviceTypeId: DeviceTypeId,
     name: String,
     isOnline: Boolean,
     isOn: Boolean,
@@ -407,7 +407,7 @@ private fun DeviceItem(
       if (isOnline && isOn) MaterialTheme.colorScheme.onSurfaceVariant
       else MaterialTheme.colorScheme.onSurface
   val text = isOnDisplayString(isOn)
-  val iconId = getDeviceTypeIconId(deviceTypeId.toDeviceTypeId())
+  val iconId = deviceTypeId.getDeviceTypeIconId()
   val onCheckedChange: (value: Boolean) -> Unit = { onOnOffClick(nodeId, it) }
 
   Surface(
