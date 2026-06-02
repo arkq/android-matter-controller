@@ -203,7 +203,7 @@ protobuf {
         } else {
           ""
         }
-    artifact = "com.google.protobuf:protoc:4.34.1" + protocDepSuffix
+    artifact = "com.google.protobuf:protoc:4.35.0" + protocDepSuffix
   }
 
   // Generates the java Protobuf-lite code for the Protobufs in this project. See
