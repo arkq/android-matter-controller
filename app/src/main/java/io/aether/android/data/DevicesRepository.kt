@@ -192,20 +192,20 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
 
   suspend fun updateNodeBasicInfo(
       nodeId: NodeId,
-      vendorId: Int,
-      vendorName: String,
-      productId: Int,
-      productName: String,
+      vendorId: Int?,
+      vendorName: String?,
+      productId: Int?,
+      productName: String?,
   ) {
     Timber.d("updateNodeBasicInfo: nodeId [$nodeId]")
     val nodeIndex = findNodeIndex(nodeId)
     if (nodeIndex == -1) return
     devicesStateDataStore.updateData { state ->
       val nodeBuilder = state.getNodes(nodeIndex).toBuilder()
-      if (vendorId != 0) nodeBuilder.vendorId = vendorId
-      if (vendorName.isNotBlank()) nodeBuilder.vendorName = vendorName
-      if (productId != 0) nodeBuilder.productId = productId
-      if (productName.isNotBlank()) nodeBuilder.productName = productName
+      if (vendorId != null && vendorId != 0) nodeBuilder.vendorId = vendorId
+      if (!vendorName.isNullOrBlank()) nodeBuilder.vendorName = vendorName
+      if (productId != null && productId != 0) nodeBuilder.productId = productId
+      if (!productName.isNullOrBlank()) nodeBuilder.productName = productName
       state.toBuilder().setNodes(nodeIndex, nodeBuilder.build()).build()
     }
   }

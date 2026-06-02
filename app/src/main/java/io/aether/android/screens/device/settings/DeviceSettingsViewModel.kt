@@ -148,10 +148,10 @@ constructor(
     try {
       devicesRepository.updateNodeBasicInfo(
           nodeId,
-          basicInfo.vendorId?.toInt() ?: 0,
-          basicInfo.vendorName ?: "",
-          basicInfo.productId?.toInt() ?: 0,
-          basicInfo.productName ?: "",
+          basicInfo.vendorId?.toInt(),
+          basicInfo.vendorName,
+          basicInfo.productId?.toInt(),
+          basicInfo.productName,
       )
     } catch (e: Exception) {
       Timber.w(e, "syncBasicInfoToStorage failed")
