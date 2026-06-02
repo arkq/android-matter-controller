@@ -57,12 +57,98 @@ sealed class TaskStatus {
 
 fun getDeviceTypeIconId(deviceTypeId: DeviceTypeId): Int {
   return when (deviceTypeId) {
-    Devices.OnOffLight.ID,
-    Devices.DimmableLight.ID,
-    Devices.ColorTemperatureLight.ID,
-    Devices.ExtendedColorLight.ID,
-    Devices.OnOffLightSwitch.ID -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
-    Devices.OnOffPluginUnit.ID -> R.drawable.ic_baseline_outlet_24
+    Devices.DoorLock.ID -> R.drawable.matter_device_type_000A
+    Devices.DoorLockController.ID -> R.drawable.matter_device_type_000B
+    Devices.Aggregator.ID -> R.drawable.matter_device_type_000E
+    Devices.GenericSwitch.ID -> R.drawable.matter_device_type_000F
+    Devices.PowerSource.ID -> R.drawable.matter_device_type_0011
+    Devices.OTARequestor.ID -> R.drawable.matter_device_type_0012
+    Devices.BridgedNode.ID -> R.drawable.matter_device_type_0013
+    Devices.OTAProvider.ID -> R.drawable.matter_device_type_0014
+    Devices.ContactSensor.ID -> R.drawable.matter_device_type_0015
+    Devices.RootNode.ID -> R.drawable.matter_device_type_0016
+    Devices.SolarPower.ID -> R.drawable.matter_device_type_0017
+    Devices.BatteryStorage.ID -> R.drawable.matter_device_type_0018
+    Devices.SecondaryNetworkInterface.ID -> R.drawable.matter_device_type_0019
+    Devices.Speaker.ID -> R.drawable.matter_device_type_0022
+    Devices.CastingVideoPlayer.ID -> R.drawable.matter_device_type_0023
+    Devices.ContentApp.ID -> R.drawable.matter_device_type_0024
+    Devices.ModeSelect.ID -> R.drawable.matter_device_type_0027
+    Devices.BasicVideoPlayer.ID -> R.drawable.matter_device_type_0028
+    Devices.CastingVideoClient.ID -> R.drawable.matter_device_type_0029
+    Devices.VideoRemoteControl.ID -> R.drawable.matter_device_type_002A
+    Devices.Fan.ID -> R.drawable.matter_device_type_002B
+    Devices.AirQualitySensor.ID -> R.drawable.matter_device_type_002C
+    Devices.AirPurifier.ID -> R.drawable.matter_device_type_002D
+    Devices.IrrigationSystem.ID -> R.drawable.matter_device_type_0040
+    Devices.WaterFreezeDetector.ID -> R.drawable.matter_device_type_0041
+    Devices.WaterValve.ID -> R.drawable.matter_device_type_0042
+    Devices.WaterLeakDetector.ID -> R.drawable.matter_device_type_0043
+    Devices.RainSensor.ID -> R.drawable.matter_device_type_0044
+    Devices.SoilSensor.ID -> R.drawable.matter_device_type_0045
+    Devices.Refrigerator.ID -> R.drawable.matter_device_type_0070
+    Devices.TemperatureControlledCabinet.ID -> R.drawable.matter_device_type_0071
+    Devices.RoomAirConditioner.ID -> R.drawable.matter_device_type_0072
+    Devices.LaundryWasher.ID -> R.drawable.matter_device_type_0073
+    Devices.RoboticVacuumCleaner.ID -> R.drawable.matter_device_type_0074
+    Devices.Dishwasher.ID -> R.drawable.matter_device_type_0075
+    Devices.SmokeCOAlarm.ID -> R.drawable.matter_device_type_0076
+    Devices.CookSurface.ID -> R.drawable.matter_device_type_0077
+    Devices.Cooktop.ID -> R.drawable.matter_device_type_0078
+    Devices.MicrowaveOven.ID -> R.drawable.matter_device_type_0079
+    Devices.ExtractorHood.ID -> R.drawable.matter_device_type_007A
+    Devices.Oven.ID -> R.drawable.matter_device_type_007B
+    Devices.LaundryDryer.ID -> R.drawable.matter_device_type_007C
+    Devices.NetworkInfrastructureManager.ID -> R.drawable.matter_device_type_0090
+    Devices.ThreadBorderRouter.ID -> R.drawable.matter_device_type_0091
+    Devices.OnOffLight.ID -> R.drawable.matter_device_type_0100
+    Devices.DimmableLight.ID -> R.drawable.matter_device_type_0101
+    Devices.OnOffLightSwitch.ID -> R.drawable.matter_device_type_0103
+    Devices.DimmerSwitch.ID -> R.drawable.matter_device_type_0104
+    Devices.ColorDimmerSwitch.ID -> R.drawable.matter_device_type_0105
+    Devices.LightSensor.ID -> R.drawable.matter_device_type_0106
+    Devices.OccupancySensor.ID -> R.drawable.matter_device_type_0107
+    Devices.OnOffPluginUnit.ID -> R.drawable.matter_device_type_010A
+    Devices.DimmablePlugInUnit.ID -> R.drawable.matter_device_type_010B
+    Devices.ColorTemperatureLight.ID -> R.drawable.matter_device_type_010C
+    Devices.ExtendedColorLight.ID -> R.drawable.matter_device_type_010D
+    Devices.MountedOnOffControl.ID -> R.drawable.matter_device_type_010F
+    Devices.MountedDimmableLoadControl.ID -> R.drawable.matter_device_type_0110
+    Devices.JointFabricAdministrator.ID -> R.drawable.matter_device_type_0130
+    Devices.Intercom.ID -> R.drawable.matter_device_type_0140
+    Devices.AudioDoorbell.ID -> R.drawable.matter_device_type_0141
+    Devices.Camera.ID -> R.drawable.matter_device_type_0142
+    Devices.VideoDoorbell.ID -> R.drawable.matter_device_type_0143
+    Devices.FloodlightCamera.ID -> R.drawable.matter_device_type_0144
+    Devices.SnapshotCamera.ID -> R.drawable.matter_device_type_0145
+    Devices.Chime.ID -> R.drawable.matter_device_type_0146
+    Devices.CameraController.ID -> R.drawable.matter_device_type_0147
+    Devices.Doorbell.ID -> R.drawable.matter_device_type_0148
+    Devices.WindowCovering.ID -> R.drawable.matter_device_type_0202
+    Devices.WindowCoveringController.ID -> R.drawable.matter_device_type_0203
+    Devices.Closure.ID -> R.drawable.matter_device_type_0230
+    Devices.ClosurePanel.ID -> R.drawable.matter_device_type_0231
+    Devices.ClosureController.ID -> R.drawable.matter_device_type_023E
+    Devices.HeatingCoolingUnit.ID -> R.drawable.matter_device_type_0300
+    Devices.Thermostat.ID -> R.drawable.matter_device_type_0301
+    Devices.TemperatureSensor.ID -> R.drawable.matter_device_type_0302
+    Devices.Pump.ID -> R.drawable.matter_device_type_0303
+    Devices.PumpController.ID -> R.drawable.matter_device_type_0304
+    Devices.PressureSensor.ID -> R.drawable.matter_device_type_0305
+    Devices.FlowSensor.ID -> R.drawable.matter_device_type_0306
+    Devices.HumiditySensor.ID -> R.drawable.matter_device_type_0307
+    Devices.HeatPump.ID -> R.drawable.matter_device_type_0309
+    Devices.ThermostatController.ID -> R.drawable.matter_device_type_030A
+    Devices.EnergyEVSE.ID -> R.drawable.matter_device_type_050C
+    Devices.DeviceEnergyManagement.ID -> R.drawable.matter_device_type_050D
+    Devices.WaterHeater.ID -> R.drawable.matter_device_type_050F
+    Devices.ElectricalSensor.ID -> R.drawable.matter_device_type_0510
+    Devices.ElectricalUtilityMeter.ID -> R.drawable.matter_device_type_0511
+    Devices.MeterReferencePoint.ID -> R.drawable.matter_device_type_0512
+    Devices.ElectricalEnergyTariff.ID -> R.drawable.matter_device_type_0513
+    Devices.ElectricalMeter.ID -> R.drawable.matter_device_type_0514
+    Devices.ControlBridge.ID -> R.drawable.matter_device_type_0840
+    Devices.OnOffSensor.ID -> R.drawable.matter_device_type_0850
     else -> R.drawable.ic_baseline_device_unknown_24
   }
 }
