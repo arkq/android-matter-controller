@@ -190,6 +190,43 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
     }
   }
 
+  suspend fun updateNodeBasicInfo(
+      nodeId: NodeId,
+      vendorId: Int,
+      vendorName: String,
+      productId: Int,
+      productName: String,
+  ) {
+    Timber.d("updateNodeBasicInfo: nodeId [$nodeId]")
+    val nodeIndex = findNodeIndex(nodeId)
+    if (nodeIndex == -1) return
+    devicesStateDataStore.updateData { state ->
+      val nodeBuilder = state.getNodes(nodeIndex).toBuilder()
+      if (vendorId != 0) nodeBuilder.vendorId = vendorId
+      if (vendorName.isNotBlank()) nodeBuilder.vendorName = vendorName
+      if (productId != 0) nodeBuilder.productId = productId
+      if (productName.isNotBlank()) nodeBuilder.productName = productName
+      state.toBuilder().setNodes(nodeIndex, nodeBuilder.build()).build()
+    }
+  }
+
+  suspend fun removeEndpointsFromNode(nodeId: NodeId, endpointIds: Set<EndpointId>) {
+    Timber.d("removeEndpointsFromNode: nodeId [$nodeId] endpointIds [$endpointIds]")
+    val nodeIndex = findNodeIndex(nodeId)
+    if (nodeIndex == -1) return
+    devicesStateDataStore.updateData { state ->
+      val node = state.getNodes(nodeIndex)
+      val nodeBuilder = node.toBuilder()
+      nodeBuilder.clearEndpoints()
+      node.endpointsList.forEach { ep ->
+        if (ep.endpointId.toEndpointId() !in endpointIds) {
+          nodeBuilder.addEndpoints(ep)
+        }
+      }
+      state.toBuilder().setNodes(nodeIndex, nodeBuilder.build()).build()
+    }
+  }
+
   suspend fun removeDevice(nodeId: NodeId) {
     Timber.d("removeDevice: nodeId [${nodeId}]")
     val nodeIndex = findNodeIndex(nodeId)

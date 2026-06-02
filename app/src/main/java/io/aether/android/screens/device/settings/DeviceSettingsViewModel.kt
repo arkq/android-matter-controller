@@ -114,29 +114,47 @@ constructor(
   fun loadDevice(nodeId: NodeId) {
     Timber.d("loadDevice: nodeId [$nodeId]")
     viewModelScope.launch {
-      val shouldBlockUiUntilLoaded = _device.value == null
-      try {
-        val devicesForNode = devicesRepository.getDevicesByNodeId(nodeId)
-        val loadedDevice =
+      // Phase 1: show from storage immediately
+      val loadedDevice =
+          try {
+            val devicesForNode = devicesRepository.getDevicesByNodeId(nodeId)
             chooseBestDevice(devicesForNode) ?: devicesRepository.getDeviceByNodeId(nodeId)
-        val basicInfo =
-            try {
-              clustersHelper.readBasicInformationAttributes(nodeId)
-            } catch (e: Exception) {
-              Timber.w(e, "loadDevice: could not read basic information attributes")
-              null
+          } catch (e: Exception) {
+            Timber.e(e, "loadDevice: storage load failed")
+            if (_device.value == null) {
+              showMsgDialog(R.string.device_settings, R.string.device_settings_load_failed)
             }
+            return@launch
+          }
+      _device.value = loadedDevice
 
-        _device.value = loadedDevice
-        _basicInformation.value = basicInfo
-      } catch (e: Exception) {
-        Timber.e(e, "loadDevice failed")
-        if (shouldBlockUiUntilLoaded) {
-          _device.value = null
+      // Phase 2: fetch from device in background; update in-place on response
+      launch {
+        try {
+          val basicInfo = clustersHelper.readBasicInformationAttributes(nodeId)
+          _basicInformation.value = basicInfo
+          if (basicInfo != null) syncBasicInfoToStorage(nodeId, basicInfo)
+        } catch (e: Exception) {
+          Timber.w(e, "loadDevice: could not read basic information attributes")
         }
-        _basicInformation.value = null
-        showMsgDialog(R.string.device_settings, R.string.device_settings_load_failed)
       }
+    }
+  }
+
+  private suspend fun syncBasicInfoToStorage(
+      nodeId: NodeId,
+      basicInfo: BasicInformationAttributes,
+  ) {
+    try {
+      devicesRepository.updateNodeBasicInfo(
+          nodeId,
+          basicInfo.vendorId?.toInt() ?: 0,
+          basicInfo.vendorName ?: "",
+          basicInfo.productId?.toInt() ?: 0,
+          basicInfo.productName ?: "",
+      )
+    } catch (e: Exception) {
+      Timber.w(e, "syncBasicInfoToStorage failed")
     }
   }
 

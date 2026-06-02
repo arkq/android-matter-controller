@@ -107,7 +107,8 @@ constructor(
 
   fun loadDevice(nodeId: NodeId) {
     if (nodeId == deviceUiModel.value?.nodeId) {
-      Timber.d("loadDevice: nodeId [${nodeId}] was already loaded")
+      Timber.d("loadDevice: nodeId [${nodeId}] was already loaded, syncing from device")
+      viewModelScope.launch { syncEndpointsFromDevice(nodeId) }
       return
     } else {
       Timber.d("loadDevice: loading nodeId [${nodeId}]")
@@ -161,7 +162,127 @@ constructor(
           }
         }
         _allEndpointUiModels.value = models
+
+        launch { syncEndpointsFromDevice(nodeId) }
       }
+    }
+  }
+
+  // -----------------------------------------------------------------------------------------------
+  // Sync endpoints from device
+
+  private suspend fun syncEndpointsFromDevice(nodeId: NodeId) {
+    Timber.d("syncEndpointsFromDevice: nodeId [$nodeId]")
+    try {
+      val deviceMatterInfoList = clustersHelper.fetchDeviceMatterInfo(nodeId)
+
+      val appEndpoints =
+          deviceMatterInfoList
+              .filter { info ->
+                info.endpointId != EndpointId(0u) && info.serverClusters.contains(Clusters.OnOff.ID)
+              }
+              .ifEmpty { deviceMatterInfoList.filter { info -> info.endpointId != EndpointId(0u) } }
+      val deviceEndpointIds = appEndpoints.map { it.endpointId }.toSet()
+
+      val state = devicesStateRepository.getAllDevicesState()
+      val node = state.nodesList.firstOrNull { it.nodeId == nodeId.toLong() } ?: return
+      val storedEndpointIds = node.endpointsList.map { it.endpointId.toEndpointId() }.toSet()
+
+      if (deviceEndpointIds == storedEndpointIds) return
+
+      // Add new endpoints
+      val newEndpointIds = deviceEndpointIds - storedEndpointIds
+      for (endpointId in newEndpointIds) {
+        val info = deviceMatterInfoList.firstOrNull { it.endpointId == endpointId } ?: continue
+        val supportsLevel = info.serverClusters.contains(Clusters.LevelControl.ID)
+        val supportsColorTemperature =
+            if (info.serverClusters.contains(Clusters.ColorControl.ID)) {
+              try {
+                clustersHelper
+                    .readColorControlClusterAttributeList(nodeId, info.endpointId)
+                    .contains(Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID)
+              } catch (e: Exception) {
+                Timber.w(
+                    e,
+                    "syncEndpointsFromDevice: could not read color control attributes for endpoint $endpointId",
+                )
+                false
+              }
+            } else false
+        val endpoint =
+            MatterEndpoint.newBuilder()
+                .setEndpointId(endpointId.toInt())
+                .setSupportsLevelControl(supportsLevel)
+                .setSupportsColorTemperature(supportsColorTemperature)
+                .addAllDeviceTypes(info.types.map { it.toInt() })
+                .build()
+        devicesRepository.addOrUpdateEndpoint(
+            nodeId = nodeId,
+            nodeName = node.name,
+            vendorId = node.vendorId,
+            vendorName = node.vendorName,
+            productId = node.productId,
+            productName = node.productName,
+            endpoint = endpoint,
+        )
+        devicesStateRepository.addEndpointState(
+            nodeId,
+            endpointId,
+            isOnline = true,
+            isOn = false,
+            level = 0,
+            colorTemperature = 0,
+        )
+      }
+
+      // Remove endpoints that no longer exist on the device
+      val removedEndpointIds = storedEndpointIds - deviceEndpointIds
+      if (removedEndpointIds.isNotEmpty()) {
+        devicesRepository.removeEndpointsFromNode(nodeId, removedEndpointIds)
+      }
+
+      // Reload and update UI in-place
+      val updatedState = devicesStateRepository.getAllDevicesState()
+      val updatedNode =
+          updatedState.nodesList.firstOrNull { it.nodeId == nodeId.toLong() } ?: return
+      val updatedSiblings = updatedNode.endpointsList.sortedBy { it.endpointId }
+      val updatedModels = updatedSiblings.map { sibling ->
+        val siblingState =
+            devicesStateRepository.loadEndpointState(nodeId, sibling.endpointIdTyped())
+        if (siblingState != null) {
+          DeviceUiModel(
+              updatedNode,
+              sibling,
+              siblingState.online,
+              siblingState.on,
+              siblingState.level,
+              siblingState.colorTemperature,
+          )
+        } else {
+          DeviceUiModel(updatedNode, sibling, false, false)
+        }
+      }
+      _allEndpointUiModels.value = updatedModels
+
+      val primaryEndpoint = updatedNode.endpointsList.minByOrNull { it.endpointId }
+      if (primaryEndpoint != null) {
+        val primaryState =
+            devicesStateRepository.loadEndpointState(nodeId, primaryEndpoint.endpointIdTyped())
+        _deviceUiModel.update { current ->
+          if (current != null)
+              DeviceUiModel(
+                  updatedNode,
+                  primaryEndpoint,
+                  primaryState?.online ?: false,
+                  primaryState?.on ?: false,
+                  primaryState?.level ?: 0,
+                  primaryState?.colorTemperature ?: 0,
+              )
+          else null
+        }
+      }
+    } catch (e: Exception) {
+      Timber.w(e, "syncEndpointsFromDevice failed for nodeId [$nodeId]")
     }
   }
 
