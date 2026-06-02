@@ -11,7 +11,6 @@ import androidx.fragment.app.FragmentActivity
 import com.google.protobuf.Timestamp
 import io.aether.android.matter.DEVICES
 import io.aether.android.matter.DeviceTypeId
-import io.aether.android.matter.Devices
 import java.io.File
 import java.lang.Long.max
 import java.security.SecureRandom
@@ -50,21 +49,6 @@ sealed class TaskStatus {
    * @param statusMessage a message to be displayed in the UI
    */
   class Completed(val statusMessage: String) : TaskStatus()
-}
-
-// -----------------------------------------------------------------------------
-// Matter Device Type Display Icon
-
-fun getDeviceTypeIconId(deviceTypeId: DeviceTypeId): Int {
-  return when (deviceTypeId) {
-    Devices.OnOffLight.ID,
-    Devices.DimmableLight.ID,
-    Devices.ColorTemperatureLight.ID,
-    Devices.ExtendedColorLight.ID,
-    Devices.OnOffLightSwitch.ID -> R.drawable.quantum_gm_ic_lights_gha_vd_theme_24
-    Devices.OnOffPluginUnit.ID -> R.drawable.ic_baseline_outlet_24
-    else -> R.drawable.ic_baseline_device_unknown_24
-  }
 }
 
 fun getDeviceTypeDisplayStringId(deviceTypeId: DeviceTypeId): String {

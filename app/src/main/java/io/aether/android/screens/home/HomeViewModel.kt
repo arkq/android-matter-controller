@@ -41,8 +41,10 @@ import io.aether.android.data.DevicesStateRepository
 import io.aether.android.data.UserPreferencesRepository
 import io.aether.android.endpointIdTyped
 import io.aether.android.matter.Clusters
+import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.EndpointId
 import io.aether.android.matter.NodeId
+import io.aether.android.matter.toDeviceTypeId
 import io.aether.android.matter.toEndpointId
 import io.aether.android.matter.toNodeId
 import io.aether.android.screens.common.DialogInfo
@@ -86,8 +88,8 @@ data class DeviceUiModel(
   val name: String
     get() = if (node.name.isNotBlank()) node.name else endpoint.label
 
-  val deviceTypeId: Long
-    get() = endpoint.deviceTypesList.firstOrNull()?.toLong() ?: 0L
+  val deviceTypeId: DeviceTypeId
+    get() = endpoint.deviceTypesList.firstOrNull()?.toLong()?.toDeviceTypeId() ?: DeviceTypeId(0u)
 }
 
 /**
