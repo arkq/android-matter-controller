@@ -115,7 +115,7 @@ fun AppLayout(navController: NavHostController) {
     }
   }
 
-  MsgAlertDialog(msgDialogInfo, onDismissMsgDialog)
+  msgDialogInfo?.let { dialogInfo -> MsgAlertDialog(dialogInfo, onDismissMsgDialog) }
 
   ModalNavigationDrawer(
       drawerState = drawerState,

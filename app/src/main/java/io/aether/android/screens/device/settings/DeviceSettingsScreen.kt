@@ -35,7 +35,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -48,16 +47,18 @@ import io.aether.android.formatTimestamp
 import io.aether.android.getDeviceTypeDisplayStringId
 import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.NodeId
-import io.aether.android.matter.toVendorId
+import io.aether.android.matter.ProductId
+import io.aether.android.matter.VendorId
 import io.aether.android.matter.vendorLabel
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
-import io.aether.android.screens.device.action.ConfirmDeviceRemovalAlertDialog
-import io.aether.android.screens.device.action.RemoveDeviceAlertDialog
-import io.aether.android.screens.device.action.ShareDeviceAlertDialog
-import io.aether.android.screens.device.action.shareDevice
+import io.aether.android.screens.device.actions.ConfirmDeviceRemovalAlertDialog
+import io.aether.android.screens.device.actions.RemoveDeviceAlertDialog
+import io.aether.android.screens.device.actions.ShareDeviceAlertDialog
+import io.aether.android.screens.device.actions.shareDevice
 import io.aether.android.screens.thread.getActivity
+import io.aether.android.spacing
 import timber.log.Timber
 
 /** Route composable for the Device Settings screen. Wires up the ViewModel and navigation. */
@@ -81,9 +82,10 @@ fun DeviceSettingsRoute(
   val isOnline by viewModel.isOnline.collectAsState()
   val dateCommissioned by viewModel.dateCommissioned.collectAsState()
   val msgDialogInfo by viewModel.msgDialogInfo.collectAsState()
+  val showShareDeviceAlertDialog by viewModel.showShareDeviceAlertDialog.collectAsState()
   val showRemoveDeviceAlertDialog by viewModel.showRemoveDeviceAlertDialog.collectAsState()
-  val showConfirmDeviceRemovalAlertDialog by
-      viewModel.showConfirmDeviceRemovalAlertDialog.collectAsState()
+  val showRemoveDeviceConfirmAlertDialog by
+      viewModel.showRemoveDeviceConfirmAlertDialog.collectAsState()
   val deviceRemovalCompleted by viewModel.deviceRemovalCompleted.collectAsState()
   val pairingWindowOpenForDeviceSharing by
       viewModel.pairingWindowOpenForDeviceSharing.collectAsState()
@@ -152,27 +154,28 @@ fun DeviceSettingsRoute(
         isOnline = isOnline,
         dateCommissioned = dateCommissioned,
         msgDialogInfo = msgDialogInfo,
+        showShareDeviceAlertDialog = showShareDeviceAlertDialog,
         showRemoveDeviceAlertDialog = showRemoveDeviceAlertDialog,
-        showConfirmDeviceRemovalAlertDialog = showConfirmDeviceRemovalAlertDialog,
+        showRemoveDeviceConfirmAlertDialog = showRemoveDeviceConfirmAlertDialog,
         onDismissMsgDialog = { viewModel.dismissMsgDialog() },
-        onRenameDevice = { newName -> viewModel.renameDevice(typedNodeId, newName) },
-        onChangeDeviceType = { type -> viewModel.changeDeviceType(typedNodeId, type) },
-        onShareDevice = { viewModel.openPairingWindow(typedNodeId) },
+        onDeviceNameChange = { name -> viewModel.renameDevice(typedNodeId, name) },
+        onDeviceTypeChange = { type -> viewModel.changeDeviceType(typedNodeId, type) },
+        onManageFabricsClick = { navigateToDeviceFabrics(typedNodeId) },
+        onDataModelExplorerClick = { navigateToDeviceExplorer(typedNodeId) },
+        onShareDeviceClick = { viewModel.showShareDeviceAlertDialog() },
+        onShareDeviceResult = { doIt ->
+          viewModel.dismissShareDeviceAlertDialog()
+          if (doIt) viewModel.openPairingWindow(typedNodeId)
+        },
         onRemoveDeviceClick = { viewModel.showRemoveDeviceAlertDialog() },
-        onRemoveDeviceOutcome = { doIt ->
-          viewModel.dismissRemoveDeviceDialog()
-          if (doIt) {
-            viewModel.removeDevice(typedNodeId)
-          }
+        onRemoveDeviceResult = { doIt ->
+          viewModel.dismissRemoveDeviceAlertDialog()
+          if (doIt) viewModel.removeDevice(typedNodeId)
         },
-        onConfirmDeviceRemovalOutcome = { doIt ->
-          viewModel.dismissConfirmDeviceRemovalDialog()
-          if (doIt) {
-            viewModel.removeDeviceWithoutUnlink(typedNodeId)
-          }
+        onConfirmDeviceRemovalResult = { doIt ->
+          viewModel.dismissRemoveDeviceConfirmAlertDialog()
+          if (doIt) viewModel.removeDeviceWithoutUnlink(typedNodeId)
         },
-        onExplorer = { navigateToDeviceExplorer(typedNodeId) },
-        onManageControllers = { navigateToDeviceFabrics(typedNodeId) },
     )
   }
 }
@@ -185,62 +188,23 @@ private fun DeviceSettingsScreen(
     isOnline: Boolean,
     dateCommissioned: Timestamp?,
     msgDialogInfo: DialogInfo?,
+    showShareDeviceAlertDialog: Boolean,
     showRemoveDeviceAlertDialog: Boolean,
-    showConfirmDeviceRemovalAlertDialog: Boolean,
+    showRemoveDeviceConfirmAlertDialog: Boolean,
     onDismissMsgDialog: () -> Unit,
-    onRenameDevice: (String) -> Unit,
-    onChangeDeviceType: (DeviceTypeId) -> Unit,
-    onShareDevice: () -> Unit,
+    onDeviceNameChange: (String) -> Unit,
+    onDeviceTypeChange: (DeviceTypeId) -> Unit,
+    onManageFabricsClick: () -> Unit,
+    onDataModelExplorerClick: () -> Unit,
+    onShareDeviceClick: () -> Unit,
+    onShareDeviceResult: (Boolean) -> Unit,
     onRemoveDeviceClick: () -> Unit,
-    onRemoveDeviceOutcome: (Boolean) -> Unit,
-    onConfirmDeviceRemovalOutcome: (Boolean) -> Unit,
-    onExplorer: () -> Unit,
-    onManageControllers: () -> Unit,
+    onRemoveDeviceResult: (Boolean) -> Unit,
+    onConfirmDeviceRemovalResult: (Boolean) -> Unit,
 ) {
-  val context = LocalContext.current
-  var showShareDeviceAlertDialog by remember { mutableStateOf(false) }
-  var showRenameDialog by remember { mutableStateOf(false) }
-  var showTypeDialog by remember { mutableStateOf(false) }
-  val scrollState =
-      rememberSaveable(saver = androidx.compose.foundation.ScrollState.Saver) {
-        androidx.compose.foundation.ScrollState(0)
-      }
 
-  MsgAlertDialog(msgDialogInfo, onDismissMsgDialog)
-  RemoveDeviceAlertDialog(showRemoveDeviceAlertDialog, onRemoveDeviceOutcome)
-  ConfirmDeviceRemovalAlertDialog(
-      showConfirmDeviceRemovalAlertDialog,
-      onConfirmDeviceRemovalOutcome,
-  )
-  ShareDeviceAlertDialog(
-      showShareDeviceAlertDialog,
-      onConfirm = {
-        showShareDeviceAlertDialog = false
-        onShareDevice()
-      },
-      onDismiss = { showShareDeviceAlertDialog = false },
-  )
-
-  if (showRenameDialog && device != null) {
-    RenameDialog(
-        currentName = device.name,
-        onConfirm = { name ->
-          onRenameDevice(name)
-          showRenameDialog = false
-        },
-        onDismiss = { showRenameDialog = false },
-    )
-  }
-
-  if (showTypeDialog && device != null) {
-    DeviceTypeDialog(
-        currentType = device.deviceTypeId,
-        onConfirm = { type ->
-          onChangeDeviceType(type)
-          showTypeDialog = false
-        },
-        onDismiss = { showTypeDialog = false },
-    )
+  if (msgDialogInfo != null) {
+    MsgAlertDialog(msgDialogInfo, onDismissMsgDialog)
   }
 
   if (device == null) {
@@ -248,13 +212,54 @@ private fun DeviceSettingsScreen(
     return
   }
 
+  var showRenameDialog by remember { mutableStateOf(false) }
+  var showTypeDialog by remember { mutableStateOf(false) }
+  val scrollState =
+      rememberSaveable(saver = androidx.compose.foundation.ScrollState.Saver) {
+        androidx.compose.foundation.ScrollState(0)
+      }
+
+  if (showRenameDialog) {
+    ChangeDeviceNameDialog(
+        currentName = device.name,
+        onConfirm = { name ->
+          onDeviceNameChange(name)
+          showRenameDialog = false
+        },
+        onDismiss = { showRenameDialog = false },
+    )
+  }
+
+  if (showTypeDialog) {
+    ChangeDeviceTypeDialog(
+        currentType = device.deviceTypeId,
+        onConfirm = { type ->
+          onDeviceTypeChange(type)
+          showTypeDialog = false
+        },
+        onDismiss = { showTypeDialog = false },
+    )
+  }
+
+  if (showShareDeviceAlertDialog) {
+    ShareDeviceAlertDialog(onShareDeviceResult)
+  }
+
+  if (showRemoveDeviceAlertDialog) {
+    RemoveDeviceAlertDialog(onRemoveDeviceResult)
+  }
+
+  if (showRemoveDeviceConfirmAlertDialog) {
+    ConfirmDeviceRemovalAlertDialog(onConfirmDeviceRemovalResult)
+  }
+
   Column(
       modifier =
           Modifier.fillMaxWidth()
               .padding(innerPadding)
               .verticalScroll(scrollState)
-              .padding(dimensionResource(R.dimen.margin_normal)),
-      verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
+              .padding(MaterialTheme.spacing.paddingNormal),
+      verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
   ) {
     if (!isOnline) {
       Text(
@@ -273,7 +278,7 @@ private fun DeviceSettingsScreen(
           label = stringResource(R.string.device_settings_basic_vendor),
           value =
               vendorLabel(
-                  basicInformation?.vendorId ?: (device.vendorId.toIntOrNull() ?: 0).toVendorId(),
+                  basicInformation?.vendorId?.takeIf { it != VendorId(0u) } ?: device.vendorId,
                   basicInformation?.vendorName?.takeIf { it.isNotBlank() }
                       ?: device.vendorName.takeIf { it.isNotBlank() },
               ),
@@ -286,9 +291,8 @@ private fun DeviceSettingsScreen(
                   basicInformation?.productName?.takeIf { it.isNotBlank() }
                       ?: device.productName.takeIf { it.isNotBlank() }
                       ?: unknown,
-                  basicInformation?.productId?.takeIf { it.toInt() != 0 }?.toString()
-                      ?: device.productId.toIntOrNull()?.takeIf { it != 0 }?.toString()
-                      ?: unknown,
+                  basicInformation?.productId?.takeIf { it != ProductId(0u) }?.toString()
+                      ?: device.productId.toString(),
               ),
       )
       SettingsInfoRow(
@@ -304,7 +308,7 @@ private fun DeviceSettingsScreen(
           value =
               dateCommissioned
                   ?.takeUnless { it.seconds == 0L && it.nanos == 0 }
-                  ?.let { formatTimestamp(context, it) } ?: unknown,
+                  ?.let { formatTimestamp(LocalContext.current, it) } ?: unknown,
       )
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_node_id),
@@ -336,19 +340,19 @@ private fun DeviceSettingsScreen(
           icon = Icons.Outlined.Settings,
           label = stringResource(R.string.device_settings_admin_fabrics),
           subtitle = stringResource(R.string.device_settings_admin_fabrics_subtitle),
-          onClick = onManageControllers,
+          onClick = onManageFabricsClick,
       )
       SettingsActionRow(
           icon = Icons.Outlined.Search,
           label = stringResource(R.string.device_settings_admin_explorer),
           subtitle = stringResource(R.string.device_settings_admin_explorer_subtitle),
-          onClick = onExplorer,
+          onClick = onDataModelExplorerClick,
       )
       SettingsActionRow(
           icon = Icons.Outlined.Share,
           label = stringResource(R.string.device_settings_admin_share),
           subtitle = stringResource(R.string.device_settings_admin_share_subtitle),
-          onClick = { showShareDeviceAlertDialog = true },
+          onClick = onShareDeviceClick,
       )
       SettingsActionRow(
           icon = Icons.Outlined.Delete,

@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
@@ -24,6 +23,7 @@ import io.aether.android.matter.CLUSTERS
 import io.aether.android.matter.ClusterId
 import io.aether.android.matter.EndpointId
 import io.aether.android.screens.common.SearchTextField
+import io.aether.android.spacing
 
 @Composable
 internal fun ClusterListContent(
@@ -52,8 +52,8 @@ internal fun ClusterListContent(
   val normalizedQuery = searchQuery.trim().lowercase()
 
   Column(
-      modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),
-      verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
+      modifier = Modifier.fillMaxSize().padding(MaterialTheme.spacing.paddingNormal),
+      verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
   ) {
     if (showSearch) {
       SearchTextField(

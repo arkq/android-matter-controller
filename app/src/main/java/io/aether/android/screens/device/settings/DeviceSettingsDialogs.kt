@@ -14,7 +14,6 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,7 +27,7 @@ import io.aether.android.matter.DEVICES
 import io.aether.android.matter.DeviceTypeId
 
 @Composable
-internal fun RenameDialog(
+internal fun ChangeDeviceNameDialog(
     currentName: String,
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit,
@@ -37,10 +36,9 @@ internal fun RenameDialog(
   AlertDialog(
       title = { Text(stringResource(R.string.rename_device)) },
       text = {
-        TextField(
+        OutlinedTextField(
             value = inputText,
             onValueChange = { inputText = it },
-            label = { Text(stringResource(R.string.rename_device_label)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
         )
@@ -60,14 +58,13 @@ internal fun RenameDialog(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun DeviceTypeDialog(
+internal fun ChangeDeviceTypeDialog(
     currentType: DeviceTypeId,
     onConfirm: (DeviceTypeId) -> Unit,
     onDismiss: () -> Unit,
 ) {
   var expanded by remember { mutableStateOf(false) }
   var selectedType by remember(currentType) { mutableStateOf(currentType) }
-
   AlertDialog(
       title = { Text(stringResource(R.string.device_type_dialog_title)) },
       text = {

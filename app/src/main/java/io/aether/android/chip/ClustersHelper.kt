@@ -60,10 +60,10 @@ private const val TIMED_INVOKE_TIMEOUT_MS = 500
 private val ROOT_ENDPOINT_ID: EndpointId = EndpointId(0u)
 
 data class BasicInformationAttributes(
-    val vendorName: String? = null,
     val vendorId: VendorId? = null,
-    val productName: String? = null,
+    val vendorName: String? = null,
     val productId: ProductId? = null,
+    val productName: String? = null,
     val hardwareVersion: String? = null,
     val softwareVersion: String? = null,
     val nodeLabel: String? = null,
@@ -1129,17 +1129,12 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
                 ChipAttributePath.newInstance(
                     ROOT_ENDPOINT_ID.toInt().toLong(),
                     Clusters.BasicInformation.ID.toLong(),
-                    Clusters.BasicInformation.Attributes.VendorName.ID.toLong(),
-                ),
-                ChipAttributePath.newInstance(
-                    ROOT_ENDPOINT_ID.toInt().toLong(),
-                    Clusters.BasicInformation.ID.toLong(),
                     Clusters.BasicInformation.Attributes.VendorID.ID.toLong(),
                 ),
                 ChipAttributePath.newInstance(
                     ROOT_ENDPOINT_ID.toInt().toLong(),
                     Clusters.BasicInformation.ID.toLong(),
-                    Clusters.BasicInformation.Attributes.ProductName.ID.toLong(),
+                    Clusters.BasicInformation.Attributes.VendorName.ID.toLong(),
                 ),
                 ChipAttributePath.newInstance(
                     ROOT_ENDPOINT_ID.toInt().toLong(),
@@ -1149,7 +1144,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
                 ChipAttributePath.newInstance(
                     ROOT_ENDPOINT_ID.toInt().toLong(),
                     Clusters.BasicInformation.ID.toLong(),
-                    Clusters.BasicInformation.Attributes.NodeLabel.ID.toLong(),
+                    Clusters.BasicInformation.Attributes.ProductName.ID.toLong(),
                 ),
                 ChipAttributePath.newInstance(
                     ROOT_ENDPOINT_ID.toInt().toLong(),
@@ -1160,6 +1155,11 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
                     ROOT_ENDPOINT_ID.toInt().toLong(),
                     Clusters.BasicInformation.ID.toLong(),
                     Clusters.BasicInformation.Attributes.SoftwareVersionString.ID.toLong(),
+                ),
+                ChipAttributePath.newInstance(
+                    ROOT_ENDPOINT_ID.toInt().toLong(),
+                    Clusters.BasicInformation.ID.toLong(),
+                    Clusters.BasicInformation.Attributes.NodeLabel.ID.toLong(),
                 ),
             )
 
@@ -1200,20 +1200,15 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
             ?.getClusterState(Clusters.BasicInformation.ID.toLong())
             ?: return BasicInformationAttributes()
 
-    val vendorName =
-        clusterState
-            .getAttributeState(Clusters.BasicInformation.Attributes.VendorName.ID.toLong())
-            ?.value
-            .asString()
     val vendorId =
         clusterState
             .getAttributeState(Clusters.BasicInformation.Attributes.VendorID.ID.toLong())
             ?.value
             .asInt()
             ?.toVendorId()
-    val productName =
+    val vendorName =
         clusterState
-            .getAttributeState(Clusters.BasicInformation.Attributes.ProductName.ID.toLong())
+            .getAttributeState(Clusters.BasicInformation.Attributes.VendorName.ID.toLong())
             ?.value
             .asString()
     val productId =
@@ -1222,9 +1217,9 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
             ?.value
             .asInt()
             ?.toProductId()
-    val nodeLabel =
+    val productName =
         clusterState
-            .getAttributeState(Clusters.BasicInformation.Attributes.NodeLabel.ID.toLong())
+            .getAttributeState(Clusters.BasicInformation.Attributes.ProductName.ID.toLong())
             ?.value
             .asString()
     val hardwareVersion =
@@ -1241,12 +1236,17 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
             )
             ?.value
             .asString()
+    val nodeLabel =
+        clusterState
+            .getAttributeState(Clusters.BasicInformation.Attributes.NodeLabel.ID.toLong())
+            ?.value
+            .asString()
 
     return BasicInformationAttributes(
-        vendorName = vendorName,
         vendorId = vendorId,
-        productName = productName,
+        vendorName = vendorName,
         productId = productId,
+        productName = productName,
         hardwareVersion = hardwareVersion,
         softwareVersion = softwareVersion,
         nodeLabel = nodeLabel,
@@ -1497,45 +1497,6 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         is Number -> toString()
         else -> null
       }
-
-  /**
-   * Reads the list of NOCs from the Operational Credentials Cluster.
-   *
-   * @param nodeId the Matter node ID
-   * @return list of NOC structs, or null on error
-   */
-  suspend fun readNOCsAttribute(
-      nodeId: NodeId
-  ): List<ChipStructs.OperationalCredentialsClusterNOCStruct>? {
-    val connectedDevicePtr =
-        try {
-          chipClient.getConnectedDevicePointer(nodeId)
-        } catch (e: IllegalStateException) {
-          Timber.e(e, "Can't get connectedDevicePointer for nodeId: $nodeId")
-          return null
-        }
-    return try {
-      suspendCoroutine { continuation ->
-        ChipClusters.OperationalCredentialsCluster(connectedDevicePtr, 0)
-            .readNOCsAttribute(
-                object : ChipClusters.OperationalCredentialsCluster.NOCsAttributeCallback {
-                  override fun onSuccess(
-                      values: List<ChipStructs.OperationalCredentialsClusterNOCStruct>
-                  ) {
-                    continuation.resume(values)
-                  }
-
-                  override fun onError(ex: Exception) {
-                    continuation.resumeWithException(ex)
-                  }
-                }
-            )
-      }
-    } catch (e: Exception) {
-      Timber.e(e, "readNOCsAttribute failed")
-      null
-    }
-  }
 
   /**
    * Removes a fabric (controller) from the device.

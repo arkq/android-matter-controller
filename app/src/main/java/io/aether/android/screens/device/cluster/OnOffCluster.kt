@@ -16,10 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
-import io.aether.android.R
 import io.aether.android.isOnDisplayString
+import io.aether.android.spacing
 
 /** Displays the on/off state of a single OnOff cluster and lets the user toggle it. */
 @Composable
@@ -39,11 +38,11 @@ internal fun OnOffClusterControl(
       border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
       color = bgColor,
       contentColor = contentColor,
-      shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
+      shape = RoundedCornerShape(MaterialTheme.spacing.roundedCorner),
   ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content)),
+        modifier = Modifier.padding(MaterialTheme.spacing.paddingSurfaceContent),
     ) {
       Text(text = isOnDisplayString(isOn), style = MaterialTheme.typography.bodyLarge)
       Spacer(Modifier.weight(1f))

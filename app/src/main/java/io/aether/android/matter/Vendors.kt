@@ -39,13 +39,3 @@ fun vendorLabel(vendorId: VendorId, providedLabel: String? = null): String {
   val hex = vendorId.toString()
   return if (name != null) "$name ($hex)" else hex
 }
-
-/** Overload for callers that still have an Int vendor ID (e.g. from proto). */
-fun vendorLabel(vendorId: Int, providedLabel: String? = null): String =
-    vendorLabel(vendorId.toVendorId(), providedLabel)
-
-/**
- * Overload for callers that still have a UShort vendor ID (e.g. proto uint32 narrowed to uint16).
- */
-fun vendorLabel(vendorId: UShort, providedLabel: String? = null): String =
-    vendorLabel(VendorId(vendorId), providedLabel)

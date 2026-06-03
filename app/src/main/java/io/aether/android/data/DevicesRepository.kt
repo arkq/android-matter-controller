@@ -14,8 +14,12 @@ import io.aether.android.getTimestampForNow
 import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.EndpointId
 import io.aether.android.matter.NodeId
+import io.aether.android.matter.ProductId
+import io.aether.android.matter.VendorId
 import io.aether.android.matter.toDeviceTypeId
 import io.aether.android.matter.toEndpointId
+import io.aether.android.matter.toProductId
+import io.aether.android.matter.toVendorId
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -64,9 +68,9 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
         val newNodeBuilder =
             MatterNode.newBuilder()
                 .setNodeId(device.nodeId.toLong())
-                .setVendorId(device.vendorId.toIntOrNull() ?: 0)
+                .setVendorId(device.vendorId.toInt())
                 .setVendorName(device.vendorName)
-                .setProductId(device.productId.toIntOrNull() ?: 0)
+                .setProductId(device.productId.toInt())
                 .setProductName(device.productName)
                 .setDateCommissioned(getTimestampForNow())
                 .setName(device.name)
@@ -86,11 +90,11 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
         if (device.productName.isNotBlank()) {
           nodeBuilder.productName = device.productName
         }
-        if (device.vendorId.isNotBlank()) {
-          nodeBuilder.vendorId = device.vendorId.toIntOrNull() ?: existingNode.vendorId
+        if (device.vendorId != VendorId(0u)) {
+          nodeBuilder.vendorId = device.vendorId.toInt()
         }
-        if (device.productId.isNotBlank()) {
-          nodeBuilder.productId = device.productId.toIntOrNull() ?: existingNode.productId
+        if (device.productId != ProductId(0u)) {
+          nodeBuilder.productId = device.productId.toInt()
         }
         val endpointIndex = findEndpointIndex(existingNode, normalizedEndpoint.toEndpointId())
         val updatedEndpoint =
@@ -113,9 +117,9 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
   suspend fun addOrUpdateEndpoint(
       nodeId: NodeId,
       nodeName: String,
-      vendorId: Int,
+      vendorId: VendorId,
       vendorName: String,
-      productId: Int,
+      productId: ProductId,
       productName: String,
       endpoint: MatterEndpoint,
   ) {
@@ -127,9 +131,9 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
             MatterNode.newBuilder()
                 .setNodeId(nodeId.toLong())
                 .setName(nodeName)
-                .setVendorId(vendorId)
+                .setVendorId(vendorId.toInt())
                 .setVendorName(vendorName)
-                .setProductId(productId)
+                .setProductId(productId.toInt())
                 .setProductName(productName)
                 .setDateCommissioned(getTimestampForNow())
                 .setOnline(false)
@@ -141,8 +145,8 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
         if (nodeName.isNotBlank()) nodeBuilder.name = nodeName
         if (vendorName.isNotBlank()) nodeBuilder.vendorName = vendorName
         if (productName.isNotBlank()) nodeBuilder.productName = productName
-        if (vendorId != 0) nodeBuilder.vendorId = vendorId
-        if (productId != 0) nodeBuilder.productId = productId
+        if (vendorId != VendorId(0u)) nodeBuilder.vendorId = vendorId.toInt()
+        if (productId != ProductId(0u)) nodeBuilder.productId = productId.toInt()
 
         val normalizedEndpoint = endpointOf(endpoint)
         val endpointIndex = findEndpointIndex(existingNode, normalizedEndpoint.toEndpointId())
@@ -185,6 +189,45 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
           endpointBuilder.addDeviceTypes(deviceTypeId.toInt())
         }
         nodeBuilder.setEndpoints(i, endpointBuilder.build())
+      }
+      state.toBuilder().setNodes(nodeIndex, nodeBuilder.build()).build()
+    }
+  }
+
+  suspend fun updateNodeBasicInfo(
+      nodeId: NodeId,
+      vendorId: VendorId?,
+      vendorName: String?,
+      productId: ProductId?,
+      productName: String?,
+      nodeLabel: String?,
+  ) {
+    Timber.d("updateNodeBasicInfo: nodeId [$nodeId]")
+    val nodeIndex = findNodeIndex(nodeId)
+    if (nodeIndex == -1) return
+    devicesStateDataStore.updateData { state ->
+      val nodeBuilder = state.getNodes(nodeIndex).toBuilder()
+      if (vendorId != null && vendorId != VendorId(0u)) nodeBuilder.vendorId = vendorId.toInt()
+      if (!vendorName.isNullOrBlank()) nodeBuilder.vendorName = vendorName
+      if (productId != null && productId != ProductId(0u)) nodeBuilder.productId = productId.toInt()
+      if (!productName.isNullOrBlank()) nodeBuilder.productName = productName
+      if (!nodeLabel.isNullOrBlank()) nodeBuilder.name = nodeLabel
+      state.toBuilder().setNodes(nodeIndex, nodeBuilder.build()).build()
+    }
+  }
+
+  suspend fun removeEndpointsFromNode(nodeId: NodeId, endpointIds: Set<EndpointId>) {
+    Timber.d("removeEndpointsFromNode: nodeId [$nodeId] endpointIds [$endpointIds]")
+    val nodeIndex = findNodeIndex(nodeId)
+    if (nodeIndex == -1) return
+    devicesStateDataStore.updateData { state ->
+      val node = state.getNodes(nodeIndex)
+      val nodeBuilder = node.toBuilder()
+      nodeBuilder.clearEndpoints()
+      node.endpointsList.forEach { ep ->
+        if (ep.endpointId.toEndpointId() !in endpointIds) {
+          nodeBuilder.addEndpoints(ep)
+        }
       }
       state.toBuilder().setNodes(nodeIndex, nodeBuilder.build()).build()
     }
@@ -258,9 +301,9 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
         .setNodeId(node.nodeId)
         .setEndpointId(endpointOf(endpoint).toEndpointId())
         .setName(if (node.name.isNotBlank()) node.name else endpoint.label)
-        .setVendorId(node.vendorId.toString())
+        .setVendorId(node.vendorId.toVendorId())
         .setVendorName(node.vendorName)
-        .setProductId(node.productId.toString())
+        .setProductId(node.productId.toProductId())
         .setProductName(node.productName)
         .setDeviceTypeId(typeId)
         .setSupportsLevelControl(endpoint.supportsLevelControl)

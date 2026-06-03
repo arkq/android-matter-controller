@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,6 +26,7 @@ import io.aether.android.R
 import io.aether.android.chip.DeviceMatterInfo
 import io.aether.android.matter.CLUSTERS
 import io.aether.android.matter.DEVICES
+import io.aether.android.spacing
 
 @Composable
 internal fun BreadcrumbBar(
@@ -44,7 +44,7 @@ internal fun BreadcrumbBar(
               .padding(
                   start = 6.dp,
                   top = 6.dp,
-                  end = dimensionResource(R.dimen.margin_normal),
+                  end = MaterialTheme.spacing.paddingNormal,
                   bottom = 6.dp,
               ),
       verticalAlignment = Alignment.CenterVertically,

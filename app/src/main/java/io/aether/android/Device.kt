@@ -6,18 +6,20 @@ package io.aether.android
 import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.EndpointId
 import io.aether.android.matter.NodeId
+import io.aether.android.matter.ProductId
+import io.aether.android.matter.VendorId
 import io.aether.android.matter.toNodeId
 
 /** App-level device model used by UI/viewmodels, backed by node+endpoint proto state. */
 data class Device(
     val nodeId: NodeId = NodeId(0u),
-    val endpointId: EndpointId = EndpointId(0u),
-    val name: String = "",
-    val vendorId: String = "",
+    val vendorId: VendorId = VendorId(0u),
     val vendorName: String = "",
-    val productId: String = "",
+    val productId: ProductId = ProductId(0u),
     val productName: String = "",
     val deviceTypeId: DeviceTypeId = DeviceTypeId(0u),
+    val endpointId: EndpointId = EndpointId(0u),
+    val name: String = "",
     val supportsLevelControl: Boolean = false,
     val supportsColorTemperature: Boolean = false,
     val on: Boolean = false,
@@ -37,11 +39,11 @@ data class Device(
 
     fun setName(name: String) = apply { device = device.copy(name = name) }
 
-    fun setVendorId(vendorId: String) = apply { device = device.copy(vendorId = vendorId) }
+    fun setVendorId(vendorId: VendorId) = apply { device = device.copy(vendorId = vendorId) }
 
     fun setVendorName(vendorName: String) = apply { device = device.copy(vendorName = vendorName) }
 
-    fun setProductId(productId: String) = apply { device = device.copy(productId = productId) }
+    fun setProductId(productId: ProductId) = apply { device = device.copy(productId = productId) }
 
     fun setProductName(productName: String) = apply {
       device = device.copy(productName = productName)

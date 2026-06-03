@@ -9,15 +9,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import io.aether.android.R
+import io.aether.android.spacing
 
 @Composable
 internal fun CommandInvokeContent(
@@ -33,8 +34,8 @@ internal fun CommandInvokeContent(
       }
 
   Column(
-      modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),
-      verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
+      modifier = Modifier.fillMaxSize().padding(MaterialTheme.spacing.paddingNormal),
+      verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
   ) {
     val focusManager = LocalFocusManager.current
     if (command.arguments.isNotEmpty()) {

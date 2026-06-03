@@ -22,9 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import io.aether.android.R
+import io.aether.android.spacing
 
 @Composable
 internal fun AttributeDetailContent(
@@ -47,8 +47,8 @@ internal fun AttributeDetailContent(
       modifier =
           Modifier.fillMaxSize()
               .verticalScroll(rememberScrollState())
-              .padding(dimensionResource(R.dimen.margin_normal)),
-      verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
+              .padding(MaterialTheme.spacing.paddingNormal),
+      verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
   ) {
     ExplorerTypedValueField(
         value = editValue,
@@ -88,7 +88,7 @@ internal fun AttributeDetailContent(
 
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
     ) {
       val focusManager = LocalFocusManager.current
       Button(

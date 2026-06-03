@@ -25,6 +25,7 @@ import io.aether.android.matter.DEVICES
 import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.EndpointId
 import io.aether.android.matter.NodeId
+import io.aether.android.matter.ProductId
 import io.aether.android.matter.VendorId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.shared.SetDeviceNameResult
@@ -90,14 +91,15 @@ constructor(
   private var _msgDialogInfo = MutableStateFlow<DialogInfo?>(null)
   val msgDialogInfo: StateFlow<DialogInfo?> = _msgDialogInfo.asStateFlow()
 
-  // Controls whether the "Remove Device" AlertDialog should be shown in the UI.
+  private var _showShareDeviceAlertDialog = MutableStateFlow(false)
+  val showShareDeviceAlertDialog: StateFlow<Boolean> = _showShareDeviceAlertDialog.asStateFlow()
+
   private var _showRemoveDeviceAlertDialog = MutableStateFlow(false)
   val showRemoveDeviceAlertDialog: StateFlow<Boolean> = _showRemoveDeviceAlertDialog.asStateFlow()
 
-  // Controls whether the "Confirm Device Removal" AlertDialog should be shown in the UI.
-  private var _showConfirmDeviceRemovalAlertDialog = MutableStateFlow(false)
-  val showConfirmDeviceRemovalAlertDialog: StateFlow<Boolean> =
-      _showConfirmDeviceRemovalAlertDialog.asStateFlow()
+  private var _showRemoveDeviceConfirmAlertDialog = MutableStateFlow(false)
+  val showRemoveDeviceConfirmAlertDialog: StateFlow<Boolean> =
+      _showRemoveDeviceConfirmAlertDialog.asStateFlow()
 
   // Communicates to the UI that removal of the device has completed successfully.
   private var _deviceRemovalCompleted = MutableStateFlow(false)
@@ -108,35 +110,51 @@ constructor(
   val pairingWindowOpenForDeviceSharing: StateFlow<Boolean> =
       _pairingWindowOpenForDeviceSharing.asStateFlow()
 
-  // -----------------------------------------------------------------------------------------------
-  // Load device
-
   fun loadDevice(nodeId: NodeId) {
     Timber.d("loadDevice: nodeId [$nodeId]")
     viewModelScope.launch {
-      val shouldBlockUiUntilLoaded = _device.value == null
-      try {
-        val devicesForNode = devicesRepository.getDevicesByNodeId(nodeId)
-        val loadedDevice =
+      // Phase 1: show from storage immediately
+      val loadedDevice =
+          try {
+            val devicesForNode = devicesRepository.getDevicesByNodeId(nodeId)
             chooseBestDevice(devicesForNode) ?: devicesRepository.getDeviceByNodeId(nodeId)
-        val basicInfo =
-            try {
-              clustersHelper.readBasicInformationAttributes(nodeId)
-            } catch (e: Exception) {
-              Timber.w(e, "loadDevice: could not read basic information attributes")
-              null
+          } catch (e: Exception) {
+            Timber.e(e, "loadDevice: storage load failed")
+            if (_device.value == null) {
+              showMsgDialog(R.string.device_settings, R.string.device_settings_load_failed)
             }
+            return@launch
+          }
+      _device.value = loadedDevice
 
-        _device.value = loadedDevice
-        _basicInformation.value = basicInfo
-      } catch (e: Exception) {
-        Timber.e(e, "loadDevice failed")
-        if (shouldBlockUiUntilLoaded) {
-          _device.value = null
+      // Phase 2: fetch from device in background; update in-place on response
+      launch {
+        try {
+          val basicInfo = clustersHelper.readBasicInformationAttributes(nodeId)
+          _basicInformation.value = basicInfo
+          if (basicInfo != null) syncBasicInfoToStorage(nodeId, basicInfo)
+        } catch (e: Exception) {
+          Timber.w(e, "loadDevice: could not read basic information attributes")
         }
-        _basicInformation.value = null
-        showMsgDialog(R.string.device_settings, R.string.device_settings_load_failed)
       }
+    }
+  }
+
+  private suspend fun syncBasicInfoToStorage(
+      nodeId: NodeId,
+      basicInfo: BasicInformationAttributes,
+  ) {
+    try {
+      devicesRepository.updateNodeBasicInfo(
+          nodeId,
+          basicInfo.vendorId,
+          basicInfo.vendorName,
+          basicInfo.productId,
+          basicInfo.productName,
+          basicInfo.nodeLabel,
+      )
+    } catch (e: Exception) {
+      Timber.w(e, "syncBasicInfoToStorage failed")
     }
   }
 
@@ -146,7 +164,7 @@ constructor(
       if (candidate.deviceTypeId in DEVICES) score += 4
       if (candidate.name.isNotBlank()) score += 2
       if (candidate.productName.isNotBlank()) score += 2
-      if (candidate.productId.toIntOrNull()?.let { it != 0 } == true) score += 1
+      if (candidate.productId.let { it != ProductId(0u) } == true) score += 1
       score
     }
   }
@@ -191,16 +209,28 @@ constructor(
   // -----------------------------------------------------------------------------------------------
   // Dialog and transient UI state
 
+  fun showShareDeviceAlertDialog() {
+    _showShareDeviceAlertDialog.value = true
+  }
+
+  fun dismissShareDeviceAlertDialog() {
+    _showShareDeviceAlertDialog.value = false
+  }
+
   fun showRemoveDeviceAlertDialog() {
     _showRemoveDeviceAlertDialog.value = true
   }
 
-  fun dismissRemoveDeviceDialog() {
+  fun dismissRemoveDeviceAlertDialog() {
     _showRemoveDeviceAlertDialog.value = false
   }
 
-  fun dismissConfirmDeviceRemovalDialog() {
-    _showConfirmDeviceRemovalAlertDialog.value = false
+  fun showRemoveDeviceConfirmAlertDialog() {
+    _showRemoveDeviceConfirmAlertDialog.value = true
+  }
+
+  fun dismissRemoveDeviceConfirmAlertDialog() {
+    _showRemoveDeviceConfirmAlertDialog.value = false
   }
 
   fun resetDeviceRemovalCompleted() {
@@ -302,7 +332,7 @@ constructor(
       } catch (e: Exception) {
         Timber.e(e, "Unlinking the device failed.")
         dismissMsgDialog()
-        _showConfirmDeviceRemovalAlertDialog.value = true
+        showRemoveDeviceConfirmAlertDialog()
         return@launch
       }
       Timber.d("removeDevice succeeded for nodeId [$nodeId]")

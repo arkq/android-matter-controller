@@ -60,7 +60,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -98,6 +97,7 @@ import io.aether.android.matter.getDeviceTypeIconId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.MsgAlertDialog
 import io.aether.android.screens.thread.getActivity
+import io.aether.android.spacing
 import timber.log.Timber
 
 /**
@@ -318,8 +318,9 @@ private fun HomeScreen(
     )
   }
 
-  // Alert Dialog for messages to be shown to the user.
-  MsgAlertDialog(msgDialogInfo, onConsumeMsgDialog)
+  if (msgDialogInfo != null) {
+    MsgAlertDialog(msgDialogInfo, onConsumeMsgDialog)
+  }
 
   // Alert Dialog shown when the name of the device must be captured in the commissioning flow.
   NewDeviceAlertDialog(
@@ -412,18 +413,18 @@ private fun DeviceItem(
 
   Surface(
       modifier =
-          Modifier.padding(top = dimensionResource(R.dimen.margin_small))
-              .padding(PaddingValues(horizontal = dimensionResource(R.dimen.margin_small))),
+          Modifier.padding(top = MaterialTheme.spacing.paddingSmall)
+              .padding(PaddingValues(horizontal = MaterialTheme.spacing.paddingSmall)),
       border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
       contentColor = contentColor,
       color = bgColor,
-      shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
+      shape = RoundedCornerShape(MaterialTheme.spacing.roundedCorner),
       onClick = onDeviceClick,
   ) {
-    Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content))) {
+    Column(modifier = Modifier.padding(MaterialTheme.spacing.paddingSurfaceContent)) {
       Row(
           verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_small)),
+          horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingSmall),
       ) {
         Icon(
             painter = painterResource(id = iconId),
@@ -442,8 +443,7 @@ private fun DeviceItem(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.error,
             textAlign = TextAlign.Center,
-            modifier =
-                Modifier.fillMaxWidth().padding(top = dimensionResource(R.dimen.margin_small)),
+            modifier = Modifier.fillMaxWidth().padding(top = MaterialTheme.spacing.paddingSmall),
         )
       }
     }

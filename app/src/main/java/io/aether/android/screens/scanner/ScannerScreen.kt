@@ -29,12 +29,12 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import io.aether.android.R
+import io.aether.android.spacing
 import timber.log.Timber
 
 /**
@@ -72,7 +72,7 @@ internal fun ScannerRoute(
 @Composable
 private fun ScannerScreen(innerPadding: PaddingValues, beaconsList: List<MatterBeacon>) {
   Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-    LazyColumn(modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content))) {
+    LazyColumn(modifier = Modifier.padding(MaterialTheme.spacing.paddingSurfaceContent)) {
       this.items(beaconsList) { MatterBeaconItem(it) }
     }
   }

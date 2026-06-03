@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.device.action
+package io.aether.android.screens.device.actions
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -12,24 +12,17 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import io.aether.android.R
-import timber.log.Timber
 
 @Composable
 internal fun RemoveDeviceAlertDialog(
-    showRemoveDeviceAlertDialog: Boolean,
-    onRemoveDeviceOutcome: (doIt: Boolean) -> Unit,
+    onRemoveDeviceResult: (doIt: Boolean) -> Unit,
 ) {
-  Timber.d("RemoveDeviceAlertDialog [$showRemoveDeviceAlertDialog]")
-  if (!showRemoveDeviceAlertDialog) {
-    return
-  }
-
   AlertDialog(
       title = { Text(text = stringResource(R.string.device_remove_dialog_title)) },
       text = { Text(stringResource(R.string.device_remove_dialog_body)) },
       confirmButton = {
         Button(
-            onClick = { onRemoveDeviceOutcome(true) },
+            onClick = { onRemoveDeviceResult(true) },
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error,
@@ -41,7 +34,7 @@ internal fun RemoveDeviceAlertDialog(
       },
       onDismissRequest = {},
       dismissButton = {
-        TextButton(onClick = { onRemoveDeviceOutcome(false) }) {
+        TextButton(onClick = { onRemoveDeviceResult(false) }) {
           Text(stringResource(R.string.cancel))
         }
       },
@@ -50,19 +43,14 @@ internal fun RemoveDeviceAlertDialog(
 
 @Composable
 internal fun ConfirmDeviceRemovalAlertDialog(
-    showConfirmDeviceRemovalAlertDialog: Boolean,
-    onConfirmDeviceRemovalOutcome: (doIt: Boolean) -> Unit,
+    onRemoveDeviceConfirmResult: (doIt: Boolean) -> Unit,
 ) {
-  if (!showConfirmDeviceRemovalAlertDialog) {
-    return
-  }
-
   AlertDialog(
       title = { Text(text = stringResource(R.string.device_remove_failed_confirm_dialog_title)) },
       text = { Text(stringResource(R.string.device_remove_failed_confirm_dialog_body)) },
       confirmButton = {
         Button(
-            onClick = { onConfirmDeviceRemovalOutcome(true) },
+            onClick = { onRemoveDeviceConfirmResult(true) },
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error,
@@ -74,7 +62,7 @@ internal fun ConfirmDeviceRemovalAlertDialog(
       },
       onDismissRequest = {},
       dismissButton = {
-        TextButton(onClick = { onConfirmDeviceRemovalOutcome(false) }) {
+        TextButton(onClick = { onRemoveDeviceConfirmResult(false) }) {
           Text(stringResource(R.string.cancel))
         }
       },

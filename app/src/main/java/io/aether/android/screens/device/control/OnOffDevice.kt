@@ -5,18 +5,18 @@ package io.aether.android.screens.device.control
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.dimensionResource
-import io.aether.android.R
 import io.aether.android.data.DevicesStateRepository
 import io.aether.android.endpointIdTyped
 import io.aether.android.screens.device.cluster.OnOffClusterControl
 import io.aether.android.screens.home.DeviceUiModel
+import io.aether.android.spacing
 
 /**
  * Device-type control for endpoints that expose only the **OnOff** cluster (e.g. smart outlets,
@@ -50,7 +50,7 @@ internal fun OnOffDeviceControl(
     }
   }
 
-  Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal))) {
+  Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal)) {
     OnOffClusterControl(
         isOnline = isOnline,
         isOn = isOn,
