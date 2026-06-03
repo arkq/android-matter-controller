@@ -10,9 +10,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import io.aether.android.R
-import timber.log.Timber
 
-// Information used for [MsgAlertDialog].
 data class DialogInfo(
     @field:StringRes @param:StringRes val titleRes: Int? = null,
     val title: String? = null,
@@ -23,13 +21,9 @@ data class DialogInfo(
 
 // Useful dialog that can display title, message, and confirm button.
 @Composable
-fun MsgAlertDialog(dialogInfo: DialogInfo?, onDismissMsgAlertDialog: () -> Unit) {
-  Timber.d("MsgAlertDialog [$dialogInfo]")
-  if (dialogInfo == null) return
-
+fun MsgAlertDialog(dialogInfo: DialogInfo, onDismissMsgAlertDialog: () -> Unit) {
   val resolvedTitle = dialogInfo.titleRes?.let { stringResource(it) } ?: dialogInfo.title
   val resolvedMessage = dialogInfo.messageRes?.let { stringResource(it) } ?: dialogInfo.message
-
   AlertDialog(
       title = {
         if (!resolvedTitle.isNullOrEmpty()) {

@@ -25,6 +25,7 @@ import io.aether.android.matter.DEVICES
 import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.EndpointId
 import io.aether.android.matter.NodeId
+import io.aether.android.matter.ProductId
 import io.aether.android.matter.VendorId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.shared.SetDeviceNameResult
@@ -90,14 +91,15 @@ constructor(
   private var _msgDialogInfo = MutableStateFlow<DialogInfo?>(null)
   val msgDialogInfo: StateFlow<DialogInfo?> = _msgDialogInfo.asStateFlow()
 
-  // Controls whether the "Remove Device" AlertDialog should be shown in the UI.
+  private var _showShareDeviceAlertDialog = MutableStateFlow(false)
+  val showShareDeviceAlertDialog: StateFlow<Boolean> = _showShareDeviceAlertDialog.asStateFlow()
+
   private var _showRemoveDeviceAlertDialog = MutableStateFlow(false)
   val showRemoveDeviceAlertDialog: StateFlow<Boolean> = _showRemoveDeviceAlertDialog.asStateFlow()
 
-  // Controls whether the "Confirm Device Removal" AlertDialog should be shown in the UI.
-  private var _showConfirmDeviceRemovalAlertDialog = MutableStateFlow(false)
-  val showConfirmDeviceRemovalAlertDialog: StateFlow<Boolean> =
-      _showConfirmDeviceRemovalAlertDialog.asStateFlow()
+  private var _showRemoveDeviceConfirmAlertDialog = MutableStateFlow(false)
+  val showRemoveDeviceConfirmAlertDialog: StateFlow<Boolean> =
+      _showRemoveDeviceConfirmAlertDialog.asStateFlow()
 
   // Communicates to the UI that removal of the device has completed successfully.
   private var _deviceRemovalCompleted = MutableStateFlow(false)
@@ -107,9 +109,6 @@ constructor(
   private var _pairingWindowOpenForDeviceSharing = MutableStateFlow(false)
   val pairingWindowOpenForDeviceSharing: StateFlow<Boolean> =
       _pairingWindowOpenForDeviceSharing.asStateFlow()
-
-  // -----------------------------------------------------------------------------------------------
-  // Load device
 
   fun loadDevice(nodeId: NodeId) {
     Timber.d("loadDevice: nodeId [$nodeId]")
@@ -148,10 +147,11 @@ constructor(
     try {
       devicesRepository.updateNodeBasicInfo(
           nodeId,
-          basicInfo.vendorId?.toInt(),
+          basicInfo.vendorId,
           basicInfo.vendorName,
-          basicInfo.productId?.toInt(),
+          basicInfo.productId,
           basicInfo.productName,
+          basicInfo.nodeLabel,
       )
     } catch (e: Exception) {
       Timber.w(e, "syncBasicInfoToStorage failed")
@@ -164,7 +164,7 @@ constructor(
       if (candidate.deviceTypeId in DEVICES) score += 4
       if (candidate.name.isNotBlank()) score += 2
       if (candidate.productName.isNotBlank()) score += 2
-      if (candidate.productId.toIntOrNull()?.let { it != 0 } == true) score += 1
+      if (candidate.productId.let { it != ProductId(0u) } == true) score += 1
       score
     }
   }
@@ -209,16 +209,28 @@ constructor(
   // -----------------------------------------------------------------------------------------------
   // Dialog and transient UI state
 
+  fun showShareDeviceAlertDialog() {
+    _showShareDeviceAlertDialog.value = true
+  }
+
+  fun dismissShareDeviceAlertDialog() {
+    _showShareDeviceAlertDialog.value = false
+  }
+
   fun showRemoveDeviceAlertDialog() {
     _showRemoveDeviceAlertDialog.value = true
   }
 
-  fun dismissRemoveDeviceDialog() {
+  fun dismissRemoveDeviceAlertDialog() {
     _showRemoveDeviceAlertDialog.value = false
   }
 
-  fun dismissConfirmDeviceRemovalDialog() {
-    _showConfirmDeviceRemovalAlertDialog.value = false
+  fun showRemoveDeviceConfirmAlertDialog() {
+    _showRemoveDeviceConfirmAlertDialog.value = true
+  }
+
+  fun dismissRemoveDeviceConfirmAlertDialog() {
+    _showRemoveDeviceConfirmAlertDialog.value = false
   }
 
   fun resetDeviceRemovalCompleted() {
@@ -320,7 +332,7 @@ constructor(
       } catch (e: Exception) {
         Timber.e(e, "Unlinking the device failed.")
         dismissMsgDialog()
-        _showConfirmDeviceRemovalAlertDialog.value = true
+        showRemoveDeviceConfirmAlertDialog()
         return@launch
       }
       Timber.d("removeDevice succeeded for nodeId [$nodeId]")

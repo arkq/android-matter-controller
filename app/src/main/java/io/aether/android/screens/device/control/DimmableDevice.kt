@@ -5,6 +5,7 @@ package io.aether.android.screens.device.control
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -12,7 +13,6 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import io.aether.android.R
 import io.aether.android.data.DevicesStateRepository
@@ -21,6 +21,7 @@ import io.aether.android.screens.device.cluster.LEVEL_MAX
 import io.aether.android.screens.device.cluster.LevelClusterControl
 import io.aether.android.screens.device.cluster.OnOffClusterControl
 import io.aether.android.screens.home.DeviceUiModel
+import io.aether.android.spacing
 
 /**
  * Device-type control for endpoints that expose the **OnOff** and **Level Control** clusters (e.g.
@@ -60,7 +61,7 @@ internal fun DimmableDeviceControl(
     }
   }
 
-  Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal))) {
+  Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal)) {
     OnOffClusterControl(
         isOnline = isOnline,
         isOn = isOn,

@@ -47,7 +47,6 @@ SPDX-License-Identifier: Apache-2.0
     <!-- Device Screen -->
     <string name="device_screen_title">Device</string>
     <string name="rename_device">Rename device</string>
-    <string name="rename_device_label">Device name</string>
     <string name="set_device_name_failed">Failed to set device name</string>
     <string name="loading_device_info">Loading device information…</string>
     <string name="device_offline_label">device offline</string>
@@ -103,6 +102,7 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_fabrics_fabric_vendor">Vendor: %1$s</string>
     <string name="device_fabrics_fabric_fabric_id">Fabric ID: %1$s</string>
     <string name="device_fabrics_fabric_node_id">Node ID: %1$s</string>
+    <string name="device_fabrics_fabric_root_pub_key">Root Public Key: %1$s…</string>
     <string name="device_fabrics_fabric_remove">Remove fabric</string>
 
     <!-- Device Fabric Remove Dialog -->

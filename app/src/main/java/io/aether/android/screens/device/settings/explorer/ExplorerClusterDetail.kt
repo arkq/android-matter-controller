@@ -18,12 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.aether.android.R
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.SearchTextField
+import io.aether.android.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,8 +63,8 @@ internal fun ClusterDetailContent(
     when (tab) {
       ExplorerTab.ATTRIBUTES -> {
         Column(
-            modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
+            modifier = Modifier.fillMaxSize().padding(MaterialTheme.spacing.paddingNormal),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
         ) {
           if (showSearch) {
             SearchTextField(
@@ -137,8 +137,8 @@ internal fun ClusterDetailContent(
       }
       ExplorerTab.COMMANDS -> {
         Column(
-            modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
+            modifier = Modifier.fillMaxSize().padding(MaterialTheme.spacing.paddingNormal),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
         ) {
           if (showSearch) {
             SearchTextField(
@@ -199,8 +199,8 @@ internal fun ClusterDetailContent(
       }
       ExplorerTab.EVENTS -> {
         Column(
-            modifier = Modifier.fillMaxSize().padding(dimensionResource(R.dimen.margin_normal)),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
+            modifier = Modifier.fillMaxSize().padding(MaterialTheme.spacing.paddingNormal),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
         ) {
           if (showSearch) {
             SearchTextField(

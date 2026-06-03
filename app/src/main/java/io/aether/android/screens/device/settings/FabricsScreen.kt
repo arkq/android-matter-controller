@@ -3,7 +3,6 @@
 
 package io.aether.android.screens.device.settings
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
@@ -26,7 +24,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -39,14 +36,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import io.aether.android.R
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.vendorLabel
+import io.aether.android.screens.common.GroupBox
 import io.aether.android.screens.common.LoadingIndicator
+import io.aether.android.spacing
 
 /** Route composable for the Controllers screen. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -118,7 +116,7 @@ private fun FabricsScreen(
         } else {
           LazyColumn(
               modifier = Modifier.fillMaxSize(),
-              contentPadding = PaddingValues(dimensionResource(R.dimen.margin_normal)),
+              contentPadding = PaddingValues(MaterialTheme.spacing.paddingNormal),
               verticalArrangement = Arrangement.spacedBy(8.dp),
           ) {
             items(items = uiState.fabrics, key = { it.fabricIndex }) { fabric ->
@@ -171,45 +169,42 @@ private fun FabricItem(
     )
   }
 
-  Surface(
-      modifier = Modifier.fillMaxWidth(),
-      border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
-      shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
-  ) {
-    Row(
-        modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content)),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
+  val label =
+      fabric.label.takeIf { it.isNotBlank() }
+          ?: stringResource(R.string.device_fabrics_fabric_label, fabric.fabricIndex)
+
+  GroupBox(title = label) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
       Column(modifier = Modifier.weight(1f)) {
-        val label =
-            fabric.label?.takeIf { it.isNotBlank() }
-                ?: stringResource(R.string.device_fabrics_fabric_label, fabric.fabricIndex)
-        Text(text = label, style = MaterialTheme.typography.bodyLarge)
-        fabric.vendorId?.let { vendorId ->
-          Text(
-              text = stringResource(R.string.device_fabrics_fabric_vendor, vendorLabel(vendorId)),
-              style = MaterialTheme.typography.bodySmall,
-              color = MaterialTheme.colorScheme.onSurfaceVariant,
-          )
-        }
-        fabric.fabricId?.let { fabricId ->
-          Text(
-              text =
-                  stringResource(
-                      R.string.device_fabrics_fabric_fabric_id,
-                      fabricId.toString(),
-                  ),
-              style = MaterialTheme.typography.bodySmall,
-              color = MaterialTheme.colorScheme.onSurfaceVariant,
-          )
-        }
-        fabric.nodeId?.let { nodeId ->
-          Text(
-              text = stringResource(R.string.device_fabrics_fabric_node_id, nodeId.toString()),
-              style = MaterialTheme.typography.bodySmall,
-              color = MaterialTheme.colorScheme.onSurfaceVariant,
-          )
-        }
+        Text(
+            text =
+                stringResource(R.string.device_fabrics_fabric_vendor, vendorLabel(fabric.vendorId)),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            text =
+                stringResource(
+                    R.string.device_fabrics_fabric_fabric_id,
+                    fabric.fabricId.toString(),
+                ),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            text = stringResource(R.string.device_fabrics_fabric_node_id, fabric.nodeId.toString()),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            text =
+                stringResource(
+                    R.string.device_fabrics_fabric_root_pub_key,
+                    fabric.rootPublicKey.take(8).joinToString(separator = "") { "%02X".format(it) },
+                ),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
       }
       if (canRemove) {
         IconButton(onClick = { showConfirmDialog = true }) {

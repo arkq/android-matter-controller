@@ -58,7 +58,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -67,6 +66,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.google.android.gms.threadnetwork.ThreadNetworkCredentials
 import com.google.common.io.BaseEncoding
 import io.aether.android.R
+import io.aether.android.spacing
 import timber.log.Timber
 
 /**
@@ -229,8 +229,7 @@ private fun ThreadScreen(
       // .padding(innerPadding)
   ) {
     Column(
-        modifier =
-            Modifier.fillMaxWidth().padding(dimensionResource(R.dimen.padding_surface_content))
+        modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.paddingSurfaceContent)
     ) {
       // TODO: Hack to handle issue with Fragment's top appbar.
       Spacer(Modifier.padding(30.dp))

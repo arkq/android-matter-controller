@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.device.action
+package io.aether.android.screens.device.actions
 
 import android.content.Context
 import android.os.SystemClock
@@ -27,22 +27,22 @@ import timber.log.Timber
 
 @Composable
 internal fun ShareDeviceAlertDialog(
-    show: Boolean,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
+    onShareDeviceResult: (doIt: Boolean) -> Unit,
 ) {
-  if (!show) {
-    return
-  }
-
   AlertDialog(
       title = { Text(text = stringResource(R.string.device_share_dialog_title)) },
       text = { Text(stringResource(R.string.device_share_dialog_body)) },
       confirmButton = {
-        Button(onClick = onConfirm) { Text(stringResource(R.string.device_share_dialog_yes)) }
+        Button(onClick = { onShareDeviceResult(true) }) {
+          Text(stringResource(R.string.device_share_dialog_yes))
+        }
       },
-      onDismissRequest = onDismiss,
-      dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+      onDismissRequest = { onShareDeviceResult(false) },
+      dismissButton = {
+        TextButton(onClick = { onShareDeviceResult(false) }) {
+          Text(stringResource(R.string.cancel))
+        }
+      },
   )
 }
 

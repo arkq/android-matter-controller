@@ -90,7 +90,7 @@ fun ExplorerRoute(
         )
       }
   ) { innerPadding ->
-    MsgAlertDialog(msgDialogInfo, viewModel::dismissMsgDialog)
+    msgDialogInfo?.let { dialogInfo -> MsgAlertDialog(dialogInfo, viewModel::dismissMsgDialog) }
     if (deviceMatterInfoList == null) {
       LoadingIndicator(stringResource(R.string.device_explorer_loading_endpoints), innerPadding)
       return@Scaffold

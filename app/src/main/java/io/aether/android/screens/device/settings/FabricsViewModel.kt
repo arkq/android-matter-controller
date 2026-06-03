@@ -25,15 +25,14 @@ import timber.log.Timber
 
 data class ManagedFabric(
     val fabricIndex: Int,
-    val rootPublicKey: ByteArray?,
-    val vendorId: VendorId?,
-    val fabricId: FabricId?,
-    val nodeId: NodeId?,
-    val label: String?,
+    val rootPublicKey: ByteArray,
+    val vendorId: VendorId,
+    val fabricId: FabricId,
+    val nodeId: NodeId,
+    val label: String,
     val isCurrentFabric: Boolean,
 )
 
-/** ViewModel for the Controllers screen. */
 @HiltViewModel
 class FabricsViewModel
 @Inject
@@ -107,18 +106,18 @@ constructor(
             (fabrics.mapNotNull { it.fabricIndex } + nocs.mapNotNull { it.fabricIndex }).distinct()
         val mergedFabrics =
             fabricIndexes
-                .map { fabricIndex ->
-                  val fabric = fabricsByIndex[fabricIndex]
-                  val isCurrentFabric = fabricIndex == currentFabricIndex
-                  ManagedFabric(
-                      fabricIndex = fabricIndex,
-                      rootPublicKey = fabric?.rootPublicKey,
-                      vendorId = fabric?.vendorID?.toVendorId(),
-                      fabricId = fabric?.fabricID?.toFabricId(),
-                      nodeId = fabric?.nodeID?.toNodeId(),
-                      label = fabric?.label,
-                      isCurrentFabric = isCurrentFabric,
-                  )
+                .mapNotNull { fabricIndex ->
+                  fabricsByIndex[fabricIndex]?.run {
+                    ManagedFabric(
+                        fabricIndex = fabricIndex,
+                        rootPublicKey = rootPublicKey,
+                        vendorId = vendorID.toVendorId(),
+                        fabricId = fabricID.toFabricId(),
+                        nodeId = nodeID.toNodeId(),
+                        label = label,
+                        isCurrentFabric = fabricIndex == currentFabricIndex,
+                    )
+                  }
                 }
                 .sortedBy { it.fabricIndex }
         UiState.Loaded(mergedFabrics)

@@ -47,6 +47,8 @@ import io.aether.android.matter.NodeId
 import io.aether.android.matter.toDeviceTypeId
 import io.aether.android.matter.toEndpointId
 import io.aether.android.matter.toNodeId
+import io.aether.android.matter.toProductId
+import io.aether.android.matter.toVendorId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.supportsColorTemperature
 import io.aether.android.supportsLevelControl
@@ -382,9 +384,13 @@ constructor(
           devicesRepository.addOrUpdateEndpoint(
               nodeId = nodeId,
               nodeName = deviceName,
-              vendorId = gpsCommissioningResult?.commissionedDeviceDescriptor?.vendorId ?: 0,
+              vendorId =
+                  (gpsCommissioningResult?.commissionedDeviceDescriptor?.vendorId ?: 0)
+                      .toVendorId(),
               vendorName = vendorName,
-              productId = gpsCommissioningResult?.commissionedDeviceDescriptor?.productId ?: 0,
+              productId =
+                  (gpsCommissioningResult?.commissionedDeviceDescriptor?.productId ?: 0)
+                      .toProductId(),
               productName = productName,
               endpoint = device,
           )
@@ -430,9 +436,13 @@ constructor(
             devicesRepository.addOrUpdateEndpoint(
                 nodeId = nodeId,
                 nodeName = deviceName,
-                vendorId = gpsCommissioningResult?.commissionedDeviceDescriptor?.vendorId ?: 0,
+                vendorId =
+                    (gpsCommissioningResult?.commissionedDeviceDescriptor?.vendorId ?: 0)
+                        .toVendorId(),
                 vendorName = vendorName,
-                productId = gpsCommissioningResult?.commissionedDeviceDescriptor?.productId ?: 0,
+                productId =
+                    (gpsCommissioningResult?.commissionedDeviceDescriptor?.productId ?: 0)
+                        .toProductId(),
                 productName = productName,
                 endpoint = device,
             )

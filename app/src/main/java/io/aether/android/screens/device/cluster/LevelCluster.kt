@@ -14,10 +14,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import io.aether.android.R
+import io.aether.android.spacing
 
 /**
  * Displays a labeled slider that controls a single Level-type cluster attribute (brightness or
@@ -36,9 +35,9 @@ internal fun LevelClusterControl(
   Surface(
       modifier = Modifier.fillMaxWidth(),
       border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
-      shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
+      shape = RoundedCornerShape(MaterialTheme.spacing.roundedCorner),
   ) {
-    Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content))) {
+    Column(modifier = Modifier.padding(MaterialTheme.spacing.paddingSurfaceContent)) {
       Text(text = title)
       Slider(
           enabled = isOnline && isOn,

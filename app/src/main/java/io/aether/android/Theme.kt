@@ -5,6 +5,7 @@ package io.aether.android
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -12,20 +13,27 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
-/** Extended theme colors not covered by the Material3 color scheme. */
-data class AetherExtendedColors(
-    /** Color used to indicate a successful operation (e.g. read / write / invoke feedback). */
-    val success: Color,
+val ColorScheme.success: Color
+  @Composable get() = if (isSystemInDarkTheme()) Color(0xFF81C784) else Color(0xFF4CAF50)
+
+data class Spacing(
+    val paddingNormal: Dp = 16.dp,
+    val paddingSmall: Dp = 8.dp,
+    val paddingSurfaceContent: Dp = 12.dp,
+    val roundedCorner: Dp = 12.dp,
 )
 
-val LocalAetherExtendedColors = staticCompositionLocalOf {
-  AetherExtendedColors(success = Color(0xFF4CAF50))
-}
+val LocalSpacing = staticCompositionLocalOf { Spacing() }
+
+val MaterialTheme.spacing: Spacing
+  @Composable @ReadOnlyComposable get() = LocalSpacing.current
 
 @Composable
 fun AetherTheme(
@@ -34,21 +42,13 @@ fun AetherTheme(
 ) {
   val context = LocalContext.current
   val colorScheme =
-      remember(context, darkTheme) {
-        when {
-          Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
-              if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-          darkTheme -> darkColorScheme()
-          else -> lightColorScheme()
-        }
+      when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        darkTheme -> darkColorScheme()
+        else -> lightColorScheme()
       }
-  val extendedColors =
-      if (darkTheme) AetherExtendedColors(success = Color(0xFF81C784))
-      else AetherExtendedColors(success = Color(0xFF4CAF50))
-  CompositionLocalProvider(LocalAetherExtendedColors provides extendedColors) {
-    MaterialTheme(
-        colorScheme = colorScheme,
-        content = content,
-    )
+  CompositionLocalProvider(LocalSpacing provides Spacing()) {
+    MaterialTheme(colorScheme = colorScheme, content = content)
   }
 }

@@ -31,7 +31,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -48,6 +47,7 @@ import io.aether.android.screens.device.control.ColorTemperatureDeviceControl
 import io.aether.android.screens.device.control.DimmableDeviceControl
 import io.aether.android.screens.device.control.OnOffDeviceControl
 import io.aether.android.screens.home.DeviceUiModel
+import io.aether.android.spacing
 import io.aether.android.supportsColorTemperature
 import io.aether.android.supportsLevelControl
 import timber.log.Timber
@@ -181,7 +181,9 @@ private fun DeviceScreen(
     return
   }
 
-  MsgAlertDialog(msgDialogInfo, onDismissMsgDialog)
+  if (msgDialogInfo != null) {
+    MsgAlertDialog(msgDialogInfo, onDismissMsgDialog)
+  }
 
   val endpointsToShow = allEndpointUiModels.ifEmpty { listOf(deviceUiModel) }
 
@@ -190,8 +192,8 @@ private fun DeviceScreen(
           Modifier.fillMaxWidth()
               .padding(innerPadding)
               .verticalScroll(rememberScrollState())
-              .padding(dimensionResource(R.dimen.margin_normal)),
-      verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.margin_normal)),
+              .padding(MaterialTheme.spacing.paddingNormal),
+      verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
   ) {
     if (!isOnline) {
       Text(
@@ -206,9 +208,9 @@ private fun DeviceScreen(
       Surface(
           modifier = Modifier.fillMaxWidth(),
           border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
-          shape = RoundedCornerShape(dimensionResource(R.dimen.rounded_corner)),
+          shape = RoundedCornerShape(MaterialTheme.spacing.roundedCorner),
       ) {
-        Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_surface_content))) {
+        Column(modifier = Modifier.padding(MaterialTheme.spacing.paddingSurfaceContent)) {
           EndpointDeviceControl(
               endpointModel = endpointModel,
               lastUpdatedEndpointState = lastUpdatedEndpointState,
