@@ -1499,45 +1499,6 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
       }
 
   /**
-   * Reads the list of NOCs from the Operational Credentials Cluster.
-   *
-   * @param nodeId the Matter node ID
-   * @return list of NOC structs, or null on error
-   */
-  suspend fun readNOCsAttribute(
-      nodeId: NodeId
-  ): List<ChipStructs.OperationalCredentialsClusterNOCStruct>? {
-    val connectedDevicePtr =
-        try {
-          chipClient.getConnectedDevicePointer(nodeId)
-        } catch (e: IllegalStateException) {
-          Timber.e(e, "Can't get connectedDevicePointer for nodeId: $nodeId")
-          return null
-        }
-    return try {
-      suspendCoroutine { continuation ->
-        ChipClusters.OperationalCredentialsCluster(connectedDevicePtr, 0)
-            .readNOCsAttribute(
-                object : ChipClusters.OperationalCredentialsCluster.NOCsAttributeCallback {
-                  override fun onSuccess(
-                      values: List<ChipStructs.OperationalCredentialsClusterNOCStruct>
-                  ) {
-                    continuation.resume(values)
-                  }
-
-                  override fun onError(ex: Exception) {
-                    continuation.resumeWithException(ex)
-                  }
-                }
-            )
-      }
-    } catch (e: Exception) {
-      Timber.e(e, "readNOCsAttribute failed")
-      null
-    }
-  }
-
-  /**
    * Removes a fabric (controller) from the device.
    *
    * @param nodeId the Matter node ID

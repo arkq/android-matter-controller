@@ -203,6 +203,10 @@ private fun DeviceSettingsScreen(
     onConfirmDeviceRemovalResult: (Boolean) -> Unit,
 ) {
 
+  if (msgDialogInfo != null) {
+    MsgAlertDialog(msgDialogInfo, onDismissMsgDialog)
+  }
+
   if (device == null) {
     LoadingIndicator(stringResource(R.string.loading_device_info), innerPadding)
     return
@@ -214,10 +218,6 @@ private fun DeviceSettingsScreen(
       rememberSaveable(saver = androidx.compose.foundation.ScrollState.Saver) {
         androidx.compose.foundation.ScrollState(0)
       }
-
-  if (msgDialogInfo != null) {
-    MsgAlertDialog(msgDialogInfo, onDismissMsgDialog)
-  }
 
   if (showRenameDialog) {
     ChangeDeviceNameDialog(

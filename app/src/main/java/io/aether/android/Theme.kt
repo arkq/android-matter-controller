@@ -14,6 +14,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -42,11 +43,13 @@ fun AetherTheme(
 ) {
   val context = LocalContext.current
   val colorScheme =
-      when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        darkTheme -> darkColorScheme()
-        else -> lightColorScheme()
+      remember(darkTheme, context) {
+        when {
+          Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
+              if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+          darkTheme -> darkColorScheme()
+          else -> lightColorScheme()
+        }
       }
   CompositionLocalProvider(LocalSpacing provides Spacing()) {
     MaterialTheme(colorScheme = colorScheme, content = content)
