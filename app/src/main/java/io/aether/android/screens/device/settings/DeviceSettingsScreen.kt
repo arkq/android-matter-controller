@@ -77,10 +77,11 @@ fun DeviceSettingsRoute(
 
   val activity = LocalContext.current.getActivity()
 
-  val device by viewModel.device.collectAsState()
-  val basicInformation by viewModel.basicInformation.collectAsState()
-  val isOnline by viewModel.isOnline.collectAsState()
-  val dateCommissioned by viewModel.dateCommissioned.collectAsState()
+  val uiState by viewModel.uiState.collectAsState()
+  val device = (uiState as? DeviceSettingsViewModel.UiState.Loaded)?.device
+  val basicInformation = (uiState as? DeviceSettingsViewModel.UiState.Loaded)?.basicInformation
+  val isOnline = (uiState as? DeviceSettingsViewModel.UiState.Loaded)?.isOnline ?: false
+  val dateCommissioned = (uiState as? DeviceSettingsViewModel.UiState.Loaded)?.dateCommissioned
   val msgDialogInfo by viewModel.msgDialogInfo.collectAsState()
   val showShareDeviceAlertDialog by viewModel.showShareDeviceAlertDialog.collectAsState()
   val showRemoveDeviceAlertDialog by viewModel.showRemoveDeviceAlertDialog.collectAsState()

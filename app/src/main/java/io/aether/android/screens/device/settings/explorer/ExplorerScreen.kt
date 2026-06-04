@@ -40,7 +40,7 @@ fun ExplorerRoute(
     viewModel: ExplorerViewModel = hiltViewModel(),
 ) {
   val typedNodeId = nodeId
-  val deviceMatterInfoList by viewModel.deviceMatterInfoList.collectAsState()
+  val uiState by viewModel.uiState.collectAsState()
   val navStack by viewModel.navStack.collectAsState()
   val endpointSearchQuery by viewModel.endpointSearchQuery.collectAsState()
   val clusterSearchQuery by viewModel.clusterSearchQuery.collectAsState()
@@ -91,12 +91,12 @@ fun ExplorerRoute(
       }
   ) { innerPadding ->
     msgDialogInfo?.let { dialogInfo -> MsgAlertDialog(dialogInfo, viewModel::dismissMsgDialog) }
-    if (deviceMatterInfoList == null) {
+    if (uiState !is ExplorerViewModel.UiState.Loaded) {
       LoadingIndicator(stringResource(R.string.device_explorer_loading_endpoints), innerPadding)
       return@Scaffold
     }
 
-    val infos = deviceMatterInfoList!!
+    val infos = (uiState as ExplorerViewModel.UiState.Loaded).deviceMatterInfoList
     Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
       BreadcrumbBar(
           navStack = navStack,

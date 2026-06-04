@@ -26,17 +26,21 @@ import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.EndpointId
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.ProductId
-import io.aether.android.matter.VendorId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.shared.SetDeviceNameResult
 import io.aether.android.screens.shared.SetDeviceNameUseCase
 import javax.inject.Inject
 import kotlin.random.Random
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -52,92 +56,69 @@ constructor(
     private val setDeviceNameUseCase: SetDeviceNameUseCase,
 ) : ViewModel() {
 
-  // The device being shown on the settings screen.
-  private var _device = MutableStateFlow<Device?>(null)
-  val device: StateFlow<Device?> = _device.asStateFlow()
+  sealed interface UiState {
+    data object Loading : UiState
 
-  // Attributes fetched live from Basic Information cluster.
-  private var _basicInformation = MutableStateFlow<BasicInformationAttributes?>(null)
-  val basicInformation: StateFlow<BasicInformationAttributes?> = _basicInformation.asStateFlow()
+    data class Loaded(
+        val device: Device,
+        val basicInformation: BasicInformationAttributes?,
+        val isOnline: Boolean,
+        val dateCommissioned: Timestamp?,
+    ) : UiState
 
-  private var _isOnline = MutableStateFlow(true)
-  val isOnline: StateFlow<Boolean> = _isOnline.asStateFlow()
-
-  private var _dateCommissioned = MutableStateFlow<Timestamp?>(null)
-  val dateCommissioned: StateFlow<Timestamp?> = _dateCommissioned.asStateFlow()
-
-  init {
-    // Keep _isOnline in sync with the repository state as it changes.
-    kotlinx.coroutines.flow
-        .combine(_device, devicesStateRepository.devicesStateFlow) { device, state ->
-          val node =
-              device?.nodeId?.let { nodeId ->
-                state.nodesList.firstOrNull { it.nodeId == nodeId.toLong() }
-              }
-          (node?.online ?: false) to node?.dateCommissioned
-        }
-        .onEach { (isOnline, dateCommissioned) ->
-          _isOnline.value = isOnline
-          _dateCommissioned.value = dateCommissioned?.takeUnless { isDefaultTimestamp(it) }
-        }
-        .launchIn(viewModelScope)
+    data class Error(@StringRes val messageRes: Int) : UiState
   }
 
-  // Vendor ID fetched from the device (null when not yet loaded or unavailable).
-  private var _vendorId = MutableStateFlow<VendorId?>(null)
-  val vendorId: StateFlow<VendorId?> = _vendorId.asStateFlow()
+  private val refreshTrigger = MutableSharedFlow<NodeId>(replay = 1)
 
-  // Controls whether the "Message" AlertDialog should be shown in the UI.
-  private var _msgDialogInfo = MutableStateFlow<DialogInfo?>(null)
-  val msgDialogInfo: StateFlow<DialogInfo?> = _msgDialogInfo.asStateFlow()
-
-  private var _showShareDeviceAlertDialog = MutableStateFlow(false)
-  val showShareDeviceAlertDialog: StateFlow<Boolean> = _showShareDeviceAlertDialog.asStateFlow()
-
-  private var _showRemoveDeviceAlertDialog = MutableStateFlow(false)
-  val showRemoveDeviceAlertDialog: StateFlow<Boolean> = _showRemoveDeviceAlertDialog.asStateFlow()
-
-  private var _showRemoveDeviceConfirmAlertDialog = MutableStateFlow(false)
-  val showRemoveDeviceConfirmAlertDialog: StateFlow<Boolean> =
-      _showRemoveDeviceConfirmAlertDialog.asStateFlow()
-
-  // Communicates to the UI that removal of the device has completed successfully.
-  private var _deviceRemovalCompleted = MutableStateFlow(false)
-  val deviceRemovalCompleted: StateFlow<Boolean> = _deviceRemovalCompleted.asStateFlow()
-
-  // Communicates to the UI that the pairing window is open for device sharing.
-  private var _pairingWindowOpenForDeviceSharing = MutableStateFlow(false)
-  val pairingWindowOpenForDeviceSharing: StateFlow<Boolean> =
-      _pairingWindowOpenForDeviceSharing.asStateFlow()
+  @OptIn(ExperimentalCoroutinesApi::class)
+  val uiState: StateFlow<UiState> =
+      refreshTrigger
+          .flatMapLatest { nodeId ->
+            flow {
+              emit(UiState.Loading)
+              // Phase 1: show from storage immediately
+              val device =
+                  runCatching {
+                        val candidates = devicesRepository.getDevicesByNodeId(nodeId)
+                        chooseBestDevice(candidates)
+                            ?: devicesRepository.getDeviceByNodeId(nodeId)
+                      }
+                      .onFailure { Timber.e(it, "loadDevice: storage load failed") }
+                      .getOrNull()
+              if (device == null) {
+                emit(UiState.Error(R.string.device_settings_load_failed))
+                return@flow
+              }
+              emit(UiState.Loaded(device, null, false, null))
+              // Phase 2: fetch from device in background; update in-place on response
+              val basicInfo =
+                  runCatching { clustersHelper.readBasicInformationAttributes(nodeId) }
+                      .onFailure {
+                        Timber.w(it, "loadDevice: could not read basic information attributes")
+                      }
+                      .getOrNull()
+              if (basicInfo != null) syncBasicInfoToStorage(nodeId, basicInfo)
+              emit(UiState.Loaded(device, basicInfo, false, null))
+            }
+          }
+          .combine(devicesStateRepository.devicesStateFlow) { deviceState, nodesState ->
+            if (deviceState !is UiState.Loaded) return@combine deviceState
+            val node =
+                nodesState.nodesList.firstOrNull {
+                  it.nodeId == deviceState.device.nodeId.toLong()
+                }
+            deviceState.copy(
+                isOnline = node?.online ?: false,
+                dateCommissioned =
+                    node?.dateCommissioned?.takeUnless { isDefaultTimestamp(it) },
+            )
+          }
+          .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), UiState.Loading)
 
   fun loadDevice(nodeId: NodeId) {
     Timber.d("loadDevice: nodeId [$nodeId]")
-    viewModelScope.launch {
-      // Phase 1: show from storage immediately
-      val loadedDevice =
-          try {
-            val devicesForNode = devicesRepository.getDevicesByNodeId(nodeId)
-            chooseBestDevice(devicesForNode) ?: devicesRepository.getDeviceByNodeId(nodeId)
-          } catch (e: Exception) {
-            Timber.e(e, "loadDevice: storage load failed")
-            if (_device.value == null) {
-              showMsgDialog(R.string.device_settings, R.string.device_settings_load_failed)
-            }
-            return@launch
-          }
-      _device.value = loadedDevice
-
-      // Phase 2: fetch from device in background; update in-place on response
-      launch {
-        try {
-          val basicInfo = clustersHelper.readBasicInformationAttributes(nodeId)
-          _basicInformation.value = basicInfo
-          if (basicInfo != null) syncBasicInfoToStorage(nodeId, basicInfo)
-        } catch (e: Exception) {
-          Timber.w(e, "loadDevice: could not read basic information attributes")
-        }
-      }
-    }
+    refreshTrigger.tryEmit(nodeId)
   }
 
   private suspend fun syncBasicInfoToStorage(
@@ -173,17 +154,39 @@ constructor(
     return timestamp.seconds == 0L && timestamp.nanos == 0
   }
 
+  // Controls whether the "Message" AlertDialog should be shown in the UI.
+  private var _msgDialogInfo = MutableStateFlow<DialogInfo?>(null)
+  val msgDialogInfo: StateFlow<DialogInfo?> = _msgDialogInfo.asStateFlow()
+
+  private var _showShareDeviceAlertDialog = MutableStateFlow(false)
+  val showShareDeviceAlertDialog: StateFlow<Boolean> = _showShareDeviceAlertDialog.asStateFlow()
+
+  private var _showRemoveDeviceAlertDialog = MutableStateFlow(false)
+  val showRemoveDeviceAlertDialog: StateFlow<Boolean> = _showRemoveDeviceAlertDialog.asStateFlow()
+
+  private var _showRemoveDeviceConfirmAlertDialog = MutableStateFlow(false)
+  val showRemoveDeviceConfirmAlertDialog: StateFlow<Boolean> =
+      _showRemoveDeviceConfirmAlertDialog.asStateFlow()
+
+  // Communicates to the UI that removal of the device has completed successfully.
+  private var _deviceRemovalCompleted = MutableStateFlow(false)
+  val deviceRemovalCompleted: StateFlow<Boolean> = _deviceRemovalCompleted.asStateFlow()
+
+  // Communicates to the UI that the pairing window is open for device sharing.
+  private var _pairingWindowOpenForDeviceSharing = MutableStateFlow(false)
+  val pairingWindowOpenForDeviceSharing: StateFlow<Boolean> =
+      _pairingWindowOpenForDeviceSharing.asStateFlow()
+
   // -----------------------------------------------------------------------------------------------
   // Rename device
 
   fun renameDevice(nodeId: NodeId, newName: String) {
     Timber.d("renameDevice: nodeId [$nodeId] newName [$newName]")
     viewModelScope.launch {
-      val device = devicesRepository.getDeviceByNodeId(nodeId)
       val result =
           setDeviceNameUseCase.execute(nodeId, newName) {
-            // Immediately update local state so the UI reflects the new name.
-            _device.value = _device.value?.toBuilder()?.setName(newName)?.build()
+            // Refresh from storage immediately so the UI reflects the new name.
+            loadDevice(nodeId)
           }
       if (result is SetDeviceNameResult.LocalError) {
         showMsgDialog(R.string.set_device_name_failed, result.exception.message)
@@ -199,7 +202,7 @@ constructor(
     viewModelScope.launch {
       try {
         devicesRepository.updateDeviceType(nodeId, deviceTypeId)
-        _device.value = _device.value?.toBuilder()?.setDeviceTypeId(deviceTypeId)?.build()
+        loadDevice(nodeId)
       } catch (e: Exception) {
         Timber.e(e, "changeDeviceType failed")
       }
