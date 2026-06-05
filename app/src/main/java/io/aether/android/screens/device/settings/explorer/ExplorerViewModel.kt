@@ -119,9 +119,7 @@ constructor(
               emit(
                   runCatching {
                         UiState.Loaded(
-                            clustersHelper.fetchDeviceMatterInfo(nodeId).sortedBy {
-                              it.endpointId
-                            }
+                            clustersHelper.fetchDeviceMatterInfo(nodeId).sortedBy { it.endpointId }
                         )
                       }
                       .getOrElse {

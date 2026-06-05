@@ -81,8 +81,7 @@ constructor(
               val device =
                   runCatching {
                         val candidates = devicesRepository.getDevicesByNodeId(nodeId)
-                        chooseBestDevice(candidates)
-                            ?: devicesRepository.getDeviceByNodeId(nodeId)
+                        chooseBestDevice(candidates) ?: devicesRepository.getDeviceByNodeId(nodeId)
                       }
                       .onFailure { Timber.e(it, "loadDevice: storage load failed") }
                       .getOrNull()
@@ -105,13 +104,10 @@ constructor(
           .combine(devicesStateRepository.devicesStateFlow) { deviceState, nodesState ->
             if (deviceState !is UiState.Loaded) return@combine deviceState
             val node =
-                nodesState.nodesList.firstOrNull {
-                  it.nodeId == deviceState.device.nodeId.toLong()
-                }
+                nodesState.nodesList.firstOrNull { it.nodeId == deviceState.device.nodeId.toLong() }
             deviceState.copy(
                 isOnline = node?.online ?: false,
-                dateCommissioned =
-                    node?.dateCommissioned?.takeUnless { isDefaultTimestamp(it) },
+                dateCommissioned = node?.dateCommissioned?.takeUnless { isDefaultTimestamp(it) },
             )
           }
           .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), UiState.Loading)
