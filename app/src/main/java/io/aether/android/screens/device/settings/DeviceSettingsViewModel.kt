@@ -21,17 +21,17 @@ import io.aether.android.chip.ChipClient
 import io.aether.android.chip.ClustersHelper
 import io.aether.android.data.DevicesRepository
 import io.aether.android.data.DevicesStateRepository
-import io.aether.android.matter.DEVICES
 import io.aether.android.matter.DeviceTypeId
 import io.aether.android.matter.EndpointId
 import io.aether.android.matter.NodeId
-import io.aether.android.matter.ProductId
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.shared.SetDeviceNameResult
 import io.aether.android.screens.shared.SetDeviceNameUseCase
 import javax.inject.Inject
 import kotlin.random.Random
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -76,29 +76,39 @@ constructor(
       refreshTrigger
           .flatMapLatest { nodeId ->
             flow {
-              emit(UiState.Loading)
-              // Phase 1: show from storage immediately
-              val device =
-                  runCatching {
-                        val candidates = devicesRepository.getDevicesByNodeId(nodeId)
-                        chooseBestDevice(candidates) ?: devicesRepository.getDeviceByNodeId(nodeId)
-                      }
-                      .onFailure { Timber.e(it, "loadDevice: storage load failed") }
-                      .getOrNull()
-              if (device == null) {
-                emit(UiState.Error(R.string.device_settings_load_failed))
+              // Check if we already have the data for the given nodeId.
+              val current = uiState.value
+              if (
+                  current is UiState.Loaded &&
+                      current.device.nodeId == nodeId &&
+                      current.basicInformation != null
+              ) {
                 return@flow
               }
-              emit(UiState.Loaded(device, null, false, null))
-              // Phase 2: fetch from device in background; update in-place on response
-              val basicInfo =
+              emit(UiState.Loading)
+              coroutineScope {
+                // Kick off the network read immediately.
+                val networkDeferred = async {
                   runCatching { clustersHelper.readBasicInformationAttributes(nodeId) }
-                      .onFailure {
-                        Timber.w(it, "loadDevice: could not read basic information attributes")
-                      }
+                      .onFailure { Timber.w(it, "Network read failed") }
                       .getOrNull()
-              if (basicInfo != null) syncBasicInfoToStorage(nodeId, basicInfo)
-              emit(UiState.Loaded(device, basicInfo, false, null))
+                }
+                // Fetch cached data from the storage.
+                val device =
+                    runCatching { devicesRepository.getDevice(nodeId) }
+                        .getOrElse {
+                          emit(UiState.Error(R.string.device_settings_load_failed))
+                          return@coroutineScope
+                        }
+                // Immediate emission of cached data.
+                emit(UiState.Loaded(device, null, false, null))
+                // Await network result.
+                val basicInfo = networkDeferred.await()
+                if (basicInfo != null) {
+                  syncBasicInfoToStorage(nodeId, basicInfo)
+                  emit(UiState.Loaded(device, basicInfo, false, null))
+                }
+              }
             }
           }
           .combine(devicesStateRepository.devicesStateFlow) { deviceState, nodesState ->
@@ -121,29 +131,17 @@ constructor(
       nodeId: NodeId,
       basicInfo: BasicInformationAttributes,
   ) {
-    try {
-      devicesRepository.updateNodeBasicInfo(
-          nodeId,
-          basicInfo.vendorId,
-          basicInfo.vendorName,
-          basicInfo.productId,
-          basicInfo.productName,
-          basicInfo.nodeLabel,
-      )
-    } catch (e: Exception) {
-      Timber.w(e, "syncBasicInfoToStorage failed")
-    }
-  }
-
-  private fun chooseBestDevice(candidates: List<Device>): Device? {
-    return candidates.maxByOrNull { candidate ->
-      var score = 0
-      if (candidate.deviceTypeId in DEVICES) score += 4
-      if (candidate.name.isNotBlank()) score += 2
-      if (candidate.productName.isNotBlank()) score += 2
-      if (candidate.productId.let { it != ProductId(0u) } == true) score += 1
-      score
-    }
+    runCatching {
+          devicesRepository.updateNodeBasicInfo(
+              nodeId,
+              basicInfo.vendorId,
+              basicInfo.vendorName,
+              basicInfo.productId,
+              basicInfo.productName,
+              basicInfo.nodeLabel,
+          )
+        }
+        .onFailure { Timber.e(it, "syncBasicInfoToStorage failed") }
   }
 
   private fun isDefaultTimestamp(timestamp: Timestamp): Boolean {
