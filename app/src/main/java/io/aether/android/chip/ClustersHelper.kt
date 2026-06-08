@@ -10,6 +10,7 @@ import chip.devicecontroller.ChipStructs
 import chip.devicecontroller.ReportCallback
 import chip.devicecontroller.model.ChipAttributePath
 import chip.devicecontroller.model.ChipEventPath
+import chip.devicecontroller.model.ChipPathId
 import chip.devicecontroller.model.InvokeElement
 import chip.devicecontroller.model.NodeState
 import io.aether.android.CommissioningWindowStatus
@@ -58,6 +59,15 @@ data class DeviceMatterInfo(
 // Timed invoke timeout for commands like removeFabric that require a short grace period.
 private const val TIMED_INVOKE_TIMEOUT_MS = 500
 private val ROOT_ENDPOINT_ID: EndpointId = EndpointId(0u)
+private val GENERIC_ATTRIBUTE_IDS: Set<AttributeId> =
+    setOf(
+        GenericAttributes.GeneratedCommandList.ID,
+        GenericAttributes.AcceptedCommandList.ID,
+        GenericAttributes.EventList.ID,
+        GenericAttributes.AttributeList.ID,
+        GenericAttributes.FeatureMap.ID,
+        GenericAttributes.ClusterRevision.ID,
+    )
 
 data class BasicInformationAttributes(
     val vendorId: VendorId? = null,
@@ -67,6 +77,12 @@ data class BasicInformationAttributes(
     val hardwareVersion: String? = null,
     val softwareVersion: String? = null,
     val nodeLabel: String? = null,
+)
+
+data class DiagnosticClusterSnapshot(
+    val clusterId: ClusterId,
+    val isSupported: Boolean,
+    val attributes: Map<AttributeId, String>,
 )
 
 @Singleton
@@ -172,6 +188,100 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
       attributeState.value != null -> attributeState.value.toString()
       attributeState.json != null -> attributeState.json.toString()
       else -> throw IllegalStateException("readAttributeValue returned empty state")
+    }
+  }
+
+  suspend fun readRootDiagnosticsClusters(nodeId: NodeId): Map<ClusterId, DiagnosticClusterSnapshot> {
+    val connectedDevicePtr =
+        try {
+          chipClient.getConnectedDevicePointer(nodeId)
+        } catch (e: IllegalStateException) {
+          Timber.e(e, "Can't get connectedDevicePointer for readRootDiagnosticsClusters.")
+          return emptyMap()
+        }
+
+    val clusterIds =
+        listOf(
+            Clusters.GeneralDiagnostics.ID,
+            Clusters.SoftwareDiagnostics.ID,
+            Clusters.ThreadNetworkDiagnostics.ID,
+            Clusters.WiFiNetworkDiagnostics.ID,
+            Clusters.EthernetNetworkDiagnostics.ID,
+            Clusters.DiagnosticLogs.ID,
+        )
+
+    val nodeState =
+        try {
+          suspendCoroutine { continuation ->
+            val completed = AtomicBoolean(false)
+            var latestNodeState: NodeState? = null
+            chipClient.chipDeviceController.readPath(
+                object : ReportCallback {
+                  override fun onError(
+                      attributePath: ChipAttributePath?,
+                      eventPath: ChipEventPath?,
+                      ex: Exception,
+                  ) {
+                    Timber.w(
+                        ex,
+                        "readRootDiagnosticsClusters: path error attributePath=%s eventPath=%s",
+                        attributePath,
+                        eventPath,
+                    )
+                  }
+
+                  override fun onReport(nodeState: NodeState) {
+                    latestNodeState = nodeState
+                  }
+
+                  override fun onDone() {
+                    if (completed.compareAndSet(false, true)) {
+                      continuation.resume(latestNodeState)
+                    }
+                  }
+                },
+                connectedDevicePtr,
+                clusterIds.map { clusterId ->
+                  ChipAttributePath.newInstance(
+                      ROOT_ENDPOINT_ID.toInt().toLong(),
+                      clusterId.toLong(),
+                      ChipPathId.forWildcard(),
+                  )
+                },
+                emptyList(),
+                false,
+            )
+          }
+        } catch (e: Exception) {
+          Timber.e(e, "readRootDiagnosticsClusters failed")
+          null
+        }
+
+    val endpointState = nodeState?.getEndpointState(ROOT_ENDPOINT_ID.toInt())
+    return clusterIds.associateWith { clusterId ->
+      val clusterState = endpointState?.getClusterState(clusterId.toLong())
+      val attributes =
+          clusterState
+              ?.attributeStates
+              ?.asSequence()
+              ?.mapNotNull { (id, state) ->
+                val attributeId = id.toAttributeId()
+                if (attributeId in GENERIC_ATTRIBUTE_IDS) {
+                  null
+                } else {
+                  val value = state.value?.toDisplayString() ?: state.json?.toDisplayString()
+                  value?.let { attributeId to it }
+                }
+              }
+              ?.sortedBy { it.first }
+              ?.toMap()
+              .orEmpty()
+
+      DiagnosticClusterSnapshot(
+          clusterId = clusterId,
+          isSupported = clusterState != null,
+          attributes = attributes,
+      )
     }
   }
 
@@ -1496,6 +1606,17 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
         is String -> this
         is Number -> toString()
         else -> null
+      }
+
+  private fun Any?.toDisplayString(): String? =
+      when (this) {
+        null -> null
+        is String -> this
+        is Number -> toString()
+        is Boolean -> toString()
+        is JSONArray -> toString()
+        is JSONObject -> toString()
+        else -> toString()
       }
 
   /**

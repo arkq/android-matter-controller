@@ -15,6 +15,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
@@ -68,6 +69,7 @@ fun DeviceSettingsRoute(
     navigateToHome: () -> Unit,
     navigateToDeviceExplorer: (nodeId: NodeId) -> Unit,
     navigateToDeviceFabrics: (nodeId: NodeId) -> Unit,
+    navigateToDeviceDiagnostics: (nodeId: NodeId) -> Unit,
     onBackClick: () -> Unit,
     nodeId: NodeId,
     viewModel: DeviceSettingsViewModel = hiltViewModel(),
@@ -163,6 +165,7 @@ fun DeviceSettingsRoute(
         onDeviceTypeChange = { type -> viewModel.changeDeviceType(typedNodeId, type) },
         onManageFabricsClick = { navigateToDeviceFabrics(typedNodeId) },
         onDataModelExplorerClick = { navigateToDeviceExplorer(typedNodeId) },
+        onDiagnosticsClick = { navigateToDeviceDiagnostics(typedNodeId) },
         onShareDeviceClick = { viewModel.showShareDeviceAlertDialog() },
         onShareDeviceResult = { doIt ->
           viewModel.dismissShareDeviceAlertDialog()
@@ -197,6 +200,7 @@ private fun DeviceSettingsScreen(
     onDeviceTypeChange: (DeviceTypeId) -> Unit,
     onManageFabricsClick: () -> Unit,
     onDataModelExplorerClick: () -> Unit,
+    onDiagnosticsClick: () -> Unit,
     onShareDeviceClick: () -> Unit,
     onShareDeviceResult: (Boolean) -> Unit,
     onRemoveDeviceClick: () -> Unit,
@@ -348,6 +352,12 @@ private fun DeviceSettingsScreen(
           label = stringResource(R.string.device_settings_admin_explorer),
           subtitle = stringResource(R.string.device_settings_admin_explorer_subtitle),
           onClick = onDataModelExplorerClick,
+      )
+      SettingsActionRow(
+          icon = Icons.Outlined.Info,
+          label = stringResource(R.string.device_settings_admin_diagnostics),
+          subtitle = stringResource(R.string.device_settings_admin_diagnostics_subtitle),
+          onClick = onDiagnosticsClick,
       )
       SettingsActionRow(
           icon = Icons.Outlined.Share,

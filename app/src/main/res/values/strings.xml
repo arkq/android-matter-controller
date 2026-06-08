@@ -86,6 +86,8 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_settings_admin_fabrics_subtitle">Control who can manage this device</string>
     <string name="device_settings_admin_explorer">Data model explorer</string>
     <string name="device_settings_admin_explorer_subtitle">Read, write, and invoke on cluster data</string>
+    <string name="device_settings_admin_diagnostics">Diagnostics</string>
+    <string name="device_settings_admin_diagnostics_subtitle">View runtime diagnostics reported by the device</string>
     <string name="device_settings_admin_share">Share</string>
     <string name="device_settings_admin_share_subtitle">Share this device with other controllers</string>
     <string name="device_settings_admin_remove">Remove</string>
@@ -161,6 +163,13 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_explorer_error_invalid_boolean">Please enter true or false.</string>
     <string name="device_explorer_boolean_true">True</string>
     <string name="device_explorer_boolean_false">False</string>
+
+    <!-- Device Diagnostics Screen -->
+    <string name="device_diagnostics_loading">Loading diagnostics…</string>
+    <string name="device_diagnostics_empty">No diagnostics data available.</string>
+    <string name="device_diagnostics_no_attributes">No readable diagnostic attributes were reported for this cluster.</string>
+    <string name="device_diagnostics_cluster_not_supported">This diagnostics cluster is not supported on the root endpoint.</string>
+    <string name="device_diagnostics_load_failed">Failed to load diagnostics data.</string>
 
     <!-- Device Share Dialog -->
     <string name="device_share_dialog_title">Share this device?</string>
