@@ -22,13 +22,13 @@ import timber.log.Timber
 
 data class DiagnosticsAttributeUiItem(
     val id: AttributeId,
-    val name: String,
+    val name: String?,
     val value: String,
 )
 
 data class DiagnosticsClusterUiItem(
     val clusterId: ClusterId,
-    val title: String,
+    val title: String?,
     val isSupported: Boolean,
     val attributes: List<DiagnosticsAttributeUiItem>,
 )
@@ -106,7 +106,7 @@ class DiagnosticsViewModel @Inject constructor(private val clustersHelper: Clust
       val clusterInfo = CLUSTERS[clusterId]
       DiagnosticsClusterUiItem(
           clusterId = clusterId,
-          title = clusterInfo?.name ?: formatClusterId(clusterId),
+          title = clusterInfo?.name,
           isSupported = snapshot?.isSupported == true,
           attributes =
               snapshot
@@ -114,9 +114,7 @@ class DiagnosticsViewModel @Inject constructor(private val clustersHelper: Clust
                   ?.map { (attributeId, value) ->
                     DiagnosticsAttributeUiItem(
                         id = attributeId,
-                        name =
-                            clusterInfo?.attributes?.get(attributeId)?.name
-                                ?: formatAttributeId(attributeId),
+                        name = clusterInfo?.attributes?.get(attributeId)?.name,
                         value = value,
                     )
                   }
@@ -125,10 +123,4 @@ class DiagnosticsViewModel @Inject constructor(private val clustersHelper: Clust
       )
     }
   }
-
-  private fun formatClusterId(clusterId: ClusterId): String =
-      "Cluster 0x%04X".format(clusterId.toLong())
-
-  private fun formatAttributeId(attributeId: AttributeId): String =
-      "Attribute 0x%04X".format(attributeId.toLong())
 }

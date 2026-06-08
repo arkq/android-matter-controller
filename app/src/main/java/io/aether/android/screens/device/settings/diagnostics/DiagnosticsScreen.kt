@@ -113,7 +113,16 @@ private fun DiagnosticsScreen(
         Tab(
             selected = selectedTab == index,
             onClick = { selectedTab = index },
-            text = { Text(text = cluster.title) },
+            text = {
+              Text(
+                  text =
+                      cluster.title
+                          ?: stringResource(
+                              R.string.device_diagnostics_cluster_fallback,
+                              cluster.clusterId.toLong(),
+                          )
+              )
+            },
         )
       }
     }
@@ -147,11 +156,20 @@ private fun DiagnosticsScreen(
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingSmall),
             ) {
               Text(
-                  text = selectedCluster.title,
+                  text =
+                      selectedCluster.title
+                          ?: stringResource(
+                              R.string.device_diagnostics_cluster_fallback,
+                              selectedCluster.clusterId.toLong(),
+                          ),
                   style = MaterialTheme.typography.titleMedium,
               )
               Text(
-                  text = "ID: 0x%04X".format(selectedCluster.clusterId.toLong()),
+                  text =
+                      stringResource(
+                          R.string.device_diagnostics_cluster_id,
+                          selectedCluster.clusterId.toLong(),
+                      ),
                   style = MaterialTheme.typography.bodySmall,
                   color = MaterialTheme.colorScheme.onSurfaceVariant,
               )
@@ -180,9 +198,21 @@ private fun DiagnosticsScreen(
                   modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.paddingNormal),
                   verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingSmall),
               ) {
-                Text(text = attribute.name, style = MaterialTheme.typography.titleSmall)
                 Text(
-                    text = "0x%04X".format(attribute.id.toLong()),
+                    text =
+                        attribute.name
+                            ?: stringResource(
+                                R.string.device_diagnostics_attribute_fallback,
+                                attribute.id.toLong(),
+                            ),
+                    style = MaterialTheme.typography.titleSmall,
+                )
+                Text(
+                    text =
+                        stringResource(
+                            R.string.device_diagnostics_attribute_id,
+                            attribute.id.toLong(),
+                        ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

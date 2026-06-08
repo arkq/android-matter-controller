@@ -280,12 +280,12 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
               ?.asSequence()
               ?.mapNotNull { entry ->
                 val attributeId = entry.key.toAttributeId()
-                if (attributeId in GENERIC_ATTRIBUTE_IDS) {
-                  null
-                } else {
+                if (attributeId !in GENERIC_ATTRIBUTE_IDS) {
                   val value =
                       entry.value.value?.toDisplayString() ?: entry.value.json?.toDisplayString()
                   value?.let { attributeId to it }
+                } else {
+                  null
                 }
               }
               ?.sortedBy { it.first }
