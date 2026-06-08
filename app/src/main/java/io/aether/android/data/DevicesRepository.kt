@@ -242,15 +242,9 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
     devicesStateDataStore.updateData { state -> state.toBuilder().removeNodes(nodeIndex).build() }
   }
 
-  suspend fun getDevice(nodeId: NodeId): Device = getDeviceByNodeId(nodeId)
-
-  suspend fun getDeviceByNodeId(nodeId: NodeId): Device {
+  suspend fun getDevice(nodeId: NodeId): Device {
     return getAllDevices().devicesList.firstOrNull { it.nodeId == nodeId }
         ?: throw Exception("Device not found for nodeId: ${nodeId}")
-  }
-
-  suspend fun getDevicesByNodeId(nodeId: NodeId): List<Device> {
-    return getAllDevices().devicesList.filter { it.nodeId == nodeId }
   }
 
   suspend fun getAllDevices(): Devices {

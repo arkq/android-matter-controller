@@ -47,6 +47,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -58,6 +59,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -236,33 +238,56 @@ internal fun HomeRoute(
     }
   }
 
-  Scaffold(
-      topBar = {
-        TopAppBar(
-            title = {},
-            navigationIcon = {
-              IconButton(onClick = onMenuClick) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = stringResource(R.string.menu_button),
-                )
-              }
-            },
-        )
-      },
-  ) { innerPadding ->
-    HomeScreen(
-        innerPadding,
-        devicesList,
-        msgDialogInfo,
-        onDismissMsgDialog,
-        showNewDeviceAlertDialog,
-        deviceAttestationFailureIgnored,
-        onCommissionedDeviceNameCaptured,
-        onCommissionDevice,
-        onDeviceClick,
-        onOnOffClick,
-    )
+  Box(modifier = Modifier.fillMaxSize()) {
+    if (devicesList.isEmpty()) {
+      NoDevices()
+    }
+    Scaffold(
+        containerColor = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.onBackground,
+        topBar = {
+          TopAppBar(
+              title = {},
+              navigationIcon = {
+                IconButton(onClick = onMenuClick) {
+                  Icon(
+                      imageVector = Icons.Filled.Menu,
+                      contentDescription = stringResource(R.string.menu_button),
+                      tint = MaterialTheme.colorScheme.onBackground,
+                  )
+                }
+              },
+              colors =
+                  TopAppBarDefaults.topAppBarColors(
+                      containerColor = Color.Transparent,
+                      scrolledContainerColor = Color.Transparent,
+                      navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
+                      titleContentColor = MaterialTheme.colorScheme.onBackground,
+                  ),
+          )
+        },
+        floatingActionButton = {
+          FloatingActionButton(
+              onClick = onCommissionDevice,
+              modifier = Modifier.padding(16.dp),
+          ) {
+            Icon(Icons.Filled.Add, contentDescription = "Add")
+          }
+        },
+    ) { innerPadding ->
+      HomeScreen(
+          innerPadding,
+          devicesList,
+          msgDialogInfo,
+          onDismissMsgDialog,
+          showNewDeviceAlertDialog,
+          deviceAttestationFailureIgnored,
+          onCommissionedDeviceNameCaptured,
+          onCommissionDevice,
+          onDeviceClick,
+          onOnOffClick,
+      )
+    }
   }
 }
 
@@ -322,43 +347,24 @@ private fun HomeScreen(
     MsgAlertDialog(msgDialogInfo, onConsumeMsgDialog)
   }
 
-  // Alert Dialog shown when the name of the device must be captured in the commissioning flow.
-  NewDeviceAlertDialog(
-      showNewDeviceAlertDialog,
-      onCommissionedDeviceNameCaptured,
-      deviceAttestationFailureIgnored,
-  )
+  if (showNewDeviceAlertDialog) {
+    NewDeviceAlertDialog(onCommissionedDeviceNameCaptured, deviceAttestationFailureIgnored)
+  }
 
-  // Content for the screen.
-  Box {
-    if (devicesList.isEmpty()) {
-      NoDevices()
-    } else {
-      Box(Modifier.fillMaxSize()) {
-        LazyColumn(
-            // verticalArrangement = Arrangement.spacedBy(1.dp),
-            modifier = Modifier.fillMaxWidth().padding(innerPadding)
-        ) {
-          this.items(devicesList) { device ->
-            val onDeviceItemClick: () -> Unit = { onDeviceClick(device) }
-            DeviceItem(
-                device.nodeId,
-                device.deviceTypeId,
-                device.name,
-                device.isOnline,
-                device.isOn,
-                onOnOffClick,
-                onDeviceItemClick,
-            )
-          }
-        }
+  Box(Modifier.fillMaxSize()) {
+    LazyColumn(modifier = Modifier.fillMaxWidth().padding(innerPadding)) {
+      this.items(devicesList) { device ->
+        val onDeviceItemClick: () -> Unit = { onDeviceClick(device) }
+        DeviceItem(
+            device.nodeId,
+            device.deviceTypeId,
+            device.name,
+            device.isOnline,
+            device.isOn,
+            onOnOffClick,
+            onDeviceItemClick,
+        )
       }
-    }
-    FloatingActionButton(
-        onClick = onCommissionDevice,
-        modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-    ) {
-      Icon(Icons.Filled.Add, contentDescription = "Add")
     }
   }
   LaunchedEffect(devicesList) { Timber.d("HomeRoute [$devicesList]") }
@@ -452,16 +458,10 @@ private fun DeviceItem(
 
 @Composable
 private fun NewDeviceAlertDialog(
-    showNewDeviceAlertDialog: Boolean,
     onCommissionedDeviceNameCaptured: (name: String) -> Unit,
     deviceAttestationFailureIgnored: Boolean,
 ) {
-  if (!showNewDeviceAlertDialog) {
-    return
-  }
-
   var inputText by remember { mutableStateOf("") }
-
   AlertDialog(
       title = { Text(text = "Specify device name") },
       text = {
@@ -528,10 +528,12 @@ private fun NoDevices() {
     ) {
       Text(
           text = stringResource(R.string.empty_dashboard_title),
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
           style = MaterialTheme.typography.bodyMedium,
       )
       Text(
           text = stringResource(R.string.empty_dashboard_subtitle),
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
           style = MaterialTheme.typography.bodySmall,
       )
     }

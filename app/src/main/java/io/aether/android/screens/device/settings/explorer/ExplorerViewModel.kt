@@ -21,9 +21,15 @@ import io.aether.android.matter.Privilege
 import io.aether.android.screens.common.DialogInfo
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -94,8 +100,38 @@ constructor(
     private val clustersHelper: ClustersHelper,
 ) : ViewModel() {
 
-  private val _deviceMatterInfoList = MutableStateFlow<List<DeviceMatterInfo>?>(null)
-  val deviceMatterInfoList: StateFlow<List<DeviceMatterInfo>?> = _deviceMatterInfoList.asStateFlow()
+  sealed interface UiState {
+    data object Loading : UiState
+
+    data class Loaded(val deviceMatterInfoList: List<DeviceMatterInfo>) : UiState
+
+    data class Error(@StringRes val messageRes: Int) : UiState
+  }
+
+  private val refreshTrigger = MutableSharedFlow<NodeId>(replay = 1)
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  val uiState: StateFlow<UiState> =
+      refreshTrigger
+          .flatMapLatest { nodeId ->
+            flow {
+              emit(UiState.Loading)
+              emit(
+                  runCatching {
+                        UiState.Loaded(
+                            clustersHelper.fetchDeviceMatterInfo(nodeId).sortedBy { it.endpointId }
+                        )
+                      }
+                      .getOrElse {
+                        Timber.e(it, "loadExplorer failed")
+                        UiState.Error(R.string.device_explorer_error_action_failed)
+                      }
+              )
+            }
+          }
+          .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), UiState.Loading)
+
+  fun loadExplorer(nodeId: NodeId) = refreshTrigger.tryEmit(nodeId)
 
   private val _navStack = MutableStateFlow<List<ExplorerLevel>>(listOf(ExplorerLevel.EndpointList))
   val navStack: StateFlow<List<ExplorerLevel>> = _navStack.asStateFlow()
@@ -146,25 +182,6 @@ constructor(
   init {
     viewModelScope.launch(Dispatchers.IO) {
       _knownClustersById.value = ExplorerSchema.buildKnownClustersById()
-    }
-  }
-
-  fun loadExplorer(nodeId: NodeId) {
-    viewModelScope.launch {
-      val isInitialLoad = _deviceMatterInfoList.value == null
-      try {
-        val infos = clustersHelper.fetchDeviceMatterInfo(nodeId).sortedBy { it.endpointId }
-        _deviceMatterInfoList.value = infos
-      } catch (e: Exception) {
-        Timber.e(e, "loadExplorer failed")
-        if (isInitialLoad) {
-          _deviceMatterInfoList.value = emptyList()
-        }
-        showMsgDialog(
-            R.string.device_settings_admin_explorer,
-            R.string.device_explorer_error_action_failed,
-        )
-      }
     }
   }
 
