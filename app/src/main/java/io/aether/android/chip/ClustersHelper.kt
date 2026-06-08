@@ -10,11 +10,11 @@ import chip.devicecontroller.ChipStructs
 import chip.devicecontroller.ReportCallback
 import chip.devicecontroller.model.ChipAttributePath
 import chip.devicecontroller.model.ChipEventPath
-import chip.devicecontroller.model.ChipPathId
 import chip.devicecontroller.model.InvokeElement
 import chip.devicecontroller.model.NodeState
 import io.aether.android.CommissioningWindowStatus
 import io.aether.android.matter.AttributeId
+import io.aether.android.matter.CLUSTERS
 import io.aether.android.matter.ClusterId
 import io.aether.android.matter.Clusters
 import io.aether.android.matter.CommandId
@@ -191,7 +191,9 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
     }
   }
 
-  suspend fun readRootDiagnosticsClusters(nodeId: NodeId): Map<ClusterId, DiagnosticClusterSnapshot> {
+  suspend fun readRootDiagnosticsClusters(
+      nodeId: NodeId
+  ): Map<ClusterId, DiagnosticClusterSnapshot> {
     val connectedDevicePtr =
         try {
           chipClient.getConnectedDevicePointer(nodeId)
@@ -210,9 +212,26 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
             Clusters.DiagnosticLogs.ID,
         )
 
-    val nodeState =
+    val attributePaths = clusterIds.flatMap { clusterId ->
+      val knownAttributeIds = CLUSTERS[clusterId]?.attributes?.keys.orEmpty()
+      val attributeIds =
+          if (knownAttributeIds.isEmpty()) {
+            listOf(GenericAttributes.AttributeList.ID)
+          } else {
+            knownAttributeIds
+          }
+      attributeIds.map { attributeId ->
+        ChipAttributePath.newInstance(
+            ROOT_ENDPOINT_ID.toInt().toLong(),
+            clusterId.toLong(),
+            attributeId.toLong(),
+        )
+      }
+    }
+
+    val nodeState: NodeState? =
         try {
-          suspendCoroutine { continuation ->
+          suspendCoroutine<NodeState?> { continuation ->
             val completed = AtomicBoolean(false)
             var latestNodeState: NodeState? = null
             chipClient.chipDeviceController.readPath(
@@ -241,13 +260,7 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
                   }
                 },
                 connectedDevicePtr,
-                clusterIds.map { clusterId ->
-                  ChipAttributePath.newInstance(
-                      ROOT_ENDPOINT_ID.toInt().toLong(),
-                      clusterId.toLong(),
-                      ChipPathId.forWildcard(),
-                  )
-                },
+                attributePaths,
                 emptyList(),
                 false,
             )
@@ -263,13 +276,15 @@ class ClustersHelper @Inject constructor(private val chipClient: ChipClient) {
       val attributes =
           clusterState
               ?.attributeStates
+              ?.entries
               ?.asSequence()
-              ?.mapNotNull { (id, state) ->
-                val attributeId = id.toAttributeId()
+              ?.mapNotNull { entry ->
+                val attributeId = entry.key.toAttributeId()
                 if (attributeId in GENERIC_ATTRIBUTE_IDS) {
                   null
                 } else {
-                  val value = state.value?.toDisplayString() ?: state.json?.toDisplayString()
+                  val value =
+                      entry.value.value?.toDisplayString() ?: entry.value.json?.toDisplayString()
                   value?.let { attributeId to it }
                 }
               }

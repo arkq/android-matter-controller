@@ -41,7 +41,8 @@ data class DiagnosticsUiState(
 )
 
 @HiltViewModel
-class DiagnosticsViewModel @Inject constructor(private val clustersHelper: ClustersHelper) : ViewModel() {
+class DiagnosticsViewModel @Inject constructor(private val clustersHelper: ClustersHelper) :
+    ViewModel() {
   private val targetClusters =
       listOf(
           Clusters.GeneralDiagnostics.ID,
@@ -73,29 +74,28 @@ class DiagnosticsViewModel @Inject constructor(private val clustersHelper: Clust
             errorRes = null,
         )
 
-    refreshJob =
-        viewModelScope.launch {
-          val result = runCatching { clustersHelper.readRootDiagnosticsClusters(nodeId) }
-          result
-              .onSuccess { snapshot ->
-                _uiState.value =
-                    DiagnosticsUiState(
-                        isInitialLoading = false,
-                        isRefreshing = false,
-                        clusters = toUiClusters(snapshot),
-                        errorRes = null,
-                    )
-              }
-              .onFailure { error ->
-                Timber.e(error, "loadDiagnostics failed")
-                _uiState.value =
-                    _uiState.value.copy(
-                        isInitialLoading = false,
-                        isRefreshing = false,
-                        errorRes = R.string.device_diagnostics_load_failed,
-                    )
-              }
-        }
+    refreshJob = viewModelScope.launch {
+      val result = runCatching { clustersHelper.readRootDiagnosticsClusters(nodeId) }
+      result
+          .onSuccess { snapshot ->
+            _uiState.value =
+                DiagnosticsUiState(
+                    isInitialLoading = false,
+                    isRefreshing = false,
+                    clusters = toUiClusters(snapshot),
+                    errorRes = null,
+                )
+          }
+          .onFailure { error ->
+            Timber.e(error, "loadDiagnostics failed")
+            _uiState.value =
+                _uiState.value.copy(
+                    isInitialLoading = false,
+                    isRefreshing = false,
+                    errorRes = R.string.device_diagnostics_load_failed,
+                )
+          }
+    }
   }
 
   private fun toUiClusters(
@@ -114,7 +114,9 @@ class DiagnosticsViewModel @Inject constructor(private val clustersHelper: Clust
                   ?.map { (attributeId, value) ->
                     DiagnosticsAttributeUiItem(
                         id = attributeId,
-                        name = clusterInfo?.attributes?.get(attributeId)?.name ?: formatAttributeId(attributeId),
+                        name =
+                            clusterInfo?.attributes?.get(attributeId)?.name
+                                ?: formatAttributeId(attributeId),
                         value = value,
                     )
                   }
@@ -124,9 +126,9 @@ class DiagnosticsViewModel @Inject constructor(private val clustersHelper: Clust
     }
   }
 
-  private fun formatClusterId(clusterId: ClusterId): String = "Cluster 0x%04X".format(clusterId.toLong())
+  private fun formatClusterId(clusterId: ClusterId): String =
+      "Cluster 0x%04X".format(clusterId.toLong())
 
   private fun formatAttributeId(attributeId: AttributeId): String =
       "Attribute 0x%04X".format(attributeId.toLong())
 }
-

@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -143,7 +144,7 @@ private fun DiagnosticsScreen(
           ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.paddingNormal),
-                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingTiny),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingSmall),
             ) {
               Text(
                   text = selectedCluster.title,
@@ -177,7 +178,7 @@ private fun DiagnosticsScreen(
             ElevatedCard(modifier = Modifier.fillMaxWidth()) {
               Column(
                   modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.paddingNormal),
-                  verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingTiny),
+                  verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingSmall),
               ) {
                 Text(text = attribute.name, style = MaterialTheme.typography.titleSmall)
                 Text(
@@ -194,4 +195,3 @@ private fun DiagnosticsScreen(
     }
   }
 }
-
