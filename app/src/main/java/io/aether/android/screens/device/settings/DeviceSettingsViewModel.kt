@@ -76,33 +76,37 @@ constructor(
       refreshTrigger
           .flatMapLatest { nodeId ->
             flow {
-              // Check if we already have the data for the given nodeId.
-              val current = uiState.value
-              if (
-                  current is UiState.Loaded &&
-                      current.device.nodeId == nodeId &&
-                      current.basicInformation != null
-              ) {
-                return@flow
+              // Use existing state as a local cache: emit stale data immediately so the UI
+              // never flashes "Loading" or shows unknown values while refreshing.
+              val cached = uiState.value
+              if (cached is UiState.Loaded && cached.device.nodeId == nodeId) {
+                emit(cached)
+              } else {
+                emit(UiState.Loading)
               }
-              emit(UiState.Loading)
               coroutineScope {
-                // Kick off the network read immediately.
+                // Kick off the network read immediately (async) so total wait time is
+                // bounded by the network round-trip, not storage + network sequentially.
                 val networkDeferred = async {
                   runCatching { clustersHelper.readBasicInformationAttributes(nodeId) }
                       .onFailure { Timber.w(it, "Network read failed") }
                       .getOrNull()
                 }
-                // Fetch cached data from the storage.
+                // Fetch fresh data from storage (fast local read).
                 val device =
                     runCatching { devicesRepository.getDevice(nodeId) }
                         .getOrElse {
                           emit(UiState.Error(R.string.device_settings_load_failed))
                           return@coroutineScope
                         }
-                // Immediate emission of cached data.
-                emit(UiState.Loaded(device, null, false, null))
-                // Await network result.
+                // Emit storage-fresh device with cached basicInfo so e.g. a rename is
+                // reflected immediately without waiting for the network round-trip.
+                val cachedBasicInfo =
+                    (cached as? UiState.Loaded)
+                        ?.takeIf { it.device.nodeId == nodeId }
+                        ?.basicInformation
+                emit(UiState.Loaded(device, cachedBasicInfo, false, null))
+                // Await network result and update with live basic information.
                 val basicInfo = networkDeferred.await()
                 if (basicInfo != null) {
                   syncBasicInfoToStorage(nodeId, basicInfo)
@@ -123,7 +127,6 @@ constructor(
           .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), UiState.Loading)
 
   fun loadDevice(nodeId: NodeId) {
-    Timber.d("loadDevice: nodeId [$nodeId]")
     refreshTrigger.tryEmit(nodeId)
   }
 
