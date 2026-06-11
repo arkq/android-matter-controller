@@ -15,9 +15,9 @@ import io.aether.android.matter.NodeId
 import io.aether.android.matter.toNodeId
 import io.aether.android.screens.device.DeviceRoute
 import io.aether.android.screens.device.settings.DeviceSettingsRoute
-import io.aether.android.screens.device.settings.FabricsRoute
 import io.aether.android.screens.device.settings.diagnostics.DiagnosticsRoute
 import io.aether.android.screens.device.settings.explorer.ExplorerRoute
+import io.aether.android.screens.device.settings.fabrics.FabricsRoute
 import io.aether.android.screens.home.HomeRoute
 import io.aether.android.screens.scanner.ScannerRoute
 import io.aether.android.screens.thread.ThreadRoute

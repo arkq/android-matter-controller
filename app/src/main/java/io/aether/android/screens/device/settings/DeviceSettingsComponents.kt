@@ -6,6 +6,7 @@ package io.aether.android.screens.device.settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,20 +20,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import io.aether.android.screens.common.GroupBox
+import io.aether.android.screens.common.LabeledContent
 
 @Composable
-internal fun SettingsSection(title: String, content: @Composable () -> Unit) {
+internal fun SettingsSection(title: String, content: @Composable ColumnScope.() -> Unit) {
   GroupBox(title = title, content = content)
 }
 
 @Composable
 internal fun SettingsInfoRow(label: String, value: String) {
-  Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-    Text(
-        text = label,
-        style = MaterialTheme.typography.labelSmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
+  LabeledContent(label = label, modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
     Text(text = value, style = MaterialTheme.typography.bodyMedium)
   }
 }
@@ -43,12 +40,7 @@ internal fun SettingsClickableRow(label: String, value: String, onClick: () -> U
       modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 4.dp),
       verticalAlignment = Alignment.CenterVertically,
   ) {
-    Column(modifier = Modifier.weight(1f)) {
-      Text(
-          text = label,
-          style = MaterialTheme.typography.labelSmall,
-          color = MaterialTheme.colorScheme.onSurfaceVariant,
-      )
+    LabeledContent(label = label, modifier = Modifier.weight(1f)) {
       Text(text = value, style = MaterialTheme.typography.bodyMedium)
     }
   }

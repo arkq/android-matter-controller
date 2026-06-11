@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.device.settings
+package io.aether.android.screens.device.settings.fabrics
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

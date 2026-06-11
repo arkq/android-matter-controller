@@ -5,6 +5,12 @@ package io.aether.android.matter
 
 import io.aether.android.R
 
+/** The root endpoint ID for Matter devices. */
+val ROOT_ENDPOINT_ID: EndpointId = EndpointId(0u)
+
+/** The wildcard attribute ID for Matter devices. */
+val WILDCARD_ATTRIBUTE_ID: AttributeId = AttributeId(0xFFFFFFFFu)
+
 /** Checks if the data type is numeric (e.g. should use numeric keyboard). */
 fun DataType.isNumeric(): Boolean =
     when (this) {

@@ -8,119 +8,111 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.aether.android.R
-import io.aether.android.chip.ClustersHelper
-import io.aether.android.chip.DiagnosticClusterSnapshot
-import io.aether.android.matter.AttributeId
-import io.aether.android.matter.CLUSTERS
-import io.aether.android.matter.ClusterId
-import io.aether.android.matter.Clusters
+import io.aether.android.data.DiagnosticsRepository
+import io.aether.android.data.models.GeneralDiagnosticsData
+import io.aether.android.data.models.SoftwareDiagnosticsData
 import io.aether.android.matter.NodeId
 import javax.inject.Inject
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import timber.log.Timber
-
-data class DiagnosticsAttributeUiItem(
-    val id: AttributeId,
-    val name: String?,
-    val value: String,
-)
-
-data class DiagnosticsClusterUiItem(
-    val clusterId: ClusterId,
-    val title: String?,
-    val isSupported: Boolean,
-    val attributes: List<DiagnosticsAttributeUiItem>,
-)
 
 data class DiagnosticsUiState(
     val isInitialLoading: Boolean = true,
     val isRefreshing: Boolean = false,
-    val clusters: List<DiagnosticsClusterUiItem> = emptyList(),
+    val generalDiagnostics: GeneralDiagnosticsData? = null,
+    val softwareDiagnostics: SoftwareDiagnosticsData? = null,
     @StringRes val errorRes: Int? = null,
 )
 
+private data class RefreshRequest(val nodeId: NodeId, val timestamp: Long)
+
+private sealed interface PartialState {
+  data object Loading : PartialState
+
+  data class Success(
+      val generalDiagnostics: GeneralDiagnosticsData?,
+      val softwareDiagnostics: SoftwareDiagnosticsData?,
+  ) : PartialState
+
+  data class Error(@StringRes val errorRes: Int) : PartialState
+}
+
 @HiltViewModel
-class DiagnosticsViewModel @Inject constructor(private val clustersHelper: ClustersHelper) :
-    ViewModel() {
-  private val targetClusters =
-      listOf(
-          Clusters.GeneralDiagnostics.ID,
-          Clusters.SoftwareDiagnostics.ID,
-          Clusters.ThreadNetworkDiagnostics.ID,
-          Clusters.WiFiNetworkDiagnostics.ID,
-          Clusters.EthernetNetworkDiagnostics.ID,
-          Clusters.DiagnosticLogs.ID,
-      )
+class DiagnosticsViewModel
+@Inject
+constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewModel() {
 
-  private var refreshJob: Job? = null
-  private var activeNodeId: NodeId? = null
+  private val refreshTrigger = MutableSharedFlow<RefreshRequest>(replay = 1)
 
-  private val _uiState = kotlinx.coroutines.flow.MutableStateFlow(DiagnosticsUiState())
-  val uiState: kotlinx.coroutines.flow.StateFlow<DiagnosticsUiState> = _uiState
+  val uiState: StateFlow<DiagnosticsUiState> =
+      refreshTrigger
+          .flatMapLatest { request ->
+            flow {
+              emit(PartialState.Loading)
+
+              val generalDiagnostics = diagnosticsRepository.readGeneralDiagnostics(request.nodeId)
+              val softwareDiagnostics =
+                  diagnosticsRepository.readSoftwareDiagnostics(request.nodeId)
+
+              if (generalDiagnostics == null && softwareDiagnostics == null) {
+                emit(PartialState.Error(R.string.device_diagnostics_load_failed))
+              } else {
+                emit(PartialState.Success(generalDiagnostics, softwareDiagnostics))
+              }
+            }
+          }
+          .scan(DiagnosticsUiState(isInitialLoading = true)) { previousState, partial ->
+            when (partial) {
+              is PartialState.Loading ->
+                  previousState.copy(
+                      isRefreshing =
+                          previousState.generalDiagnostics != null ||
+                              previousState.softwareDiagnostics != null,
+                      isInitialLoading =
+                          previousState.generalDiagnostics == null &&
+                              previousState.softwareDiagnostics == null,
+                      errorRes = null,
+                  )
+              is PartialState.Success ->
+                  previousState.copy(
+                      isInitialLoading = false,
+                      isRefreshing = false,
+                      generalDiagnostics = partial.generalDiagnostics,
+                      softwareDiagnostics = partial.softwareDiagnostics,
+                      errorRes = null,
+                  )
+              is PartialState.Error ->
+                  previousState.copy(
+                      isInitialLoading = false,
+                      isRefreshing = false,
+                      errorRes = partial.errorRes,
+                  )
+            }
+          }
+          .stateIn(
+              viewModelScope,
+              SharingStarted.WhileSubscribed(5000),
+              DiagnosticsUiState(isInitialLoading = true),
+          )
 
   fun loadDiagnostics(nodeId: NodeId, forceRefresh: Boolean = false) {
-    val currentState = _uiState.value
-    if (!forceRefresh && activeNodeId == nodeId && currentState.clusters.isNotEmpty()) {
+    val currentRequest = refreshTrigger.replayCache.firstOrNull()
+    if (
+        !forceRefresh &&
+            currentRequest?.nodeId == nodeId &&
+            (uiState.value.generalDiagnostics != null || uiState.value.softwareDiagnostics != null)
+    ) {
       return
     }
 
-    activeNodeId = nodeId
-    refreshJob?.cancel()
-    _uiState.value =
-        currentState.copy(
-            isInitialLoading = currentState.clusters.isEmpty(),
-            isRefreshing = currentState.clusters.isNotEmpty(),
-            errorRes = null,
-        )
-
-    refreshJob = viewModelScope.launch {
-      val result = runCatching { clustersHelper.readRootDiagnosticsClusters(nodeId) }
-      result
-          .onSuccess { snapshot ->
-            _uiState.value =
-                DiagnosticsUiState(
-                    isInitialLoading = false,
-                    isRefreshing = false,
-                    clusters = toUiClusters(snapshot),
-                    errorRes = null,
-                )
-          }
-          .onFailure { error ->
-            Timber.e(error, "loadDiagnostics failed")
-            _uiState.value =
-                _uiState.value.copy(
-                    isInitialLoading = false,
-                    isRefreshing = false,
-                    errorRes = R.string.device_diagnostics_load_failed,
-                )
-          }
-    }
-  }
-
-  private fun toUiClusters(
-      snapshots: Map<ClusterId, DiagnosticClusterSnapshot>
-  ): List<DiagnosticsClusterUiItem> {
-    return targetClusters.map { clusterId ->
-      val snapshot = snapshots[clusterId]
-      val clusterInfo = CLUSTERS[clusterId]
-      DiagnosticsClusterUiItem(
-          clusterId = clusterId,
-          title = clusterInfo?.name,
-          isSupported = snapshot?.isSupported == true,
-          attributes =
-              snapshot
-                  ?.attributes
-                  ?.map { (attributeId, value) ->
-                    DiagnosticsAttributeUiItem(
-                        id = attributeId,
-                        name = clusterInfo?.attributes?.get(attributeId)?.name,
-                        value = value,
-                    )
-                  }
-                  .orEmpty()
-                  .sortedBy { it.id },
-      )
+    viewModelScope.launch {
+      refreshTrigger.emit(RefreshRequest(nodeId, System.currentTimeMillis()))
     }
   }
 }
