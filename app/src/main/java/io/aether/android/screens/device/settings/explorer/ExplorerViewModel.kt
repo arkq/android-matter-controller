@@ -105,7 +105,7 @@ constructor(
 
     data class Loaded(val deviceMatterInfoList: List<DeviceMatterInfo>) : UiState
 
-    data class Error(@StringRes val messageRes: Int) : UiState
+    data class Error(@field:StringRes val messageRes: Int) : UiState
   }
 
   private val refreshTrigger = MutableSharedFlow<NodeId>(replay = 1)
