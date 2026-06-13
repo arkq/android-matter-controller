@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -30,6 +31,8 @@ fun GroupBox(
     content: @Composable ColumnScope.() -> Unit,
 ) {
   val shape = RoundedCornerShape(MaterialTheme.spacing.roundedCorner)
+  val labelFontSize = MaterialTheme.typography.labelMedium.fontSize
+  val labelOffsetY = with(LocalDensity.current) { -(labelFontSize.toDp() / 2) }
   Box(
       modifier =
           modifier.padding(top = MaterialTheme.spacing.paddingSmall).semantics(
@@ -52,10 +55,7 @@ fun GroupBox(
         color = MaterialTheme.colorScheme.primary,
         modifier =
             Modifier.align(Alignment.TopStart)
-                .offset(
-                    x = MaterialTheme.spacing.paddingNormal,
-                    y = -MaterialTheme.typography.labelMedium.fontSize.value.dp / 2,
-                )
+                .offset(x = MaterialTheme.spacing.paddingNormal, y = labelOffsetY)
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 4.dp),
     )

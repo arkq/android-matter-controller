@@ -18,6 +18,8 @@ import io.aether.android.matter.toFabricId
 import io.aether.android.matter.toNodeId
 import io.aether.android.matter.toVendorId
 import javax.inject.Inject
+import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -25,8 +27,10 @@ import timber.log.Timber
 
 class FabricsRepository @Inject constructor(private val chipClient: ChipClient) {
 
+  @OptIn(ExperimentalAtomicApi::class)
   suspend fun readManagedFabrics(nodeId: NodeId): List<ManagedFabric> =
       runCatching {
+            val completed = AtomicBoolean(false)
             val devicePtr = chipClient.getConnectedDevicePointer(nodeId)
             val currentIdx = getCurrentFabricIndex(nodeId)
             suspendCancellableCoroutine { continuation ->
@@ -45,11 +49,12 @@ class FabricsRepository @Inject constructor(private val chipClient: ChipClient) 
                         eventPath: ChipEventPath?,
                         ex: Exception,
                     ) {
-                      if (continuation.isActive) continuation.resumeWithException(ex)
+                      if (!completed.compareAndSet(false, true)) return
+                      continuation.resumeWithException(ex)
                     }
 
                     override fun onReport(nodeState: NodeState) {
-                      if (!continuation.isActive) return
+                      if (!completed.compareAndSet(false, true)) return
                       continuation.resume(extractManagedFabrics(nodeState, currentIdx))
                     }
                   },
@@ -85,9 +90,11 @@ class FabricsRepository @Inject constructor(private val chipClient: ChipClient) 
         } ?: emptyList()
   }
 
+  @OptIn(ExperimentalAtomicApi::class)
   suspend fun removeFabric(nodeId: NodeId, fabricIndex: Int) =
       runCatching {
             Timber.d("Removing fabricIndex=$fabricIndex for nodeId=$nodeId")
+            val completed = AtomicBoolean(false)
             val devicePtr = chipClient.getConnectedDevicePointer(nodeId)
             suspendCancellableCoroutine { continuation ->
               val cluster =
@@ -99,7 +106,7 @@ class FabricsRepository @Inject constructor(private val chipClient: ChipClient) 
                         fabricIndex: java.util.Optional<Int>,
                         debugText: java.util.Optional<String>,
                     ) {
-                      if (!continuation.isActive) return
+                      if (!completed.compareAndSet(false, true)) return
                       if (statusCode == 0) {
                         continuation.resume(Unit)
                       } else {
@@ -111,7 +118,8 @@ class FabricsRepository @Inject constructor(private val chipClient: ChipClient) 
                     }
 
                     override fun onError(ex: Exception) {
-                      if (continuation.isActive) continuation.resumeWithException(ex)
+                      if (!completed.compareAndSet(false, true)) return
+                      continuation.resumeWithException(ex)
                     }
                   },
                   fabricIndex,
@@ -129,8 +137,10 @@ class FabricsRepository @Inject constructor(private val chipClient: ChipClient) 
         ?: chipClient.chipDeviceController.getFabricIndex()
   }
 
+  @OptIn(ExperimentalAtomicApi::class)
   private suspend fun readCurrentFabricIndexAttribute(nodeId: NodeId): Int? =
       runCatching {
+            val completed = AtomicBoolean(false)
             val devicePtr = chipClient.getConnectedDevicePointer(nodeId)
             suspendCancellableCoroutine { continuation ->
               val readPaths =
@@ -148,11 +158,12 @@ class FabricsRepository @Inject constructor(private val chipClient: ChipClient) 
                         event: ChipEventPath?,
                         ex: Exception,
                     ) {
-                      if (continuation.isActive) continuation.resumeWithException(ex)
+                      if (!completed.compareAndSet(false, true)) return
+                      continuation.resumeWithException(ex)
                     }
 
                     override fun onReport(nodeState: NodeState) {
-                      if (!continuation.isActive) return
+                      if (!completed.compareAndSet(false, true)) return
                       continuation.resume(extractCurrentFabricIndex(nodeState))
                     }
                   },

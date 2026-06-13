@@ -38,16 +38,13 @@ constructor(
 
   fun loadFabrics(nodeId: NodeId) {
     viewModelScope.launch {
-      val isFirstLoad = _uiState.value.fabrics.isEmpty() && _uiState.value.errorRes == null
-
       _uiState.update {
         it.copy(
-            isInitialLoading = isFirstLoad,
-            isRefreshing = !isFirstLoad,
+            isInitialLoading = _uiState.value.isInitialLoading,
+            isRefreshing = !_uiState.value.isInitialLoading,
             errorRes = null,
         )
       }
-
       runCatching {
             val fabrics = repository.readManagedFabrics(nodeId)
             _uiState.update {
