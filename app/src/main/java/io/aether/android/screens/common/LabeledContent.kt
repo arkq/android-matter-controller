@@ -5,35 +5,46 @@ package io.aether.android.screens.common
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import io.aether.android.spacing
 
 @Composable
 fun LabeledContent(
-    label: String,
+    label: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    labelStyle: TextStyle = MaterialTheme.typography.labelSmall,
-    labelColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
-    spacing: Dp = 4.dp,
     content: @Composable () -> Unit,
 ) {
   Column(
       modifier = modifier.semantics(mergeDescendants = true) {},
-      verticalArrangement = Arrangement.spacedBy(spacing),
+      verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingTiny),
   ) {
-    Text(
-        text = label,
-        style = labelStyle,
-        color = labelColor,
-    )
+    CompositionLocalProvider(
+        LocalTextStyle provides MaterialTheme.typography.labelSmall,
+        LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant,
+    ) {
+      label()
+    }
     content()
   }
+}
+
+/** Convenience overload for the most common "just a string" case */
+@Composable
+fun LabeledContent(
+    label: String,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+  LabeledContent(
+      label = { Text(label) },
+      modifier = modifier,
+      content = content,
+  )
 }

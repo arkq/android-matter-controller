@@ -109,7 +109,7 @@ fun AppNavigation(
           nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId(),
       )
     }
-    // Controllers
+    // Fabrics from Device Settings
     composable(
         ROUTE_DEVICE_FABRICS,
         arguments = listOf(navArgument(ARG_NODE_ID) { type = NavType.LongType }),

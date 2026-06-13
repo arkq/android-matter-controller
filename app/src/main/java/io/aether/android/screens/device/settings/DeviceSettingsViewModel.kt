@@ -66,7 +66,7 @@ constructor(
         val dateCommissioned: Timestamp?,
     ) : UiState
 
-    data class Error(@StringRes val messageRes: Int) : UiState
+    data class Error(@field:StringRes val messageRes: Int) : UiState
   }
 
   private val refreshTrigger = MutableSharedFlow<NodeId>(replay = 1)

@@ -41,6 +41,7 @@ fun DataType.isNumeric(): Boolean =
       DataType.U_INT64,
       DataType.U_INT8,
       DataType.VENDOR_ID -> true
+
       else -> false
     }
 
