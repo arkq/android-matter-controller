@@ -277,44 +277,56 @@ private fun DeviceSettingsScreen(
       val unknown = stringResource(R.string.device_type_unknown)
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_vendor),
-          value =
-              vendorLabel(
-                  basicInformation?.vendorId?.takeIf { it != VendorId(0u) } ?: device.vendorId,
-                  basicInformation?.vendorName?.takeIf { it.isNotBlank() }
-                      ?: device.vendorName.takeIf { it.isNotBlank() },
-              ),
-      )
+      ) {
+        Text(
+            text =
+                vendorLabel(
+                    basicInformation?.vendorId?.takeIf { it != VendorId(0u) } ?: device.vendorId,
+                    basicInformation?.vendorName?.takeIf { it.isNotBlank() }
+                        ?: device.vendorName.takeIf { it.isNotBlank() },
+                ),
+        )
+      }
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_product),
-          value =
-              stringResource(
-                  R.string.device_settings_basic_product_value,
-                  basicInformation?.productName?.takeIf { it.isNotBlank() }
-                      ?: device.productName.takeIf { it.isNotBlank() }
-                      ?: unknown,
-                  basicInformation?.productId?.takeIf { it != ProductId(0u) }?.toString()
-                      ?: device.productId.toString(),
-              ),
-      )
+      ) {
+        Text(
+            text =
+                stringResource(
+                    R.string.device_settings_basic_product_value,
+                    basicInformation?.productName?.takeIf { it.isNotBlank() }
+                        ?: device.productName.takeIf { it.isNotBlank() }
+                        ?: unknown,
+                    basicInformation?.productId?.takeIf { it != ProductId(0u) }?.toString()
+                        ?: device.productId.toString(),
+                ),
+        )
+      }
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_hardware_version),
-          value = basicInformation?.hardwareVersion?.takeIf { it.isNotBlank() } ?: unknown,
-      )
+      ) {
+        Text(text = basicInformation?.hardwareVersion?.takeIf { it.isNotBlank() } ?: unknown)
+      }
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_software_version),
-          value = basicInformation?.softwareVersion?.takeIf { it.isNotBlank() } ?: unknown,
-      )
+      ) {
+        Text(text = basicInformation?.softwareVersion?.takeIf { it.isNotBlank() } ?: unknown)
+      }
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_added_on),
-          value =
-              dateCommissioned
-                  ?.takeUnless { it.seconds == 0L && it.nanos == 0 }
-                  ?.let { formatTimestamp(LocalContext.current, it) } ?: unknown,
-      )
+      ) {
+        Text(
+            text =
+                dateCommissioned
+                    ?.takeUnless { it.seconds == 0L && it.nanos == 0 }
+                    ?.let { formatTimestamp(LocalContext.current, it) } ?: unknown,
+        )
+      }
       SettingsInfoRow(
           label = stringResource(R.string.device_settings_basic_node_id),
-          value = device.nodeId.toString(),
-      )
+      ) {
+        Text(text = device.nodeId.toString())
+      }
     }
 
     // General section
