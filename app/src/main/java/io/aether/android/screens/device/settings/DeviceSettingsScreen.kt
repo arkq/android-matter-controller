@@ -350,16 +350,16 @@ private fun DeviceSettingsScreen(
     // Admin section
     SettingsSection(title = stringResource(R.string.device_settings_section_admin)) {
       SettingsActionRow(
-          icon = Icons.Outlined.Settings,
-          label = stringResource(R.string.device_settings_admin_fabrics),
-          subtitle = stringResource(R.string.device_settings_admin_fabrics_subtitle),
-          onClick = onManageFabricsClick,
-      )
-      SettingsActionRow(
           icon = Icons.Outlined.Search,
           label = stringResource(R.string.device_settings_admin_explorer),
           subtitle = stringResource(R.string.device_settings_admin_explorer_subtitle),
           onClick = onDataModelExplorerClick,
+      )
+      SettingsActionRow(
+          icon = Icons.Outlined.Settings,
+          label = stringResource(R.string.device_settings_admin_fabrics),
+          subtitle = stringResource(R.string.device_settings_admin_fabrics_subtitle),
+          onClick = onManageFabricsClick,
       )
       SettingsActionRow(
           icon = Icons.Outlined.Share,

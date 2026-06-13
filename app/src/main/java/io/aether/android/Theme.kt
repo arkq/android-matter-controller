@@ -27,6 +27,7 @@ val ColorScheme.success: Color
 data class Spacing(
     val paddingNormal: Dp = 16.dp,
     val paddingSmall: Dp = 8.dp,
+    val paddingTiny: Dp = 4.dp,
     val paddingSurfaceContent: Dp = 12.dp,
     val roundedCorner: Dp = 12.dp,
 )

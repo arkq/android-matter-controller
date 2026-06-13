@@ -1,18 +1,16 @@
 // SPDX-FileCopyrightText: 2026 The Authors
 // SPDX-License-Identifier: Apache-2.0
 
-package io.aether.android.screens.device.settings
+package io.aether.android.screens.device.settings.fabrics
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
@@ -27,9 +25,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,27 +35,30 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.aether.android.R
+import io.aether.android.data.models.ManagedFabric
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.vendorLabel
+import io.aether.android.screens.common.EmptyState
+import io.aether.android.screens.common.ErrorMessage
 import io.aether.android.screens.common.GroupBox
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.spacing
 
-/** Route composable for the Controllers screen. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FabricsRoute(
-    onBackClick: () -> Unit,
     nodeId: NodeId,
+    onBackClick: () -> Unit,
     viewModel: FabricsViewModel = hiltViewModel(),
 ) {
-  val typedNodeId = nodeId
-  LaunchedEffect(nodeId) { viewModel.loadFabrics(typedNodeId) }
+  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-  val uiState by viewModel.uiState.collectAsState()
+  LaunchedEffect(nodeId) {
+    viewModel.loadFabrics(nodeId)
+  }
 
   Scaffold(
       topBar = {
@@ -75,57 +76,51 @@ fun FabricsRoute(
       },
   ) { innerPadding ->
     FabricsScreen(
-        innerPadding = innerPadding,
+        modifier = Modifier.padding(innerPadding),
         uiState = uiState,
-        onRemoveController = { fabricIndex -> viewModel.removeFabric(typedNodeId, fabricIndex) },
+        onRefresh = { viewModel.loadFabrics(nodeId) },
+        onRemoveController = { index -> viewModel.removeFabric(nodeId, index) },
     )
   }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FabricsScreen(
-    innerPadding: PaddingValues,
-    uiState: FabricsViewModel.UiState,
-    onRemoveController: (fabricIndex: Int) -> Unit,
+    uiState: FabricsUiState,
+    onRefresh: () -> Unit,
+    onRemoveController: (Int) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-    when (uiState) {
-      is FabricsViewModel.UiState.Loading -> {
+  PullToRefreshBox(
+      isRefreshing = uiState.isRefreshing,
+      onRefresh = onRefresh,
+      modifier = modifier.fillMaxSize(),
+  ) {
+    when {
+      uiState.isInitialLoading -> {
         LoadingIndicator(stringResource(R.string.device_fabrics_loading))
       }
-
-      is FabricsViewModel.UiState.Error -> {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-          Text(
-              text = stringResource(uiState.messageRes),
-              style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.error,
-              modifier = Modifier.padding(16.dp),
-          )
-        }
+      uiState.errorRes != null -> {
+        ErrorMessage(stringResource(uiState.errorRes))
       }
-
-      is FabricsViewModel.UiState.Loaded -> {
-        if (uiState.fabrics.isEmpty()) {
-          Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(
-                text = stringResource(R.string.device_fabrics_empty),
-                style = MaterialTheme.typography.bodyMedium,
+      uiState.fabrics.isEmpty() -> {
+        EmptyState(stringResource(R.string.device_fabrics_empty))
+      }
+      else -> {
+        Column(
+            modifier =
+                Modifier.fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(MaterialTheme.spacing.paddingNormal),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
+        ) {
+          uiState.fabrics.forEach { fabric ->
+            FabricItem(
+                fabric = fabric,
+                onRemove = { onRemoveController(fabric.fabricIndex) },
+                canRemove = !fabric.isCurrentFabric,
             )
-          }
-        } else {
-          LazyColumn(
-              modifier = Modifier.fillMaxSize(),
-              contentPadding = PaddingValues(MaterialTheme.spacing.paddingNormal),
-              verticalArrangement = Arrangement.spacedBy(8.dp),
-          ) {
-            items(items = uiState.fabrics, key = { it.fabricIndex }) { fabric ->
-              FabricItem(
-                  fabric = fabric,
-                  onRemove = { onRemoveController(fabric.fabricIndex) },
-                  canRemove = !fabric.isCurrentFabric,
-              )
-            }
           }
         }
       }

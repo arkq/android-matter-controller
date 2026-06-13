@@ -15,8 +15,8 @@ import io.aether.android.matter.NodeId
 import io.aether.android.matter.toNodeId
 import io.aether.android.screens.device.DeviceRoute
 import io.aether.android.screens.device.settings.DeviceSettingsRoute
-import io.aether.android.screens.device.settings.FabricsRoute
 import io.aether.android.screens.device.settings.explorer.ExplorerRoute
+import io.aether.android.screens.device.settings.fabrics.FabricsRoute
 import io.aether.android.screens.home.HomeRoute
 import io.aether.android.screens.scanner.ScannerRoute
 import io.aether.android.screens.thread.ThreadRoute
@@ -101,7 +101,7 @@ fun AppNavigation(
           nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId(),
       )
     }
-    // Controllers
+    // Fabrics from Device Settings
     composable(
         ROUTE_DEVICE_FABRICS,
         arguments = listOf(navArgument(ARG_NODE_ID) { type = NavType.LongType }),
