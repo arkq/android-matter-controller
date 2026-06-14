@@ -3,25 +3,19 @@
 
 package io.aether.android.data.models
 
-data class NetworkInterface(
-    val name: String,
-    val isOperational: Boolean,
-    val hardwareAddress: String,
-    val ipv4Addresses: List<String>,
-    val ipv6Addresses: List<String>,
-)
+import chip.devicecontroller.ChipStructs
 
 data class GeneralDiagnosticsData(
-    val networkInterfaces: List<NetworkInterface>,
+    val networkInterfaces: List<ChipStructs.GeneralDiagnosticsClusterNetworkInterface>,
     val rebootCount: Int,
     val upTime: Long? = null,
     val totalOperationalHours: Int? = null,
-    val bootReason: String? = null,
-    var activeHardwareFaults: List<String>? = null,
-    var activeRadioFaults: List<String>? = null,
-    var activeNetworkFaults: List<String>? = null,
-    var testEventTriggersEnabled: Boolean? = null,
-    var deviceLoadStatus: String? = null,
+    val bootReason: Int? = null,
+    val activeHardwareFaults: List<String>? = null,
+    val activeRadioFaults: List<String>? = null,
+    val activeNetworkFaults: List<String>? = null,
+    val testEventTriggersEnabled: Boolean? = null,
+    val deviceLoadStatus: String? = null,
 )
 
 data class SoftwareDiagnosticsData(

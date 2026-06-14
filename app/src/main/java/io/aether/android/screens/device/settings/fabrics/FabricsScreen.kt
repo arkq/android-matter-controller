@@ -75,6 +75,10 @@ fun FabricsRoute(
         )
       },
   ) { innerPadding ->
+    if (uiState.isInitialLoading) {
+      LoadingIndicator(stringResource(R.string.device_fabrics_loading), innerPadding)
+      return@Scaffold
+    }
     FabricsScreen(
         modifier = Modifier.padding(innerPadding),
         uiState = uiState,
@@ -98,9 +102,6 @@ private fun FabricsScreen(
       modifier = modifier.fillMaxSize(),
   ) {
     when {
-      uiState.isInitialLoading -> {
-        LoadingIndicator(stringResource(R.string.device_fabrics_loading))
-      }
       uiState.errorRes != null -> {
         ErrorMessage(stringResource(uiState.errorRes))
       }

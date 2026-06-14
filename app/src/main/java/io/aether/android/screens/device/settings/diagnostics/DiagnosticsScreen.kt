@@ -7,7 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,7 +24,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.aether.android.R
@@ -63,7 +63,6 @@ fun DiagnosticsRoute(
       LoadingIndicator(stringResource(R.string.device_diagnostics_loading), innerPadding)
       return@Scaffold
     }
-
     DiagnosticsScreen(
         modifier = Modifier.fillMaxSize().padding(innerPadding),
         uiState = uiState,
@@ -84,26 +83,28 @@ private fun DiagnosticsScreen(
       onRefresh = onRefresh,
       modifier = modifier.fillMaxSize(),
   ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(MaterialTheme.spacing.paddingNormal),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+    if (uiState.errorRes != null) {
+      Text(stringResource(uiState.errorRes), color = MaterialTheme.colorScheme.error)
+    }
+    Column(
+        modifier =
+            Modifier.fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(MaterialTheme.spacing.paddingNormal),
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
     ) {
-      if (uiState.errorRes != null) {
-        item { Text(stringResource(uiState.errorRes), color = MaterialTheme.colorScheme.error) }
-      }
       uiState.generalDiagnostics?.let {
-        item {
-          DiagnosticsSection(title = stringResource(R.string.device_diagnostics_card_general)) {
-            GeneralDiagnosticsCard(it)
-          }
+        DiagnosticsSection(title = stringResource(R.string.device_diagnostics_card_general)) {
+          GeneralDiagnosticsCard(it)
+        }
+        DiagnosticsSection(title = stringResource(R.string.device_diagnostics_card_interfaces)) {
+          GeneralDiagnosticsInterfacesCard(it)
         }
       }
-      uiState.softwareDiagnostics?.let {
-        item {
-          DiagnosticsSection(title = stringResource(R.string.device_diagnostics_card_software)) {
-            SoftwareDiagnosticsCard(it)
-          }
-        }
+    }
+    uiState.softwareDiagnostics?.let {
+      DiagnosticsSection(title = stringResource(R.string.device_diagnostics_card_software)) {
+        SoftwareDiagnosticsCard(it)
       }
     }
   }

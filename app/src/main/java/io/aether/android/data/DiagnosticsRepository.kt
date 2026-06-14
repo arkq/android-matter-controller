@@ -3,13 +3,13 @@
 
 package io.aether.android.data
 
+import chip.devicecontroller.ChipStructs
 import chip.devicecontroller.ReportCallback
 import chip.devicecontroller.model.ChipAttributePath
 import chip.devicecontroller.model.ChipEventPath
 import chip.devicecontroller.model.NodeState
 import io.aether.android.chip.ChipClient
 import io.aether.android.data.models.GeneralDiagnosticsData
-import io.aether.android.data.models.NetworkInterface
 import io.aether.android.data.models.SoftwareDiagnosticsData
 import io.aether.android.matter.AttributeId
 import io.aether.android.matter.Clusters
@@ -21,25 +21,6 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
-
-inline fun <T> Any?.toMatterList(transform: (Map<Long, Any?>) -> T?): List<T> {
-  val rawList = this as? List<*> ?: return emptyList()
-
-  return rawList.mapNotNull { item ->
-    val rawMap = item as? Map<*, *> ?: return@mapNotNull null
-
-    // Explicitly build a Map<Long, Any?> by iterating entries
-    val typedMap = mutableMapOf<Long, Any?>()
-    rawMap.forEach { (key, value) ->
-      val longKey = (key as? Number)?.toLong()
-      if (longKey != null) {
-        typedMap[longKey] = value
-      }
-    }
-
-    transform(typedMap)
-  }
-}
 
 class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClient) {
 
@@ -92,39 +73,32 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
     fun attr(id: AttributeId) = clusterState.getAttributeState(id.toLong())?.value
     return GeneralDiagnosticsData(
         networkInterfaces =
-            attr(Clusters.GeneralDiagnostics.Attributes.NetworkInterfaces.ID)?.toMatterList { map ->
-              NetworkInterface(
-                  name = map[0] as? String ?: "Unknown",
-                  isOperational = (map[1] as? Boolean) ?: false,
-                  hardwareAddress = map[2] as? String ?: "Unknown",
-                  ipv4Addresses = (map[3] as? List<*>)?.mapNotNull { it as? String } ?: emptyList(),
-                  ipv6Addresses = (map[4] as? List<*>)?.mapNotNull { it as? String } ?: emptyList(),
-              )
-            } ?: emptyList(),
+            attr(Clusters.GeneralDiagnostics.Attributes.NetworkInterfaces.ID).toNetworkInterfaces(),
         rebootCount = attr(Clusters.GeneralDiagnostics.Attributes.RebootCount.ID)?.toInt() ?: 0,
         upTime = attr(Clusters.GeneralDiagnostics.Attributes.UpTime.ID)?.toLong(),
         totalOperationalHours =
             attr(Clusters.GeneralDiagnostics.Attributes.TotalOperationalHours.ID)?.toInt(),
-        bootReason = attr(Clusters.GeneralDiagnostics.Attributes.BootReason.ID)?.toString(),
-        activeHardwareFaults =
-            attr(Clusters.GeneralDiagnostics.Attributes.ActiveHardwareFaults.ID)
-                ?.toString()
-                ?.split(",")
-                ?.map { it.trim() },
-        activeRadioFaults =
-            attr(Clusters.GeneralDiagnostics.Attributes.ActiveRadioFaults.ID)
-                ?.toString()
-                ?.split(",")
-                ?.map { it.trim() },
-        activeNetworkFaults =
-            attr(Clusters.GeneralDiagnostics.Attributes.ActiveNetworkFaults.ID)
-                ?.toString()
-                ?.split(",")
-                ?.map { it.trim() },
-        testEventTriggersEnabled =
-            attr(Clusters.GeneralDiagnostics.Attributes.TestEventTriggersEnabled.ID)?.toBoolean(),
-        deviceLoadStatus =
-            attr(Clusters.GeneralDiagnostics.Attributes.DeviceLoadStatus.ID)?.toString(),
+        // bootReason = attr(Clusters.GeneralDiagnostics.Attributes.BootReason.ID)?.toInt(),
+        // activeHardwareFaults =
+        //     attr(Clusters.GeneralDiagnostics.Attributes.ActiveHardwareFaults.ID)
+        //         ?.toString()
+        //         ?.split(",")
+        //         ?.map { it.trim() },
+        // activeRadioFaults =
+        //     attr(Clusters.GeneralDiagnostics.Attributes.ActiveRadioFaults.ID)
+        //         ?.toString()
+        //         ?.split(",")
+        //         ?.map { it.trim() },
+        // activeNetworkFaults =
+        //     attr(Clusters.GeneralDiagnostics.Attributes.ActiveNetworkFaults.ID)
+        //         ?.toString()
+        //         ?.split(",")
+        //         ?.map { it.trim() },
+        // testEventTriggersEnabled =
+        //
+        // attr(Clusters.GeneralDiagnostics.Attributes.TestEventTriggersEnabled.ID)?.toBoolean(),
+        // deviceLoadStatus =
+        //     attr(Clusters.GeneralDiagnostics.Attributes.DeviceLoadStatus.ID)?.toString(),
     )
   }
 
@@ -185,6 +159,13 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
             attr(Clusters.SoftwareDiagnostics.Attributes.CurrentHeapHighWatermark.ID)?.toLong(),
     )
   }
+
+  private fun Any?.toNetworkInterfaces():
+      List<ChipStructs.GeneralDiagnosticsClusterNetworkInterface> =
+      when (this) {
+        is List<*> -> this.filterIsInstance<ChipStructs.GeneralDiagnosticsClusterNetworkInterface>()
+        else -> emptyList()
+      }
 
   private fun Any?.toBoolean(): Boolean? =
       when (this) {

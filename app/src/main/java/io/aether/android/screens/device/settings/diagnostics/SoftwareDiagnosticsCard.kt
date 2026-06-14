@@ -13,9 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import io.aether.android.R
 import io.aether.android.data.models.SoftwareDiagnosticsData
+import io.aether.android.spacing
 
 @Composable
 fun SoftwareDiagnosticsCard(data: SoftwareDiagnosticsData) {
@@ -26,19 +26,19 @@ fun SoftwareDiagnosticsCard(data: SoftwareDiagnosticsData) {
 
   if (total > 0) {
     DiagnosticsInfoRow(
-        label = stringResource(R.string.device_diagnostics_label_current_heap_used)
+        label = stringResource(R.string.device_diagnostics_label_current_heap_usage)
     ) {
       val progress = used.toFloat() / total.toFloat()
       LinearProgressIndicator(
           progress = { progress },
-          modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+          modifier = Modifier.fillMaxWidth().padding(vertical = MaterialTheme.spacing.paddingTiny),
           color =
               if (progress > 0.9f) MaterialTheme.colorScheme.error
               else MaterialTheme.colorScheme.primary,
       )
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text("${used / 1024} KB used")
-        Text("${free / 1024} KB free")
+        Text(stringResource(R.string.device_diagnostics_current_heap_used, used / 1024))
+        Text(stringResource(R.string.device_diagnostics_current_heap_free, free / 1024))
       }
     }
   }
@@ -47,7 +47,7 @@ fun SoftwareDiagnosticsCard(data: SoftwareDiagnosticsData) {
     DiagnosticsInfoRow(
         label = stringResource(R.string.device_diagnostics_label_current_heap_high_watermark)
     ) {
-      Text("$it KB")
+      Text(stringResource(R.string.device_diagnostics_current_heap_high_watermark, it / 1024))
     }
   }
 
