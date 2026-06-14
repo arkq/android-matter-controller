@@ -23,6 +23,7 @@ import io.aether.android.matter.EventId
 import io.aether.android.matter.GenericAttributes
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.ProductId
+import io.aether.android.matter.ROOT_ENDPOINT_ID
 import io.aether.android.matter.VendorId
 import io.aether.android.matter.toAttributeId
 import io.aether.android.matter.toClusterId
@@ -52,8 +53,6 @@ data class DeviceMatterInfo(
     val clientClusters: List<ClusterId>,
     val parts: List<EndpointId>,
 )
-
-private val ROOT_ENDPOINT_ID: EndpointId = EndpointId(0u)
 
 data class BasicInformationAttributes(
     val vendorId: VendorId? = null,

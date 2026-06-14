@@ -47,7 +47,7 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
       runCatching {
             val devicePtr = chipClient.getConnectedDevicePointer(nodeId)
             suspendCancellableCoroutine { continuation ->
-              var readCallback =
+              val readCallback =
                   object : ReportCallback {
                     override fun onError(
                         path: ChipAttributePath?,
@@ -63,7 +63,7 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
                       }
                     }
                   }
-              var readPaths =
+              val readPaths =
                   listOf(
                       ChipAttributePath.newInstance(
                           ROOT_ENDPOINT_ID.toLong(),
@@ -132,7 +132,7 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
       runCatching {
             val devicePtr = chipClient.getConnectedDevicePointer(nodeId)
             suspendCancellableCoroutine { continuation ->
-              var readCallback =
+              val readCallback =
                   object : ReportCallback {
                     override fun onError(
                         path: ChipAttributePath?,
@@ -148,7 +148,7 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
                       }
                     }
                   }
-              var readPaths =
+              val readPaths =
                   listOf(
                       ChipAttributePath.newInstance(
                           ROOT_ENDPOINT_ID.toLong(),

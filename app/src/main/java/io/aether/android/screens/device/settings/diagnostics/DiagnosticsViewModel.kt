@@ -13,6 +13,9 @@ import io.aether.android.data.models.GeneralDiagnosticsData
 import io.aether.android.data.models.SoftwareDiagnosticsData
 import io.aether.android.matter.NodeId
 import javax.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,20 +30,22 @@ data class DiagnosticsUiState(
     val isRefreshing: Boolean = false,
     val generalDiagnostics: GeneralDiagnosticsData? = null,
     val softwareDiagnostics: SoftwareDiagnosticsData? = null,
-    @StringRes val errorRes: Int? = null,
+    @field:StringRes val errorRes: Int? = null,
 )
 
-private data class RefreshRequest(val nodeId: NodeId, val timestamp: Long)
+private data class RefreshRequest(val nodeId: NodeId)
 
 private sealed interface PartialState {
   data object Loading : PartialState
 
-  data class Success(
-      val generalDiagnostics: GeneralDiagnosticsData?,
+  data class GeneralDiagnosticsSuccess(val generalDiagnostics: GeneralDiagnosticsData) :
+      PartialState
+
+  data class OtherDiagnosticsSuccess(
       val softwareDiagnostics: SoftwareDiagnosticsData?,
   ) : PartialState
 
-  data class Error(@StringRes val errorRes: Int) : PartialState
+  data class Error(@field:StringRes val errorRes: Int) : PartialState
 }
 
 @HiltViewModel
@@ -50,20 +55,33 @@ constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewMode
 
   private val refreshTrigger = MutableSharedFlow<RefreshRequest>(replay = 1)
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   val uiState: StateFlow<DiagnosticsUiState> =
       refreshTrigger
           .flatMapLatest { request ->
             flow {
               emit(PartialState.Loading)
-
-              val generalDiagnostics = diagnosticsRepository.readGeneralDiagnostics(request.nodeId)
-              val softwareDiagnostics =
+              coroutineScope {
+                val generalDef = async {
+                  diagnosticsRepository.readGeneralDiagnostics(request.nodeId)
+                }
+                val softwareDef = async {
                   diagnosticsRepository.readSoftwareDiagnostics(request.nodeId)
+                }
 
-              if (generalDiagnostics == null && softwareDiagnostics == null) {
-                emit(PartialState.Error(R.string.device_diagnostics_load_failed))
-              } else {
-                emit(PartialState.Success(generalDiagnostics, softwareDiagnostics))
+                val general = generalDef.await()
+                if (general == null) {
+                  emit(PartialState.Error(R.string.device_diagnostics_load_failed))
+                  return@coroutineScope
+                }
+
+                emit(PartialState.GeneralDiagnosticsSuccess(general))
+                emit(
+                    PartialState.OtherDiagnosticsSuccess(
+                        softwareDiagnostics = softwareDef.await(),
+                        // wifi = wifiDef.await()
+                    )
+                )
               }
             }
           }
@@ -71,19 +89,19 @@ constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewMode
             when (partial) {
               is PartialState.Loading ->
                   previousState.copy(
-                      isRefreshing =
-                          previousState.generalDiagnostics != null ||
-                              previousState.softwareDiagnostics != null,
-                      isInitialLoading =
-                          previousState.generalDiagnostics == null &&
-                              previousState.softwareDiagnostics == null,
+                      isRefreshing = previousState.generalDiagnostics != null,
+                      isInitialLoading = previousState.generalDiagnostics == null,
                       errorRes = null,
                   )
-              is PartialState.Success ->
+              is PartialState.GeneralDiagnosticsSuccess ->
                   previousState.copy(
                       isInitialLoading = false,
                       isRefreshing = false,
                       generalDiagnostics = partial.generalDiagnostics,
+                      errorRes = null,
+                  )
+              is PartialState.OtherDiagnosticsSuccess ->
+                  previousState.copy(
                       softwareDiagnostics = partial.softwareDiagnostics,
                       errorRes = null,
                   )
@@ -106,13 +124,12 @@ constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewMode
     if (
         !forceRefresh &&
             currentRequest?.nodeId == nodeId &&
-            (uiState.value.generalDiagnostics != null || uiState.value.softwareDiagnostics != null)
+            uiState.value.generalDiagnostics != null
     ) {
       return
     }
-
     viewModelScope.launch {
-      refreshTrigger.emit(RefreshRequest(nodeId, System.currentTimeMillis()))
+      refreshTrigger.emit(RefreshRequest(nodeId))
     }
   }
 }
