@@ -21,13 +21,14 @@ val CLUSTERS_1_4 =
                         Clusters.WaterTankLevelMonitoring.Attributes.DegradationDirection.ID to
                             AttributeInfo(
                                 name = "DegradationDirection",
-                                type = DataType.DEGRADATION_DIRECTION_ENUM,
+                                type =
+                                    DataType.RESOURCE_MONITORING_CLUSTER_DEGRADATION_DIRECTION_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.WaterTankLevelMonitoring.Attributes.ChangeIndication.ID to
                             AttributeInfo(
                                 name = "ChangeIndication",
-                                type = DataType.CHANGE_INDICATION_ENUM,
+                                type = DataType.RESOURCE_MONITORING_CLUSTER_CHANGE_INDICATION_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.WaterTankLevelMonitoring.Attributes.InPlaceIndicator.ID to
@@ -100,7 +101,7 @@ val CLUSTERS_1_4 =
                         Clusters.WaterHeaterManagement.Attributes.BoostState.ID to
                             AttributeInfo(
                                 name = "BoostState",
-                                type = DataType.BOOST_STATE_ENUM,
+                                type = DataType.WATER_HEATER_MANAGEMENT_CLUSTER_BOOST_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -250,7 +251,9 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Status",
-                                                type = DataType.SELECT_AREAS_STATUS,
+                                                type =
+                                                    DataType
+                                                        .SERVICE_AREA_CLUSTER_SELECT_AREAS_STATUS,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -267,7 +270,8 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Status",
-                                                type = DataType.SKIP_AREA_STATUS,
+                                                type =
+                                                    DataType.SERVICE_AREA_CLUSTER_SKIP_AREA_STATUS,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -1287,7 +1291,9 @@ val CLUSTERS_1_4 =
                                         0u to
                                             ParameterInfo(
                                                 name = "StatusCode",
-                                                type = DataType.ICAC_SIGNING_REQUEST_STATUS_ENUM,
+                                                type =
+                                                    DataType
+                                                        .JOINT_FABRIC_PKI_CLUSTER_ICAC_SIGNING_REQUEST_STATUS_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -1305,7 +1311,8 @@ val CLUSTERS_1_4 =
                                             ParameterInfo(
                                                 name = "StatusCode",
                                                 type =
-                                                    DataType.TRANSFER_ANCHOR_RESPONSE_STATUS_ENUM,
+                                                    DataType
+                                                        .JOINT_FABRIC_PKI_CLUSTER_TRANSFER_ANCHOR_RESPONSE_STATUS_ENUM,
                                             ),
                                     ),
                             ),
@@ -1319,7 +1326,8 @@ val CLUSTERS_1_4 =
                                             ParameterInfo(
                                                 name = "StatusCode",
                                                 type =
-                                                    DataType.TRANSFER_ANCHOR_RESPONSE_STATUS_ENUM,
+                                                    DataType
+                                                        .JOINT_FABRIC_ADMINISTRATOR_CLUSTER_TRANSFER_ANCHOR_RESPONSE_STATUS_ENUM,
                                             ),
                                     ),
                             ),

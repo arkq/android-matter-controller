@@ -772,7 +772,7 @@ val CLUSTERS_1_0 =
                         Clusters.OnOff.Attributes.StartUpOnOff.ID to
                             AttributeInfo(
                                 name = "StartUpOnOff",
-                                type = DataType.START_UP_ON_OFF_ENUM,
+                                type = DataType.ON_OFF_CLUSTER_START_UP_ON_OFF_ENUM,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.MANAGE,
                             ),
@@ -2001,7 +2001,9 @@ val CLUSTERS_1_0 =
                                         3u to
                                             ParameterInfo(
                                                 name = "ProtocolsSupported",
-                                                type = DataType.LIST_DOWNLOAD_PROTOCOL_ENUM,
+                                                type =
+                                                    DataType
+                                                        .LIST_OTA_PROVIDER_CLUSTER_DOWNLOAD_PROTOCOL_ENUM,
                                             ),
                                         4u to
                                             ParameterInfo(
@@ -2073,7 +2075,7 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Status",
-                                                type = DataType.STATUS_ENUM,
+                                                type = DataType.OTA_PROVIDER_CLUSTER_STATUS_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -2121,7 +2123,9 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Action",
-                                                type = DataType.APPLY_UPDATE_ACTION_ENUM,
+                                                type =
+                                                    DataType
+                                                        .OTA_PROVIDER_CLUSTER_APPLY_UPDATE_ACTION_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -2154,7 +2158,7 @@ val CLUSTERS_1_0 =
                         Clusters.OTASoftwareUpdateRequestor.Attributes.UpdateState.ID to
                             AttributeInfo(
                                 name = "UpdateState",
-                                type = DataType.UPDATE_STATE_ENUM,
+                                type = DataType.OTA_REQUESTOR_CLUSTER_UPDATE_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.OTASoftwareUpdateRequestor.Attributes.UpdateStateProgress.ID to
@@ -2186,7 +2190,9 @@ val CLUSTERS_1_0 =
                                         2u to
                                             ParameterInfo(
                                                 name = "AnnouncementReason",
-                                                type = DataType.ANNOUNCEMENT_REASON_ENUM,
+                                                type =
+                                                    DataType
+                                                        .OTA_REQUESTOR_CLUSTER_ANNOUNCEMENT_REASON_ENUM,
                                             ),
                                         3u to
                                             ParameterInfo(
@@ -2249,21 +2255,21 @@ val CLUSTERS_1_0 =
                         Clusters.TimeFormatLocalization.Attributes.HourFormat.ID to
                             AttributeInfo(
                                 name = "HourFormat",
-                                type = DataType.HOUR_FORMAT,
+                                type = DataType.LOCALIZATION_TIME_FORMAT_CLUSTER_HOUR_FORMAT,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.MANAGE,
                             ),
                         Clusters.TimeFormatLocalization.Attributes.ActiveCalendarType.ID to
                             AttributeInfo(
                                 name = "ActiveCalendarType",
-                                type = DataType.CALENDAR_TYPE,
+                                type = DataType.LOCALIZATION_TIME_FORMAT_CLUSTER_CALENDAR_TYPE,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.MANAGE,
                             ),
                         Clusters.TimeFormatLocalization.Attributes.SupportedCalendarTypes.ID to
                             AttributeInfo(
                                 name = "SupportedCalendarTypes",
-                                type = DataType.LIST_CALENDAR_TYPE,
+                                type = DataType.LIST_LOCALIZATION_TIME_FORMAT_CLUSTER_CALENDAR_TYPE,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -2279,14 +2285,14 @@ val CLUSTERS_1_0 =
                         Clusters.UnitLocalization.Attributes.TemperatureUnit.ID to
                             AttributeInfo(
                                 name = "TemperatureUnit",
-                                type = DataType.TEMP_UNIT,
+                                type = DataType.LOCALIZATION_UNIT_CLUSTER_TEMP_UNIT,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.MANAGE,
                             ),
                         Clusters.UnitLocalization.Attributes.SupportedTemperatureUnits.ID to
                             AttributeInfo(
                                 name = "SupportedTemperatureUnits",
-                                type = DataType.LIST_TEMP_UNIT_ENUM,
+                                type = DataType.LIST_LOCALIZATION_UNIT_CLUSTER_TEMP_UNIT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -2318,7 +2324,7 @@ val CLUSTERS_1_0 =
                         Clusters.PowerSource.Attributes.Status.ID to
                             AttributeInfo(
                                 name = "Status",
-                                type = DataType.POWER_SOURCE_STATUS_ENUM,
+                                type = DataType.POWER_SOURCE_CLUSTER_POWER_SOURCE_STATUS_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PowerSource.Attributes.Order.ID to
@@ -2348,7 +2354,7 @@ val CLUSTERS_1_0 =
                         Clusters.PowerSource.Attributes.WiredCurrentType.ID to
                             AttributeInfo(
                                 name = "WiredCurrentType",
-                                type = DataType.WIRED_CURRENT_TYPE_ENUM,
+                                type = DataType.POWER_SOURCE_CLUSTER_WIRED_CURRENT_TYPE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PowerSource.Attributes.WiredAssessedCurrent.ID to
@@ -2378,7 +2384,7 @@ val CLUSTERS_1_0 =
                         Clusters.PowerSource.Attributes.ActiveWiredFaults.ID to
                             AttributeInfo(
                                 name = "ActiveWiredFaults",
-                                type = DataType.LIST_WIRED_FAULT_ENUM,
+                                type = DataType.LIST_POWER_SOURCE_CLUSTER_WIRED_FAULT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PowerSource.Attributes.BatVoltage.ID to
@@ -2402,7 +2408,7 @@ val CLUSTERS_1_0 =
                         Clusters.PowerSource.Attributes.BatChargeLevel.ID to
                             AttributeInfo(
                                 name = "BatChargeLevel",
-                                type = DataType.BAT_CHARGE_LEVEL_ENUM,
+                                type = DataType.POWER_SOURCE_CLUSTER_BAT_CHARGE_LEVEL_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PowerSource.Attributes.BatReplacementNeeded.ID to
@@ -2414,7 +2420,7 @@ val CLUSTERS_1_0 =
                         Clusters.PowerSource.Attributes.BatReplaceability.ID to
                             AttributeInfo(
                                 name = "BatReplaceability",
-                                type = DataType.BAT_REPLACEABILITY_ENUM,
+                                type = DataType.POWER_SOURCE_CLUSTER_BAT_REPLACEABILITY_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PowerSource.Attributes.BatPresent.ID to
@@ -2426,7 +2432,7 @@ val CLUSTERS_1_0 =
                         Clusters.PowerSource.Attributes.ActiveBatFaults.ID to
                             AttributeInfo(
                                 name = "ActiveBatFaults",
-                                type = DataType.LIST_BAT_FAULT_ENUM,
+                                type = DataType.LIST_POWER_SOURCE_CLUSTER_BAT_FAULT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PowerSource.Attributes.BatReplacementDescription.ID to
@@ -2438,7 +2444,7 @@ val CLUSTERS_1_0 =
                         Clusters.PowerSource.Attributes.BatCommonDesignation.ID to
                             AttributeInfo(
                                 name = "BatCommonDesignation",
-                                type = DataType.BAT_COMMON_DESIGNATION_ENUM,
+                                type = DataType.POWER_SOURCE_CLUSTER_BAT_COMMON_DESIGNATION_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PowerSource.Attributes.BatANSIDesignation.ID to
@@ -2456,7 +2462,7 @@ val CLUSTERS_1_0 =
                         Clusters.PowerSource.Attributes.BatApprovedChemistry.ID to
                             AttributeInfo(
                                 name = "BatApprovedChemistry",
-                                type = DataType.BAT_APPROVED_CHEMISTRY_ENUM,
+                                type = DataType.POWER_SOURCE_CLUSTER_BAT_APPROVED_CHEMISTRY_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PowerSource.Attributes.BatCapacity.ID to
@@ -2474,7 +2480,7 @@ val CLUSTERS_1_0 =
                         Clusters.PowerSource.Attributes.BatChargeState.ID to
                             AttributeInfo(
                                 name = "BatChargeState",
-                                type = DataType.BAT_CHARGE_STATE_ENUM,
+                                type = DataType.POWER_SOURCE_CLUSTER_BAT_CHARGE_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PowerSource.Attributes.BatTimeToFullCharge.ID to
@@ -2498,7 +2504,7 @@ val CLUSTERS_1_0 =
                         Clusters.PowerSource.Attributes.ActiveBatChargeFaults.ID to
                             AttributeInfo(
                                 name = "ActiveBatChargeFaults",
-                                type = DataType.LIST_BAT_CHARGE_FAULT_ENUM,
+                                type = DataType.LIST_POWER_SOURCE_CLUSTER_BAT_CHARGE_FAULT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PowerSource.Attributes.EndpointList.ID to
@@ -2547,13 +2553,17 @@ val CLUSTERS_1_0 =
                         Clusters.GeneralCommissioning.Attributes.RegulatoryConfig.ID to
                             AttributeInfo(
                                 name = "RegulatoryConfig",
-                                type = DataType.REGULATORY_LOCATION_TYPE_ENUM,
+                                type =
+                                    DataType
+                                        .GENERAL_COMMISSIONING_CLUSTER_REGULATORY_LOCATION_TYPE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.GeneralCommissioning.Attributes.LocationCapability.ID to
                             AttributeInfo(
                                 name = "LocationCapability",
-                                type = DataType.REGULATORY_LOCATION_TYPE_ENUM,
+                                type =
+                                    DataType
+                                        .GENERAL_COMMISSIONING_CLUSTER_REGULATORY_LOCATION_TYPE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.GeneralCommissioning.Attributes.SupportsConcurrentConnection.ID to
@@ -2601,7 +2611,9 @@ val CLUSTERS_1_0 =
                         Clusters.GeneralCommissioning.Attributes.NetworkRecoveryReason.ID to
                             AttributeInfo(
                                 name = "NetworkRecoveryReason",
-                                type = DataType.NETWORK_RECOVERY_REASON_ENUM,
+                                type =
+                                    DataType
+                                        .GENERAL_COMMISSIONING_CLUSTER_NETWORK_RECOVERY_REASON_ENUM,
                                 readPrivilege = Privilege.MANAGE,
                             ),
                         Clusters.GeneralCommissioning.Attributes.IsCommissioningWithoutPower.ID to
@@ -2640,7 +2652,9 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "NewRegulatoryConfig",
-                                                type = DataType.REGULATORY_LOCATION_TYPE_ENUM,
+                                                type =
+                                                    DataType
+                                                        .GENERAL_COMMISSIONING_CLUSTER_REGULATORY_LOCATION_TYPE_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -2689,7 +2703,9 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ErrorCode",
-                                                type = DataType.COMMISSIONING_ERROR_ENUM,
+                                                type =
+                                                    DataType
+                                                        .GENERAL_COMMISSIONING_CLUSTER_COMMISSIONING_ERROR_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -2707,7 +2723,9 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ErrorCode",
-                                                type = DataType.COMMISSIONING_ERROR_ENUM,
+                                                type =
+                                                    DataType
+                                                        .GENERAL_COMMISSIONING_CLUSTER_COMMISSIONING_ERROR_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -2725,7 +2743,9 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ErrorCode",
-                                                type = DataType.COMMISSIONING_ERROR_ENUM,
+                                                type =
+                                                    DataType
+                                                        .GENERAL_COMMISSIONING_CLUSTER_COMMISSIONING_ERROR_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -2743,7 +2763,9 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ErrorCode",
-                                                type = DataType.COMMISSIONING_ERROR_ENUM,
+                                                type =
+                                                    DataType
+                                                        .GENERAL_COMMISSIONING_CLUSTER_COMMISSIONING_ERROR_ENUM,
                                             ),
                                     ),
                             ),
@@ -2789,7 +2811,9 @@ val CLUSTERS_1_0 =
                         Clusters.NetworkCommissioning.Attributes.LastNetworkingStatus.ID to
                             AttributeInfo(
                                 name = "LastNetworkingStatus",
-                                type = DataType.NETWORK_COMMISSIONING_STATUS_ENUM,
+                                type =
+                                    DataType
+                                        .NETWORK_COMMISSIONING_CLUSTER_NETWORK_COMMISSIONING_STATUS_ENUM,
                                 readPrivilege = Privilege.ADMINISTER,
                             ),
                         Clusters.NetworkCommissioning.Attributes.LastNetworkID.ID to
@@ -2807,7 +2831,7 @@ val CLUSTERS_1_0 =
                         Clusters.NetworkCommissioning.Attributes.SupportedWiFiBands.ID to
                             AttributeInfo(
                                 name = "SupportedWiFiBands",
-                                type = DataType.LIST_WI_FI_BAND_ENUM,
+                                type = DataType.LIST_NETWORK_COMMISSIONING_CLUSTER_WI_FI_BAND_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.NetworkCommissioning.Attributes.SupportedThreadFeatures.ID to
@@ -2955,7 +2979,9 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "NetworkingStatus",
-                                                type = DataType.NETWORK_COMMISSIONING_STATUS_ENUM,
+                                                type =
+                                                    DataType
+                                                        .NETWORK_COMMISSIONING_CLUSTER_NETWORK_COMMISSIONING_STATUS_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -2986,7 +3012,9 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "NetworkingStatus",
-                                                type = DataType.NETWORK_COMMISSIONING_STATUS_ENUM,
+                                                type =
+                                                    DataType
+                                                        .NETWORK_COMMISSIONING_CLUSTER_NETWORK_COMMISSIONING_STATUS_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -3008,7 +3036,9 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "NetworkingStatus",
-                                                type = DataType.NETWORK_COMMISSIONING_STATUS_ENUM,
+                                                type =
+                                                    DataType
+                                                        .NETWORK_COMMISSIONING_CLUSTER_NETWORK_COMMISSIONING_STATUS_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -3040,12 +3070,14 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Intent",
-                                                type = DataType.INTENT_ENUM,
+                                                type = DataType.DIAGNOSTIC_LOGS_CLUSTER_INTENT_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
                                                 name = "RequestedProtocol",
-                                                type = DataType.TRANSFER_PROTOCOL_ENUM,
+                                                type =
+                                                    DataType
+                                                        .DIAGNOSTIC_LOGS_CLUSTER_TRANSFER_PROTOCOL_ENUM,
                                             ),
                                         2u to
                                             ParameterInfo(
@@ -3119,25 +3151,26 @@ val CLUSTERS_1_0 =
                         Clusters.GeneralDiagnostics.Attributes.BootReason.ID to
                             AttributeInfo(
                                 name = "BootReason",
-                                type = DataType.BOOT_REASON_ENUM,
+                                type = DataType.DIAGNOSTICS_GENERAL_CLUSTER_BOOT_REASON_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.GeneralDiagnostics.Attributes.ActiveHardwareFaults.ID to
                             AttributeInfo(
                                 name = "ActiveHardwareFaults",
-                                type = DataType.LIST_HARDWARE_FAULT_ENUM,
+                                type =
+                                    DataType.LIST_DIAGNOSTICS_GENERAL_CLUSTER_HARDWARE_FAULT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.GeneralDiagnostics.Attributes.ActiveRadioFaults.ID to
                             AttributeInfo(
                                 name = "ActiveRadioFaults",
-                                type = DataType.LIST_RADIO_FAULT_ENUM,
+                                type = DataType.LIST_DIAGNOSTICS_GENERAL_CLUSTER_RADIO_FAULT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.GeneralDiagnostics.Attributes.ActiveNetworkFaults.ID to
                             AttributeInfo(
                                 name = "ActiveNetworkFaults",
-                                type = DataType.LIST_NETWORK_FAULT_ENUM,
+                                type = DataType.LIST_DIAGNOSTICS_GENERAL_CLUSTER_NETWORK_FAULT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.GeneralDiagnostics.Attributes.TestEventTriggersEnabled.ID to
@@ -3322,7 +3355,7 @@ val CLUSTERS_1_0 =
                         Clusters.ThreadNetworkDiagnostics.Attributes.RoutingRole.ID to
                             AttributeInfo(
                                 name = "RoutingRole",
-                                type = DataType.ROUTING_ROLE_ENUM,
+                                type = DataType.DIAGNOSTICS_THREAD_CLUSTER_ROUTING_ROLE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ThreadNetworkDiagnostics.Attributes.NetworkName.ID to
@@ -3693,7 +3726,7 @@ val CLUSTERS_1_0 =
                         Clusters.ThreadNetworkDiagnostics.Attributes.ActiveNetworkFaultsList.ID to
                             AttributeInfo(
                                 name = "ActiveNetworkFaultsList",
-                                type = DataType.LIST_NETWORK_FAULT,
+                                type = DataType.LIST_DIAGNOSTICS_THREAD_CLUSTER_NETWORK_FAULT,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ThreadNetworkDiagnostics.Attributes.ExtAddress.ID to
@@ -3745,13 +3778,13 @@ val CLUSTERS_1_0 =
                         Clusters.WiFiNetworkDiagnostics.Attributes.SecurityType.ID to
                             AttributeInfo(
                                 name = "SecurityType",
-                                type = DataType.SECURITY_TYPE_ENUM,
+                                type = DataType.DIAGNOSTICS_WI_FI_CLUSTER_SECURITY_TYPE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.WiFiNetworkDiagnostics.Attributes.WiFiVersion.ID to
                             AttributeInfo(
                                 name = "WiFiVersion",
-                                type = DataType.WI_FI_VERSION_ENUM,
+                                type = DataType.DIAGNOSTICS_WI_FI_CLUSTER_WI_FI_VERSION_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.WiFiNetworkDiagnostics.Attributes.ChannelNumber.ID to
@@ -3849,7 +3882,7 @@ val CLUSTERS_1_0 =
                         Clusters.EthernetNetworkDiagnostics.Attributes.PHYRate.ID to
                             AttributeInfo(
                                 name = "PHYRate",
-                                type = DataType.PHY_RATE_ENUM,
+                                type = DataType.DIAGNOSTICS_ETHERNET_CLUSTER_PHY_RATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EthernetNetworkDiagnostics.Attributes.FullDuplex.ID to
@@ -3927,13 +3960,13 @@ val CLUSTERS_1_0 =
                         Clusters.TimeSynchronization.Attributes.Granularity.ID to
                             AttributeInfo(
                                 name = "Granularity",
-                                type = DataType.GRANULARITY_ENUM,
+                                type = DataType.TIME_SYNC_CLUSTER_GRANULARITY_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.TimeSynchronization.Attributes.TimeSource.ID to
                             AttributeInfo(
                                 name = "TimeSource",
-                                type = DataType.TIME_SOURCE_ENUM,
+                                type = DataType.TIME_SYNC_CLUSTER_TIME_SOURCE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.TimeSynchronization.Attributes.TrustedTimeSource.ID to
@@ -4017,12 +4050,12 @@ val CLUSTERS_1_0 =
                                         1u to
                                             ParameterInfo(
                                                 name = "Granularity",
-                                                type = DataType.GRANULARITY_ENUM,
+                                                type = DataType.TIME_SYNC_CLUSTER_GRANULARITY_ENUM,
                                             ),
                                         2u to
                                             ParameterInfo(
                                                 name = "TimeSource",
-                                                type = DataType.TIME_SOURCE_ENUM,
+                                                type = DataType.TIME_SYNC_CLUSTER_TIME_SOURCE_ENUM,
                                             ),
                                     ),
                             ),
@@ -4387,7 +4420,9 @@ val CLUSTERS_1_0 =
                         Clusters.AdministratorCommissioning.Attributes.WindowStatus.ID to
                             AttributeInfo(
                                 name = "WindowStatus",
-                                type = DataType.COMMISSIONING_WINDOW_STATUS_ENUM,
+                                type =
+                                    DataType
+                                        .ADMIN_COMMISSIONING_CLUSTER_COMMISSIONING_WINDOW_STATUS_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.AdministratorCommissioning.Attributes.AdminFabricIndex.ID to
@@ -4532,7 +4567,9 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "CertificateType",
-                                                type = DataType.CERTIFICATE_CHAIN_TYPE_ENUM,
+                                                type =
+                                                    DataType
+                                                        .OPERATIONAL_CREDENTIAL_CLUSTER_CERTIFICATE_CHAIN_TYPE_ENUM,
                                             ),
                                     ),
                             ),
@@ -4746,7 +4783,9 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "StatusCode",
-                                                type = DataType.NODE_OPERATIONAL_CERT_STATUS_ENUM,
+                                                type =
+                                                    DataType
+                                                        .OPERATIONAL_CREDENTIAL_CLUSTER_NODE_OPERATIONAL_CERT_STATUS_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -5160,7 +5199,9 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Status",
-                                                type = DataType.CHANGE_TO_MODE_STATUS_ENUM,
+                                                type =
+                                                    DataType
+                                                        .MODE_SELECT_CLUSTER_CHANGE_TO_MODE_STATUS_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -5623,12 +5664,12 @@ val CLUSTERS_1_0 =
                                         1u to
                                             ParameterInfo(
                                                 name = "UserStatus",
-                                                type = DataType.USER_STATUS_ENUM,
+                                                type = DataType.DOOR_LOCK_CLUSTER_USER_STATUS_ENUM,
                                             ),
                                         2u to
                                             ParameterInfo(
                                                 name = "UserType",
-                                                type = DataType.USER_TYPE_ENUM,
+                                                type = DataType.DOOR_LOCK_CLUSTER_USER_TYPE_ENUM,
                                             ),
                                         3u to
                                             ParameterInfo(
@@ -5867,7 +5908,8 @@ val CLUSTERS_1_0 =
                                         3u to
                                             ParameterInfo(
                                                 name = "OperatingMode",
-                                                type = DataType.OPERATING_MODE_ENUM,
+                                                type =
+                                                    DataType.DOOR_LOCK_CLUSTER_OPERATING_MODE_ENUM,
                                             ),
                                     ),
                             ),
@@ -5942,12 +5984,12 @@ val CLUSTERS_1_0 =
                                         1u to
                                             ParameterInfo(
                                                 name = "UserStatus",
-                                                type = DataType.USER_STATUS_ENUM,
+                                                type = DataType.DOOR_LOCK_CLUSTER_USER_STATUS_ENUM,
                                             ),
                                         2u to
                                             ParameterInfo(
                                                 name = "UserType",
-                                                type = DataType.USER_TYPE_ENUM,
+                                                type = DataType.DOOR_LOCK_CLUSTER_USER_TYPE_ENUM,
                                             ),
                                         3u to
                                             ParameterInfo(
@@ -5997,7 +6039,9 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "OperationType",
-                                                type = DataType.DATA_OPERATION_TYPE_ENUM,
+                                                type =
+                                                    DataType
+                                                        .DOOR_LOCK_CLUSTER_DATA_OPERATION_TYPE_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -6017,17 +6061,18 @@ val CLUSTERS_1_0 =
                                         4u to
                                             ParameterInfo(
                                                 name = "UserStatus",
-                                                type = DataType.USER_STATUS_ENUM,
+                                                type = DataType.DOOR_LOCK_CLUSTER_USER_STATUS_ENUM,
                                             ),
                                         5u to
                                             ParameterInfo(
                                                 name = "UserType",
-                                                type = DataType.USER_TYPE_ENUM,
+                                                type = DataType.DOOR_LOCK_CLUSTER_USER_TYPE_ENUM,
                                             ),
                                         6u to
                                             ParameterInfo(
                                                 name = "CredentialRule",
-                                                type = DataType.CREDENTIAL_RULE_ENUM,
+                                                type =
+                                                    DataType.DOOR_LOCK_CLUSTER_CREDENTIAL_RULE_ENUM,
                                             ),
                                     ),
                             ),
@@ -6066,7 +6111,9 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "OperationType",
-                                                type = DataType.DATA_OPERATION_TYPE_ENUM,
+                                                type =
+                                                    DataType
+                                                        .DOOR_LOCK_CLUSTER_DATA_OPERATION_TYPE_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -6086,12 +6133,12 @@ val CLUSTERS_1_0 =
                                         4u to
                                             ParameterInfo(
                                                 name = "UserStatus",
-                                                type = DataType.USER_STATUS_ENUM,
+                                                type = DataType.DOOR_LOCK_CLUSTER_USER_STATUS_ENUM,
                                             ),
                                         5u to
                                             ParameterInfo(
                                                 name = "UserType",
-                                                type = DataType.USER_TYPE_ENUM,
+                                                type = DataType.DOOR_LOCK_CLUSTER_USER_TYPE_ENUM,
                                             ),
                                     ),
                             ),
@@ -6226,12 +6273,12 @@ val CLUSTERS_1_0 =
                                         1u to
                                             ParameterInfo(
                                                 name = "UserStatus",
-                                                type = DataType.USER_STATUS_ENUM,
+                                                type = DataType.DOOR_LOCK_CLUSTER_USER_STATUS_ENUM,
                                             ),
                                         2u to
                                             ParameterInfo(
                                                 name = "UserType",
-                                                type = DataType.USER_TYPE_ENUM,
+                                                type = DataType.DOOR_LOCK_CLUSTER_USER_TYPE_ENUM,
                                             ),
                                         3u to
                                             ParameterInfo(
@@ -6364,7 +6411,8 @@ val CLUSTERS_1_0 =
                                         4u to
                                             ParameterInfo(
                                                 name = "OperatingMode",
-                                                type = DataType.OPERATING_MODE_ENUM,
+                                                type =
+                                                    DataType.DOOR_LOCK_CLUSTER_OPERATING_MODE_ENUM,
                                             ),
                                     ),
                             ),
@@ -6381,7 +6429,7 @@ val CLUSTERS_1_0 =
                                         1u to
                                             ParameterInfo(
                                                 name = "UserType",
-                                                type = DataType.USER_TYPE_ENUM,
+                                                type = DataType.DOOR_LOCK_CLUSTER_USER_TYPE_ENUM,
                                             ),
                                     ),
                             ),
@@ -6398,12 +6446,12 @@ val CLUSTERS_1_0 =
                                         1u to
                                             ParameterInfo(
                                                 name = "UserStatus",
-                                                type = DataType.USER_STATUS_ENUM,
+                                                type = DataType.DOOR_LOCK_CLUSTER_USER_STATUS_ENUM,
                                             ),
                                         2u to
                                             ParameterInfo(
                                                 name = "UserType",
-                                                type = DataType.USER_TYPE_ENUM,
+                                                type = DataType.DOOR_LOCK_CLUSTER_USER_TYPE_ENUM,
                                             ),
                                         3u to
                                             ParameterInfo(
@@ -6435,17 +6483,18 @@ val CLUSTERS_1_0 =
                                         3u to
                                             ParameterInfo(
                                                 name = "UserStatus",
-                                                type = DataType.USER_STATUS_ENUM,
+                                                type = DataType.DOOR_LOCK_CLUSTER_USER_STATUS_ENUM,
                                             ),
                                         4u to
                                             ParameterInfo(
                                                 name = "UserType",
-                                                type = DataType.USER_TYPE_ENUM,
+                                                type = DataType.DOOR_LOCK_CLUSTER_USER_TYPE_ENUM,
                                             ),
                                         5u to
                                             ParameterInfo(
                                                 name = "CredentialRule",
-                                                type = DataType.CREDENTIAL_RULE_ENUM,
+                                                type =
+                                                    DataType.DOOR_LOCK_CLUSTER_CREDENTIAL_RULE_ENUM,
                                             ),
                                         6u to
                                             ParameterInfo(
@@ -6947,13 +6996,15 @@ val CLUSTERS_1_0 =
                         Clusters.PumpConfigurationandControl.Attributes.EffectiveOperationMode.ID to
                             AttributeInfo(
                                 name = "EffectiveOperationMode",
-                                type = DataType.OPERATION_MODE_ENUM,
+                                type =
+                                    DataType.PUMP_CONFIGURATION_CONTROL_CLUSTER_OPERATION_MODE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PumpConfigurationandControl.Attributes.EffectiveControlMode.ID to
                             AttributeInfo(
                                 name = "EffectiveControlMode",
-                                type = DataType.CONTROL_MODE_ENUM,
+                                type =
+                                    DataType.PUMP_CONFIGURATION_CONTROL_CLUSTER_CONTROL_MODE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PumpConfigurationandControl.Attributes.Capacity.ID to
@@ -6991,14 +7042,16 @@ val CLUSTERS_1_0 =
                         Clusters.PumpConfigurationandControl.Attributes.OperationMode.ID to
                             AttributeInfo(
                                 name = "OperationMode",
-                                type = DataType.OPERATION_MODE_ENUM,
+                                type =
+                                    DataType.PUMP_CONFIGURATION_CONTROL_CLUSTER_OPERATION_MODE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.MANAGE,
                             ),
                         Clusters.PumpConfigurationandControl.Attributes.ControlMode.ID to
                             AttributeInfo(
                                 name = "ControlMode",
-                                type = DataType.CONTROL_MODE_ENUM,
+                                type =
+                                    DataType.PUMP_CONFIGURATION_CONTROL_CLUSTER_CONTROL_MODE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.MANAGE,
                             ),
@@ -7845,7 +7898,7 @@ val CLUSTERS_1_0 =
                         Clusters.FanControl.Attributes.AirflowDirection.ID to
                             AttributeInfo(
                                 name = "AirflowDirection",
-                                type = DataType.AIRFLOW_DIRECTION_ENUM,
+                                type = DataType.FAN_CONTROL_CLUSTER_AIRFLOW_DIRECTION_ENUM,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
@@ -7861,7 +7914,9 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Direction",
-                                                type = DataType.STEP_DIRECTION_ENUM,
+                                                type =
+                                                    DataType
+                                                        .FAN_CONTROL_CLUSTER_STEP_DIRECTION_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -9571,7 +9626,7 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Status",
-                                                type = DataType.STATUS_ENUM,
+                                                type = DataType.CHANNEL_CLUSTER_STATUS_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -9649,7 +9704,8 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Status",
-                                                type = DataType.STATUS_ENUM,
+                                                type =
+                                                    DataType.TARGET_NAVIGATOR_CLUSTER_STATUS_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -9675,7 +9731,7 @@ val CLUSTERS_1_0 =
                         Clusters.MediaPlayback.Attributes.CurrentState.ID to
                             AttributeInfo(
                                 name = "CurrentState",
-                                type = DataType.PLAYBACK_STATE_ENUM,
+                                type = DataType.MEDIA_PLAYBACK_CLUSTER_PLAYBACK_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.MediaPlayback.Attributes.StartTime.ID to
@@ -9890,7 +9946,7 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Status",
-                                                type = DataType.STATUS_ENUM,
+                                                type = DataType.MEDIA_PLAYBACK_CLUSTER_STATUS_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -10021,7 +10077,7 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Status",
-                                                type = DataType.STATUS_ENUM,
+                                                type = DataType.KEYPAD_INPUT_CLUSTER_STATUS_ENUM,
                                             ),
                                     ),
                             ),
@@ -10120,7 +10176,8 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Status",
-                                                type = DataType.STATUS_ENUM,
+                                                type =
+                                                    DataType.CONTENT_LAUNCHER_CLUSTER_STATUS_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -10262,7 +10319,9 @@ val CLUSTERS_1_0 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Status",
-                                                type = DataType.STATUS_ENUM,
+                                                type =
+                                                    DataType
+                                                        .APPLICATION_LAUNCHER_CLUSTER_STATUS_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -10312,7 +10371,7 @@ val CLUSTERS_1_0 =
                         Clusters.ApplicationBasic.Attributes.Status.ID to
                             AttributeInfo(
                                 name = "Status",
-                                type = DataType.APPLICATION_STATUS_ENUM,
+                                type = DataType.APPLICATION_BASIC_CLUSTER_APPLICATION_STATUS_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ApplicationBasic.Attributes.ApplicationVersion.ID to

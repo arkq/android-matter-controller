@@ -22,33 +22,25 @@ from pathlib import Path
 import lxml.etree as ET
 
 
-def _to_camel(s: str) -> str:
-    """Convert a string to CamelCase."""
-    return re.sub(r"\W", "", s)
+def _to_pascal(s: str) -> str:
+    """Convert a string to PascalCase."""
+    s = re.sub(r"\W", "", s)
+    return s[0].upper() + s[1:] if s else s
 
 
-def _to_upper_snake(t: str) -> str:
+def _to_upper_snake(s: str) -> str:
     """Convert a string to UPPER_SNAKE_CASE."""
     # Insert an underscore before any capital letter preceded by a lowercase
     # letter or digit e.g., 'camelCase' -> 'camel_Case'
-    s1 = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", t)
+    s = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s)
     # Handle consecutive capitals e.g., 'HTTPResponse' -> 'HTTP_Response'
-    s2 = re.sub(r"([A-Z])([A-Z][a-z])", r"\1_\2", s1)
+    s = re.sub(r"([A-Z])([A-Z][a-z])", r"\1_\2", s)
     # Replace all non-alphanumeric characters with underscores.
-    cleaned = re.sub(r"[^A-Za-z0-9]+", "_", s2).upper()
+    cleaned = re.sub(r"[^A-Za-z0-9]+", "_", s).upper()
     return re.sub(r"_+", "_", cleaned).strip("_")
 
 
-def _get_type(element: ET._Element) -> str:
-    """Extract the type from an XML element, handling any special cases."""
-    type = element.get("type", "")
-    if (
-        type.lower() == "list"
-        # For list types, we need to get the element type from the "entry" element.
-        and (entry := element.find("./entry")) is not None
-        and (entry_type := _get_type(entry))
-    ):
-        return f"List<{entry_type}>"
+def _get_type_name(type: str) -> str:
     match type:
         case "fabric-idx":
             return "FabricIndex"
@@ -160,6 +152,39 @@ def _xml_files_for_version(data_model_dir: Path, version: str) -> list[Path]:
     return sorted(data_model_dir.joinpath(version).rglob("**/*.xml"))
 
 
+def _xml_file_to_namespace(file: Path) -> str:
+    """Convert an XML file path to a namespace prefix for enums."""
+    ns = file.stem.removeprefix("bridge-clusters-").replace("-", "")
+    # Ensure "Cluster" suffix to separate cluster and enum name.
+    return f"{ns.removesuffix('Cluster')}Cluster"
+
+
+@dataclasses.dataclass
+class EnumItem:
+    id: int
+    name: str
+
+    # Keep track of any name changes across versions for diagnostics.
+    diagnostics: list[str] = dataclasses.field(default_factory=list)
+
+    def has_diagnostics(self) -> bool:
+        return bool(self.diagnostics)
+
+
+@dataclasses.dataclass
+class Enum:
+    name: str
+    entries: dict[int, EnumItem]
+
+    def __post_init__(self):
+        if self.name.upper().endswith("ENUM"):
+            # Normalize the suffix to be consistent with naming conventions.
+            self.name = f"{self.name[:-4]}Enum"
+
+    def has_diagnostics(self) -> bool:
+        return any(x.has_diagnostics() for x in self.entries.values())
+
+
 @dataclasses.dataclass
 class Field:
     id: int
@@ -221,6 +246,7 @@ class Event:
 
 @dataclasses.dataclass
 class Cluster:
+    ns: str
     id: int
     name: str
     attributes: dict[int, Attribute]
@@ -228,6 +254,8 @@ class Cluster:
     commands_out: dict[int, Command]
     events: dict[int, Event]
 
+    # Collection of enums used by this cluster.
+    enums: dict[str, Enum] = dataclasses.field(default_factory=dict)
     # Keep track of any name changes across versions for diagnostics.
     diagnostics: list[str] = dataclasses.field(default_factory=list)
     # Keep track of spec versions where this cluster appears.
@@ -241,6 +269,8 @@ class Cluster:
         if any(x.has_diagnostics() for x in self.commands_out.values()):
             return True
         if any(x.has_diagnostics() for x in self.events.values()):
+            return True
+        if any(x.has_diagnostics() for x in self.enums.values()):
             return True
         return bool(self.diagnostics)
 
@@ -277,13 +307,45 @@ def collect_clusters(data_model_dir: Path, versions: list[str]):
     clusters: dict[int, Cluster] = {}
     for ver in versions:
         for xml_file in _xml_files_for_version(data_model_dir, ver):
+            ns = _xml_file_to_namespace(xml_file)
             tree = ET.parse(xml_file)
+            # Get all enum types defined in this XML namespace.
+            enums: dict[str, Enum] = {}
+            for enum_elem in tree.xpath("./dataTypes/enum[@name]"):
+                name = enum_elem.get("name")
+                enum_new = Enum(name=ns + name, entries={})
+                enum = enums.setdefault(name, enum_new)
+                for item_elem in enum_elem.xpath("./item[@value]"):
+                    id = int(item_elem.get("value"), 0)
+                    name = _to_pascal(item_elem.get("name", ""))
+                    entry_new = EnumItem(id=id, name=name)
+                    entry = enum.entries.setdefault(id, entry_new)
+                    if entry.name != name:
+                        entry.diagnostics.append(f"v{ver}: '{entry.name}' -> '{name}'")
+                        # Update to the latest name.
+                        entry.name = _to_pascal(name)
+
+            def _get_type(element: ET._Element) -> str:
+                """Extract the type from an XML element, handling any special cases."""
+                type = element.get("type", "")
+                if (
+                    type.lower() == "list"
+                    # For list types, we need to get the element type from the "entry" element.
+                    and (entry := element.find("./entry")) is not None
+                    and (entry_type := _get_type(entry))
+                ):
+                    return f"List<{entry_type}>"
+                if enum := enums.get(type):
+                    return enum.name
+                return _get_type_name(type)
+
             # Find all cluster ID entries within the clusterIds container.
             for cluster_elem in tree.xpath("./clusterIds/clusterId[@id]"):
                 id = int(cluster_elem.get("id"), 0)
                 name = cluster_elem.get("name", "")
                 cluster_new = Cluster(
-                    id=id, name=name, attributes={}, commands_in={}, commands_out={}, events={}
+                    ns=ns, id=id, name=name, attributes={}, commands_in={},
+                    commands_out={}, events={}, enums=enums
                 )
                 cluster = clusters.setdefault(id, cluster_new)
                 cluster.versions.append(ver)
@@ -357,6 +419,15 @@ def collect_clusters(data_model_dir: Path, versions: list[str]):
         print(f"Cluster 0x{cluster.id:04X}:")
         for diag in cluster.diagnostics:
             print(f"  Name changed in spec {diag}")
+        for enum in sorted(cluster.enums.values(), key=lambda x: x.name):
+            if not enum.has_diagnostics():
+                continue
+            print(f"Enum {enum.name}:")
+            for item in sorted(enum.entries.values(), key=lambda x: x.id):
+                if not item.has_diagnostics():
+                    continue
+                for diag in item.diagnostics:
+                    print(f"  Name changed in spec {diag}")
         for attr in sorted(cluster.attributes.values(), key=lambda x: x.id):
             if not attr.has_diagnostics():
                 continue
@@ -472,6 +543,10 @@ clusters = collect_clusters(args.DATA_MODEL_DIR, versions)
 print("Collecting device types across all versions...")
 devices = collect_devices(args.DATA_MODEL_DIR, versions)
 
+enums: dict[str, Enum] = {}
+for cluster in clusters.values():
+    enums.update(cluster.enums)
+
 types: set[str] = set()
 for cluster in clusters.values():
     for attr in cluster.attributes.values():
@@ -502,33 +577,49 @@ with open(args.out_dir / "Clusters.kt", "w") as f:
     f.write(HEADER)
     f.write("object Clusters {\n")
     for cluster in sorted(clusters.values(), key=lambda x: x.id):
-        f.write(f"  object {_to_camel(cluster.name)} {{\n")
+        f.write(f"  object {_to_pascal(cluster.name)} {{\n")
         f.write(f"    val ID = ClusterId(0x{cluster.id:04X}u)\n")
         f.write("    object Attributes {\n")
         for attr in sorted(cluster.attributes.values(), key=lambda x: x.id):
-            f.write(f"      object {_to_camel(attr.name)} {{\n")
+            f.write(f"      object {_to_pascal(attr.name)} {{\n")
             f.write(f"        val ID = AttributeId(0x{attr.id:04X}u)\n")
             f.write("      }\n")
         f.write("    }\n")
         f.write("    object CommandsIncoming {\n")
         for cmd in sorted(cluster.commands_in.values(), key=lambda x: x.id):
-            f.write(f"      object {_to_camel(cmd.name)} {{\n")
+            f.write(f"      object {_to_pascal(cmd.name)} {{\n")
             f.write(f"        val ID = CommandId(0x{cmd.id:04X}u)\n")
             f.write("      }\n")
         f.write("    }\n")
         f.write("    object CommandsOutgoing {\n")
         for cmd in sorted(cluster.commands_out.values(), key=lambda x: x.id):
-            f.write(f"      object {_to_camel(cmd.name)} {{\n")
+            f.write(f"      object {_to_pascal(cmd.name)} {{\n")
             f.write(f"        val ID = CommandId(0x{cmd.id:04X}u)\n")
             f.write("      }\n")
         f.write("    }\n")
         f.write("    object Events {\n")
         for event in sorted(cluster.events.values(), key=lambda x: x.id):
-            f.write(f"      object {_to_camel(event.name)} {{\n")
+            f.write(f"      object {_to_pascal(event.name)} {{\n")
             f.write(f"        val ID = EventId(0x{event.id:04X}u)\n")
             f.write("      }\n")
         f.write("    }\n")
         f.write("  }\n")
+    f.write("}\n")
+
+
+print("Writing enums...")
+with open(args.out_dir / "Enums.kt", "w") as f:
+    f.write(HEADER)
+    f.write("object Enums {\n")
+    for enum in sorted(enums.values(), key=lambda x: x.name):
+        name = _to_pascal(enum.name.removesuffix("Enum"))
+        f.write(f"  enum class {name}(val value: UInt) {{\n")
+        for item in sorted(enum.entries.values(), key=lambda x: x.id):
+            name = _to_pascal(item.name)
+            if name[0].isdigit():
+                name = f"`{name}`"
+            f.write(f"    {name}({item.id}u),\n")
+        f.write("  }\n\n")
     f.write("}\n")
 
 
@@ -547,15 +638,15 @@ with open(args.out_dir / "Devices.kt", "w") as f:
     f.write(HEADER)
     f.write("object Devices {\n")
     for id, device in sorted(devices.items()):
-        f.write(f"  object {_to_camel(device.name)} {{\n")
+        f.write(f"  object {_to_pascal(device.name)} {{\n")
         f.write(f"    val ID = DeviceTypeId(0x{id:04X}u)\n")
-        f.write("  }\n")
+        f.write("  }\n\n")
     f.write("}\n")
     f.write("\n")
     f.write("val DEVICES =\n")
     f.write("    mapOf<DeviceTypeId, String>(\n")
     for id, device in sorted(devices.items()):
-        f.write(f'        Devices.{_to_camel(device.name)}.ID to "{device.name}",\n')
+        f.write(f'        Devices.{_to_pascal(device.name)}.ID to "{device.name}",\n')
     f.write("    )\n")
 
 
@@ -566,12 +657,12 @@ def write_cluster_registry(clusters: dict[int, Cluster], path: Path, version: st
         f.write(f"val CLUSTERS_{version.replace('.', '_')} =\n")
         f.write("    mapOf<ClusterId, ClusterInfo>(\n")
         for cluster in sorted(clusters.values(), key=lambda x: x.id):
-            cluster_namespace = f"Clusters.{_to_camel(cluster.name)}"
+            cluster_namespace = f"Clusters.{_to_pascal(cluster.name)}"
             f.write(f"    {cluster_namespace}.ID to ClusterInfo(\n")
             f.write(f'      name = "{cluster.name}",\n')
             f.write("      attributes = mapOf<AttributeId, AttributeInfo>(\n")
             for attr in sorted(cluster.attributes.values(), key=lambda x: x.id):
-                attr_namespace = f"{cluster_namespace}.Attributes.{_to_camel(attr.name)}"
+                attr_namespace = f"{cluster_namespace}.Attributes.{_to_pascal(attr.name)}"
                 f.write(f"        {attr_namespace}.ID to AttributeInfo(\n")
                 f.write(f'          name = "{attr.name}",\n')
                 f.write(f"          type = {_get_type_enum(attr.type)},\n")
@@ -585,7 +676,7 @@ def write_cluster_registry(clusters: dict[int, Cluster], path: Path, version: st
             f.write("      ),\n")
             f.write("      commandsIncoming = mapOf<CommandId, CommandInfo>(\n")
             for cmd in sorted(cluster.commands_in.values(), key=lambda x: x.id):
-                cmd_namespace = f"{cluster_namespace}.CommandsIncoming.{_to_camel(cmd.name)}"
+                cmd_namespace = f"{cluster_namespace}.CommandsIncoming.{_to_pascal(cmd.name)}"
                 f.write(f"        {cmd_namespace}.ID to CommandInfo(\n")
                 f.write(f'          name = "{cmd.name}",\n')
                 if cmd.privilege:
@@ -601,7 +692,7 @@ def write_cluster_registry(clusters: dict[int, Cluster], path: Path, version: st
             f.write("      ),\n")
             f.write("      commandsOutgoing = mapOf<CommandId, CommandInfo>(\n")
             for cmd in sorted(cluster.commands_out.values(), key=lambda x: x.id):
-                cmd_namespace = f"{cluster_namespace}.CommandsOutgoing.{_to_camel(cmd.name)}"
+                cmd_namespace = f"{cluster_namespace}.CommandsOutgoing.{_to_pascal(cmd.name)}"
                 f.write(f"        {cmd_namespace}.ID to CommandInfo(\n")
                 f.write(f'          name = "{cmd.name}",\n')
                 if cmd.privilege:
@@ -617,7 +708,7 @@ def write_cluster_registry(clusters: dict[int, Cluster], path: Path, version: st
             f.write("      ),\n")
             f.write("      events = mapOf<EventId, EventInfo>(\n")
             for event in sorted(cluster.events.values(), key=lambda x: x.id):
-                event_namespace = f"{cluster_namespace}.Events.{_to_camel(event.name)}"
+                event_namespace = f"{cluster_namespace}.Events.{_to_pascal(event.name)}"
                 f.write(f"        {event_namespace}.ID to EventInfo(\n")
                 f.write(f'          name = "{event.name}",\n')
                 f.write("        ),\n")

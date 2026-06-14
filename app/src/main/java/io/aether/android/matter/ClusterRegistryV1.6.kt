@@ -171,7 +171,9 @@ val CLUSTERS_1_6 =
                                         6u to
                                             ParameterInfo(
                                                 name = "McastAddrPolicy",
-                                                type = DataType.MULTICAST_ADDR_POLICY_ENUM,
+                                                type =
+                                                    DataType
+                                                        .GROUPCAST_CLUSTER_MULTICAST_ADDR_POLICY_ENUM,
                                             ),
                                     ),
                             ),
@@ -243,7 +245,9 @@ val CLUSTERS_1_6 =
                                         0u to
                                             ParameterInfo(
                                                 name = "TestOperation",
-                                                type = DataType.GROUPCAST_TESTING_ENUM,
+                                                type =
+                                                    DataType
+                                                        .GROUPCAST_CLUSTER_GROUPCAST_TESTING_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
