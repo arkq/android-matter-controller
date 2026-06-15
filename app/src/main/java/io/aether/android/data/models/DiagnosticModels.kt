@@ -4,16 +4,17 @@
 package io.aether.android.data.models
 
 import chip.devicecontroller.ChipStructs
+import io.aether.android.matter.Enums
 
 data class GeneralDiagnosticsData(
     val networkInterfaces: List<ChipStructs.GeneralDiagnosticsClusterNetworkInterface>,
     val rebootCount: Int,
     val upTime: Long? = null,
     val totalOperationalHours: Int? = null,
-    val bootReason: Int? = null,
-    val activeHardwareFaults: List<String>? = null,
-    val activeRadioFaults: List<String>? = null,
-    val activeNetworkFaults: List<String>? = null,
+    val bootReason: Enums.DiagnosticsGeneralClusterBootReason? = null,
+    val activeHardwareFaults: List<Enums.DiagnosticsGeneralClusterHardwareFault>? = null,
+    val activeRadioFaults: List<Enums.DiagnosticsGeneralClusterRadioFault>? = null,
+    val activeNetworkFaults: List<Enums.DiagnosticsGeneralClusterNetworkFault>? = null,
     val testEventTriggersEnabled: Boolean? = null,
     val deviceLoadStatus: String? = null,
 )

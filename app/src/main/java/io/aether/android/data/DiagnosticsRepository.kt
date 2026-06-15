@@ -13,6 +13,7 @@ import io.aether.android.data.models.GeneralDiagnosticsData
 import io.aether.android.data.models.SoftwareDiagnosticsData
 import io.aether.android.matter.AttributeId
 import io.aether.android.matter.Clusters
+import io.aether.android.matter.Enums
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.ROOT_ENDPOINT_ID
 import io.aether.android.matter.WILDCARD_ATTRIBUTE_ID
@@ -78,27 +79,18 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
         upTime = attr(Clusters.GeneralDiagnostics.Attributes.UpTime.ID)?.toLong(),
         totalOperationalHours =
             attr(Clusters.GeneralDiagnostics.Attributes.TotalOperationalHours.ID)?.toInt(),
-        // bootReason = attr(Clusters.GeneralDiagnostics.Attributes.BootReason.ID)?.toInt(),
-        // activeHardwareFaults =
-        //     attr(Clusters.GeneralDiagnostics.Attributes.ActiveHardwareFaults.ID)
-        //         ?.toString()
-        //         ?.split(",")
-        //         ?.map { it.trim() },
-        // activeRadioFaults =
-        //     attr(Clusters.GeneralDiagnostics.Attributes.ActiveRadioFaults.ID)
-        //         ?.toString()
-        //         ?.split(",")
-        //         ?.map { it.trim() },
-        // activeNetworkFaults =
-        //     attr(Clusters.GeneralDiagnostics.Attributes.ActiveNetworkFaults.ID)
-        //         ?.toString()
-        //         ?.split(",")
-        //         ?.map { it.trim() },
-        // testEventTriggersEnabled =
-        //
-        // attr(Clusters.GeneralDiagnostics.Attributes.TestEventTriggersEnabled.ID)?.toBoolean(),
-        // deviceLoadStatus =
-        //     attr(Clusters.GeneralDiagnostics.Attributes.DeviceLoadStatus.ID)?.toString(),
+        bootReason = attr(Clusters.GeneralDiagnostics.Attributes.BootReason.ID)?.toBootReason(),
+        activeHardwareFaults =
+            attr(Clusters.GeneralDiagnostics.Attributes.ActiveHardwareFaults.ID)
+                ?.toHardwareFaults(),
+        activeRadioFaults =
+            attr(Clusters.GeneralDiagnostics.Attributes.ActiveRadioFaults.ID)?.toRadioFaults(),
+        activeNetworkFaults =
+            attr(Clusters.GeneralDiagnostics.Attributes.ActiveNetworkFaults.ID)?.toNetworkFaults(),
+        testEventTriggersEnabled =
+            attr(Clusters.GeneralDiagnostics.Attributes.TestEventTriggersEnabled.ID)?.toBoolean(),
+        deviceLoadStatus =
+            attr(Clusters.GeneralDiagnostics.Attributes.DeviceLoadStatus.ID)?.toString(),
     )
   }
 
@@ -164,6 +156,50 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
       List<ChipStructs.GeneralDiagnosticsClusterNetworkInterface> =
       when (this) {
         is List<*> -> this.filterIsInstance<ChipStructs.GeneralDiagnosticsClusterNetworkInterface>()
+        else -> emptyList()
+      }
+
+  private val bootReasonMap =
+      Enums.DiagnosticsGeneralClusterBootReason.entries.associateBy(
+          Enums.DiagnosticsGeneralClusterBootReason::value
+      )
+
+  private fun Any?.toBootReason(): Enums.DiagnosticsGeneralClusterBootReason? =
+      when (this) {
+        is Number -> bootReasonMap[this.toInt().toUInt()]
+        else -> null
+      }
+
+  private val hardwareFaultMap =
+      Enums.DiagnosticsGeneralClusterHardwareFault.entries.associateBy(
+          Enums.DiagnosticsGeneralClusterHardwareFault::value
+      )
+
+  private fun Any?.toHardwareFaults(): List<Enums.DiagnosticsGeneralClusterHardwareFault> =
+      when (this) {
+        is List<*> -> this.filterIsInstance<Number>().mapNotNull { hardwareFaultMap[it.toInt().toUInt()] }
+        else -> emptyList()
+      }
+
+  private val radioFaultMap =
+      Enums.DiagnosticsGeneralClusterRadioFault.entries.associateBy(
+          Enums.DiagnosticsGeneralClusterRadioFault::value
+      )
+
+  private fun Any?.toRadioFaults(): List<Enums.DiagnosticsGeneralClusterRadioFault> =
+      when (this) {
+        is List<*> -> this.filterIsInstance<Number>().mapNotNull { radioFaultMap[it.toInt().toUInt()] }
+        else -> emptyList()
+      }
+
+  private val networkFaultMap =
+      Enums.DiagnosticsGeneralClusterNetworkFault.entries.associateBy(
+          Enums.DiagnosticsGeneralClusterNetworkFault::value
+      )
+
+  private fun Any?.toNetworkFaults(): List<Enums.DiagnosticsGeneralClusterNetworkFault> =
+      when (this) {
+        is List<*> -> this.filterIsInstance<Number>().mapNotNull { networkFaultMap[it.toInt().toUInt()] }
         else -> emptyList()
       }
 

@@ -49,9 +49,30 @@ fun GeneralDiagnosticsCard(data: GeneralDiagnosticsData) {
   DiagnosticsInfoRow(label = stringResource(R.string.device_diagnostics_label_reboot_count)) {
     Text(data.rebootCount.toString())
   }
-  // DiagnosticsInfoRow(label = stringResource(R.string.device_diagnostics_label_boot_reason)) {
-  //   Text(data.bootReason ?: "N/A")
-  // }
+  DiagnosticsInfoRow(label = stringResource(R.string.device_diagnostics_label_boot_reason)) {
+    Text(data.bootReason?.name ?: "N/A")
+  }
+  data.activeHardwareFaults?.let { faults ->
+    DiagnosticsInfoRow(
+        label = stringResource(R.string.device_diagnostics_label_active_hardware_faults)
+    ) {
+      Text(faults.joinToString(", ") { it.name })
+    }
+  }
+  data.activeRadioFaults?.let { faults ->
+    DiagnosticsInfoRow(
+        label = stringResource(R.string.device_diagnostics_label_active_radio_faults)
+    ) {
+      Text(faults.joinToString(", ") { it.name })
+    }
+  }
+  data.activeNetworkFaults?.let { faults ->
+    DiagnosticsInfoRow(
+        label = stringResource(R.string.device_diagnostics_label_active_network_faults)
+    ) {
+      Text(faults.joinToString(", ") { it.name })
+    }
+  }
 }
 
 @Composable
