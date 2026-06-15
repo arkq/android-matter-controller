@@ -10,13 +10,17 @@ import chip.devicecontroller.model.ChipEventPath
 import chip.devicecontroller.model.NodeState
 import io.aether.android.chip.ChipClient
 import io.aether.android.data.models.GeneralDiagnosticsData
+import io.aether.android.data.models.NetworkInterface
 import io.aether.android.data.models.SoftwareDiagnosticsData
+import io.aether.android.data.models.ThreadMetrics
 import io.aether.android.matter.AttributeId
 import io.aether.android.matter.Clusters
 import io.aether.android.matter.Enums
 import io.aether.android.matter.NodeId
 import io.aether.android.matter.ROOT_ENDPOINT_ID
 import io.aether.android.matter.WILDCARD_ATTRIBUTE_ID
+import java.net.Inet6Address
+import java.net.InetAddress
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -75,22 +79,21 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
     return GeneralDiagnosticsData(
         networkInterfaces =
             attr(Clusters.GeneralDiagnostics.Attributes.NetworkInterfaces.ID).toNetworkInterfaces(),
-        rebootCount = attr(Clusters.GeneralDiagnostics.Attributes.RebootCount.ID)?.toInt() ?: 0,
-        upTime = attr(Clusters.GeneralDiagnostics.Attributes.UpTime.ID)?.toLong(),
+        rebootCount = attr(Clusters.GeneralDiagnostics.Attributes.RebootCount.ID).toInt() ?: 0,
+        upTime = attr(Clusters.GeneralDiagnostics.Attributes.UpTime.ID).toLong(),
         totalOperationalHours =
-            attr(Clusters.GeneralDiagnostics.Attributes.TotalOperationalHours.ID)?.toInt(),
-        bootReason = attr(Clusters.GeneralDiagnostics.Attributes.BootReason.ID)?.toBootReason(),
+            attr(Clusters.GeneralDiagnostics.Attributes.TotalOperationalHours.ID).toInt(),
+        bootReason = attr(Clusters.GeneralDiagnostics.Attributes.BootReason.ID).toBootReason(),
         activeHardwareFaults =
-            attr(Clusters.GeneralDiagnostics.Attributes.ActiveHardwareFaults.ID)
-                ?.toHardwareFaults(),
+            attr(Clusters.GeneralDiagnostics.Attributes.ActiveHardwareFaults.ID).toHardwareFaults(),
         activeRadioFaults =
-            attr(Clusters.GeneralDiagnostics.Attributes.ActiveRadioFaults.ID)?.toRadioFaults(),
+            attr(Clusters.GeneralDiagnostics.Attributes.ActiveRadioFaults.ID).toRadioFaults(),
         activeNetworkFaults =
-            attr(Clusters.GeneralDiagnostics.Attributes.ActiveNetworkFaults.ID)?.toNetworkFaults(),
+            attr(Clusters.GeneralDiagnostics.Attributes.ActiveNetworkFaults.ID).toNetworkFaults(),
         testEventTriggersEnabled =
-            attr(Clusters.GeneralDiagnostics.Attributes.TestEventTriggersEnabled.ID)?.toBoolean(),
+            attr(Clusters.GeneralDiagnostics.Attributes.TestEventTriggersEnabled.ID).toBoolean(),
         deviceLoadStatus =
-            attr(Clusters.GeneralDiagnostics.Attributes.DeviceLoadStatus.ID)?.toString(),
+            attr(Clusters.GeneralDiagnostics.Attributes.DeviceLoadStatus.ID).toString(),
     )
   }
 
@@ -139,23 +142,43 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
         nodeState
             .getEndpointState(ROOT_ENDPOINT_ID.toInt())
             ?.getClusterState(Clusters.SoftwareDiagnostics.ID.toLong())
-            ?: return SoftwareDiagnosticsData()
+            ?: return SoftwareDiagnosticsData(threadMetrics = emptyList())
     fun attr(id: AttributeId) = clusterState.getAttributeState(id.toLong())?.value
     return SoftwareDiagnosticsData(
-        threadMetrics = attr(Clusters.SoftwareDiagnostics.Attributes.ThreadMetrics.ID)?.toString(),
-        currentHeapFree =
-            attr(Clusters.SoftwareDiagnostics.Attributes.CurrentHeapFree.ID)?.toLong(),
-        currentHeapUsed =
-            attr(Clusters.SoftwareDiagnostics.Attributes.CurrentHeapUsed.ID)?.toLong(),
+        threadMetrics =
+            attr(Clusters.SoftwareDiagnostics.Attributes.ThreadMetrics.ID).toThreadMetrics(),
+        currentHeapFree = attr(Clusters.SoftwareDiagnostics.Attributes.CurrentHeapFree.ID).toLong(),
+        currentHeapUsed = attr(Clusters.SoftwareDiagnostics.Attributes.CurrentHeapUsed.ID).toLong(),
         currentHeapHighWatermark =
-            attr(Clusters.SoftwareDiagnostics.Attributes.CurrentHeapHighWatermark.ID)?.toLong(),
+            attr(Clusters.SoftwareDiagnostics.Attributes.CurrentHeapHighWatermark.ID).toLong(),
     )
   }
 
-  private fun Any?.toNetworkInterfaces():
-      List<ChipStructs.GeneralDiagnosticsClusterNetworkInterface> =
+  private val interfaceTypeMap =
+      Enums.DiagnosticsGeneralClusterInterfaceType.entries.associateBy(
+          Enums.DiagnosticsGeneralClusterInterfaceType::value
+      )
+
+  private fun Any?.toNetworkInterfaces(): List<NetworkInterface> =
       when (this) {
-        is List<*> -> this.filterIsInstance<ChipStructs.GeneralDiagnosticsClusterNetworkInterface>()
+        is List<*> ->
+            this.filterIsInstance<ChipStructs.GeneralDiagnosticsClusterNetworkInterface>().map {
+              NetworkInterface(
+                  name = it.name,
+                  isOperational = it.isOperational,
+                  offPremiseServicesReachableIPv4 = it.offPremiseServicesReachableIPv4,
+                  offPremiseServicesReachableIPv6 = it.offPremiseServicesReachableIPv6,
+                  hardwareAddress = it.hardwareAddress,
+                  ipv4Addresses = it.IPv4Addresses.map { addr -> InetAddress.getByAddress(addr) },
+                  ipv6Addresses =
+                      it.IPv6Addresses.map { addr ->
+                        Inet6Address.getByAddress(addr) as Inet6Address
+                      },
+                  type =
+                      interfaceTypeMap[it.type.toInt().toUInt()]
+                          ?: Enums.DiagnosticsGeneralClusterInterfaceType.Unspecified,
+              )
+            }
         else -> emptyList()
       }
 
@@ -177,7 +200,8 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
 
   private fun Any?.toHardwareFaults(): List<Enums.DiagnosticsGeneralClusterHardwareFault> =
       when (this) {
-        is List<*> -> this.filterIsInstance<Number>().mapNotNull { hardwareFaultMap[it.toInt().toUInt()] }
+        is List<*> ->
+            this.filterIsInstance<Number>().mapNotNull { hardwareFaultMap[it.toInt().toUInt()] }
         else -> emptyList()
       }
 
@@ -188,7 +212,8 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
 
   private fun Any?.toRadioFaults(): List<Enums.DiagnosticsGeneralClusterRadioFault> =
       when (this) {
-        is List<*> -> this.filterIsInstance<Number>().mapNotNull { radioFaultMap[it.toInt().toUInt()] }
+        is List<*> ->
+            this.filterIsInstance<Number>().mapNotNull { radioFaultMap[it.toInt().toUInt()] }
         else -> emptyList()
       }
 
@@ -199,7 +224,23 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
 
   private fun Any?.toNetworkFaults(): List<Enums.DiagnosticsGeneralClusterNetworkFault> =
       when (this) {
-        is List<*> -> this.filterIsInstance<Number>().mapNotNull { networkFaultMap[it.toInt().toUInt()] }
+        is List<*> ->
+            this.filterIsInstance<Number>().mapNotNull { networkFaultMap[it.toInt().toUInt()] }
+        else -> emptyList()
+      }
+
+  private fun Any?.toThreadMetrics(): List<ThreadMetrics> =
+      when (this) {
+        is List<*> ->
+            this.filterIsInstance<ChipStructs.SoftwareDiagnosticsClusterThreadMetricsStruct>().map {
+              ThreadMetrics(
+                  id = it.id,
+                  name = it.name.orElse(null),
+                  stackFreeCurrent = it.stackFreeCurrent?.toInt(),
+                  stackFreeMinimum = it.stackFreeMinimum?.toInt(),
+                  stackSize = it.stackSize?.toInt(),
+              )
+            }
         else -> emptyList()
       }
 

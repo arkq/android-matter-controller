@@ -128,8 +128,6 @@ constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewMode
     ) {
       return
     }
-    viewModelScope.launch {
-      refreshTrigger.emit(RefreshRequest(nodeId))
-    }
+    viewModelScope.launch { refreshTrigger.emit(RefreshRequest(nodeId)) }
   }
 }

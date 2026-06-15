@@ -56,9 +56,7 @@ fun FabricsRoute(
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-  LaunchedEffect(nodeId) {
-    viewModel.loadFabrics(nodeId)
-  }
+  LaunchedEffect(nodeId) { viewModel.loadFabrics(nodeId) }
 
   Scaffold(
       topBar = {

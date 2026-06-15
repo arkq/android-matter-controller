@@ -93,19 +93,8 @@ private fun DiagnosticsScreen(
                 .padding(MaterialTheme.spacing.paddingNormal),
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
     ) {
-      uiState.generalDiagnostics?.let {
-        DiagnosticsSection(title = stringResource(R.string.device_diagnostics_card_general)) {
-          GeneralDiagnosticsCard(it)
-        }
-        DiagnosticsSection(title = stringResource(R.string.device_diagnostics_card_interfaces)) {
-          GeneralDiagnosticsInterfacesCard(it)
-        }
-      }
-    }
-    uiState.softwareDiagnostics?.let {
-      DiagnosticsSection(title = stringResource(R.string.device_diagnostics_card_software)) {
-        SoftwareDiagnosticsCard(it)
-      }
+      uiState.generalDiagnostics?.let { GeneralDiagnosticsCard(it) }
+      uiState.softwareDiagnostics?.let { SoftwareDiagnosticsCard(it) }
     }
   }
 }
