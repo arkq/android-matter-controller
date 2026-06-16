@@ -17,12 +17,12 @@ import io.aether.android.data.models.SoftwareDiagnosticsData
 import io.aether.android.data.models.ThreadMetrics
 
 @Composable
-fun SoftwareDiagnosticsCard(data: SoftwareDiagnosticsData) {
-  DiagnosticsSection(title = stringResource(R.string.device_diagnostics_card_memory)) {
-    val used = data.currentHeapUsed ?: 0L
-    val free = data.currentHeapFree ?: 0L
+fun SoftwareDiagnostics(data: SoftwareDiagnosticsData) {
+  DiagnosticsSection(title = stringResource(R.string.device_diagnostics_section_memory)) {
+    val used = data.currentHeapUsed ?: 0u
+    val free = data.currentHeapFree ?: 0u
     val total = used + free
-    if (total > 0) {
+    if (total > 0u) {
       DiagnosticsInfoRow(
           label = stringResource(R.string.device_diagnostics_label_current_heap_usage)
       ) {
@@ -35,8 +35,18 @@ fun SoftwareDiagnosticsCard(data: SoftwareDiagnosticsData) {
                 else MaterialTheme.colorScheme.primary,
         )
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-          Text(stringResource(R.string.device_diagnostics_current_heap_used, used / 1024))
-          Text(stringResource(R.string.device_diagnostics_current_heap_free, free / 1024))
+          Text(
+              stringResource(
+                  R.string.device_diagnostics_current_heap_used,
+                  (used / 1024u).toString(),
+              )
+          )
+          Text(
+              stringResource(
+                  R.string.device_diagnostics_current_heap_free,
+                  (free / 1024u).toString(),
+              )
+          )
         }
       }
     }
@@ -44,13 +54,18 @@ fun SoftwareDiagnosticsCard(data: SoftwareDiagnosticsData) {
       DiagnosticsInfoRow(
           label = stringResource(R.string.device_diagnostics_label_current_heap_high_watermark)
       ) {
-        Text(stringResource(R.string.device_diagnostics_current_heap_high_watermark, it / 1024))
+        Text(
+            stringResource(
+                R.string.device_diagnostics_current_heap_high_watermark,
+                (it / 1024u).toString(),
+            )
+        )
       }
     }
   }
   if (data.threadMetrics.isNotEmpty()) {
-    val maxStackSizeAcrossThreads = data.threadMetrics.maxOfOrNull { it.stackSize ?: 0 } ?: 0
-    DiagnosticsSection(title = stringResource(R.string.device_diagnostics_card_threads)) {
+    val maxStackSizeAcrossThreads = data.threadMetrics.maxOfOrNull { it.stackSize ?: 0u } ?: 0u
+    DiagnosticsSection(title = stringResource(R.string.device_diagnostics_section_threads)) {
       data.threadMetrics
           .sortedBy { it.id }
           .forEach { SoftwareDiagnosticsThread(it, maxStackSizeAcrossThreads) }
@@ -59,10 +74,10 @@ fun SoftwareDiagnosticsCard(data: SoftwareDiagnosticsData) {
 }
 
 @Composable
-fun SoftwareDiagnosticsThread(thread: ThreadMetrics, maxStackSizeAcrossThreads: Int) {
+private fun SoftwareDiagnosticsThread(thread: ThreadMetrics, maxStackSizeAcrossThreads: UInt) {
   DiagnosticsInfoRow("${thread.name ?: "Thread"} (${thread.id})") {
     if (thread.stackSize != null && thread.stackFreeCurrent != null) {
-      val used = (thread.stackSize - thread.stackFreeCurrent).coerceAtLeast(0)
+      val used = (thread.stackSize - thread.stackFreeCurrent).coerceAtLeast(0u)
       val progress = used.toFloat() / thread.stackSize.toFloat()
       LinearProgressIndicator(
           progress = { progress },
@@ -72,11 +87,13 @@ fun SoftwareDiagnosticsThread(thread: ThreadMetrics, maxStackSizeAcrossThreads: 
               else MaterialTheme.colorScheme.primary,
       )
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(stringResource(R.string.device_diagnostics_thread_stack_used, used / 1024))
+        Text(
+            stringResource(R.string.device_diagnostics_thread_stack_used, (used / 1024u).toString())
+        )
         Text(
             stringResource(
                 R.string.device_diagnostics_thread_stack_free,
-                thread.stackFreeCurrent / 1024,
+                (thread.stackFreeCurrent / 1024u).toString(),
             )
         )
       }

@@ -344,8 +344,14 @@ def collect_clusters(data_model_dir: Path, versions: list[str]):
                 id = int(cluster_elem.get("id"), 0)
                 name = cluster_elem.get("name", "")
                 cluster_new = Cluster(
-                    ns=ns, id=id, name=name, attributes={}, commands_in={},
-                    commands_out={}, events={}, enums=enums
+                    ns=ns,
+                    id=id,
+                    name=name,
+                    attributes={},
+                    commands_in={},
+                    commands_out={},
+                    events={},
+                    enums=enums,
                 )
                 cluster = clusters.setdefault(id, cluster_new)
                 cluster.versions.append(ver)
@@ -613,12 +619,12 @@ with open(args.out_dir / "Enums.kt", "w") as f:
     f.write("object Enums {\n")
     for enum in sorted(enums.values(), key=lambda x: x.name):
         name = _to_pascal(enum.name.removesuffix("Enum"))
-        f.write(f"  enum class {name}(val value: UInt) {{\n")
+        f.write(f"  enum class {name}(val value: Int) {{\n")
         for item in sorted(enum.entries.values(), key=lambda x: x.id):
             name = _to_pascal(item.name)
             if name[0].isdigit():
                 name = f"`{name}`"
-            f.write(f"    {name}({item.id}u),\n")
+            f.write(f"    {name}({item.id}),\n")
         f.write("  }\n\n")
     f.write("}\n")
 

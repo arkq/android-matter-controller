@@ -9,8 +9,11 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.aether.android.R
 import io.aether.android.data.DiagnosticsRepository
+import io.aether.android.data.models.EthernetNetworkDiagnosticsData
 import io.aether.android.data.models.GeneralDiagnosticsData
 import io.aether.android.data.models.SoftwareDiagnosticsData
+import io.aether.android.data.models.ThreadNetworkDiagnosticsData
+import io.aether.android.data.models.WiFiNetworkDiagnosticsData
 import io.aether.android.matter.NodeId
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,6 +33,9 @@ data class DiagnosticsUiState(
     val isRefreshing: Boolean = false,
     val generalDiagnostics: GeneralDiagnosticsData? = null,
     val softwareDiagnostics: SoftwareDiagnosticsData? = null,
+    val ethernetNetworkDiagnostics: EthernetNetworkDiagnosticsData? = null,
+    val wifiNetworkDiagnostics: WiFiNetworkDiagnosticsData? = null,
+    val threadNetworkDiagnostics: ThreadNetworkDiagnosticsData? = null,
     @field:StringRes val errorRes: Int? = null,
 )
 
@@ -43,6 +49,9 @@ private sealed interface PartialState {
 
   data class OtherDiagnosticsSuccess(
       val softwareDiagnostics: SoftwareDiagnosticsData?,
+      val ethernetNetworkDiagnostics: EthernetNetworkDiagnosticsData?,
+      val wifiNetworkDiagnostics: WiFiNetworkDiagnosticsData?,
+      val threadNetworkDiagnostics: ThreadNetworkDiagnosticsData?,
   ) : PartialState
 
   data class Error(@field:StringRes val errorRes: Int) : PartialState
@@ -68,6 +77,15 @@ constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewMode
                 val softwareDef = async {
                   diagnosticsRepository.readSoftwareDiagnostics(request.nodeId)
                 }
+                val ethernetDef = async {
+                  diagnosticsRepository.readEthernetNetworkDiagnostics(request.nodeId)
+                }
+                val wifiDef = async {
+                  diagnosticsRepository.readWiFiNetworkDiagnostics(request.nodeId)
+                }
+                val threadDef = async {
+                  diagnosticsRepository.readThreadNetworkDiagnostics(request.nodeId)
+                }
 
                 val general = generalDef.await()
                 if (general == null) {
@@ -79,7 +97,9 @@ constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewMode
                 emit(
                     PartialState.OtherDiagnosticsSuccess(
                         softwareDiagnostics = softwareDef.await(),
-                        // wifi = wifiDef.await()
+                        ethernetNetworkDiagnostics = ethernetDef.await(),
+                        wifiNetworkDiagnostics = wifiDef.await(),
+                        threadNetworkDiagnostics = threadDef.await(),
                     )
                 )
               }
@@ -103,6 +123,9 @@ constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewMode
               is PartialState.OtherDiagnosticsSuccess ->
                   previousState.copy(
                       softwareDiagnostics = partial.softwareDiagnostics,
+                      ethernetNetworkDiagnostics = partial.ethernetNetworkDiagnostics,
+                      wifiNetworkDiagnostics = partial.wifiNetworkDiagnostics,
+                      threadNetworkDiagnostics = partial.threadNetworkDiagnostics,
                       errorRes = null,
                   )
               is PartialState.Error ->

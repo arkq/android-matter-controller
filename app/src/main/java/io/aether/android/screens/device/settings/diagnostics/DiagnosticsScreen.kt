@@ -93,8 +93,11 @@ private fun DiagnosticsScreen(
                 .padding(MaterialTheme.spacing.paddingNormal),
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
     ) {
-      uiState.generalDiagnostics?.let { GeneralDiagnosticsCard(it) }
-      uiState.softwareDiagnostics?.let { SoftwareDiagnosticsCard(it) }
+      uiState.generalDiagnostics?.let { GeneralDiagnostics(it) }
+      uiState.softwareDiagnostics?.let { SoftwareDiagnostics(it) }
+      uiState.ethernetNetworkDiagnostics?.let { EthernetNetworkDiagnostics(it) }
+      uiState.wifiNetworkDiagnostics?.let { WiFiNetworkDiagnostics(it) }
+      uiState.threadNetworkDiagnostics?.let { ThreadNetworkDiagnostics(it) }
     }
   }
 }

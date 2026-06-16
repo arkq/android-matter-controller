@@ -8,43 +8,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import io.aether.android.R
 import io.aether.android.data.models.GeneralDiagnosticsData
-
-private fun formatUpTimeDuration(seconds: Long): String {
-  val days = seconds / 86400
-  val hours = (seconds % 86400) / 3600
-  val minutes = (seconds % 3600) / 60
-  val secs = seconds % 60
-  return if (days > 0) {
-    "${days}d ${hours}h ${minutes}m"
-  } else if (hours > 0) {
-    "${hours}h ${minutes}m ${secs}s"
-  } else if (minutes > 0) {
-    "${minutes}m ${secs}s"
-  } else {
-    "${secs}s"
-  }
-}
-
-private fun formatTotalOperationalTime(hours: Int): String {
-  val days = hours / 24
-  val remainingHours = hours % 24
-  return if (days > 0) {
-    "${days}d ${remainingHours}h"
-  } else {
-    "${remainingHours}h"
-  }
-}
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun GeneralDiagnosticsCard(data: GeneralDiagnosticsData) {
-  DiagnosticsSection(title = stringResource(R.string.device_diagnostics_card_general)) {
+fun GeneralDiagnostics(data: GeneralDiagnosticsData) {
+  DiagnosticsSection(title = stringResource(R.string.device_diagnostics_section_general)) {
     DiagnosticsInfoRow(label = stringResource(R.string.device_diagnostics_label_uptime)) {
-      Text(data.upTime?.let { formatUpTimeDuration(it) } ?: "N/A")
+      Text(data.upTime?.let { it.toLong().seconds.toString() } ?: "N/A")
     }
     DiagnosticsInfoRow(
         label = stringResource(R.string.device_diagnostics_label_total_operational_time)
     ) {
-      Text(data.totalOperationalHours?.let { formatTotalOperationalTime(it) } ?: "N/A")
+      Text(data.totalOperationalHours?.let { it.toInt().hours.toString() } ?: "N/A")
     }
     DiagnosticsInfoRow(label = stringResource(R.string.device_diagnostics_label_reboot_count)) {
       Text(data.rebootCount.toString())
@@ -74,7 +50,7 @@ fun GeneralDiagnosticsCard(data: GeneralDiagnosticsData) {
       }
     }
   }
-  DiagnosticsSection(title = stringResource(R.string.device_diagnostics_card_interfaces)) {
+  DiagnosticsSection(title = stringResource(R.string.device_diagnostics_section_interfaces)) {
     data.networkInterfaces.forEach {
       DiagnosticsInfoRow(
           label = "${it.name} (${it.type.name}) ${if (it.isOperational) "[UP]" else "[DOWN]"}"

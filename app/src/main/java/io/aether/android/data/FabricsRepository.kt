@@ -49,12 +49,12 @@ class FabricsRepository @Inject constructor(private val chipClient: ChipClient) 
                         eventPath: ChipEventPath?,
                         ex: Exception,
                     ) {
-                      if (!completed.compareAndSet(false, true)) return
+                      if (!completed.compareAndSet(expectedValue = false, newValue = true)) return
                       continuation.resumeWithException(ex)
                     }
 
                     override fun onReport(nodeState: NodeState) {
-                      if (!completed.compareAndSet(false, true)) return
+                      if (!completed.compareAndSet(expectedValue = false, newValue = true)) return
                       continuation.resume(extractManagedFabrics(nodeState, currentIdx))
                     }
                   },
@@ -106,7 +106,7 @@ class FabricsRepository @Inject constructor(private val chipClient: ChipClient) 
                         fabricIndex: java.util.Optional<Int>,
                         debugText: java.util.Optional<String>,
                     ) {
-                      if (!completed.compareAndSet(false, true)) return
+                      if (!completed.compareAndSet(expectedValue = false, newValue = true)) return
                       if (statusCode == 0) {
                         continuation.resume(Unit)
                       } else {
@@ -118,7 +118,7 @@ class FabricsRepository @Inject constructor(private val chipClient: ChipClient) 
                     }
 
                     override fun onError(ex: Exception) {
-                      if (!completed.compareAndSet(false, true)) return
+                      if (!completed.compareAndSet(expectedValue = false, newValue = true)) return
                       continuation.resumeWithException(ex)
                     }
                   },
@@ -158,12 +158,12 @@ class FabricsRepository @Inject constructor(private val chipClient: ChipClient) 
                         event: ChipEventPath?,
                         ex: Exception,
                     ) {
-                      if (!completed.compareAndSet(false, true)) return
+                      if (!completed.compareAndSet(expectedValue = false, newValue = true)) return
                       continuation.resumeWithException(ex)
                     }
 
                     override fun onReport(nodeState: NodeState) {
-                      if (!completed.compareAndSet(false, true)) return
+                      if (!completed.compareAndSet(expectedValue = false, newValue = true)) return
                       continuation.resume(extractCurrentFabricIndex(nodeState))
                     }
                   },
