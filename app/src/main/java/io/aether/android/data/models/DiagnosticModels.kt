@@ -59,7 +59,7 @@ data class EthernetNetworkDiagnosticsData(
 )
 
 data class WiFiNetworkDiagnosticsData(
-    val bssid: String? = null,
+    val bssid: ByteArray? = null,
     val securityType: Enums.DiagnosticsWiFiClusterSecurityType? = null,
     val wifiVersion: Enums.DiagnosticsWiFiClusterWiFiVersion? = null,
     val channelNumber: UShort? = null,

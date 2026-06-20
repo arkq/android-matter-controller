@@ -3,234 +3,129 @@
 
 package io.aether.android.screens.device.settings.diagnostics
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import io.aether.android.R
 import io.aether.android.data.models.WiFiNetworkDiagnosticsData
+import io.aether.android.spacing
 
 @Composable
 fun WiFiNetworkDiagnostics(data: WiFiNetworkDiagnosticsData) {
-  DiagnosticsSection(title = stringResource(R.string.device_diagnostics_section_wifi_network)) {
 
-    // 1. NETWORK IDENTITY
-    if (data.bssid != null || data.securityType != null) {
-      DiagnosticsInfoRow(
-          label = stringResource(R.string.device_diagnostics_label_network_identity)
-      ) {
-        Column {
-          data.bssid?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
-          data.securityType?.let {
-            Text(
-                text = it.name,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary,
-            )
+  val networkTrafficUnicast =
+      buildList {
+            data.packetUnicastRxCount?.let {
+              add(stringResource(R.string.device_diagnostics_network_rx, it.toString()))
+            }
+            data.packetUnicastTxCount?.let {
+              add(stringResource(R.string.device_diagnostics_network_tx, it.toString()))
+            }
           }
-        }
-      }
-    }
-
-    // 2. SIGNAL & PERFORMANCE (With RSSI Progress Bar)
-    if (
-        data.rssi != null ||
-            data.wifiVersion != null ||
-            data.channelNumber != null ||
-            data.currentMaxRate != null
-    ) {
-      DiagnosticsInfoRow(
-          label = stringResource(R.string.device_diagnostics_label_signal_performance)
-      ) {
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-          // Network Info Badges
-          Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            data.wifiVersion?.let { Text(it.name) }
-            data.channelNumber?.let { Text("Ch: $it") }
-            data.currentMaxRate?.let { Text("$it Mb/s") }
+          .joinToString(" • ")
+  val networkTrafficMulticast =
+      buildList {
+            data.packetMulticastRxCount?.let {
+              add(stringResource(R.string.device_diagnostics_network_rx, it.toString()))
+            }
+            data.packetMulticastTxCount?.let {
+              add(stringResource(R.string.device_diagnostics_network_tx, it.toString()))
+            }
           }
+          .joinToString(" • ")
 
-          // RSSI Visual Progress Bar
-          data.rssi?.let { rssiVal ->
-            // Normalize RSSI (-100 to -30 dBm) to a 0.0f to 1.0f float range
-            val clampedRssi = rssiVal.coerceIn(-100, -30)
-            val progress = (clampedRssi + 100) / 70f
+  val linkQuality =
+      buildList {
+            data.beaconRxCount?.let {
+              add(stringResource(R.string.device_diagnostics_network_beacon_rx, it.toString()))
+            }
+            data.beaconLostCount?.let {
+              add(stringResource(R.string.device_diagnostics_network_beacon_lost, it.toString()))
+            }
+            data.overrunCount?.let {
+              add(stringResource(R.string.device_diagnostics_network_drops, it.toString()))
+            }
+          }
+          .joinToString(" • ")
 
-            val barColor =
-                when {
-                  progress > 0.7f -> Color.Green
-                  progress > 0.4f -> Color.Yellow
-                  else -> Color.Red
-                }
-
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-              LinearProgressIndicator(
-                  progress = { progress },
-                  modifier = Modifier.fillMaxWidth().height(6.dp),
-                  color = barColor,
-                  trackColor = MaterialTheme.colorScheme.surfaceVariant,
-              )
-              Text(
-                  text = "Signal Strength: $rssiVal dBm",
-                  style = MaterialTheme.typography.bodySmall,
+  val linkProperties =
+      buildList {
+            data.securityType?.let { add(it.name) }
+            data.wifiVersion?.let { add(it.name) }
+            data.channelNumber?.let {
+              add(stringResource(R.string.device_diagnostics_network_channel, it.toString()))
+            }
+            data.currentMaxRate?.let {
+              add(
+                  stringResource(
+                      R.string.device_diagnostics_network_rate,
+                      it.toFloat() / 1000000,
+                  )
               )
             }
           }
-        }
-      }
-    }
+          .joinToString(" • ")
 
-    // 3. UNICAST TRAFFIC
-    if (data.packetUnicastRxCount != null || data.packetUnicastTxCount != null) {
-      DiagnosticsInfoRow(
-          label = stringResource(R.string.device_diagnostics_label_unicast_traffic)
-      ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-          Text("⬇ Rx: ${data.packetUnicastRxCount ?: 0}")
-          Text("⬆ Tx: ${data.packetUnicastTxCount ?: 0}")
-        }
-      }
-    }
-
-    // 4. MULTICAST TRAFFIC
-    if (data.packetMulticastRxCount != null || data.packetMulticastTxCount != null) {
-      DiagnosticsInfoRow(
-          label = stringResource(R.string.device_diagnostics_label_multicast_traffic)
-      ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-          Text("⬇ Rx: ${data.packetMulticastRxCount ?: 0}")
-          Text("⬆ Tx: ${data.packetMulticastTxCount ?: 0}")
-        }
-      }
-    }
-
-    // 5. LINK QUALITY & DROPPED DATA
-    if (data.beaconLostCount != null || data.beaconRxCount != null || data.overrunCount != null) {
-      val lostBeacons = data.beaconLostCount ?: 0u
-      val totalBeacons = (data.beaconRxCount ?: 0u) + lostBeacons
-
-      // Calculate health bar (high lost beacons or overruns turn it red)
-      val hasIssues = lostBeacons > 5u || (data.overrunCount ?: 0u) > 0u
-
-      DiagnosticsInfoRow(
-          label = stringResource(R.string.device_diagnostics_label_network_link_quality)
-      ) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-          Box(
-              modifier =
-                  Modifier.fillMaxWidth()
-                      .height(6.dp)
-                      .background(
-                          color = if (hasIssues) Color.Red else Color.Green,
-                          shape = RoundedCornerShape(3.dp),
-                      )
-          )
-          Row(
-              modifier = Modifier.fillMaxWidth(),
-              horizontalArrangement = Arrangement.SpaceBetween,
-          ) {
-            Text("Lost Beacons: $lostBeacons", style = MaterialTheme.typography.bodySmall)
-            Text("Overruns: ${data.overrunCount ?: 0}", style = MaterialTheme.typography.bodySmall)
-          }
-        }
-      }
-    }
-
+  DiagnosticsSection(title = stringResource(R.string.device_diagnostics_section_wifi_network)) {
     data.bssid?.let {
       DiagnosticsInfoRow(label = stringResource(R.string.device_diagnostics_label_bssid)) {
-        Text(it)
+        Text(it.joinToString(separator = ":") { "%02X".format(it) })
       }
     }
-    data.securityType?.let {
-      DiagnosticsInfoRow(label = stringResource(R.string.device_diagnostics_label_security_type)) {
-        Text(it.name)
+    if (networkTrafficUnicast.isNotEmpty() || networkTrafficMulticast.isNotEmpty()) {
+      DiagnosticsInfoRow(stringResource(R.string.device_diagnostics_label_network_traffic)) {
+        networkTrafficUnicast
+            .takeIf { it.isNotEmpty() }
+            ?.let {
+              Text(stringResource(R.string.device_diagnostics_network_unicast, it))
+            }
+        networkTrafficMulticast
+            .takeIf { it.isNotEmpty() }
+            ?.let {
+              Text(stringResource(R.string.device_diagnostics_network_multicast, it))
+            }
       }
     }
-    data.wifiVersion?.let {
-      DiagnosticsInfoRow(label = stringResource(R.string.device_diagnostics_label_wifi_version)) {
-        Text(it.name)
+    if (data.rssi != null || linkQuality.isNotEmpty()) {
+      DiagnosticsInfoRow(stringResource(R.string.device_diagnostics_label_network_link_quality)) {
+        data.rssi?.let {
+          // Normalize RSSI (-100 to -30 dBm) to a 0.0f to 1.0f float range.
+          val progress = (it.coerceIn(-100, -30) + 100) / 70f
+          Row(
+              modifier = Modifier.fillMaxWidth(),
+              horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
+              verticalAlignment = Alignment.CenterVertically,
+          ) {
+            Text(stringResource(R.string.device_diagnostics_network_rssi))
+            LinearProgressIndicator(
+                progress = { progress },
+                modifier = Modifier.weight(1f),
+                color =
+                    when {
+                      progress > 0.7f -> MaterialTheme.colorScheme.primary
+                      progress > 0.4f -> Color.Yellow
+                      else -> MaterialTheme.colorScheme.error
+                    },
+            )
+            Text(stringResource(R.string.device_diagnostics_network_dbm, it))
+          }
+        }
+        linkQuality.takeIf { it.isNotEmpty() }?.let { Text(it) }
       }
     }
-    data.channelNumber?.let {
-      DiagnosticsInfoRow(label = stringResource(R.string.device_diagnostics_label_channel_number)) {
-        Text(it.toString())
-      }
-    }
-    data.rssi?.let {
-      DiagnosticsInfoRow(label = stringResource(R.string.device_diagnostics_label_rssi)) {
-        Text(it.toString())
-      }
-    }
-    data.beaconLostCount?.let {
+    if (linkProperties.isNotEmpty()) {
       DiagnosticsInfoRow(
-          label = stringResource(R.string.device_diagnostics_label_beacon_lost_count)
+          stringResource(R.string.device_diagnostics_label_network_link_properties)
       ) {
-        Text(it.toString())
-      }
-    }
-    data.beaconRxCount?.let {
-      DiagnosticsInfoRow(
-          label = stringResource(R.string.device_diagnostics_label_beacon_rx_count)
-      ) {
-        Text(it.toString())
-      }
-    }
-    data.packetMulticastRxCount?.let {
-      DiagnosticsInfoRow(
-          label = stringResource(R.string.device_diagnostics_label_packet_multicast_rx_count)
-      ) {
-        Text(it.toString())
-      }
-    }
-    data.packetMulticastTxCount?.let {
-      DiagnosticsInfoRow(
-          label = stringResource(R.string.device_diagnostics_label_packet_multicast_tx_count)
-      ) {
-        Text(it.toString())
-      }
-    }
-    data.packetUnicastRxCount?.let {
-      DiagnosticsInfoRow(
-          label = stringResource(R.string.device_diagnostics_label_packet_unicast_rx_count)
-      ) {
-        Text(it.toString())
-      }
-    }
-    data.packetUnicastTxCount?.let {
-      DiagnosticsInfoRow(
-          label = stringResource(R.string.device_diagnostics_label_packet_unicast_tx_count)
-      ) {
-        Text(it.toString())
-      }
-    }
-    data.currentMaxRate?.let {
-      DiagnosticsInfoRow(
-          label = stringResource(R.string.device_diagnostics_label_current_max_rate)
-      ) {
-        Text(it.toString())
-      }
-    }
-    data.overrunCount?.let {
-      DiagnosticsInfoRow(label = stringResource(R.string.device_diagnostics_label_overrun_count)) {
-        Text(it.toString())
+        Text(linkProperties)
       }
     }
   }

@@ -94,10 +94,10 @@ private fun DiagnosticsScreen(
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
     ) {
       uiState.generalDiagnostics?.let { GeneralDiagnostics(it) }
-      uiState.softwareDiagnostics?.let { SoftwareDiagnostics(it) }
       uiState.ethernetNetworkDiagnostics?.let { EthernetNetworkDiagnostics(it) }
       uiState.wifiNetworkDiagnostics?.let { WiFiNetworkDiagnostics(it) }
       uiState.threadNetworkDiagnostics?.let { ThreadNetworkDiagnostics(it) }
+      uiState.softwareDiagnostics?.let { SoftwareDiagnostics(it) }
     }
   }
 }

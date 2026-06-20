@@ -285,7 +285,7 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
             ?: return WiFiNetworkDiagnosticsData()
     fun attr(id: AttributeId) = clusterState.getAttributeState(id.toLong())?.value
     return WiFiNetworkDiagnosticsData(
-        bssid = attr(Clusters.WiFiNetworkDiagnostics.Attributes.BSSID.ID)?.toString(),
+        bssid = attr(Clusters.WiFiNetworkDiagnostics.Attributes.BSSID.ID).toBSSID(),
         securityType =
             attr(Clusters.WiFiNetworkDiagnostics.Attributes.SecurityType.ID).toSecurityTypeOrNull(),
         wifiVersion =
@@ -443,6 +443,12 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
               )
             }
         else -> emptyList()
+      }
+
+  private fun Any?.toBSSID(): ByteArray? =
+      when (this) {
+        is ByteArray -> this
+        else -> null
       }
 
   private val phyRateMap = Enums.DiagnosticsEthernetClusterPHYRate.entries.associateBy { it.value }

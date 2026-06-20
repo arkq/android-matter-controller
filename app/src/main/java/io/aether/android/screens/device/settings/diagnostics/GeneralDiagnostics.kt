@@ -32,21 +32,21 @@ fun GeneralDiagnostics(data: GeneralDiagnosticsData) {
       DiagnosticsInfoRow(
           label = stringResource(R.string.device_diagnostics_label_active_hardware_faults)
       ) {
-        Text(data.activeHardwareFaults.joinToString(", ") { it.name })
+        Text(data.activeHardwareFaults.joinToString(" • ") { it.name })
       }
     }
     if (data.activeRadioFaults.isNotEmpty()) {
       DiagnosticsInfoRow(
           label = stringResource(R.string.device_diagnostics_label_active_radio_faults)
       ) {
-        Text(data.activeRadioFaults.joinToString(", ") { it.name })
+        Text(data.activeRadioFaults.joinToString(" • ") { it.name })
       }
     }
     if (data.activeNetworkFaults.isNotEmpty()) {
       DiagnosticsInfoRow(
           label = stringResource(R.string.device_diagnostics_label_active_network_faults)
       ) {
-        Text(data.activeNetworkFaults.joinToString(", ") { it.name })
+        Text(data.activeNetworkFaults.joinToString(" • ") { it.name })
       }
     }
   }
@@ -64,13 +64,13 @@ fun GeneralDiagnostics(data: GeneralDiagnosticsData) {
         Text(
             stringResource(
                 R.string.device_diagnostics_interface_ipv4_address,
-                it.ipv4Addresses.mapNotNull { it.hostAddress }.joinToString(", "),
+                it.ipv4Addresses.mapNotNull { it.hostAddress }.joinToString(" • "),
             )
         )
         Text(
             stringResource(
                 R.string.device_diagnostics_interface_ipv6_address,
-                it.ipv6Addresses.mapNotNull { it.hostAddress }.joinToString(", "),
+                it.ipv6Addresses.mapNotNull { it.hostAddress }.joinToString(" • "),
             )
         )
       }
