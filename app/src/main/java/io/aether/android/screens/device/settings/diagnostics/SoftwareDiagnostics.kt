@@ -18,14 +18,12 @@ import io.aether.android.data.models.ThreadMetrics
 
 @Composable
 fun SoftwareDiagnostics(data: SoftwareDiagnosticsData) {
-  DiagnosticsSection(title = stringResource(R.string.device_diagnostics_section_memory)) {
+  DiagnosticsSection(stringResource(R.string.device_diagnostics_section_memory)) {
     val used = data.currentHeapUsed ?: 0u
     val free = data.currentHeapFree ?: 0u
     val total = used + free
     if (total > 0u) {
-      DiagnosticsInfoRow(
-          label = stringResource(R.string.device_diagnostics_label_current_heap_usage)
-      ) {
+      DiagnosticsInfoRow(stringResource(R.string.device_diagnostics_label_current_heap_usage)) {
         val progress = used.toFloat() / total.toFloat()
         LinearProgressIndicator(
             progress = { progress },
@@ -52,7 +50,7 @@ fun SoftwareDiagnostics(data: SoftwareDiagnosticsData) {
     }
     data.currentHeapHighWatermark?.let {
       DiagnosticsInfoRow(
-          label = stringResource(R.string.device_diagnostics_label_current_heap_high_watermark)
+          stringResource(R.string.device_diagnostics_label_current_heap_high_watermark)
       ) {
         Text(
             stringResource(
@@ -65,7 +63,7 @@ fun SoftwareDiagnostics(data: SoftwareDiagnosticsData) {
   }
   if (data.threadMetrics.isNotEmpty()) {
     val maxStackSizeAcrossThreads = data.threadMetrics.maxOfOrNull { it.stackSize ?: 0u } ?: 0u
-    DiagnosticsSection(title = stringResource(R.string.device_diagnostics_section_threads)) {
+    DiagnosticsSection(stringResource(R.string.device_diagnostics_section_threads)) {
       data.threadMetrics
           .sortedBy { it.id }
           .forEach { SoftwareDiagnosticsThread(it, maxStackSizeAcrossThreads) }

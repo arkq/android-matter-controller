@@ -199,6 +199,8 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_diagnostics_interface_hw_address">HW addr: %1$s</string>
     <string name="device_diagnostics_interface_ipv4_address">IPv4: %1$s</string>
     <string name="device_diagnostics_interface_ipv6_address">IPv6: %1$s</string>
+    <string name="device_diagnostics_network_up">UP</string>
+    <string name="device_diagnostics_network_down">DOWN</string>
     <string name="device_diagnostics_network_unicast">Unicast :: %1$s</string>
     <string name="device_diagnostics_network_multicast">Multicast :: %1$s</string>
     <string name="device_diagnostics_network_rx">⬇ Rx: %1$s</string>

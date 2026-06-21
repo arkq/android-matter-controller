@@ -10,6 +10,8 @@ import io.aether.android.R
 import io.aether.android.data.models.EthernetNetworkDiagnosticsData
 import kotlin.time.Duration.Companion.seconds
 
+private const val SEPARATOR = " • "
+
 @Composable
 fun EthernetNetworkDiagnostics(data: EthernetNetworkDiagnosticsData) {
 
@@ -22,7 +24,7 @@ fun EthernetNetworkDiagnostics(data: EthernetNetworkDiagnosticsData) {
               add(stringResource(R.string.device_diagnostics_network_tx, it.toString()))
             }
           }
-          .joinToString(" • ")
+          .joinToString(SEPARATOR)
 
   val linkQuality =
       buildList {
@@ -36,7 +38,7 @@ fun EthernetNetworkDiagnostics(data: EthernetNetworkDiagnosticsData) {
               add(stringResource(R.string.device_diagnostics_network_drops, it.toString()))
             }
           }
-          .joinToString(" • ")
+          .joinToString(SEPARATOR)
 
   val linkProperties =
       buildList {
@@ -48,7 +50,7 @@ fun EthernetNetworkDiagnostics(data: EthernetNetworkDiagnosticsData) {
                 ?.takeIf { !it }
                 ?.let { add(stringResource(R.string.device_diagnostics_network_no_carrier)) }
           }
-          .joinToString(" • ")
+          .joinToString(SEPARATOR)
 
   DiagnosticsSection(stringResource(R.string.device_diagnostics_section_ethernet_network)) {
     if (networkTraffic.isNotEmpty()) {

@@ -18,6 +18,8 @@ import io.aether.android.R
 import io.aether.android.data.models.WiFiNetworkDiagnosticsData
 import io.aether.android.spacing
 
+private const val SEPARATOR = " • "
+
 @Composable
 fun WiFiNetworkDiagnostics(data: WiFiNetworkDiagnosticsData) {
 
@@ -30,7 +32,7 @@ fun WiFiNetworkDiagnostics(data: WiFiNetworkDiagnosticsData) {
               add(stringResource(R.string.device_diagnostics_network_tx, it.toString()))
             }
           }
-          .joinToString(" • ")
+          .joinToString(SEPARATOR)
   val networkTrafficMulticast =
       buildList {
             data.packetMulticastRxCount?.let {
@@ -40,7 +42,7 @@ fun WiFiNetworkDiagnostics(data: WiFiNetworkDiagnosticsData) {
               add(stringResource(R.string.device_diagnostics_network_tx, it.toString()))
             }
           }
-          .joinToString(" • ")
+          .joinToString(SEPARATOR)
 
   val linkQuality =
       buildList {
@@ -54,7 +56,7 @@ fun WiFiNetworkDiagnostics(data: WiFiNetworkDiagnosticsData) {
               add(stringResource(R.string.device_diagnostics_network_drops, it.toString()))
             }
           }
-          .joinToString(" • ")
+          .joinToString(SEPARATOR)
 
   val linkProperties =
       buildList {
@@ -72,11 +74,11 @@ fun WiFiNetworkDiagnostics(data: WiFiNetworkDiagnosticsData) {
               )
             }
           }
-          .joinToString(" • ")
+          .joinToString(SEPARATOR)
 
-  DiagnosticsSection(title = stringResource(R.string.device_diagnostics_section_wifi_network)) {
+  DiagnosticsSection(stringResource(R.string.device_diagnostics_section_wifi_network)) {
     data.bssid?.let {
-      DiagnosticsInfoRow(label = stringResource(R.string.device_diagnostics_label_bssid)) {
+      DiagnosticsInfoRow(stringResource(R.string.device_diagnostics_label_bssid)) {
         Text(it.joinToString(separator = ":") { "%02X".format(it) })
       }
     }
