@@ -26,20 +26,21 @@ import io.aether.android.SETUP_PIN_CODE
 import timber.log.Timber
 
 @Composable
-internal fun ShareDeviceAlertDialog(
-    onShareDeviceResult: (doIt: Boolean) -> Unit,
+internal fun ShareDeviceConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismissRequest: () -> Unit,
 ) {
   AlertDialog(
-      title = { Text(text = stringResource(R.string.device_share_dialog_title)) },
+      title = { Text(stringResource(R.string.device_share_dialog_title)) },
       text = { Text(stringResource(R.string.device_share_dialog_body)) },
       confirmButton = {
-        Button(onClick = { onShareDeviceResult(true) }) {
+        Button(onClick = onConfirm) {
           Text(stringResource(R.string.device_share_dialog_yes))
         }
       },
-      onDismissRequest = { onShareDeviceResult(false) },
+      onDismissRequest = onDismissRequest,
       dismissButton = {
-        TextButton(onClick = { onShareDeviceResult(false) }) {
+        TextButton(onClick = onDismissRequest) {
           Text(stringResource(R.string.cancel))
         }
       },
@@ -50,7 +51,7 @@ internal fun shareDevice(
     context: Context,
     shareDeviceLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
     deviceName: String,
-    onShareFailed: (title: String, error: String) -> Unit = { _, _ -> },
+    onShareFailed: (title: String, error: String) -> Unit,
 ) {
   Timber.d("ShareDevice: starting")
 

@@ -6,9 +6,7 @@ package io.aether.android.screens.common
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,11 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-/** Full-screen centered loading indicator: spinner above a short status message. */
 @Composable
-fun LoadingIndicator(message: String, innerPadding: PaddingValues = PaddingValues(0.dp)) {
+fun LoadingIndicator(message: String, modifier: Modifier = Modifier) {
   Box(
-      modifier = Modifier.fillMaxSize().padding(innerPadding),
+      modifier = modifier.fillMaxSize(),
       contentAlignment = Alignment.Center,
   ) {
     Column(

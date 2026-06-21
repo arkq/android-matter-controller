@@ -60,7 +60,7 @@ fun DiagnosticsRoute(
       },
   ) { innerPadding ->
     if (uiState.isInitialLoading) {
-      LoadingIndicator(stringResource(R.string.device_diagnostics_loading), innerPadding)
+      LoadingIndicator(stringResource(R.string.device_diagnostics_loading))
       return@Scaffold
     }
     DiagnosticsScreen(

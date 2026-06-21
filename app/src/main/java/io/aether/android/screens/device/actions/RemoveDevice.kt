@@ -14,15 +14,16 @@ import androidx.compose.ui.res.stringResource
 import io.aether.android.R
 
 @Composable
-internal fun RemoveDeviceAlertDialog(
-    onRemoveDeviceResult: (doIt: Boolean) -> Unit,
+internal fun RemoveDeviceConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismissRequest: () -> Unit,
 ) {
   AlertDialog(
-      title = { Text(text = stringResource(R.string.device_remove_dialog_title)) },
+      title = { Text(stringResource(R.string.device_remove_dialog_title)) },
       text = { Text(stringResource(R.string.device_remove_dialog_body)) },
       confirmButton = {
         Button(
-            onClick = { onRemoveDeviceResult(true) },
+            onClick = onConfirm,
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error,
@@ -32,9 +33,9 @@ internal fun RemoveDeviceAlertDialog(
           Text(stringResource(R.string.device_remove_dialog_yes))
         }
       },
-      onDismissRequest = {},
+      onDismissRequest = onDismissRequest,
       dismissButton = {
-        TextButton(onClick = { onRemoveDeviceResult(false) }) {
+        TextButton(onClick = onDismissRequest) {
           Text(stringResource(R.string.cancel))
         }
       },
@@ -42,15 +43,16 @@ internal fun RemoveDeviceAlertDialog(
 }
 
 @Composable
-internal fun ConfirmDeviceRemovalAlertDialog(
-    onRemoveDeviceConfirmResult: (doIt: Boolean) -> Unit,
+internal fun ForceRemoveDeviceConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismissRequest: () -> Unit,
 ) {
   AlertDialog(
-      title = { Text(text = stringResource(R.string.device_remove_failed_confirm_dialog_title)) },
+      title = { Text(stringResource(R.string.device_remove_failed_confirm_dialog_title)) },
       text = { Text(stringResource(R.string.device_remove_failed_confirm_dialog_body)) },
       confirmButton = {
         Button(
-            onClick = { onRemoveDeviceConfirmResult(true) },
+            onClick = onConfirm,
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error,
@@ -60,9 +62,9 @@ internal fun ConfirmDeviceRemovalAlertDialog(
           Text(stringResource(R.string.device_remove_failed_confirm_dialog_yes))
         }
       },
-      onDismissRequest = {},
+      onDismissRequest = onDismissRequest,
       dismissButton = {
-        TextButton(onClick = { onRemoveDeviceConfirmResult(false) }) {
+        TextButton(onClick = onDismissRequest) {
           Text(stringResource(R.string.cancel))
         }
       },

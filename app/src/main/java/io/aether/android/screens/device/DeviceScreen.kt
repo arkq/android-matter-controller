@@ -177,7 +177,7 @@ private fun DeviceScreen(
     onDismissMsgDialog: () -> Unit,
 ) {
   if (deviceUiModel == null) {
-    LoadingIndicator(stringResource(R.string.loading_device_info), innerPadding)
+    LoadingIndicator(stringResource(R.string.loading_device_info))
     return
   }
 

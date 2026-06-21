@@ -74,7 +74,7 @@ fun FabricsRoute(
       },
   ) { innerPadding ->
     if (uiState.isInitialLoading) {
-      LoadingIndicator(stringResource(R.string.device_fabrics_loading), innerPadding)
+      LoadingIndicator(stringResource(R.string.device_fabrics_loading))
       return@Scaffold
     }
     FabricsScreen(

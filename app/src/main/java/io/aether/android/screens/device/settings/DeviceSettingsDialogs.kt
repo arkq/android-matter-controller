@@ -30,7 +30,7 @@ import io.aether.android.matter.DeviceTypeId
 internal fun ChangeDeviceNameDialog(
     currentName: String,
     onConfirm: (String) -> Unit,
-    onDismiss: () -> Unit,
+    onDismissRequest: () -> Unit,
 ) {
   var inputText by remember(currentName) { mutableStateOf(currentName) }
   AlertDialog(
@@ -51,8 +51,10 @@ internal fun ChangeDeviceNameDialog(
           Text(stringResource(R.string.ok))
         }
       },
-      dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
-      onDismissRequest = onDismiss,
+      dismissButton = {
+        TextButton(onClick = onDismissRequest) { Text(stringResource(R.string.cancel)) }
+      },
+      onDismissRequest = onDismissRequest,
   )
 }
 
@@ -61,7 +63,7 @@ internal fun ChangeDeviceNameDialog(
 internal fun ChangeDeviceTypeDialog(
     currentType: DeviceTypeId,
     onConfirm: (DeviceTypeId) -> Unit,
-    onDismiss: () -> Unit,
+    onDismissRequest: () -> Unit,
 ) {
   var expanded by remember { mutableStateOf(false) }
   var selectedType by remember(currentType) { mutableStateOf(currentType) }
@@ -102,7 +104,9 @@ internal fun ChangeDeviceTypeDialog(
       confirmButton = {
         Button(onClick = { onConfirm(selectedType) }) { Text(stringResource(R.string.ok)) }
       },
-      dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
-      onDismissRequest = onDismiss,
+      dismissButton = {
+        TextButton(onClick = onDismissRequest) { Text(stringResource(R.string.cancel)) }
+      },
+      onDismissRequest = onDismissRequest,
   )
 }

@@ -92,7 +92,7 @@ fun ExplorerRoute(
   ) { innerPadding ->
     msgDialogInfo?.let { dialogInfo -> MsgAlertDialog(dialogInfo, viewModel::dismissMsgDialog) }
     if (uiState !is ExplorerViewModel.UiState.Loaded) {
-      LoadingIndicator(stringResource(R.string.device_explorer_loading_endpoints), innerPadding)
+      LoadingIndicator(stringResource(R.string.device_explorer_loading_endpoints))
       return@Scaffold
     }
 
