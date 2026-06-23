@@ -22,6 +22,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.scan
@@ -41,18 +42,29 @@ data class DiagnosticsUiState(
 
 private data class RefreshRequest(val nodeId: NodeId)
 
+private sealed interface DiagnosticUpdate {
+  data class Software(val diag: SoftwareDiagnosticsData) : DiagnosticUpdate
+
+  data class EthernetNetwork(val diag: EthernetNetworkDiagnosticsData) : DiagnosticUpdate
+
+  data class WiFiNetwork(val diag: WiFiNetworkDiagnosticsData) : DiagnosticUpdate
+
+  data class ThreadNetwork(val diag: ThreadNetworkDiagnosticsData) : DiagnosticUpdate
+}
+
 private sealed interface PartialState {
   data object Loading : PartialState
 
-  data class GeneralDiagnosticsSuccess(val generalDiagnostics: GeneralDiagnosticsData) :
+  data class GeneralDiagnosticsSuccess(val diag: GeneralDiagnosticsData) : PartialState
+
+  data class SoftwareDiagnosticsSuccess(val diag: SoftwareDiagnosticsData) : PartialState
+
+  data class EthernetNetworkDiagnosticsSuccess(val diag: EthernetNetworkDiagnosticsData) :
       PartialState
 
-  data class OtherDiagnosticsSuccess(
-      val softwareDiagnostics: SoftwareDiagnosticsData?,
-      val ethernetNetworkDiagnostics: EthernetNetworkDiagnosticsData?,
-      val wifiNetworkDiagnostics: WiFiNetworkDiagnosticsData?,
-      val threadNetworkDiagnostics: ThreadNetworkDiagnosticsData?,
-  ) : PartialState
+  data class WiFiNetworkDiagnosticsSuccess(val diag: WiFiNetworkDiagnosticsData) : PartialState
+
+  data class ThreadNetworkDiagnosticsSuccess(val diag: ThreadNetworkDiagnosticsData) : PartialState
 
   data class Error(@field:StringRes val errorRes: Int) : PartialState
 }
@@ -94,14 +106,27 @@ constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewMode
                 }
 
                 emit(PartialState.GeneralDiagnosticsSuccess(general))
-                emit(
-                    PartialState.OtherDiagnosticsSuccess(
-                        softwareDiagnostics = softwareDef.await(),
-                        ethernetNetworkDiagnostics = ethernetDef.await(),
-                        wifiNetworkDiagnostics = wifiDef.await(),
-                        threadNetworkDiagnostics = threadDef.await(),
-                    )
-                )
+
+                channelFlow {
+                      launch { softwareDef.await()?.let { send(DiagnosticUpdate.Software(it)) } }
+                      launch {
+                        ethernetDef.await()?.let { send(DiagnosticUpdate.EthernetNetwork(it)) }
+                      }
+                      launch { wifiDef.await()?.let { send(DiagnosticUpdate.WiFiNetwork(it)) } }
+                      launch { threadDef.await()?.let { send(DiagnosticUpdate.ThreadNetwork(it)) } }
+                    }
+                    .collect { update ->
+                      when (update) {
+                        is DiagnosticUpdate.Software ->
+                            emit(PartialState.SoftwareDiagnosticsSuccess(update.diag))
+                        is DiagnosticUpdate.EthernetNetwork ->
+                            emit(PartialState.EthernetNetworkDiagnosticsSuccess(update.diag))
+                        is DiagnosticUpdate.WiFiNetwork ->
+                            emit(PartialState.WiFiNetworkDiagnosticsSuccess(update.diag))
+                        is DiagnosticUpdate.ThreadNetwork ->
+                            emit(PartialState.ThreadNetworkDiagnosticsSuccess(update.diag))
+                      }
+                    }
               }
             }
           }
@@ -117,17 +142,17 @@ constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewMode
                   previousState.copy(
                       isInitialLoading = false,
                       isRefreshing = false,
-                      generalDiagnostics = partial.generalDiagnostics,
+                      generalDiagnostics = partial.diag,
                       errorRes = null,
                   )
-              is PartialState.OtherDiagnosticsSuccess ->
-                  previousState.copy(
-                      softwareDiagnostics = partial.softwareDiagnostics,
-                      ethernetNetworkDiagnostics = partial.ethernetNetworkDiagnostics,
-                      wifiNetworkDiagnostics = partial.wifiNetworkDiagnostics,
-                      threadNetworkDiagnostics = partial.threadNetworkDiagnostics,
-                      errorRes = null,
-                  )
+              is PartialState.SoftwareDiagnosticsSuccess ->
+                  previousState.copy(softwareDiagnostics = partial.diag)
+              is PartialState.EthernetNetworkDiagnosticsSuccess ->
+                  previousState.copy(ethernetNetworkDiagnostics = partial.diag)
+              is PartialState.WiFiNetworkDiagnosticsSuccess ->
+                  previousState.copy(wifiNetworkDiagnostics = partial.diag)
+              is PartialState.ThreadNetworkDiagnosticsSuccess ->
+                  previousState.copy(threadNetworkDiagnostics = partial.diag)
               is PartialState.Error ->
                   previousState.copy(
                       isInitialLoading = false,
