@@ -36,45 +36,44 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
 
   private val readTimeoutDuration = 5.seconds
 
-  suspend fun readGeneralDiagnostics(nodeId: NodeId): GeneralDiagnosticsData? =
-      runCatching {
-            withTimeout(readTimeoutDuration) {
-              val devicePtr = chipClient.getConnectedDevicePointer(nodeId)
-              suspendCancellableCoroutine { continuation ->
-                val readCallback =
-                    object : ReportCallback {
-                      override fun onError(
-                          path: ChipAttributePath?,
-                          event: ChipEventPath?,
-                          ex: Exception,
-                      ) {
-                        if (continuation.isActive) continuation.resumeWithException(ex)
-                      }
+  suspend fun readGeneralDiagnostics(nodeId: NodeId): GeneralDiagnosticsData? = runCatching {
+    withTimeout(readTimeoutDuration) {
+      val devicePtr = chipClient.getConnectedDevicePointer(nodeId)
+      suspendCancellableCoroutine { continuation ->
+        val readCallback =
+            object : ReportCallback {
+              override fun onError(
+                  path: ChipAttributePath?,
+                  event: ChipEventPath?,
+                  ex: Exception,
+              ) {
+                if (continuation.isActive) continuation.resumeWithException(ex)
+              }
 
-                      override fun onReport(nodeState: NodeState) {
-                        if (continuation.isActive) {
-                          continuation.resume(extractGeneralDiagnosticsData(nodeState))
-                        }
-                      }
-                    }
-                val readPaths =
-                    listOf(
-                        ChipAttributePath.newInstance(
-                            ROOT_ENDPOINT_ID.toLong(),
-                            Clusters.GeneralDiagnostics.ID.toLong(),
-                            WILDCARD_ATTRIBUTE_ID.toLong(),
-                        ),
-                    )
-                chipClient.chipDeviceController.readAttributePath(
-                    readCallback,
-                    devicePtr,
-                    readPaths,
-                )
+              override fun onReport(nodeState: NodeState) {
+                if (continuation.isActive) {
+                  continuation.resume(extractGeneralDiagnosticsData(nodeState))
+                }
               }
             }
-          }
-          .onFailure { e -> Timber.e(e, "Failed to read General Diagnostics for nodeId=$nodeId") }
-          .getOrNull()
+        val readPaths =
+            listOf(
+                ChipAttributePath.newInstance(
+                    ROOT_ENDPOINT_ID.toLong(),
+                    Clusters.GeneralDiagnostics.ID.toLong(),
+                    WILDCARD_ATTRIBUTE_ID.toLong(),
+                ),
+            )
+        chipClient.chipDeviceController.readAttributePath(
+            readCallback,
+            devicePtr,
+            readPaths,
+        )
+      }
+    }
+  }
+      .onFailure { e -> Timber.e(e, "Failed to read General Diagnostics for nodeId=$nodeId") }
+      .getOrNull()
 
   private fun extractGeneralDiagnosticsData(nodeState: NodeState): GeneralDiagnosticsData {
     val clusterState =
@@ -107,45 +106,44 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
     )
   }
 
-  suspend fun readSoftwareDiagnostics(nodeId: NodeId): SoftwareDiagnosticsData? =
-      runCatching {
-            withTimeout(readTimeoutDuration) {
-              val devicePtr = chipClient.getConnectedDevicePointer(nodeId)
-              suspendCancellableCoroutine { continuation ->
-                val readCallback =
-                    object : ReportCallback {
-                      override fun onError(
-                          path: ChipAttributePath?,
-                          event: ChipEventPath?,
-                          ex: Exception,
-                      ) {
-                        if (continuation.isActive) continuation.resumeWithException(ex)
-                      }
+  suspend fun readSoftwareDiagnostics(nodeId: NodeId): SoftwareDiagnosticsData? = runCatching {
+    withTimeout(readTimeoutDuration) {
+      val devicePtr = chipClient.getConnectedDevicePointer(nodeId)
+      suspendCancellableCoroutine { continuation ->
+        val readCallback =
+            object : ReportCallback {
+              override fun onError(
+                  path: ChipAttributePath?,
+                  event: ChipEventPath?,
+                  ex: Exception,
+              ) {
+                if (continuation.isActive) continuation.resumeWithException(ex)
+              }
 
-                      override fun onReport(nodeState: NodeState) {
-                        if (continuation.isActive) {
-                          continuation.resume(extractSoftwareDiagnosticsData(nodeState))
-                        }
-                      }
-                    }
-                val readPaths =
-                    listOf(
-                        ChipAttributePath.newInstance(
-                            ROOT_ENDPOINT_ID.toLong(),
-                            Clusters.SoftwareDiagnostics.ID.toLong(),
-                            WILDCARD_ATTRIBUTE_ID.toLong(),
-                        ),
-                    )
-                chipClient.chipDeviceController.readAttributePath(
-                    readCallback,
-                    devicePtr,
-                    readPaths,
-                )
+              override fun onReport(nodeState: NodeState) {
+                if (continuation.isActive) {
+                  continuation.resume(extractSoftwareDiagnosticsData(nodeState))
+                }
               }
             }
-          }
-          .onFailure { e -> Timber.e(e, "Failed to read Software Diagnostics for nodeId=$nodeId") }
-          .getOrNull()
+        val readPaths =
+            listOf(
+                ChipAttributePath.newInstance(
+                    ROOT_ENDPOINT_ID.toLong(),
+                    Clusters.SoftwareDiagnostics.ID.toLong(),
+                    WILDCARD_ATTRIBUTE_ID.toLong(),
+                ),
+            )
+        chipClient.chipDeviceController.readAttributePath(
+            readCallback,
+            devicePtr,
+            readPaths,
+        )
+      }
+    }
+  }
+      .onFailure { e -> Timber.e(e, "Failed to read Software Diagnostics for nodeId=$nodeId") }
+      .getOrNull()
 
   private fun extractSoftwareDiagnosticsData(nodeState: NodeState): SoftwareDiagnosticsData {
     val clusterState =
@@ -169,45 +167,45 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
 
   suspend fun readEthernetNetworkDiagnostics(nodeId: NodeId): EthernetNetworkDiagnosticsData? =
       runCatching {
-            withTimeout(readTimeoutDuration) {
-              val devicePtr = chipClient.getConnectedDevicePointer(nodeId)
-              suspendCancellableCoroutine { continuation ->
-                val readCallback =
-                    object : ReportCallback {
-                      override fun onError(
-                          path: ChipAttributePath?,
-                          event: ChipEventPath?,
-                          ex: Exception,
-                      ) {
-                        if (continuation.isActive) continuation.resumeWithException(ex)
-                      }
+        withTimeout(readTimeoutDuration) {
+          val devicePtr = chipClient.getConnectedDevicePointer(nodeId)
+          suspendCancellableCoroutine { continuation ->
+            val readCallback =
+                object : ReportCallback {
+                  override fun onError(
+                      path: ChipAttributePath?,
+                      event: ChipEventPath?,
+                      ex: Exception,
+                  ) {
+                    if (continuation.isActive) continuation.resumeWithException(ex)
+                  }
 
-                      override fun onReport(nodeState: NodeState) {
-                        if (continuation.isActive) {
-                          continuation.resume(extractEthernetNetworkDiagnosticsData(nodeState))
-                        }
-                      }
+                  override fun onReport(nodeState: NodeState) {
+                    if (continuation.isActive) {
+                      continuation.resume(extractEthernetNetworkDiagnosticsData(nodeState))
                     }
-                val readPaths =
-                    listOf(
-                        ChipAttributePath.newInstance(
-                            ROOT_ENDPOINT_ID.toLong(),
-                            Clusters.EthernetNetworkDiagnostics.ID.toLong(),
-                            WILDCARD_ATTRIBUTE_ID.toLong(),
-                        ),
-                    )
-                chipClient.chipDeviceController.readAttributePath(
-                    readCallback,
-                    devicePtr,
-                    readPaths,
+                  }
+                }
+            val readPaths =
+                listOf(
+                    ChipAttributePath.newInstance(
+                        ROOT_ENDPOINT_ID.toLong(),
+                        Clusters.EthernetNetworkDiagnostics.ID.toLong(),
+                        WILDCARD_ATTRIBUTE_ID.toLong(),
+                    ),
                 )
-              }
-            }
+            chipClient.chipDeviceController.readAttributePath(
+                readCallback,
+                devicePtr,
+                readPaths,
+            )
           }
-          .onFailure { e ->
-            Timber.e(e, "Failed to read Ethernet Network Diagnostics for nodeId=$nodeId")
-          }
-          .getOrNull()
+        }
+      }
+      .onFailure { e ->
+        Timber.e(e, "Failed to read Ethernet Network Diagnostics for nodeId=$nodeId")
+      }
+      .getOrNull()
 
   private fun extractEthernetNetworkDiagnosticsData(
       nodeState: NodeState
@@ -241,45 +239,45 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
 
   suspend fun readWiFiNetworkDiagnostics(nodeId: NodeId): WiFiNetworkDiagnosticsData? =
       runCatching {
-            withTimeout(readTimeoutDuration) {
-              val devicePtr = chipClient.getConnectedDevicePointer(nodeId)
-              suspendCancellableCoroutine { continuation ->
-                val readCallback =
-                    object : ReportCallback {
-                      override fun onError(
-                          path: ChipAttributePath?,
-                          event: ChipEventPath?,
-                          ex: Exception,
-                      ) {
-                        if (continuation.isActive) continuation.resumeWithException(ex)
-                      }
+        withTimeout(readTimeoutDuration) {
+          val devicePtr = chipClient.getConnectedDevicePointer(nodeId)
+          suspendCancellableCoroutine { continuation ->
+            val readCallback =
+                object : ReportCallback {
+                  override fun onError(
+                      path: ChipAttributePath?,
+                      event: ChipEventPath?,
+                      ex: Exception,
+                  ) {
+                    if (continuation.isActive) continuation.resumeWithException(ex)
+                  }
 
-                      override fun onReport(nodeState: NodeState) {
-                        if (continuation.isActive) {
-                          continuation.resume(extractWiFiNetworkDiagnosticsData(nodeState))
-                        }
-                      }
+                  override fun onReport(nodeState: NodeState) {
+                    if (continuation.isActive) {
+                      continuation.resume(extractWiFiNetworkDiagnosticsData(nodeState))
                     }
-                val readPaths =
-                    listOf(
-                        ChipAttributePath.newInstance(
-                            ROOT_ENDPOINT_ID.toLong(),
-                            Clusters.WiFiNetworkDiagnostics.ID.toLong(),
-                            WILDCARD_ATTRIBUTE_ID.toLong(),
-                        ),
-                    )
-                chipClient.chipDeviceController.readAttributePath(
-                    readCallback,
-                    devicePtr,
-                    readPaths,
+                  }
+                }
+            val readPaths =
+                listOf(
+                    ChipAttributePath.newInstance(
+                        ROOT_ENDPOINT_ID.toLong(),
+                        Clusters.WiFiNetworkDiagnostics.ID.toLong(),
+                        WILDCARD_ATTRIBUTE_ID.toLong(),
+                    ),
                 )
-              }
-            }
+            chipClient.chipDeviceController.readAttributePath(
+                readCallback,
+                devicePtr,
+                readPaths,
+            )
           }
-          .onFailure { e ->
-            Timber.e(e, "Failed to read WiFi Network Diagnostics for nodeId=$nodeId")
-          }
-          .getOrNull()
+        }
+      }
+      .onFailure { e ->
+        Timber.e(e, "Failed to read WiFi Network Diagnostics for nodeId=$nodeId")
+      }
+      .getOrNull()
 
   private fun extractWiFiNetworkDiagnosticsData(nodeState: NodeState): WiFiNetworkDiagnosticsData {
     val clusterState =
@@ -320,45 +318,45 @@ class DiagnosticsRepository @Inject constructor(private val chipClient: ChipClie
 
   suspend fun readThreadNetworkDiagnostics(nodeId: NodeId): ThreadNetworkDiagnosticsData? =
       runCatching {
-            withTimeout(readTimeoutDuration) {
-              val devicePtr = chipClient.getConnectedDevicePointer(nodeId)
-              suspendCancellableCoroutine { continuation ->
-                val readCallback =
-                    object : ReportCallback {
-                      override fun onError(
-                          path: ChipAttributePath?,
-                          event: ChipEventPath?,
-                          ex: Exception,
-                      ) {
-                        if (continuation.isActive) continuation.resumeWithException(ex)
-                      }
+        withTimeout(readTimeoutDuration) {
+          val devicePtr = chipClient.getConnectedDevicePointer(nodeId)
+          suspendCancellableCoroutine { continuation ->
+            val readCallback =
+                object : ReportCallback {
+                  override fun onError(
+                      path: ChipAttributePath?,
+                      event: ChipEventPath?,
+                      ex: Exception,
+                  ) {
+                    if (continuation.isActive) continuation.resumeWithException(ex)
+                  }
 
-                      override fun onReport(nodeState: NodeState) {
-                        if (continuation.isActive) {
-                          continuation.resume(extractThreadNetworkDiagnosticsData(nodeState))
-                        }
-                      }
+                  override fun onReport(nodeState: NodeState) {
+                    if (continuation.isActive) {
+                      continuation.resume(extractThreadNetworkDiagnosticsData(nodeState))
                     }
-                val readPaths =
-                    listOf(
-                        ChipAttributePath.newInstance(
-                            ROOT_ENDPOINT_ID.toLong(),
-                            Clusters.ThreadNetworkDiagnostics.ID.toLong(),
-                            WILDCARD_ATTRIBUTE_ID.toLong(),
-                        ),
-                    )
-                chipClient.chipDeviceController.readAttributePath(
-                    readCallback,
-                    devicePtr,
-                    readPaths,
+                  }
+                }
+            val readPaths =
+                listOf(
+                    ChipAttributePath.newInstance(
+                        ROOT_ENDPOINT_ID.toLong(),
+                        Clusters.ThreadNetworkDiagnostics.ID.toLong(),
+                        WILDCARD_ATTRIBUTE_ID.toLong(),
+                    ),
                 )
-              }
-            }
+            chipClient.chipDeviceController.readAttributePath(
+                readCallback,
+                devicePtr,
+                readPaths,
+            )
           }
-          .onFailure { e ->
-            Timber.e(e, "Failed to read Thread Network Diagnostics for nodeId=$nodeId")
-          }
-          .getOrNull()
+        }
+      }
+      .onFailure { e ->
+        Timber.e(e, "Failed to read Thread Network Diagnostics for nodeId=$nodeId")
+      }
+      .getOrNull()
 
   private fun extractThreadNetworkDiagnosticsData(
       nodeState: NodeState

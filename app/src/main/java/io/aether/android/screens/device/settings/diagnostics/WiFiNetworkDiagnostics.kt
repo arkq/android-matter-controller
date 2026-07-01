@@ -23,58 +23,54 @@ private const val SEPARATOR = " • "
 @Composable
 fun WiFiNetworkDiagnostics(data: WiFiNetworkDiagnosticsData) {
 
-  val networkTrafficUnicast =
-      buildList {
-            data.packetUnicastRxCount?.let {
-              add(stringResource(R.string.device_diagnostics_network_rx, it.toString()))
-            }
-            data.packetUnicastTxCount?.let {
-              add(stringResource(R.string.device_diagnostics_network_tx, it.toString()))
-            }
-          }
-          .joinToString(SEPARATOR)
-  val networkTrafficMulticast =
-      buildList {
-            data.packetMulticastRxCount?.let {
-              add(stringResource(R.string.device_diagnostics_network_rx, it.toString()))
-            }
-            data.packetMulticastTxCount?.let {
-              add(stringResource(R.string.device_diagnostics_network_tx, it.toString()))
-            }
-          }
-          .joinToString(SEPARATOR)
+  val networkTrafficUnicast = buildList {
+    data.packetUnicastRxCount?.let {
+      add(stringResource(R.string.device_diagnostics_network_rx, it.toString()))
+    }
+    data.packetUnicastTxCount?.let {
+      add(stringResource(R.string.device_diagnostics_network_tx, it.toString()))
+    }
+  }
+      .joinToString(SEPARATOR)
+  val networkTrafficMulticast = buildList {
+    data.packetMulticastRxCount?.let {
+      add(stringResource(R.string.device_diagnostics_network_rx, it.toString()))
+    }
+    data.packetMulticastTxCount?.let {
+      add(stringResource(R.string.device_diagnostics_network_tx, it.toString()))
+    }
+  }
+      .joinToString(SEPARATOR)
 
-  val linkQuality =
-      buildList {
-            data.beaconRxCount?.let {
-              add(stringResource(R.string.device_diagnostics_network_beacon_rx, it.toString()))
-            }
-            data.beaconLostCount?.let {
-              add(stringResource(R.string.device_diagnostics_network_beacon_lost, it.toString()))
-            }
-            data.overrunCount?.let {
-              add(stringResource(R.string.device_diagnostics_network_drops, it.toString()))
-            }
-          }
-          .joinToString(SEPARATOR)
+  val linkQuality = buildList {
+    data.beaconRxCount?.let {
+      add(stringResource(R.string.device_diagnostics_network_beacon_rx, it.toString()))
+    }
+    data.beaconLostCount?.let {
+      add(stringResource(R.string.device_diagnostics_network_beacon_lost, it.toString()))
+    }
+    data.overrunCount?.let {
+      add(stringResource(R.string.device_diagnostics_network_drops, it.toString()))
+    }
+  }
+      .joinToString(SEPARATOR)
 
-  val linkProperties =
-      buildList {
-            data.securityType?.let { add(it.name) }
-            data.wifiVersion?.let { add(it.name) }
-            data.channelNumber?.let {
-              add(stringResource(R.string.device_diagnostics_network_channel, it.toString()))
-            }
-            data.currentMaxRate?.let {
-              add(
-                  stringResource(
-                      R.string.device_diagnostics_network_rate,
-                      it.toFloat() / 1000000,
-                  )
-              )
-            }
-          }
-          .joinToString(SEPARATOR)
+  val linkProperties = buildList {
+    data.securityType?.let { add(it.name) }
+    data.wifiVersion?.let { add(it.name) }
+    data.channelNumber?.let {
+      add(stringResource(R.string.device_diagnostics_network_channel, it.toString()))
+    }
+    data.currentMaxRate?.let {
+      add(
+          stringResource(
+              R.string.device_diagnostics_network_rate,
+              it.toFloat() / 1000000,
+          )
+      )
+    }
+  }
+      .joinToString(SEPARATOR)
 
   DiagnosticsSection(stringResource(R.string.device_diagnostics_section_wifi_network)) {
     data.bssid?.let {

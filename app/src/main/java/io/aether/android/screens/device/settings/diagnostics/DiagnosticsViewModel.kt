@@ -112,13 +112,13 @@ constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewMode
                 emit(PartialState.GeneralDiagnosticsSuccess(general))
 
                 channelFlow {
-                      launch { softwareDef.await()?.let { send(DiagnosticUpdate.Software(it)) } }
-                      launch {
-                        ethernetDef.await()?.let { send(DiagnosticUpdate.EthernetNetwork(it)) }
-                      }
-                      launch { wifiDef.await()?.let { send(DiagnosticUpdate.WiFiNetwork(it)) } }
-                      launch { threadDef.await()?.let { send(DiagnosticUpdate.ThreadNetwork(it)) } }
-                    }
+                  launch { softwareDef.await()?.let { send(DiagnosticUpdate.Software(it)) } }
+                  launch {
+                    ethernetDef.await()?.let { send(DiagnosticUpdate.EthernetNetwork(it)) }
+                  }
+                  launch { wifiDef.await()?.let { send(DiagnosticUpdate.WiFiNetwork(it)) } }
+                  launch { threadDef.await()?.let { send(DiagnosticUpdate.ThreadNetwork(it)) } }
+                }
                     .collect { update ->
                       when (update) {
                         is DiagnosticUpdate.Software ->
