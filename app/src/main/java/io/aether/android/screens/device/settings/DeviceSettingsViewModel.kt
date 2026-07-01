@@ -44,7 +44,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-/** The ViewModel for the Device Settings Screen. */
 @HiltViewModel
 class DeviceSettingsViewModel
 @Inject
