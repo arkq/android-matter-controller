@@ -17,7 +17,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -27,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.aether.android.R
 import io.aether.android.matter.NodeId
 import io.aether.android.screens.common.LoadingIndicator
@@ -40,21 +40,22 @@ fun ExplorerRoute(
     viewModel: ExplorerViewModel = hiltViewModel(),
 ) {
   val typedNodeId = nodeId
-  val uiState by viewModel.uiState.collectAsState()
-  val navStack by viewModel.navStack.collectAsState()
-  val endpointSearchQuery by viewModel.endpointSearchQuery.collectAsState()
-  val clusterSearchQuery by viewModel.clusterSearchQuery.collectAsState()
-  val attributeSearchQuery by viewModel.attributeSearchQuery.collectAsState()
-  val commandSearchQuery by viewModel.commandSearchQuery.collectAsState()
-  val eventSearchQuery by viewModel.eventSearchQuery.collectAsState()
-  val loadingClusterKeys by viewModel.loadingClusterKeys.collectAsState()
-  val clusterDetailsByKey by viewModel.clusterDetailsByKey.collectAsState()
-  val attributeValueByKey by viewModel.attributeValueByKey.collectAsState()
-  val attributeReadSuccessCount by viewModel.attributeReadSuccessCount.collectAsState()
-  val attributeWriteSuccessCount by viewModel.attributeWriteSuccessCount.collectAsState()
-  val commandInvokeSuccessCount by viewModel.commandInvokeSuccessCount.collectAsState()
-  val msgDialogInfo by viewModel.msgDialogInfo.collectAsState()
-  val knownClustersById by viewModel.knownClustersById.collectAsState()
+  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  val navStack by viewModel.navStack.collectAsStateWithLifecycle()
+  val endpointSearchQuery by viewModel.endpointSearchQuery.collectAsStateWithLifecycle()
+  val clusterSearchQuery by viewModel.clusterSearchQuery.collectAsStateWithLifecycle()
+  val attributeSearchQuery by viewModel.attributeSearchQuery.collectAsStateWithLifecycle()
+  val commandSearchQuery by viewModel.commandSearchQuery.collectAsStateWithLifecycle()
+  val eventSearchQuery by viewModel.eventSearchQuery.collectAsStateWithLifecycle()
+  val loadingClusterKeys by viewModel.loadingClusterKeys.collectAsStateWithLifecycle()
+  val clusterDetailsByKey by viewModel.clusterDetailsByKey.collectAsStateWithLifecycle()
+  val attributeValueByKey by viewModel.attributeValueByKey.collectAsStateWithLifecycle()
+  val attributeReadSuccessCount by viewModel.attributeReadSuccessCount.collectAsStateWithLifecycle()
+  val attributeWriteSuccessCount by
+      viewModel.attributeWriteSuccessCount.collectAsStateWithLifecycle()
+  val commandInvokeSuccessCount by viewModel.commandInvokeSuccessCount.collectAsStateWithLifecycle()
+  val msgDialogInfo by viewModel.msgDialogInfo.collectAsStateWithLifecycle()
+  val knownClustersById by viewModel.knownClustersById.collectAsStateWithLifecycle()
 
   var showSearch by rememberSaveable { mutableStateOf(false) }
   val saveableStateHolder = rememberSaveableStateHolder()
@@ -90,14 +91,20 @@ fun ExplorerRoute(
         )
       }
   ) { innerPadding ->
+    val modifierWithInnerPadding = Modifier.fillMaxSize().padding(innerPadding)
+
     msgDialogInfo?.let { dialogInfo -> MsgAlertDialog(dialogInfo, viewModel::dismissMsgDialog) }
+
     if (uiState !is ExplorerViewModel.UiState.Loaded) {
-      LoadingIndicator(stringResource(R.string.device_explorer_loading_endpoints), innerPadding)
+      LoadingIndicator(
+          stringResource(R.string.device_explorer_loading_endpoints),
+          modifier = modifierWithInnerPadding,
+      )
       return@Scaffold
     }
 
     val infos = (uiState as ExplorerViewModel.UiState.Loaded).deviceMatterInfoList
-    Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+    Column(modifier = modifierWithInnerPadding) {
       BreadcrumbBar(
           navStack = navStack,
           deviceMatterInfoList = infos,

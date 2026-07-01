@@ -82,13 +82,14 @@ val CLUSTERS_1_3 =
                         Clusters.LaundryDryerControls.Attributes.SupportedDrynessLevels.ID to
                             AttributeInfo(
                                 name = "SupportedDrynessLevels",
-                                type = DataType.LIST_DRYNESS_LEVEL_ENUM,
+                                type =
+                                    DataType.LIST_LAUNDRY_DRYER_CONTROLS_CLUSTER_DRYNESS_LEVEL_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.LaundryDryerControls.Attributes.SelectedDrynessLevel.ID to
                             AttributeInfo(
                                 name = "SelectedDrynessLevel",
-                                type = DataType.DRYNESS_LEVEL_ENUM,
+                                type = DataType.LAUNDRY_DRYER_CONTROLS_CLUSTER_DRYNESS_LEVEL_ENUM,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
@@ -752,13 +753,15 @@ val CLUSTERS_1_3 =
                         Clusters.ValveConfigurationandControl.Attributes.CurrentState.ID to
                             AttributeInfo(
                                 name = "CurrentState",
-                                type = DataType.VALVE_STATE_ENUM,
+                                type =
+                                    DataType.VALVE_CONFIGURATION_CONTROL_CLUSTER_VALVE_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ValveConfigurationandControl.Attributes.TargetState.ID to
                             AttributeInfo(
                                 name = "TargetState",
-                                type = DataType.VALVE_STATE_ENUM,
+                                type =
+                                    DataType.VALVE_CONFIGURATION_CONTROL_CLUSTER_VALVE_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ValveConfigurationandControl.Attributes.CurrentLevel.ID to
@@ -841,7 +844,8 @@ val CLUSTERS_1_3 =
                         Clusters.ElectricalPowerMeasurement.Attributes.PowerMode.ID to
                             AttributeInfo(
                                 name = "PowerMode",
-                                type = DataType.POWER_MODE_ENUM,
+                                type =
+                                    DataType.ELECTRICAL_POWER_MEASUREMENT_CLUSTER_POWER_MODE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ElectricalPowerMeasurement.Attributes.NumberOfMeasurementTypes
@@ -1056,7 +1060,8 @@ val CLUSTERS_1_3 =
                                         1u to
                                             ParameterInfo(
                                                 name = "Priority",
-                                                type = DataType.MESSAGE_PRIORITY_ENUM,
+                                                type =
+                                                    DataType.MESSAGES_CLUSTER_MESSAGE_PRIORITY_ENUM,
                                             ),
                                         2u to
                                             ParameterInfo(
@@ -1124,7 +1129,7 @@ val CLUSTERS_1_3 =
                         Clusters.DeviceEnergyManagement.Attributes.ESAType.ID to
                             AttributeInfo(
                                 name = "ESAType",
-                                type = DataType.ESA_TYPE_ENUM,
+                                type = DataType.DEVICE_ENERGY_MANAGEMENT_CLUSTER_ESA_TYPE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.DeviceEnergyManagement.Attributes.ESACanGenerate.ID to
@@ -1136,7 +1141,7 @@ val CLUSTERS_1_3 =
                         Clusters.DeviceEnergyManagement.Attributes.ESAState.ID to
                             AttributeInfo(
                                 name = "ESAState",
-                                type = DataType.ESA_STATE_ENUM,
+                                type = DataType.DEVICE_ENERGY_MANAGEMENT_CLUSTER_ESA_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.DeviceEnergyManagement.Attributes.AbsMinPower.ID to
@@ -1166,7 +1171,7 @@ val CLUSTERS_1_3 =
                         Clusters.DeviceEnergyManagement.Attributes.OptOutState.ID to
                             AttributeInfo(
                                 name = "OptOutState",
-                                type = DataType.OPT_OUT_STATE_ENUM,
+                                type = DataType.DEVICE_ENERGY_MANAGEMENT_CLUSTER_OPT_OUT_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -1191,7 +1196,9 @@ val CLUSTERS_1_3 =
                                         2u to
                                             ParameterInfo(
                                                 name = "Cause",
-                                                type = DataType.ADJUSTMENT_CAUSE_ENUM,
+                                                type =
+                                                    DataType
+                                                        .DEVICE_ENERGY_MANAGEMENT_CLUSTER_ADJUSTMENT_CAUSE_ENUM,
                                             ),
                                     ),
                             ),
@@ -1217,7 +1224,9 @@ val CLUSTERS_1_3 =
                                         1u to
                                             ParameterInfo(
                                                 name = "Cause",
-                                                type = DataType.ADJUSTMENT_CAUSE_ENUM,
+                                                type =
+                                                    DataType
+                                                        .DEVICE_ENERGY_MANAGEMENT_CLUSTER_ADJUSTMENT_CAUSE_ENUM,
                                             ),
                                     ),
                             ),
@@ -1235,7 +1244,9 @@ val CLUSTERS_1_3 =
                                         1u to
                                             ParameterInfo(
                                                 name = "Cause",
-                                                type = DataType.ADJUSTMENT_CAUSE_ENUM,
+                                                type =
+                                                    DataType
+                                                        .DEVICE_ENERGY_MANAGEMENT_CLUSTER_ADJUSTMENT_CAUSE_ENUM,
                                             ),
                                     ),
                             ),
@@ -1264,7 +1275,9 @@ val CLUSTERS_1_3 =
                                         2u to
                                             ParameterInfo(
                                                 name = "Cause",
-                                                type = DataType.ADJUSTMENT_CAUSE_ENUM,
+                                                type =
+                                                    DataType
+                                                        .DEVICE_ENERGY_MANAGEMENT_CLUSTER_ADJUSTMENT_CAUSE_ENUM,
                                             ),
                                     ),
                             ),
@@ -1284,7 +1297,9 @@ val CLUSTERS_1_3 =
                                         1u to
                                             ParameterInfo(
                                                 name = "Cause",
-                                                type = DataType.ADJUSTMENT_CAUSE_ENUM,
+                                                type =
+                                                    DataType
+                                                        .DEVICE_ENERGY_MANAGEMENT_CLUSTER_ADJUSTMENT_CAUSE_ENUM,
                                             ),
                                     ),
                             ),
@@ -1324,19 +1339,19 @@ val CLUSTERS_1_3 =
                         Clusters.EnergyEVSE.Attributes.State.ID to
                             AttributeInfo(
                                 name = "State",
-                                type = DataType.STATE_ENUM,
+                                type = DataType.ENERGY_EVSE_CLUSTER_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyEVSE.Attributes.SupplyState.ID to
                             AttributeInfo(
                                 name = "SupplyState",
-                                type = DataType.SUPPLY_STATE_ENUM,
+                                type = DataType.ENERGY_EVSE_CLUSTER_SUPPLY_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyEVSE.Attributes.FaultState.ID to
                             AttributeInfo(
                                 name = "FaultState",
-                                type = DataType.FAULT_STATE_ENUM,
+                                type = DataType.ENERGY_EVSE_CLUSTER_FAULT_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyEVSE.Attributes.ChargingEnabledUntil.ID to
@@ -1610,7 +1625,7 @@ val CLUSTERS_1_3 =
                         Clusters.EnergyPreference.Attributes.EnergyPriorities.ID to
                             AttributeInfo(
                                 name = "EnergyPriorities",
-                                type = DataType.LIST_ENERGY_PRIORITY_ENUM,
+                                type = DataType.LIST_ENERGY_PREFERENCE_CLUSTER_ENERGY_PRIORITY_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.EnergyPreference.Attributes.LowPowerModeSensitivities.ID to
@@ -2034,7 +2049,9 @@ val CLUSTERS_1_3 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Status",
-                                                type = DataType.STATUS_ENUM,
+                                                type =
+                                                    DataType
+                                                        .CONTENT_APP_OBSERVER_CLUSTER_STATUS_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(

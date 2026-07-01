@@ -15,6 +15,7 @@ import io.aether.android.matter.NodeId
 import io.aether.android.matter.toNodeId
 import io.aether.android.screens.device.DeviceRoute
 import io.aether.android.screens.device.settings.DeviceSettingsRoute
+import io.aether.android.screens.device.settings.diagnostics.DiagnosticsRoute
 import io.aether.android.screens.device.settings.explorer.ExplorerRoute
 import io.aether.android.screens.device.settings.fabrics.FabricsRoute
 import io.aether.android.screens.home.HomeRoute
@@ -32,6 +33,7 @@ const val ROUTE_DEVICE = "device/{$ARG_NODE_ID}"
 const val ROUTE_DEVICE_SETTINGS = "device/{$ARG_NODE_ID}/settings"
 const val ROUTE_DEVICE_EXPLORER = "device/{$ARG_NODE_ID}/explorer"
 const val ROUTE_DEVICE_FABRICS = "device/{$ARG_NODE_ID}/fabrics"
+const val ROUTE_DEVICE_DIAGNOSTICS = "device/{$ARG_NODE_ID}/diagnostics"
 
 fun routeToDevice(nodeId: NodeId): String = "device/${nodeId.toLong()}"
 
@@ -40,6 +42,8 @@ fun routeToDeviceSettings(nodeId: NodeId): String = "device/${nodeId.toLong()}/s
 fun routeToDeviceExplorer(nodeId: NodeId): String = "device/${nodeId.toLong()}/explorer"
 
 fun routeToDeviceFabrics(nodeId: NodeId): String = "device/${nodeId.toLong()}/fabrics"
+
+fun routeToDeviceDiagnostics(nodeId: NodeId): String = "device/${nodeId.toLong()}/diagnostics"
 
 @Composable
 fun AppNavigation(
@@ -62,6 +66,9 @@ fun AppNavigation(
   }
   val navigateToDeviceFabrics: (nodeId: NodeId) -> Unit = remember {
     { nodeId -> navController.navigate(routeToDeviceFabrics(nodeId)) }
+  }
+  val navigateToDeviceDiagnostics: (nodeId: NodeId) -> Unit = remember {
+    { nodeId -> navController.navigate(routeToDeviceDiagnostics(nodeId)) }
   }
 
   NavHost(navController = navController, startDestination = DEST_HOME) {
@@ -87,6 +94,7 @@ fun AppNavigation(
           navigateToHome = navigateToHome,
           navigateToDeviceExplorer = navigateToDeviceExplorer,
           navigateToDeviceFabrics = navigateToDeviceFabrics,
+          navigateToDeviceDiagnostics = navigateToDeviceDiagnostics,
           onBackClick = { navController.popBackStack() },
           nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId(),
       )
@@ -107,6 +115,16 @@ fun AppNavigation(
         arguments = listOf(navArgument(ARG_NODE_ID) { type = NavType.LongType }),
     ) {
       FabricsRoute(
+          onBackClick = { navController.popBackStack() },
+          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId(),
+      )
+    }
+    // Diagnostics from Device Settings
+    composable(
+        ROUTE_DEVICE_DIAGNOSTICS,
+        arguments = listOf(navArgument(ARG_NODE_ID) { type = NavType.LongType }),
+    ) {
+      DiagnosticsRoute(
           onBackClick = { navController.popBackStack() },
           nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId(),
       )

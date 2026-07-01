@@ -8,13 +8,14 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
@@ -27,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.protobuf.Timestamp
 import io.aether.android.Device
 import io.aether.android.R
@@ -53,43 +54,42 @@ import io.aether.android.matter.vendorLabel
 import io.aether.android.screens.common.DialogInfo
 import io.aether.android.screens.common.LoadingIndicator
 import io.aether.android.screens.common.MsgAlertDialog
-import io.aether.android.screens.device.actions.ConfirmDeviceRemovalAlertDialog
-import io.aether.android.screens.device.actions.RemoveDeviceAlertDialog
-import io.aether.android.screens.device.actions.ShareDeviceAlertDialog
+import io.aether.android.screens.device.actions.ForceRemoveDeviceConfirmationDialog
+import io.aether.android.screens.device.actions.RemoveDeviceConfirmationDialog
+import io.aether.android.screens.device.actions.ShareDeviceConfirmationDialog
 import io.aether.android.screens.device.actions.shareDevice
 import io.aether.android.screens.thread.getActivity
 import io.aether.android.spacing
-import timber.log.Timber
 
-/** Route composable for the Device Settings screen. Wires up the ViewModel and navigation. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeviceSettingsRoute(
     navigateToHome: () -> Unit,
     navigateToDeviceExplorer: (nodeId: NodeId) -> Unit,
     navigateToDeviceFabrics: (nodeId: NodeId) -> Unit,
+    navigateToDeviceDiagnostics: (nodeId: NodeId) -> Unit,
     onBackClick: () -> Unit,
     nodeId: NodeId,
     viewModel: DeviceSettingsViewModel = hiltViewModel(),
 ) {
-  Timber.d("DeviceSettingsRoute: nodeId [$nodeId]")
-  val typedNodeId = nodeId
 
   val activity = LocalContext.current.getActivity()
 
-  val uiState by viewModel.uiState.collectAsState()
+  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   val device = (uiState as? DeviceSettingsViewModel.UiState.Loaded)?.device
   val basicInformation = (uiState as? DeviceSettingsViewModel.UiState.Loaded)?.basicInformation
   val isOnline = (uiState as? DeviceSettingsViewModel.UiState.Loaded)?.isOnline ?: false
   val dateCommissioned = (uiState as? DeviceSettingsViewModel.UiState.Loaded)?.dateCommissioned
-  val msgDialogInfo by viewModel.msgDialogInfo.collectAsState()
-  val showShareDeviceAlertDialog by viewModel.showShareDeviceAlertDialog.collectAsState()
-  val showRemoveDeviceAlertDialog by viewModel.showRemoveDeviceAlertDialog.collectAsState()
+  val msgDialogInfo by viewModel.msgDialogInfo.collectAsStateWithLifecycle()
+  val showShareDeviceAlertDialog by
+      viewModel.showShareDeviceAlertDialog.collectAsStateWithLifecycle()
+  val showRemoveDeviceAlertDialog by
+      viewModel.showRemoveDeviceAlertDialog.collectAsStateWithLifecycle()
   val showRemoveDeviceConfirmAlertDialog by
-      viewModel.showRemoveDeviceConfirmAlertDialog.collectAsState()
-  val deviceRemovalCompleted by viewModel.deviceRemovalCompleted.collectAsState()
+      viewModel.showRemoveDeviceConfirmAlertDialog.collectAsStateWithLifecycle()
+  val deviceRemovalCompleted by viewModel.deviceRemovalCompleted.collectAsStateWithLifecycle()
   val pairingWindowOpenForDeviceSharing by
-      viewModel.pairingWindowOpenForDeviceSharing.collectAsState()
+      viewModel.pairingWindowOpenForDeviceSharing.collectAsStateWithLifecycle()
 
   // GPS share activity launcher.
   val shareDeviceLauncher =
@@ -114,9 +114,8 @@ fun DeviceSettingsRoute(
               act.applicationContext,
               shareDeviceLauncher,
               deviceName,
-          ) { title, error ->
-            viewModel.showMsgDialog(title, error)
-          }
+              onShareFailed = { title, error -> viewModel.showMsgDialog(title, error) },
+          )
         }
       }
     }
@@ -128,8 +127,8 @@ fun DeviceSettingsRoute(
     viewModel.resetDeviceRemovalCompleted()
   }
 
-  LifecycleResumeEffect(Unit) {
-    viewModel.loadDevice(typedNodeId)
+  LifecycleResumeEffect(nodeId) {
+    viewModel.loadDevice(nodeId)
     onPauseOrDispose {}
   }
 
@@ -148,8 +147,8 @@ fun DeviceSettingsRoute(
         )
       },
   ) { innerPadding ->
+    val modifierWithInnerPadding = Modifier.fillMaxSize().padding(innerPadding)
     DeviceSettingsScreen(
-        innerPadding = innerPadding,
         device = device,
         basicInformation = basicInformation,
         isOnline = isOnline,
@@ -159,31 +158,32 @@ fun DeviceSettingsRoute(
         showRemoveDeviceAlertDialog = showRemoveDeviceAlertDialog,
         showRemoveDeviceConfirmAlertDialog = showRemoveDeviceConfirmAlertDialog,
         onDismissMsgDialog = { viewModel.dismissMsgDialog() },
-        onDeviceNameChange = { name -> viewModel.renameDevice(typedNodeId, name) },
-        onDeviceTypeChange = { type -> viewModel.changeDeviceType(typedNodeId, type) },
-        onManageFabricsClick = { navigateToDeviceFabrics(typedNodeId) },
-        onDataModelExplorerClick = { navigateToDeviceExplorer(typedNodeId) },
+        onDeviceNameChange = { name -> viewModel.renameDevice(nodeId, name) },
+        onDeviceTypeChange = { type -> viewModel.changeDeviceType(nodeId, type) },
+        onManageFabricsClick = { navigateToDeviceFabrics(nodeId) },
+        onDataModelExplorerClick = { navigateToDeviceExplorer(nodeId) },
+        onDiagnosticsClick = { navigateToDeviceDiagnostics(nodeId) },
         onShareDeviceClick = { viewModel.showShareDeviceAlertDialog() },
         onShareDeviceResult = { doIt ->
           viewModel.dismissShareDeviceAlertDialog()
-          if (doIt) viewModel.openPairingWindow(typedNodeId)
+          if (doIt) viewModel.openPairingWindow(nodeId)
         },
         onRemoveDeviceClick = { viewModel.showRemoveDeviceAlertDialog() },
         onRemoveDeviceResult = { doIt ->
           viewModel.dismissRemoveDeviceAlertDialog()
-          if (doIt) viewModel.removeDevice(typedNodeId)
+          if (doIt) viewModel.removeDevice(nodeId)
         },
-        onConfirmDeviceRemovalResult = { doIt ->
+        onForceRemoveDeviceResult = { doIt ->
           viewModel.dismissRemoveDeviceConfirmAlertDialog()
-          if (doIt) viewModel.removeDeviceWithoutUnlink(typedNodeId)
+          if (doIt) viewModel.removeDeviceWithoutUnlink(nodeId)
         },
+        modifier = modifierWithInnerPadding,
     )
   }
 }
 
 @Composable
 private fun DeviceSettingsScreen(
-    innerPadding: PaddingValues,
     device: Device?,
     basicInformation: BasicInformationAttributes?,
     isOnline: Boolean,
@@ -197,11 +197,13 @@ private fun DeviceSettingsScreen(
     onDeviceTypeChange: (DeviceTypeId) -> Unit,
     onManageFabricsClick: () -> Unit,
     onDataModelExplorerClick: () -> Unit,
+    onDiagnosticsClick: () -> Unit,
     onShareDeviceClick: () -> Unit,
     onShareDeviceResult: (Boolean) -> Unit,
     onRemoveDeviceClick: () -> Unit,
     onRemoveDeviceResult: (Boolean) -> Unit,
-    onConfirmDeviceRemovalResult: (Boolean) -> Unit,
+    onForceRemoveDeviceResult: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
 
   if (msgDialogInfo != null) {
@@ -209,7 +211,7 @@ private fun DeviceSettingsScreen(
   }
 
   if (device == null) {
-    LoadingIndicator(stringResource(R.string.loading_device_info), innerPadding)
+    LoadingIndicator(stringResource(R.string.loading_device_info), modifier = modifier)
     return
   }
 
@@ -227,7 +229,7 @@ private fun DeviceSettingsScreen(
           onDeviceNameChange(name)
           showRenameDialog = false
         },
-        onDismiss = { showRenameDialog = false },
+        onDismissRequest = { showRenameDialog = false },
     )
   }
 
@@ -238,28 +240,33 @@ private fun DeviceSettingsScreen(
           onDeviceTypeChange(type)
           showTypeDialog = false
         },
-        onDismiss = { showTypeDialog = false },
+        onDismissRequest = { showTypeDialog = false },
     )
   }
 
   if (showShareDeviceAlertDialog) {
-    ShareDeviceAlertDialog(onShareDeviceResult)
+    ShareDeviceConfirmationDialog(
+        onConfirm = { onShareDeviceResult(true) },
+        onDismissRequest = { onShareDeviceResult(false) },
+    )
   }
 
   if (showRemoveDeviceAlertDialog) {
-    RemoveDeviceAlertDialog(onRemoveDeviceResult)
+    RemoveDeviceConfirmationDialog(
+        onConfirm = { onRemoveDeviceResult(true) },
+        onDismissRequest = { onRemoveDeviceResult(false) },
+    )
   }
 
   if (showRemoveDeviceConfirmAlertDialog) {
-    ConfirmDeviceRemovalAlertDialog(onConfirmDeviceRemovalResult)
+    ForceRemoveDeviceConfirmationDialog(
+        onConfirm = { onForceRemoveDeviceResult(true) },
+        onDismissRequest = { onForceRemoveDeviceResult(false) },
+    )
   }
 
   Column(
-      modifier =
-          Modifier.fillMaxWidth()
-              .padding(innerPadding)
-              .verticalScroll(scrollState)
-              .padding(MaterialTheme.spacing.paddingNormal),
+      modifier = modifier.verticalScroll(scrollState).padding(MaterialTheme.spacing.paddingNormal),
       verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
   ) {
     if (!isOnline) {
@@ -273,64 +280,49 @@ private fun DeviceSettingsScreen(
     }
 
     // Basic section
-    SettingsSection(title = stringResource(R.string.device_settings_section_basic)) {
+    SettingsSection(stringResource(R.string.device_settings_section_basic)) {
       val unknown = stringResource(R.string.device_type_unknown)
-      SettingsInfoRow(
-          label = stringResource(R.string.device_settings_basic_vendor),
-      ) {
+      SettingsInfoRow(stringResource(R.string.device_settings_basic_vendor)) {
         Text(
-            text =
-                vendorLabel(
-                    basicInformation?.vendorId?.takeIf { it != VendorId(0u) } ?: device.vendorId,
-                    basicInformation?.vendorName?.takeIf { it.isNotBlank() }
-                        ?: device.vendorName.takeIf { it.isNotBlank() },
-                ),
+            vendorLabel(
+                basicInformation?.vendorId?.takeIf { it != VendorId(0u) } ?: device.vendorId,
+                basicInformation?.vendorName?.takeIf { it.isNotBlank() }
+                    ?: device.vendorName.takeIf { it.isNotBlank() },
+            ),
         )
       }
-      SettingsInfoRow(
-          label = stringResource(R.string.device_settings_basic_product),
-      ) {
+      SettingsInfoRow(stringResource(R.string.device_settings_basic_product)) {
         Text(
-            text =
-                stringResource(
-                    R.string.device_settings_basic_product_value,
-                    basicInformation?.productName?.takeIf { it.isNotBlank() }
-                        ?: device.productName.takeIf { it.isNotBlank() }
-                        ?: unknown,
-                    basicInformation?.productId?.takeIf { it != ProductId(0u) }?.toString()
-                        ?: device.productId.toString(),
-                ),
+            stringResource(
+                R.string.device_settings_basic_product_value,
+                basicInformation?.productName?.takeIf { it.isNotBlank() }
+                    ?: device.productName.takeIf { it.isNotBlank() }
+                    ?: unknown,
+                basicInformation?.productId?.takeIf { it != ProductId(0u) }?.toString()
+                    ?: device.productId.toString(),
+            ),
         )
       }
-      SettingsInfoRow(
-          label = stringResource(R.string.device_settings_basic_hardware_version),
-      ) {
-        Text(text = basicInformation?.hardwareVersion?.takeIf { it.isNotBlank() } ?: unknown)
+      SettingsInfoRow(stringResource(R.string.device_settings_basic_hardware_version)) {
+        Text(basicInformation?.hardwareVersion?.takeIf { it.isNotBlank() } ?: unknown)
       }
-      SettingsInfoRow(
-          label = stringResource(R.string.device_settings_basic_software_version),
-      ) {
-        Text(text = basicInformation?.softwareVersion?.takeIf { it.isNotBlank() } ?: unknown)
+      SettingsInfoRow(stringResource(R.string.device_settings_basic_software_version)) {
+        Text(basicInformation?.softwareVersion?.takeIf { it.isNotBlank() } ?: unknown)
       }
-      SettingsInfoRow(
-          label = stringResource(R.string.device_settings_basic_added_on),
-      ) {
+      SettingsInfoRow(stringResource(R.string.device_settings_basic_added_on)) {
         Text(
-            text =
-                dateCommissioned
-                    ?.takeUnless { it.seconds == 0L && it.nanos == 0 }
-                    ?.let { formatTimestamp(LocalContext.current, it) } ?: unknown,
+            dateCommissioned
+                ?.takeUnless { it.seconds == 0L && it.nanos == 0 }
+                ?.let { formatTimestamp(LocalContext.current, it) } ?: unknown,
         )
       }
-      SettingsInfoRow(
-          label = stringResource(R.string.device_settings_basic_node_id),
-      ) {
-        Text(text = device.nodeId.toString())
+      SettingsInfoRow(stringResource(R.string.device_settings_basic_node_id)) {
+        Text(device.nodeId.toString())
       }
     }
 
     // General section
-    SettingsSection(title = stringResource(R.string.device_settings_section_general)) {
+    SettingsSection(stringResource(R.string.device_settings_section_general)) {
       val unknown = stringResource(R.string.device_type_unknown)
       SettingsClickableRow(
           label = stringResource(R.string.device_settings_general_name),
@@ -348,7 +340,13 @@ private fun DeviceSettingsScreen(
     }
 
     // Admin section
-    SettingsSection(title = stringResource(R.string.device_settings_section_admin)) {
+    SettingsSection(stringResource(R.string.device_settings_section_admin)) {
+      SettingsActionRow(
+          icon = Icons.Outlined.Info,
+          label = stringResource(R.string.device_settings_admin_diagnostics),
+          subtitle = stringResource(R.string.device_settings_admin_diagnostics_subtitle),
+          onClick = onDiagnosticsClick,
+      )
       SettingsActionRow(
           icon = Icons.Outlined.Search,
           label = stringResource(R.string.device_settings_admin_explorer),

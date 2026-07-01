@@ -150,13 +150,13 @@ val CLUSTERS_1_5 =
                         Clusters.ClosureControl.Attributes.MainState.ID to
                             AttributeInfo(
                                 name = "MainState",
-                                type = DataType.MAIN_STATE_ENUM,
+                                type = DataType.CLOSURE_CONTROL_CLUSTER_MAIN_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ClosureControl.Attributes.CurrentErrorList.ID to
                             AttributeInfo(
                                 name = "CurrentErrorList",
-                                type = DataType.LIST_CLOSURE_ERROR_ENUM,
+                                type = DataType.LIST_CLOSURE_CONTROL_CLUSTER_CLOSURE_ERROR_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ClosureControl.Attributes.OverallCurrentState.ID to
@@ -195,7 +195,9 @@ val CLUSTERS_1_5 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Position",
-                                                type = DataType.TARGET_POSITION_ENUM,
+                                                type =
+                                                    DataType
+                                                        .CLOSURE_CONTROL_CLUSTER_TARGET_POSITION_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -269,7 +271,7 @@ val CLUSTERS_1_5 =
                         Clusters.ClosureDimension.Attributes.Unit.ID to
                             AttributeInfo(
                                 name = "Unit",
-                                type = DataType.CLOSURE_UNIT_ENUM,
+                                type = DataType.CLOSURE_DIMENSION_CLUSTER_CLOSURE_UNIT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ClosureDimension.Attributes.UnitRange.ID to
@@ -287,25 +289,26 @@ val CLUSTERS_1_5 =
                         Clusters.ClosureDimension.Attributes.TranslationDirection.ID to
                             AttributeInfo(
                                 name = "TranslationDirection",
-                                type = DataType.TRANSLATION_DIRECTION_ENUM,
+                                type =
+                                    DataType.CLOSURE_DIMENSION_CLUSTER_TRANSLATION_DIRECTION_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ClosureDimension.Attributes.RotationAxis.ID to
                             AttributeInfo(
                                 name = "RotationAxis",
-                                type = DataType.ROTATION_AXIS_ENUM,
+                                type = DataType.CLOSURE_DIMENSION_CLUSTER_ROTATION_AXIS_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ClosureDimension.Attributes.Overflow.ID to
                             AttributeInfo(
                                 name = "Overflow",
-                                type = DataType.OVERFLOW_ENUM,
+                                type = DataType.CLOSURE_DIMENSION_CLUSTER_OVERFLOW_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ClosureDimension.Attributes.ModulationType.ID to
                             AttributeInfo(
                                 name = "ModulationType",
-                                type = DataType.MODULATION_TYPE_ENUM,
+                                type = DataType.CLOSURE_DIMENSION_CLUSTER_MODULATION_TYPE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ClosureDimension.Attributes.LatchControlModes.ID to
@@ -349,7 +352,9 @@ val CLUSTERS_1_5 =
                                         0u to
                                             ParameterInfo(
                                                 name = "Direction",
-                                                type = DataType.STEP_DIRECTION_ENUM,
+                                                type =
+                                                    DataType
+                                                        .CLOSURE_DIMENSION_CLUSTER_STEP_DIRECTION_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -602,7 +607,9 @@ val CLUSTERS_1_5 =
                         Clusters.CameraAVStreamManagement.Attributes.TwoWayTalkSupport.ID to
                             AttributeInfo(
                                 name = "TwoWayTalkSupport",
-                                type = DataType.TWO_WAY_TALK_SUPPORT_TYPE_ENUM,
+                                type =
+                                    DataType
+                                        .CAMERA_AV_STREAM_MANAGEMENT_CLUSTER_TWO_WAY_TALK_SUPPORT_TYPE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.SnapshotCapabilities.ID to
@@ -686,14 +693,18 @@ val CLUSTERS_1_5 =
                         Clusters.CameraAVStreamManagement.Attributes.NightVision.ID to
                             AttributeInfo(
                                 name = "NightVision",
-                                type = DataType.TRI_STATE_AUTO_ENUM,
+                                type =
+                                    DataType
+                                        .CAMERA_AV_STREAM_MANAGEMENT_CLUSTER_TRI_STATE_AUTO_ENUM,
                                 readPrivilege = Privilege.MANAGE,
                                 writePrivilege = Privilege.MANAGE,
                             ),
                         Clusters.CameraAVStreamManagement.Attributes.NightVisionIllum.ID to
                             AttributeInfo(
                                 name = "NightVisionIllum",
-                                type = DataType.TRI_STATE_AUTO_ENUM,
+                                type =
+                                    DataType
+                                        .CAMERA_AV_STREAM_MANAGEMENT_CLUSTER_TRI_STATE_AUTO_ENUM,
                                 readPrivilege = Privilege.MANAGE,
                                 writePrivilege = Privilege.MANAGE,
                             ),
@@ -839,7 +850,9 @@ val CLUSTERS_1_5 =
                                         1u to
                                             ParameterInfo(
                                                 name = "AudioCodec",
-                                                type = DataType.AUDIO_CODEC_ENUM,
+                                                type =
+                                                    DataType
+                                                        .CAMERA_AV_STREAM_MANAGEMENT_CLUSTER_AUDIO_CODEC_ENUM,
                                             ),
                                         2u to
                                             ParameterInfo(
@@ -891,7 +904,9 @@ val CLUSTERS_1_5 =
                                         1u to
                                             ParameterInfo(
                                                 name = "VideoCodec",
-                                                type = DataType.VIDEO_CODEC_ENUM,
+                                                type =
+                                                    DataType
+                                                        .CAMERA_AV_STREAM_MANAGEMENT_CLUSTER_VIDEO_CODEC_ENUM,
                                             ),
                                         2u to
                                             ParameterInfo(
@@ -987,7 +1002,9 @@ val CLUSTERS_1_5 =
                                         0u to
                                             ParameterInfo(
                                                 name = "ImageCodec",
-                                                type = DataType.IMAGE_CODEC_ENUM,
+                                                type =
+                                                    DataType
+                                                        .CAMERA_AV_STREAM_MANAGEMENT_CLUSTER_IMAGE_CODEC_ENUM,
                                             ),
                                         1u to
                                             ParameterInfo(
@@ -1149,7 +1166,9 @@ val CLUSTERS_1_5 =
                                         1u to
                                             ParameterInfo(
                                                 name = "ImageCodec",
-                                                type = DataType.IMAGE_CODEC_ENUM,
+                                                type =
+                                                    DataType
+                                                        .CAMERA_AV_STREAM_MANAGEMENT_CLUSTER_IMAGE_CODEC_ENUM,
                                             ),
                                         2u to
                                             ParameterInfo(
@@ -1223,7 +1242,9 @@ val CLUSTERS_1_5 =
                         Clusters.CameraAVSettingsUserLevelManagement.Attributes.MovementState.ID to
                             AttributeInfo(
                                 name = "MovementState",
-                                type = DataType.PHYSICAL_MOVEMENT_ENUM,
+                                type =
+                                    DataType
+                                        .CAMERA_AV_SETTINGS_USER_LEVEL_MANAGEMENT_CLUSTER_PHYSICAL_MOVEMENT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -1810,7 +1831,9 @@ val CLUSTERS_1_5 =
                                         1u to
                                             ParameterInfo(
                                                 name = "TransportStatus",
-                                                type = DataType.TRANSPORT_STATUS_ENUM,
+                                                type =
+                                                    DataType
+                                                        .PUSH_AV_STREAM_TRANSPORT_CLUSTER_TRANSPORT_STATUS_ENUM,
                                             ),
                                     ),
                             ),
@@ -1829,7 +1852,9 @@ val CLUSTERS_1_5 =
                                         1u to
                                             ParameterInfo(
                                                 name = "ActivationReason",
-                                                type = DataType.TRIGGER_ACTIVATION_REASON_ENUM,
+                                                type =
+                                                    DataType
+                                                        .PUSH_AV_STREAM_TRANSPORT_CLUSTER_TRIGGER_ACTIVATION_REASON_ENUM,
                                             ),
                                         2u to
                                             ParameterInfo(
@@ -2067,7 +2092,9 @@ val CLUSTERS_1_5 =
                         Clusters.CommodityTariff.Attributes.DefaultRandomizationType.ID to
                             AttributeInfo(
                                 name = "DefaultRandomizationType",
-                                type = DataType.DAY_ENTRY_RANDOMIZATION_TYPE_ENUM,
+                                type =
+                                    DataType
+                                        .COMMODITY_TARIFF_CLUSTER_DAY_ENTRY_RANDOMIZATION_TYPE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -2536,7 +2563,7 @@ val CLUSTERS_1_5 =
                         Clusters.MeterIdentification.Attributes.MeterType.ID to
                             AttributeInfo(
                                 name = "MeterType",
-                                type = DataType.METER_TYPE_ENUM,
+                                type = DataType.METER_IDENTIFICATION_CLUSTER_METER_TYPE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.MeterIdentification.Attributes.PointOfDelivery.ID to

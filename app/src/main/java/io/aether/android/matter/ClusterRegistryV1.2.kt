@@ -63,7 +63,7 @@ val CLUSTERS_1_2 =
                         Clusters.ICDManagement.Attributes.OperatingMode.ID to
                             AttributeInfo(
                                 name = "OperatingMode",
-                                type = DataType.OPERATING_MODE_ENUM,
+                                type = DataType.ICD_MANAGEMENT_CLUSTER_OPERATING_MODE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ICDManagement.Attributes.MaximumCheckInBackoff.ID to
@@ -104,7 +104,9 @@ val CLUSTERS_1_2 =
                                         4u to
                                             ParameterInfo(
                                                 name = "ClientType",
-                                                type = DataType.CLIENT_TYPE_ENUM,
+                                                type =
+                                                    DataType
+                                                        .ICD_MANAGEMENT_CLUSTER_CLIENT_TYPE_ENUM,
                                             ),
                                     ),
                             ),
@@ -257,14 +259,17 @@ val CLUSTERS_1_2 =
                         Clusters.LaundryWasherControls.Attributes.NumberOfRinses.ID to
                             AttributeInfo(
                                 name = "NumberOfRinses",
-                                type = DataType.NUMBER_OF_RINSES_ENUM,
+                                type =
+                                    DataType.LAUNDRY_WASHER_CONTROLS_CLUSTER_NUMBER_OF_RINSES_ENUM,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.OPERATE,
                             ),
                         Clusters.LaundryWasherControls.Attributes.SupportedRinses.ID to
                             AttributeInfo(
                                 name = "SupportedRinses",
-                                type = DataType.LIST_NUMBER_OF_RINSES_ENUM,
+                                type =
+                                    DataType
+                                        .LIST_LAUNDRY_WASHER_CONTROLS_CLUSTER_NUMBER_OF_RINSES_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -451,7 +456,7 @@ val CLUSTERS_1_2 =
                         Clusters.AirQuality.Attributes.AirQuality.ID to
                             AttributeInfo(
                                 name = "AirQuality",
-                                type = DataType.AIR_QUALITY_ENUM,
+                                type = DataType.AIR_QUALITY_CLUSTER_AIR_QUALITY_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -467,31 +472,31 @@ val CLUSTERS_1_2 =
                         Clusters.SmokeCOAlarm.Attributes.ExpressedState.ID to
                             AttributeInfo(
                                 name = "ExpressedState",
-                                type = DataType.EXPRESSED_STATE_ENUM,
+                                type = DataType.SMOKE_CO_ALARM_CLUSTER_EXPRESSED_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.SmokeCOAlarm.Attributes.SmokeState.ID to
                             AttributeInfo(
                                 name = "SmokeState",
-                                type = DataType.ALARM_STATE_ENUM,
+                                type = DataType.SMOKE_CO_ALARM_CLUSTER_ALARM_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.SmokeCOAlarm.Attributes.COState.ID to
                             AttributeInfo(
                                 name = "COState",
-                                type = DataType.ALARM_STATE_ENUM,
+                                type = DataType.SMOKE_CO_ALARM_CLUSTER_ALARM_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.SmokeCOAlarm.Attributes.BatteryAlert.ID to
                             AttributeInfo(
                                 name = "BatteryAlert",
-                                type = DataType.ALARM_STATE_ENUM,
+                                type = DataType.SMOKE_CO_ALARM_CLUSTER_ALARM_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.SmokeCOAlarm.Attributes.DeviceMuted.ID to
                             AttributeInfo(
                                 name = "DeviceMuted",
-                                type = DataType.MUTE_STATE_ENUM,
+                                type = DataType.SMOKE_CO_ALARM_CLUSTER_MUTE_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.SmokeCOAlarm.Attributes.TestInProgress.ID to
@@ -509,31 +514,31 @@ val CLUSTERS_1_2 =
                         Clusters.SmokeCOAlarm.Attributes.EndOfServiceAlert.ID to
                             AttributeInfo(
                                 name = "EndOfServiceAlert",
-                                type = DataType.END_OF_SERVICE_ENUM,
+                                type = DataType.SMOKE_CO_ALARM_CLUSTER_END_OF_SERVICE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.SmokeCOAlarm.Attributes.InterconnectSmokeAlarm.ID to
                             AttributeInfo(
                                 name = "InterconnectSmokeAlarm",
-                                type = DataType.ALARM_STATE_ENUM,
+                                type = DataType.SMOKE_CO_ALARM_CLUSTER_ALARM_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.SmokeCOAlarm.Attributes.InterconnectCOAlarm.ID to
                             AttributeInfo(
                                 name = "InterconnectCOAlarm",
-                                type = DataType.ALARM_STATE_ENUM,
+                                type = DataType.SMOKE_CO_ALARM_CLUSTER_ALARM_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.SmokeCOAlarm.Attributes.ContaminationState.ID to
                             AttributeInfo(
                                 name = "ContaminationState",
-                                type = DataType.CONTAMINATION_STATE_ENUM,
+                                type = DataType.SMOKE_CO_ALARM_CLUSTER_CONTAMINATION_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.SmokeCOAlarm.Attributes.SmokeSensitivityLevel.ID to
                             AttributeInfo(
                                 name = "SmokeSensitivityLevel",
-                                type = DataType.SENSITIVITY_ENUM,
+                                type = DataType.SMOKE_CO_ALARM_CLUSTER_SENSITIVITY_ENUM,
                                 readPrivilege = Privilege.VIEW,
                                 writePrivilege = Privilege.MANAGE,
                             ),
@@ -648,7 +653,7 @@ val CLUSTERS_1_2 =
                         Clusters.OperationalState.Attributes.OperationalState.ID to
                             AttributeInfo(
                                 name = "OperationalState",
-                                type = DataType.OPERATIONAL_STATE_ENUM,
+                                type = DataType.OPERATIONAL_STATE_CLUSTER_OPERATIONAL_STATE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.OperationalState.Attributes.OperationalError.ID to
@@ -770,13 +775,14 @@ val CLUSTERS_1_2 =
                         Clusters.HEPAFilterMonitoring.Attributes.DegradationDirection.ID to
                             AttributeInfo(
                                 name = "DegradationDirection",
-                                type = DataType.DEGRADATION_DIRECTION_ENUM,
+                                type =
+                                    DataType.RESOURCE_MONITORING_CLUSTER_DEGRADATION_DIRECTION_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.HEPAFilterMonitoring.Attributes.ChangeIndication.ID to
                             AttributeInfo(
                                 name = "ChangeIndication",
-                                type = DataType.CHANGE_INDICATION_ENUM,
+                                type = DataType.RESOURCE_MONITORING_CLUSTER_CHANGE_INDICATION_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.HEPAFilterMonitoring.Attributes.InPlaceIndicator.ID to
@@ -826,13 +832,14 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "DegradationDirection",
-                                type = DataType.DEGRADATION_DIRECTION_ENUM,
+                                type =
+                                    DataType.RESOURCE_MONITORING_CLUSTER_DEGRADATION_DIRECTION_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ActivatedCarbonFilterMonitoring.Attributes.ChangeIndication.ID to
                             AttributeInfo(
                                 name = "ChangeIndication",
-                                type = DataType.CHANGE_INDICATION_ENUM,
+                                type = DataType.RESOURCE_MONITORING_CLUSTER_CHANGE_INDICATION_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.ActivatedCarbonFilterMonitoring.Attributes.InPlaceIndicator.ID to
@@ -936,20 +943,24 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "MeasurementUnit",
-                                type = DataType.MEASUREMENT_UNIT_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_UNIT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CarbonMonoxideConcentrationMeasurement.Attributes.MeasurementMedium
                             .ID to
                             AttributeInfo(
                                 name = "MeasurementMedium",
-                                type = DataType.MEASUREMENT_MEDIUM_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_MEDIUM_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CarbonMonoxideConcentrationMeasurement.Attributes.LevelValue.ID to
                             AttributeInfo(
                                 name = "LevelValue",
-                                type = DataType.LEVEL_VALUE_ENUM,
+                                type = DataType.CONCENTRATION_MEASUREMENT_CLUSTER_LEVEL_VALUE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -1024,20 +1035,24 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "MeasurementUnit",
-                                type = DataType.MEASUREMENT_UNIT_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_UNIT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CarbonDioxideConcentrationMeasurement.Attributes.MeasurementMedium
                             .ID to
                             AttributeInfo(
                                 name = "MeasurementMedium",
-                                type = DataType.MEASUREMENT_MEDIUM_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_MEDIUM_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.CarbonDioxideConcentrationMeasurement.Attributes.LevelValue.ID to
                             AttributeInfo(
                                 name = "LevelValue",
-                                type = DataType.LEVEL_VALUE_ENUM,
+                                type = DataType.CONCENTRATION_MEASUREMENT_CLUSTER_LEVEL_VALUE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -1114,7 +1129,9 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "MeasurementUnit",
-                                type = DataType.MEASUREMENT_UNIT_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_UNIT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.NitrogenDioxideConcentrationMeasurement.Attributes
@@ -1122,13 +1139,15 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "MeasurementMedium",
-                                type = DataType.MEASUREMENT_MEDIUM_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_MEDIUM_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.NitrogenDioxideConcentrationMeasurement.Attributes.LevelValue.ID to
                             AttributeInfo(
                                 name = "LevelValue",
-                                type = DataType.LEVEL_VALUE_ENUM,
+                                type = DataType.CONCENTRATION_MEASUREMENT_CLUSTER_LEVEL_VALUE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -1194,19 +1213,23 @@ val CLUSTERS_1_2 =
                         Clusters.OzoneConcentrationMeasurement.Attributes.MeasurementUnit.ID to
                             AttributeInfo(
                                 name = "MeasurementUnit",
-                                type = DataType.MEASUREMENT_UNIT_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_UNIT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.OzoneConcentrationMeasurement.Attributes.MeasurementMedium.ID to
                             AttributeInfo(
                                 name = "MeasurementMedium",
-                                type = DataType.MEASUREMENT_MEDIUM_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_MEDIUM_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.OzoneConcentrationMeasurement.Attributes.LevelValue.ID to
                             AttributeInfo(
                                 name = "LevelValue",
-                                type = DataType.LEVEL_VALUE_ENUM,
+                                type = DataType.CONCENTRATION_MEASUREMENT_CLUSTER_LEVEL_VALUE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -1272,19 +1295,23 @@ val CLUSTERS_1_2 =
                         Clusters.PM25ConcentrationMeasurement.Attributes.MeasurementUnit.ID to
                             AttributeInfo(
                                 name = "MeasurementUnit",
-                                type = DataType.MEASUREMENT_UNIT_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_UNIT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PM25ConcentrationMeasurement.Attributes.MeasurementMedium.ID to
                             AttributeInfo(
                                 name = "MeasurementMedium",
-                                type = DataType.MEASUREMENT_MEDIUM_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_MEDIUM_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PM25ConcentrationMeasurement.Attributes.LevelValue.ID to
                             AttributeInfo(
                                 name = "LevelValue",
-                                type = DataType.LEVEL_VALUE_ENUM,
+                                type = DataType.CONCENTRATION_MEASUREMENT_CLUSTER_LEVEL_VALUE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -1358,20 +1385,24 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "MeasurementUnit",
-                                type = DataType.MEASUREMENT_UNIT_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_UNIT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.FormaldehydeConcentrationMeasurement.Attributes.MeasurementMedium
                             .ID to
                             AttributeInfo(
                                 name = "MeasurementMedium",
-                                type = DataType.MEASUREMENT_MEDIUM_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_MEDIUM_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.FormaldehydeConcentrationMeasurement.Attributes.LevelValue.ID to
                             AttributeInfo(
                                 name = "LevelValue",
-                                type = DataType.LEVEL_VALUE_ENUM,
+                                type = DataType.CONCENTRATION_MEASUREMENT_CLUSTER_LEVEL_VALUE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -1437,19 +1468,23 @@ val CLUSTERS_1_2 =
                         Clusters.PM1ConcentrationMeasurement.Attributes.MeasurementUnit.ID to
                             AttributeInfo(
                                 name = "MeasurementUnit",
-                                type = DataType.MEASUREMENT_UNIT_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_UNIT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PM1ConcentrationMeasurement.Attributes.MeasurementMedium.ID to
                             AttributeInfo(
                                 name = "MeasurementMedium",
-                                type = DataType.MEASUREMENT_MEDIUM_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_MEDIUM_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PM1ConcentrationMeasurement.Attributes.LevelValue.ID to
                             AttributeInfo(
                                 name = "LevelValue",
-                                type = DataType.LEVEL_VALUE_ENUM,
+                                type = DataType.CONCENTRATION_MEASUREMENT_CLUSTER_LEVEL_VALUE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -1515,19 +1550,23 @@ val CLUSTERS_1_2 =
                         Clusters.PM10ConcentrationMeasurement.Attributes.MeasurementUnit.ID to
                             AttributeInfo(
                                 name = "MeasurementUnit",
-                                type = DataType.MEASUREMENT_UNIT_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_UNIT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PM10ConcentrationMeasurement.Attributes.MeasurementMedium.ID to
                             AttributeInfo(
                                 name = "MeasurementMedium",
-                                type = DataType.MEASUREMENT_MEDIUM_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_MEDIUM_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.PM10ConcentrationMeasurement.Attributes.LevelValue.ID to
                             AttributeInfo(
                                 name = "LevelValue",
-                                type = DataType.LEVEL_VALUE_ENUM,
+                                type = DataType.CONCENTRATION_MEASUREMENT_CLUSTER_LEVEL_VALUE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -1609,7 +1648,9 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "MeasurementUnit",
-                                type = DataType.MEASUREMENT_UNIT_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_UNIT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.TotalVolatileOrganicCompoundsConcentrationMeasurement.Attributes
@@ -1617,7 +1658,9 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "MeasurementMedium",
-                                type = DataType.MEASUREMENT_MEDIUM_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_MEDIUM_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.TotalVolatileOrganicCompoundsConcentrationMeasurement.Attributes
@@ -1625,7 +1668,7 @@ val CLUSTERS_1_2 =
                             .ID to
                             AttributeInfo(
                                 name = "LevelValue",
-                                type = DataType.LEVEL_VALUE_ENUM,
+                                type = DataType.CONCENTRATION_MEASUREMENT_CLUSTER_LEVEL_VALUE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),
@@ -1691,19 +1734,23 @@ val CLUSTERS_1_2 =
                         Clusters.RadonConcentrationMeasurement.Attributes.MeasurementUnit.ID to
                             AttributeInfo(
                                 name = "MeasurementUnit",
-                                type = DataType.MEASUREMENT_UNIT_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_UNIT_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.RadonConcentrationMeasurement.Attributes.MeasurementMedium.ID to
                             AttributeInfo(
                                 name = "MeasurementMedium",
-                                type = DataType.MEASUREMENT_MEDIUM_ENUM,
+                                type =
+                                    DataType
+                                        .CONCENTRATION_MEASUREMENT_CLUSTER_MEASUREMENT_MEDIUM_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                         Clusters.RadonConcentrationMeasurement.Attributes.LevelValue.ID to
                             AttributeInfo(
                                 name = "LevelValue",
-                                type = DataType.LEVEL_VALUE_ENUM,
+                                type = DataType.CONCENTRATION_MEASUREMENT_CLUSTER_LEVEL_VALUE_ENUM,
                                 readPrivilege = Privilege.VIEW,
                             ),
                     ),

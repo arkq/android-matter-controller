@@ -51,12 +51,7 @@ internal fun SettingsClickableRow(label: String, value: String, onClick: () -> U
       modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 4.dp),
       verticalAlignment = Alignment.CenterVertically,
   ) {
-    Column(modifier = Modifier.weight(1f)) {
-      Text(
-          text = label,
-          style = MaterialTheme.typography.labelSmall,
-          color = MaterialTheme.colorScheme.onSurfaceVariant,
-      )
+    LabeledContent(label = label, modifier = Modifier.weight(1f)) {
       Text(text = value, style = MaterialTheme.typography.bodyMedium)
     }
   }

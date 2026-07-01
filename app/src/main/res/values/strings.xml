@@ -7,8 +7,10 @@ SPDX-License-Identifier: Apache-2.0
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name" translatable="false">Æther</string>
 
-    <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <!-- Menu  -->
     <string name="menu_item_scanner">Matter Device Scanner</string>
@@ -86,6 +88,8 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_settings_admin_fabrics_subtitle">Control who can manage this device</string>
     <string name="device_settings_admin_explorer">Data model explorer</string>
     <string name="device_settings_admin_explorer_subtitle">Read, write, and invoke on cluster data</string>
+    <string name="device_settings_admin_diagnostics">Diagnostics</string>
+    <string name="device_settings_admin_diagnostics_subtitle">View runtime diagnostics</string>
     <string name="device_settings_admin_share">Share</string>
     <string name="device_settings_admin_share_subtitle">Share this device with other controllers</string>
     <string name="device_settings_admin_remove">Remove</string>
@@ -161,6 +165,59 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_explorer_error_invalid_boolean">Please enter true or false.</string>
     <string name="device_explorer_boolean_true">True</string>
     <string name="device_explorer_boolean_false">False</string>
+
+    <!-- Device Diagnostics Screen -->
+    <string name="device_diagnostics_loading">Loading diagnostics…</string>
+    <string name="device_diagnostics_empty">No diagnostics data available.</string>
+    <string name="device_diagnostics_load_failed">Failed to load diagnostics data.</string>
+    <string name="device_diagnostics_section_general">General</string>
+    <string name="device_diagnostics_section_interfaces">Interfaces</string>
+    <string name="device_diagnostics_section_memory">Memory</string>
+    <string name="device_diagnostics_section_threads">Threads</string>
+    <string name="device_diagnostics_section_ethernet_network">Ethernet Network</string>
+    <string name="device_diagnostics_section_wifi_network">Wi-Fi Network</string>
+    <string name="device_diagnostics_section_thread_network">Thread Network</string>
+    <string name="device_diagnostics_label_reboot_count">Reboot count</string>
+    <string name="device_diagnostics_label_uptime">Uptime</string>
+    <string name="device_diagnostics_label_total_operational_time">Total operational time</string>
+    <string name="device_diagnostics_label_boot_reason">Boot reason</string>
+    <string name="device_diagnostics_label_active_hardware_faults">Active hardware faults</string>
+    <string name="device_diagnostics_label_active_radio_faults">Active radio faults</string>
+    <string name="device_diagnostics_label_active_network_faults">Active network faults</string>
+    <string name="device_diagnostics_label_current_heap_usage">Current heap usage</string>
+    <string name="device_diagnostics_label_current_heap_high_watermark">Current heap high watermark</string>
+    <string name="device_diagnostics_label_network_traffic">Traffic</string>
+    <string name="device_diagnostics_label_network_link_quality">Link quality</string>
+    <string name="device_diagnostics_label_network_link_properties">Link properties</string>
+    <string name="device_diagnostics_label_time_since_reset">Time since reset</string>
+    <string name="device_diagnostics_label_bssid">BSSID</string>
+    <string name="device_diagnostics_current_heap_used">%1$s KB used</string>
+    <string name="device_diagnostics_current_heap_free">%1$s KB free</string>
+    <string name="device_diagnostics_current_heap_high_watermark">%1$s KB</string>
+    <string name="device_diagnostics_thread_label">%1$s (%2$s)</string>
+    <string name="device_diagnostics_thread_stack_used">%1$s KB used</string>
+    <string name="device_diagnostics_thread_stack_free">%1$s KB free</string>
+    <string name="device_diagnostics_thread_unnamed">Unnamed thread</string>
+    <string name="device_diagnostics_interface_hw_address">HW addr: %1$s</string>
+    <string name="device_diagnostics_interface_ipv4_address">IPv4: %1$s</string>
+    <string name="device_diagnostics_interface_ipv6_address">IPv6: %1$s</string>
+    <string name="device_diagnostics_network_up">UP</string>
+    <string name="device_diagnostics_network_down">DOWN</string>
+    <string name="device_diagnostics_network_unicast">Unicast :: %1$s</string>
+    <string name="device_diagnostics_network_multicast">Multicast :: %1$s</string>
+    <string name="device_diagnostics_network_rx">⬇ Rx: %1$s</string>
+    <string name="device_diagnostics_network_tx">⬆ Tx: %1$s</string>
+    <string name="device_diagnostics_network_tx_errors">TX errors: %1$s</string>
+    <string name="device_diagnostics_network_beacon_rx">Beacon RX: %1$s</string>
+    <string name="device_diagnostics_network_beacon_lost">Beacon lost: %1$s</string>
+    <string name="device_diagnostics_network_collisions">Collisions: %1$s</string>
+    <string name="device_diagnostics_network_drops">Drops: %1$s</string>
+    <string name="device_diagnostics_network_full_duplex">Full-Duplex</string>
+    <string name="device_diagnostics_network_no_carrier">No-Carrier</string>
+    <string name="device_diagnostics_network_channel">Ch-%1$s</string>
+    <string name="device_diagnostics_network_rate">%1$.2f Mb/s</string>
+    <string name="device_diagnostics_network_rssi">RSSI:</string>
+    <string name="device_diagnostics_network_dbm">%1$d dBm</string>
 
     <!-- Device Share Dialog -->
     <string name="device_share_dialog_title">Share this device?</string>

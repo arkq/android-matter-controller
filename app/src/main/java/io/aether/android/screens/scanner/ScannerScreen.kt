@@ -8,7 +8,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -65,13 +64,14 @@ internal fun ScannerRoute(
         )
       },
   ) { innerPadding ->
-    ScannerScreen(innerPadding, beaconsList)
+    val modifierWithInnerPadding = Modifier.fillMaxSize().padding(innerPadding)
+    ScannerScreen(beaconsList, modifier = modifierWithInnerPadding)
   }
 }
 
 @Composable
-private fun ScannerScreen(innerPadding: PaddingValues, beaconsList: List<MatterBeacon>) {
-  Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+private fun ScannerScreen(beaconsList: List<MatterBeacon>, modifier: Modifier = Modifier) {
+  Box(modifier = modifier) {
     LazyColumn(modifier = Modifier.padding(MaterialTheme.spacing.paddingSurfaceContent)) {
       this.items(beaconsList) { MatterBeaconItem(it) }
     }
