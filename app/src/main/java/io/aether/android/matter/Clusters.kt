@@ -7010,7 +7010,7 @@ object Clusters {
         val ID = AttributeId(0x0004u)
       }
 
-      object ObjectCountReached {
+      object ObjectCountThresholdReached {
         val ID = AttributeId(0x0005u)
       }
 

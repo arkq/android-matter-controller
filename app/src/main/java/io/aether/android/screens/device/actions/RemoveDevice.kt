@@ -35,9 +35,7 @@ internal fun RemoveDeviceConfirmationDialog(
       },
       onDismissRequest = onDismissRequest,
       dismissButton = {
-        TextButton(onClick = onDismissRequest) {
-          Text(stringResource(R.string.cancel))
-        }
+        TextButton(onClick = onDismissRequest) { Text(stringResource(R.string.cancel)) }
       },
   )
 }
@@ -64,9 +62,7 @@ internal fun ForceRemoveDeviceConfirmationDialog(
       },
       onDismissRequest = onDismissRequest,
       dismissButton = {
-        TextButton(onClick = onDismissRequest) {
-          Text(stringResource(R.string.cancel))
-        }
+        TextButton(onClick = onDismissRequest) { Text(stringResource(R.string.cancel)) }
       },
   )
 }

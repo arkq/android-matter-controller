@@ -50,8 +50,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -75,6 +73,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.home.matter.Matter
@@ -138,24 +137,25 @@ internal fun HomeRoute(
   // We're doing it this way as we cannot ask permission to the user while the
   // decision has to be made because UI is fully controlled by GPS at that point.
   val deviceAttestationFailureIgnored by
-      homeViewModel.deviceAttestationFailureIgnored.collectAsState()
+      homeViewModel.deviceAttestationFailureIgnored.collectAsStateWithLifecycle()
 
   // Controls when the "New Device" alert dialog is shown.
   // When that alert dialog completes, control needs to go back to the ViewModel to complete
   // the commissioning flow.
-  val showNewDeviceAlertDialog by homeViewModel.showNewDeviceNameAlertDialog.collectAsState()
+  val showNewDeviceAlertDialog by
+      homeViewModel.showNewDeviceNameAlertDialog.collectAsStateWithLifecycle()
   val onCommissionedDeviceNameCaptured: (name: String) -> Unit = remember {
     { homeViewModel.onCommissionedDeviceNameCaptured(it) }
   }
 
   // Controls the Msg AlertDialog.
   // When the user dismisses the Msg AlertDialog, we "consume" the dialog.
-  val msgDialogInfo by homeViewModel.msgDialogInfo.collectAsState()
+  val msgDialogInfo by homeViewModel.msgDialogInfo.collectAsStateWithLifecycle()
   val onDismissMsgDialog: () -> Unit = remember { { homeViewModel.dismissMsgDialog() } }
 
   // Status of multiadmin commissioning.
   val multiadminCommissionDeviceTaskStatus by
-      homeViewModel.multiadminCommissionDeviceTaskStatus.collectAsState()
+      homeViewModel.multiadminCommissionDeviceTaskStatus.collectAsStateWithLifecycle()
 
   // Functions invoked when UI controls are clicked on a specific device in the list.
   val onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit = remember {
@@ -275,8 +275,8 @@ internal fun HomeRoute(
           }
         },
     ) { innerPadding ->
+      val modifierWithInnerPadding = Modifier.fillMaxSize().padding(innerPadding)
       HomeScreen(
-          innerPadding,
           devicesList,
           msgDialogInfo,
           onDismissMsgDialog,
@@ -286,6 +286,7 @@ internal fun HomeRoute(
           onCommissionDevice,
           onDeviceClick,
           onOnOffClick,
+          modifier = modifierWithInnerPadding,
       )
     }
   }
@@ -299,7 +300,6 @@ fun getPlayServicesVersion(context: Context): Long {
 
 @Composable
 private fun HomeScreen(
-    innerPadding: PaddingValues,
     devicesList: List<DeviceUiModel>,
     msgDialogInfo: DialogInfo?,
     onConsumeMsgDialog: () -> Unit,
@@ -309,6 +309,7 @@ private fun HomeScreen(
     onCommissionDevice: () -> Unit,
     onDeviceClick: (deviceUiModel: DeviceUiModel) -> Unit,
     onOnOffClick: (nodeId: NodeId, value: Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
 
   val context = LocalContext.current
@@ -351,23 +352,20 @@ private fun HomeScreen(
     NewDeviceAlertDialog(onCommissionedDeviceNameCaptured, deviceAttestationFailureIgnored)
   }
 
-  Box(Modifier.fillMaxSize()) {
-    LazyColumn(modifier = Modifier.fillMaxWidth().padding(innerPadding)) {
-      this.items(devicesList) { device ->
-        val onDeviceItemClick: () -> Unit = { onDeviceClick(device) }
-        DeviceItem(
-            device.nodeId,
-            device.deviceTypeId,
-            device.name,
-            device.isOnline,
-            device.isOn,
-            onOnOffClick,
-            onDeviceItemClick,
-        )
-      }
+  LazyColumn(modifier = modifier) {
+    this.items(devicesList) { device ->
+      val onDeviceItemClick: () -> Unit = { onDeviceClick(device) }
+      DeviceItem(
+          device.nodeId,
+          device.deviceTypeId,
+          device.name,
+          device.isOnline,
+          device.isOn,
+          onOnOffClick,
+          onDeviceItemClick,
+      )
     }
   }
-  LaunchedEffect(devicesList) { Timber.d("HomeRoute [$devicesList]") }
 }
 
 fun openPlayServicesInStore(context: Context) {

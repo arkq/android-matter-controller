@@ -7,7 +7,7 @@ package io.aether.android.screens.device
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -26,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -36,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.aether.android.MatterFabricState
 import io.aether.android.R
 import io.aether.android.data.DevicesStateRepository
@@ -74,21 +74,21 @@ internal fun DeviceRoute(
   Timber.d("DeviceRoute nodeId [$nodeId]")
 
   // Observes values needed by the DeviceScreen.
-  val deviceUiModel by deviceViewModel.deviceUiModel.collectAsState()
+  val deviceUiModel by deviceViewModel.deviceUiModel.collectAsStateWithLifecycle()
   Timber.d("DeviceRoute deviceUiModel [${deviceUiModel?.nodeId}]")
 
   // All endpoint models for the same physical node.
-  val allEndpointUiModels by deviceViewModel.allEndpointUiModels.collectAsState()
+  val allEndpointUiModels by deviceViewModel.allEndpointUiModels.collectAsStateWithLifecycle()
 
   // Controls the Msg AlertDialog.
-  val msgDialogInfo by deviceViewModel.msgDialogInfo.collectAsState()
+  val msgDialogInfo by deviceViewModel.msgDialogInfo.collectAsStateWithLifecycle()
   val onDismissMsgDialog: () -> Unit = remember { { deviceViewModel.dismissMsgDialog() } }
 
   val lastUpdatedEndpointState by
       deviceViewModel.devicesStateRepository.lastUpdatedEndpointState.observeAsState()
   val devicesState by
-      deviceViewModel.devicesStateRepository.devicesStateFlow.collectAsState(
-          initial = MatterFabricState.getDefaultInstance()
+      deviceViewModel.devicesStateRepository.devicesStateFlow.collectAsStateWithLifecycle(
+          initialValue = MatterFabricState.getDefaultInstance()
       )
   val isOnline =
       devicesState.nodesList.firstOrNull { it.nodeId == nodeId.toLong() }?.online
@@ -145,8 +145,8 @@ internal fun DeviceRoute(
         )
       },
   ) { innerPadding ->
+    val modifierWithInnerPadding = Modifier.fillMaxSize().padding(innerPadding)
     DeviceScreen(
-        innerPadding,
         deviceUiModel,
         allEndpointUiModels,
         isOnline,
@@ -156,6 +156,7 @@ internal fun DeviceRoute(
         onColorTemperatureChange,
         msgDialogInfo,
         onDismissMsgDialog,
+        modifier = modifierWithInnerPadding,
     )
   }
 }
@@ -165,7 +166,6 @@ internal fun DeviceRoute(
 
 @Composable
 private fun DeviceScreen(
-    innerPadding: PaddingValues,
     deviceUiModel: DeviceUiModel?,
     allEndpointUiModels: List<DeviceUiModel>,
     isOnline: Boolean,
@@ -175,9 +175,10 @@ private fun DeviceScreen(
     onColorTemperatureChange: (endpointModel: DeviceUiModel, value: Int) -> Unit,
     msgDialogInfo: DialogInfo?,
     onDismissMsgDialog: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
   if (deviceUiModel == null) {
-    LoadingIndicator(stringResource(R.string.loading_device_info))
+    LoadingIndicator(stringResource(R.string.loading_device_info), modifier = modifier)
     return
   }
 
@@ -189,8 +190,7 @@ private fun DeviceScreen(
 
   Column(
       modifier =
-          Modifier.fillMaxWidth()
-              .padding(innerPadding)
+          modifier
               .verticalScroll(rememberScrollState())
               .padding(MaterialTheme.spacing.paddingNormal),
       verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),

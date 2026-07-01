@@ -6,24 +6,36 @@
 package io.aether.android.matter
 
 object Enums {
-  enum class ACLClusterAuthMode(val value: Int) {
+  enum class ACLClusterAccessControlAuxiliaryType(val value: Int) {
+    System(0),
+    Groupcast(1),
+  }
+
+  enum class ACLClusterAccessControlEntryAuthMode(val value: Int) {
     PASE(1),
     CASE(2),
     Group(3),
+  }
+
+  enum class ACLClusterAccessControlEntryPrivilege(val value: Int) {
+    View(1),
+    ProxyView(2),
+    Operate(3),
+    Manage(4),
+    Administer(5),
+  }
+
+  enum class ACLClusterAccessRestrictionType(val value: Int) {
+    AttributeAccessForbidden(0),
+    AttributeWriteForbidden(1),
+    CommandForbidden(2),
+    EventForbidden(3),
   }
 
   enum class ACLClusterChangeType(val value: Int) {
     Changed(0),
     Added(1),
     Removed(2),
-  }
-
-  enum class ACLClusterPrivilege(val value: Int) {
-    View(1),
-    ProxyView(2),
-    Operate(3),
-    Manage(4),
-    Administer(5),
   }
 
   enum class ActionsClusterActionError(val value: Int) {
@@ -60,6 +72,12 @@ object Enums {
     BasicWindowOpen(2),
   }
 
+  enum class AdminCommissioningClusterStatusCode(val value: Int) {
+    Busy(2),
+    PAKEParameterError(3),
+    WindowNotOpen(4),
+  }
+
   enum class AirQualityClusterAirQuality(val value: Int) {
     Unknown(0),
     Good(1),
@@ -71,19 +89,94 @@ object Enums {
   }
 
   enum class ApplicationBasicClusterApplicationStatus(val value: Int) {
-    STOPPED(0),
-    ACTIVE_VISIBLE_FOCUS(1),
-    ACTIVE_HIDDEN(2),
-    ACTIVE_VISIBLE_NOT_FOCUS(3),
+    Stopped(0),
+    ActiveVisibleFocus(1),
+    ActiveHidden(2),
+    ActiveVisibleNotFocus(3),
+  }
+
+  enum class ApplicationLauncherClusterStatus(val value: Int) {
+    Success(0),
+    AppNotAvailable(1),
+    SystemBusy(2),
+    PendingUserApproval(3),
+    Downloading(4),
+    Installing(5),
   }
 
   enum class AudioOutputClusterOutputType(val value: Int) {
     HDMI(0),
     BT(1),
-    OPTICAL(2),
-    HEADPHONE(3),
-    INTERNAL(4),
-    OTHER(5),
+    Optical(2),
+    Headphone(3),
+    Internal(4),
+    Other(5),
+  }
+
+  enum class BasicInformationClusterColor(val value: Int) {
+    Black(0),
+    Navy(1),
+    Green(2),
+    Teal(3),
+    Maroon(4),
+    Purple(5),
+    Olive(6),
+    Gray(7),
+    Blue(8),
+    Lime(9),
+    Aqua(10),
+    Red(11),
+    Fuchsia(12),
+    Yellow(13),
+    White(14),
+    Nickel(15),
+    Chrome(16),
+    Brass(17),
+    Copper(18),
+    Silver(19),
+    Gold(20),
+  }
+
+  enum class BasicInformationClusterProductFinish(val value: Int) {
+    Other(0),
+    Matte(1),
+    Satin(2),
+    Polished(3),
+    Rugged(4),
+    Fabric(5),
+  }
+
+  enum class BridgedDeviceBasicInformationClusterColor(val value: Int) {
+    Black(0),
+    Navy(1),
+    Green(2),
+    Teal(3),
+    Maroon(4),
+    Purple(5),
+    Olive(6),
+    Gray(7),
+    Blue(8),
+    Lime(9),
+    Aqua(10),
+    Red(11),
+    Fuchsia(12),
+    Yellow(13),
+    White(14),
+    Nickel(15),
+    Chrome(16),
+    Brass(17),
+    Copper(18),
+    Silver(19),
+    Gold(20),
+  }
+
+  enum class BridgedDeviceBasicInformationClusterProductFinish(val value: Int) {
+    Other(0),
+    Matte(1),
+    Satin(2),
+    Polished(3),
+    Rugged(4),
+    Fabric(5),
   }
 
   enum class CameraAVSettingsUserLevelManagementClusterPhysicalMovement(val value: Int) {
@@ -98,6 +191,7 @@ object Enums {
 
   enum class CameraAVStreamManagementClusterImageCodec(val value: Int) {
     JPEG(0),
+    HEIC(1),
   }
 
   enum class CameraAVStreamManagementClusterTriStateAuto(val value: Int) {
@@ -119,8 +213,21 @@ object Enums {
     AV1(3),
   }
 
+  enum class ChannelClusterChannelType(val value: Int) {
+    Satellite(0),
+    Cable(1),
+    Terrestrial(2),
+    OTT(3),
+  }
+
   enum class ChannelClusterLineupInfoType(val value: Int) {
     MSO(0),
+  }
+
+  enum class ChannelClusterStatus(val value: Int) {
+    Success(0),
+    MultipleMatches(1),
+    NoMatches(2),
   }
 
   enum class ClosureControlClusterClosureError(val value: Int) {
@@ -220,6 +327,56 @@ object Enums {
     DepthSymmetry(11),
   }
 
+  enum class ColorControlClusterColorLoopAction(val value: Int) {
+    Deactivate(0),
+    ActivateFromColorLoopStartEnhancedHue(1),
+    ActivateFromEnhancedCurrentHue(2),
+  }
+
+  enum class ColorControlClusterColorLoopDirection(val value: Int) {
+    Decrement(0),
+    Increment(1),
+  }
+
+  enum class ColorControlClusterColorMode(val value: Int) {
+    CurrentHueAndCurrentSaturation(0),
+    CurrentXAndCurrentY(1),
+    ColorTemperatureMireds(2),
+  }
+
+  enum class ColorControlClusterDirection(val value: Int) {
+    Shortest(0),
+    Longest(1),
+    Up(2),
+    Down(3),
+  }
+
+  enum class ColorControlClusterDriftCompensation(val value: Int) {
+    None(0),
+    OtherOrUnknown(1),
+    TemperatureMonitoring(2),
+    OpticalLuminanceMonitoringAndFeedback(3),
+    OpticalColorMonitoringAndFeedback(4),
+  }
+
+  enum class ColorControlClusterEnhancedColorMode(val value: Int) {
+    CurrentHueAndCurrentSaturation(0),
+    CurrentXAndCurrentY(1),
+    ColorTemperatureMireds(2),
+    EnhancedCurrentHueAndCurrentSaturation(3),
+  }
+
+  enum class ColorControlClusterMoveMode(val value: Int) {
+    Stop(0),
+    Up(1),
+    Down(3),
+  }
+
+  enum class ColorControlClusterStepMode(val value: Int) {
+    Up(1),
+    Down(3),
+  }
+
   enum class CommodityTariffClusterAuxiliaryLoadSetting(val value: Int) {
     Off(0),
     On(1),
@@ -284,6 +441,19 @@ object Enums {
     UnexpectedData(1),
   }
 
+  enum class ContentControlClusterStatusCode(val value: Int) {
+    InvalidPINCode(2),
+    InvalidRating(3),
+    InvalidChannel(4),
+    ChannelAlreadyExist(5),
+    ChannelNotExist(6),
+    UnidentifiableApplication(7),
+    ApplicationAlreadyExist(8),
+    ApplicationNotExist(9),
+    TimeWindowAlreadyExist(10),
+    TimeWindowNotExist(11),
+  }
+
   enum class ContentLauncherClusterMetricType(val value: Int) {
     Pixels(0),
     Percentage(1),
@@ -304,6 +474,17 @@ object Enums {
     SportsTeam(11),
     Type(12),
     Video(13),
+    Season(14),
+    Episode(15),
+    Any(16),
+  }
+
+  enum class ContentLauncherClusterStatus(val value: Int) {
+    Success(0),
+    URLNotAvailable(1),
+    AuthFailed(2),
+    TextTrackNotAvailable(3),
+    AudioTrackNotAvailable(4),
   }
 
   enum class DeviceEnergyManagementClusterAdjustmentCause(val value: Int) {
@@ -363,6 +544,12 @@ object Enums {
     LocalOptOut(1),
     GridOptOut(2),
     OptOut(3),
+  }
+
+  enum class DeviceEnergyManagementClusterPowerAdjustReason(val value: Int) {
+    NoAdjustment(0),
+    LocalOptimizationAdjustment(1),
+    GridOptimizationAdjustment(2),
   }
 
   enum class DiagnosticLogsClusterIntent(val value: Int) {
@@ -446,6 +633,11 @@ object Enums {
     EthernetFault(6),
   }
 
+  enum class DiagnosticsThreadClusterConnectionStatus(val value: Int) {
+    Connected(0),
+    NotConnected(1),
+  }
+
   enum class DiagnosticsThreadClusterNetworkFault(val value: Int) {
     Unspecified(0),
     LinkDown(1),
@@ -491,6 +683,7 @@ object Enums {
     N(3),
     Ac(4),
     Ax(5),
+    Ah(6),
   }
 
   enum class DoorLockClusterAlarmCode(val value: Int) {
@@ -517,6 +710,9 @@ object Enums {
     Fingerprint(3),
     FingerVein(4),
     Face(5),
+    AliroCredentialIssuerKey(6),
+    AliroEvictableEndpointKey(7),
+    AliroNonEvictableEndpointKey(8),
   }
 
   enum class DoorLockClusterDataOperationType(val value: Int) {
@@ -534,6 +730,18 @@ object Enums {
     DoorAjar(5),
   }
 
+  enum class DoorLockClusterEventType(val value: Int) {
+    Operation(0),
+    Programming(1),
+    Alarm(2),
+  }
+
+  enum class DoorLockClusterLEDSetting(val value: Int) {
+    NoLEDSignal(0),
+    NoLEDSignalAccessAllowed(1),
+    LEDSignalAll(2),
+  }
+
   enum class DoorLockClusterLockDataType(val value: Int) {
     Unspecified(0),
     ProgrammingCode(1),
@@ -546,6 +754,9 @@ object Enums {
     Fingerprint(8),
     FingerVein(9),
     Face(10),
+    AliroCredentialIssuerKey(11),
+    AliroEvictableEndpointKey(12),
+    AliroNonEvictableEndpointKey(13),
   }
 
   enum class DoorLockClusterLockOperationType(val value: Int) {
@@ -553,6 +764,29 @@ object Enums {
     Unlock(1),
     NonAccessUserEvent(2),
     ForcedUserEvent(3),
+    Unlatch(4),
+  }
+
+  enum class DoorLockClusterLockState(val value: Int) {
+    NotFullyLocked(0),
+    Locked(1),
+    Unlocked(2),
+    Unlatched(3),
+  }
+
+  enum class DoorLockClusterLockType(val value: Int) {
+    DeadBolt(0),
+    Magnetic(1),
+    Other(2),
+    Mortise(3),
+    Rim(4),
+    LatchBolt(5),
+    CylindricalLock(6),
+    TubularLock(7),
+    InterconnectedLock(8),
+    DeadLatch(9),
+    DoorFurniture(10),
+    Eurocylinder(11),
   }
 
   enum class DoorLockClusterOperatingMode(val value: Int) {
@@ -582,6 +816,19 @@ object Enums {
     Remote(7),
     RFID(8),
     Biometric(9),
+    Aliro(10),
+  }
+
+  enum class DoorLockClusterSoundVolume(val value: Int) {
+    Silent(0),
+    Low(1),
+    High(2),
+    Medium(3),
+  }
+
+  enum class DoorLockClusterStatusCode(val value: Int) {
+    Duplicate(2),
+    Occupied(3),
   }
 
   enum class DoorLockClusterUserStatus(val value: Int) {
@@ -603,10 +850,50 @@ object Enums {
     RemoteOnlyUser(9),
   }
 
+  enum class ElectricalEnergyMeasurementClusterMeasurementType(val value: Int) {
+    Unspecified(0),
+    Voltage(1),
+    ActiveCurrent(2),
+    ReactiveCurrent(3),
+    ApparentCurrent(4),
+    ActivePower(5),
+    ReactivePower(6),
+    ApparentPower(7),
+    RMSVoltage(8),
+    RMSCurrent(9),
+    RMSPower(10),
+    Frequency(11),
+    PowerFactor(12),
+    NeutralCurrent(13),
+    ElectricalEnergy(14),
+    ReactiveEnergy(15),
+    ApparentEnergy(16),
+  }
+
   enum class ElectricalGridConditionsClusterThreeLevel(val value: Int) {
     Low(0),
     Medium(1),
     High(2),
+  }
+
+  enum class ElectricalPowerMeasurementClusterMeasurementType(val value: Int) {
+    Unspecified(0),
+    Voltage(1),
+    ActiveCurrent(2),
+    ReactiveCurrent(3),
+    ApparentCurrent(4),
+    ActivePower(5),
+    ReactivePower(6),
+    ApparentPower(7),
+    RMSVoltage(8),
+    RMSCurrent(9),
+    RMSPower(10),
+    Frequency(11),
+    PowerFactor(12),
+    NeutralCurrent(13),
+    ElectricalEnergy(14),
+    ReactiveEnergy(15),
+    ApparentEnergy(16),
   }
 
   enum class ElectricalPowerMeasurementClusterPowerMode(val value: Int) {
@@ -657,6 +944,7 @@ object Enums {
     DischargingEnabled(2),
     DisabledError(3),
     DisabledDiagnostics(4),
+    Enabled(5),
   }
 
   enum class EnergyPreferenceClusterEnergyPriority(val value: Int) {
@@ -666,12 +954,50 @@ object Enums {
     WaterConsumption(3),
   }
 
+  enum class FanControlClusterAirflowDirection(val value: Int) {
+    Forward(0),
+    Reverse(1),
+  }
+
+  enum class FanControlClusterFanMode(val value: Int) {
+    Off(0),
+    Low(1),
+    Medium(2),
+    High(3),
+    On(4),
+    Auto(5),
+    Smart(6),
+  }
+
+  enum class FanControlClusterFanModeSequence(val value: Int) {
+    OffLowMedHigh(0),
+    OffLowHigh(1),
+    OffLowMedHighAuto(2),
+    OffLowHighAuto(3),
+    OffHighAuto(4),
+    OffHigh(5),
+  }
+
+  enum class FanControlClusterStepDirection(val value: Int) {
+    Increase(0),
+    Decrease(1),
+  }
+
   enum class GeneralCommissioningClusterCommissioningError(val value: Int) {
     OK(0),
     ValueOutsideRange(1),
     InvalidAuthentication(2),
     NoFailSafe(3),
     BusyWithOtherAdmin(4),
+    RequiredTCNotAccepted(5),
+    TCAcknowledgementsNotReceived(6),
+    TCMinVersionNotMet(7),
+  }
+
+  enum class GeneralCommissioningClusterNetworkRecoveryReason(val value: Int) {
+    Unspecified(0),
+    Auth(1),
+    Visibility(2),
   }
 
   enum class GeneralCommissioningClusterRegulatoryLocationType(val value: Int) {
@@ -710,27 +1036,186 @@ object Enums {
     PerGroup(1),
   }
 
+  enum class ICDManagementClusterClientType(val value: Int) {
+    Permanent(0),
+    Ephemeral(1),
+  }
+
+  enum class ICDManagementClusterOperatingMode(val value: Int) {
+    SIT(0),
+    LIT(1),
+  }
+
+  enum class IdentifyClusterEffectIdentifier(val value: Int) {
+    Blink(0),
+    Breathe(1),
+    Okay(2),
+    ChannelChange(11),
+    FinishEffect(254),
+    StopEffect(255),
+  }
+
+  enum class IdentifyClusterEffectVariant(val value: Int) {
+    Default(0),
+  }
+
+  enum class IdentifyClusterIdentifyType(val value: Int) {
+    None(0),
+    LightOutput(1),
+    VisibleIndicator(2),
+    AudibleBeep(3),
+    Display(4),
+    Actuator(5),
+  }
+
+  enum class IlluminanceMeasurementClusterLightSensorType(val value: Int) {
+    Photodiode(0),
+    CMOS(1),
+  }
+
+  enum class JointFabricAdministratorClusterICACCSRResponseStatusCode(val value: Int) {
+    OK(0),
+    Busy(1),
+    PAKEParameterError(2),
+    WindowNotOpen(3),
+    VIDNotVerified(4),
+    InvalidAdministratorFabricIndex(5),
+  }
+
+  enum class JointFabricAdministratorClusterICACResponseStatus(val value: Int) {
+    OK(0),
+    InvalidPublicKey(1),
+    InvalidICAC(2),
+  }
+
+  enum class JointFabricAdministratorClusterTransferAnchorResponseStatus(val value: Int) {
+    OK(0),
+    TransferAnchorStatusDatastoreBusy(1),
+    TransferAnchorStatusNoUserConsent(2),
+  }
+
+  enum class JointFabricDatastoreClusterDatastoreAccessControlEntryAuthMode(val value: Int) {
+    PASE(1),
+    CASE(2),
+    Group(3),
+  }
+
+  enum class JointFabricDatastoreClusterDatastoreAccessControlEntryPrivilege(val value: Int) {
+    View(1),
+    Operate(3),
+    Manage(4),
+    Administer(5),
+  }
+
+  enum class JointFabricDatastoreClusterDatastoreGroupKeyMulticastPolicy(val value: Int) {
+    PerGroupID(0),
+    AllNodes(1),
+  }
+
+  enum class JointFabricDatastoreClusterDatastoreGroupKeySecurityPolicy(val value: Int) {
+    TrustFirst(0),
+  }
+
   enum class JointFabricDatastoreClusterDatastoreState(val value: Int) {
     Pending(0),
     Committed(1),
     DeletePending(2),
+    CommitFailed(3),
   }
 
-  enum class JointFabricPKIClusterICACSigningRequestStatus(val value: Int) {
-    OK(0),
-    InvalidIcaCsrFormat(1),
-    InvalidIcaCsrSignature(2),
-    FailedDCLVendorIdValidation(3),
-    NotAnIcac(4),
-    BusyAnchorTransfer(5),
-    IcaCsrSigningFailed(6),
-    IcaCsrRequestNoUserConsent(7),
+  enum class KeypadInputClusterCecKeyCode(val value: Int) {
+    Select(0),
+    Up(1),
+    Down(2),
+    Left(3),
+    Right(4),
+    RightUp(5),
+    RightDown(6),
+    LeftUp(7),
+    LeftDown(8),
+    RootMenu(9),
+    SetupMenu(10),
+    ContentsMenu(11),
+    FavoriteMenu(12),
+    Exit(13),
+    MediaTopMenu(16),
+    MediaContextSensitiveMenu(17),
+    NumberEntryMode(29),
+    Number11(30),
+    Number12(31),
+    Number0OrNumber10(32),
+    Numbers1(33),
+    Numbers2(34),
+    Numbers3(35),
+    Numbers4(36),
+    Numbers5(37),
+    Numbers6(38),
+    Numbers7(39),
+    Numbers8(40),
+    Numbers9(41),
+    Dot(42),
+    Enter(43),
+    Clear(44),
+    NextFavorite(47),
+    ChannelUp(48),
+    ChannelDown(49),
+    PreviousChannel(50),
+    SoundSelect(51),
+    InputSelect(52),
+    DisplayInformation(53),
+    Help(54),
+    PageUp(55),
+    PageDown(56),
+    Power(64),
+    VolumeUp(65),
+    VolumeDown(66),
+    Mute(67),
+    Play(68),
+    Stop(69),
+    Pause(70),
+    Record(71),
+    Rewind(72),
+    FastForward(73),
+    Eject(74),
+    Forward(75),
+    Backward(76),
+    StopRecord(77),
+    PauseRecord(78),
+    Reserved(79),
+    Angle(80),
+    SubPicture(81),
+    VideoOnDemand(82),
+    ElectronicProgramGuide(83),
+    TimerProgramming(84),
+    InitialConfiguration(85),
+    SelectBroadcastType(86),
+    SelectSoundPresentation(87),
+    PlayFunction(96),
+    PausePlayFunction(97),
+    RecordFunction(98),
+    PauseRecordFunction(99),
+    StopFunction(100),
+    MuteFunction(101),
+    RestoreVolumeFunction(102),
+    TuneFunction(103),
+    SelectMediaFunction(104),
+    SelectAvInputFunction(105),
+    SelectAudioInputFunction(106),
+    PowerToggleFunction(107),
+    PowerOffFunction(108),
+    PowerOnFunction(109),
+    F1Blue(113),
+    F2Red(114),
+    F3Green(115),
+    F4Yellow(116),
+    F5(117),
+    Data(118),
   }
 
-  enum class JointFabricPKIClusterTransferAnchorResponseStatus(val value: Int) {
-    OK(0),
-    TransferAnchorStatusDatastoreBusy(1),
-    TransferAnchorStatusNoUserConsent(2),
+  enum class KeypadInputClusterStatus(val value: Int) {
+    Success(0),
+    UnsupportedKey(1),
+    InvalidKeyInCurrentState(2),
   }
 
   enum class LaundryDryerControlsClusterDrynessLevel(val value: Int) {
@@ -747,6 +1232,16 @@ object Enums {
     Max(3),
   }
 
+  enum class LevelControlClusterMoveMode(val value: Int) {
+    Up(0),
+    Down(1),
+  }
+
+  enum class LevelControlClusterStepMode(val value: Int) {
+    Up(0),
+    Down(1),
+  }
+
   enum class LocalizationTimeFormatClusterCalendarType(val value: Int) {
     Buddhist(0),
     Chinese(1),
@@ -760,11 +1255,13 @@ object Enums {
     Korean(9),
     Persian(10),
     Taiwanese(11),
+    UseActiveLocale(255),
   }
 
   enum class LocalizationTimeFormatClusterHourFormat(val value: Int) {
     `12hr`(0),
     `24hr`(1),
+    UseActiveLocale(255),
   }
 
   enum class LocalizationUnitClusterTempUnit(val value: Int) {
@@ -774,25 +1271,55 @@ object Enums {
   }
 
   enum class MediaInputClusterInputType(val value: Int) {
-    INTERNAL(0),
-    AUX(1),
-    COAX(2),
-    COMPOSITE(3),
+    Internal(0),
+    Aux(1),
+    Coax(2),
+    Composite(3),
     HDMI(4),
-    INPUT(5),
-    LINE(6),
-    OPTICAL(7),
-    VIDEO(8),
+    Input(5),
+    Line(6),
+    Optical(7),
+    Video(8),
     SCART(9),
     USB(10),
-    OTHER(11),
+    Other(11),
+  }
+
+  enum class MediaPlaybackClusterCharacteristic(val value: Int) {
+    ForcedSubtitles(0),
+    DescribesVideo(1),
+    EasyToRead(2),
+    FrameBased(3),
+    MainProgram(4),
+    OriginalContent(5),
+    VoiceOverTranslation(6),
+    Caption(7),
+    Subtitle(8),
+    Alternate(9),
+    Supplementary(10),
+    Commentary(11),
+    DubbedTranslation(12),
+    Description(13),
+    Metadata(14),
+    EnhancedAudioIntelligibility(15),
+    Emergency(16),
+    Karaoke(17),
   }
 
   enum class MediaPlaybackClusterPlaybackState(val value: Int) {
-    PLAYING(0),
-    PAUSED(1),
-    NOT_PLAYING(2),
-    BUFFERING(3),
+    Playing(0),
+    Paused(1),
+    NotPlaying(2),
+    Buffering(3),
+  }
+
+  enum class MediaPlaybackClusterStatus(val value: Int) {
+    Success(0),
+    InvalidStateForCommand(1),
+    NotAllowed(2),
+    NotActive(3),
+    SpeedOutOfRange(4),
+    SeekOutOfRange(5),
   }
 
   enum class MessagesClusterFutureMessagePreference(val value: Int) {
@@ -814,6 +1341,177 @@ object Enums {
     Utility(0),
     Private(1),
     Generic(2),
+  }
+
+  enum class Mode_DeviceEnergyManagementClusterModeTag(val value: Int) {
+    Auto(0),
+    Quick(1),
+    Quiet(2),
+    LowNoise(3),
+    LowEnergy(4),
+    Vacation(5),
+    Min(6),
+    Max(7),
+    Night(8),
+    Day(9),
+    NoOptimization(16384),
+    DeviceOptimization(16385),
+    LocalOptimization(16386),
+    GridOptimization(16387),
+  }
+
+  enum class Mode_DishwasherClusterModeTag(val value: Int) {
+    Auto(0),
+    Quick(1),
+    Quiet(2),
+    LowNoise(3),
+    LowEnergy(4),
+    Vacation(5),
+    Min(6),
+    Max(7),
+    Night(8),
+    Day(9),
+    Normal(16384),
+    Heavy(16385),
+    Light(16386),
+  }
+
+  enum class Mode_EVSEClusterModeTag(val value: Int) {
+    Auto(0),
+    Quick(1),
+    Quiet(2),
+    LowNoise(3),
+    LowEnergy(4),
+    Vacation(5),
+    Min(6),
+    Max(7),
+    Night(8),
+    Day(9),
+    Manual(16384),
+    TimeOfUse(16385),
+    SolarCharging(16386),
+    V2X(16387),
+  }
+
+  enum class Mode_LaundryWasherClusterModeTag(val value: Int) {
+    Auto(0),
+    Quick(1),
+    Quiet(2),
+    LowNoise(3),
+    LowEnergy(4),
+    Vacation(5),
+    Min(6),
+    Max(7),
+    Night(8),
+    Day(9),
+    Normal(16384),
+    Delicate(16385),
+    Heavy(16386),
+    Whites(16387),
+  }
+
+  enum class Mode_MicrowaveOvenClusterModeTag(val value: Int) {
+    Auto(0),
+    Quick(1),
+    Quiet(2),
+    LowNoise(3),
+    LowEnergy(4),
+    Vacation(5),
+    Min(6),
+    Max(7),
+    Night(8),
+    Day(9),
+    Normal(16384),
+    Defrost(16385),
+  }
+
+  enum class Mode_OvenClusterModeTag(val value: Int) {
+    Auto(0),
+    Quick(1),
+    Quiet(2),
+    LowNoise(3),
+    LowEnergy(4),
+    Vacation(5),
+    Min(6),
+    Max(7),
+    Night(8),
+    Day(9),
+    Bake(16384),
+    Convection(16385),
+    Grill(16386),
+    Roast(16387),
+    Clean(16388),
+    ConvectionBake(16389),
+    ConvectionRoast(16390),
+    Warming(16391),
+    Proofing(16392),
+    Steam(16393),
+    AirFry(16394),
+    AirSousVide(16395),
+    FrozenFood(16396),
+  }
+
+  enum class Mode_RVCCleanClusterModeTag(val value: Int) {
+    Auto(0),
+    Quick(1),
+    Quiet(2),
+    LowNoise(3),
+    LowEnergy(4),
+    Vacation(5),
+    Min(6),
+    Max(7),
+    Night(8),
+    Day(9),
+    DeepClean(16384),
+    Vacuum(16385),
+    Mop(16386),
+    VacuumthenMop(16387),
+  }
+
+  enum class Mode_RVCCleanClusterStatusCode(val value: Int) {
+    CleaningInProgress(64),
+  }
+
+  enum class Mode_RVCRunClusterModeTag(val value: Int) {
+    Auto(0),
+    Quick(1),
+    Quiet(2),
+    LowNoise(3),
+    LowEnergy(4),
+    Vacation(5),
+    Min(6),
+    Max(7),
+    Night(8),
+    Day(9),
+    Idle(16384),
+    Cleaning(16385),
+    Mapping(16386),
+  }
+
+  enum class Mode_RVCRunClusterStatusCode(val value: Int) {
+    Stuck(65),
+    DustBinMissing(66),
+    DustBinFull(67),
+    WaterTankEmpty(68),
+    WaterTankMissing(69),
+    WaterTankLidOpen(70),
+    MopCleaningPadMissing(71),
+    BatteryLow(72),
+  }
+
+  enum class Mode_RefrigeratorClusterModeTag(val value: Int) {
+    Auto(0),
+    Quick(1),
+    Quiet(2),
+    LowNoise(3),
+    LowEnergy(4),
+    Vacation(5),
+    Min(6),
+    Max(7),
+    Night(8),
+    Day(9),
+    RapidCool(16384),
+    RapidFreeze(16385),
   }
 
   enum class Mode_WaterHeaterClusterModeTag(val value: Int) {
@@ -848,7 +1546,14 @@ object Enums {
     UnknownError(12),
   }
 
-  enum class NetworkCommissioningClusterWiFiBand(val value: Int) {}
+  enum class NetworkCommissioningClusterWiFiBand(val value: Int) {
+    `2G4`(0),
+    `3G65`(1),
+    `5G`(2),
+    `6G`(3),
+    `60G`(4),
+    `1G`(5),
+  }
 
   enum class OTAProviderClusterApplyUpdateAction(val value: Int) {
     Proceed(0),
@@ -861,6 +1566,13 @@ object Enums {
     BDXAsynchronous(1),
     HTTPS(2),
     VendorSpecific(3),
+  }
+
+  enum class OTAProviderClusterStatus(val value: Int) {
+    UpdateAvailable(0),
+    Busy(1),
+    NotAvailable(2),
+    DownloadProtocolNotSupported(3),
   }
 
   enum class OTARequestorClusterAnnouncementReason(val value: Int) {
@@ -889,6 +1601,28 @@ object Enums {
     DelayedOnUserConsent(8),
   }
 
+  enum class OccupancySensingClusterOccupancySensorType(val value: Int) {
+    PIR(0),
+    Ultrasonic(1),
+    PIRAndUltrasonic(2),
+    PhysicalContact(3),
+  }
+
+  enum class OnOffClusterDelayedAllOffEffectVariant(val value: Int) {
+    DelayedOffFastFade(0),
+    NoFade(1),
+    DelayedOffSlowFade(2),
+  }
+
+  enum class OnOffClusterDyingLightEffectVariant(val value: Int) {
+    DyingLightFadeOff(0),
+  }
+
+  enum class OnOffClusterEffectIdentifier(val value: Int) {
+    DelayedAllOff(0),
+    DyingLight(1),
+  }
+
   enum class OnOffClusterStartUpOnOff(val value: Int) {
     Off(0),
     On(1),
@@ -901,7 +1635,7 @@ object Enums {
   }
 
   enum class OperationalCredentialClusterNodeOperationalCertStatus(val value: Int) {
-    Ok(0),
+    OK(0),
     InvalidPublicKey(1),
     InvalidNodeOpId(2),
     InvalidNOC(3),
@@ -913,16 +1647,25 @@ object Enums {
     InvalidFabricIndex(11),
   }
 
-  enum class OperationalStateClusterErrorStateIDGeneralErrorsRange(val value: Int) {
+  enum class OperationalStateClusterErrorState(val value: Int) {
     NoError(0),
     UnableToStartOrResume(1),
     UnableToCompleteOperation(2),
     CommandInvalidInState(3),
   }
 
-  enum class OperationalStateClusterErrorStateIDRanges(val value: Int) {}
+  enum class OperationalStateClusterOperationalState(val value: Int) {
+    Stopped(0),
+    Running(1),
+    Paused(2),
+    Error(3),
+  }
 
   enum class OperationalState_RVCClusterErrorState(val value: Int) {
+    NoError(0),
+    UnableToStartOrResume(1),
+    UnableToCompleteOperation(2),
+    CommandInvalidInState(3),
     FailedToFindChargingDock(64),
     Stuck(65),
     DustBinMissing(66),
@@ -931,12 +1674,27 @@ object Enums {
     WaterTankMissing(69),
     WaterTankLidOpen(70),
     MopCleaningPadMissing(71),
+    LowBattery(72),
+    CannotReachTargetArea(73),
+    DirtyWaterTankFull(74),
+    DirtyWaterTankMissing(75),
+    WheelsJammed(76),
+    BrushJammed(77),
+    NavigationSensorObscured(78),
   }
 
   enum class OperationalState_RVCClusterOperationalState(val value: Int) {
+    Stopped(0),
+    Running(1),
+    Paused(2),
+    Error(3),
     SeekingCharger(64),
     Charging(65),
     Docked(66),
+    EmptyingDustBin(67),
+    CleaningMop(68),
+    FillingWaterTank(69),
+    UpdatingMaps(70),
   }
 
   enum class PowerSourceClusterBatApprovedChemistry(val value: Int) {
@@ -1117,7 +1875,7 @@ object Enums {
     UnderVoltage(2),
   }
 
-  enum class PumpConfigurationControlClusterControlModeAttribute(val value: Int) {
+  enum class PumpConfigurationControlClusterControlMode(val value: Int) {
     ConstantSpeed(0),
     ConstantPressure(1),
     ProportionalPressure(2),
@@ -1126,7 +1884,7 @@ object Enums {
     Automatic(7),
   }
 
-  enum class PumpConfigurationControlClusterOperationModeAttribute(val value: Int) {
+  enum class PumpConfigurationControlClusterOperationMode(val value: Int) {
     Normal(0),
     Minimum(1),
     Maximum(2),
@@ -1147,6 +1905,21 @@ object Enums {
     CMAFIngest(0),
   }
 
+  enum class PushAVStreamTransportClusterStatusCode(val value: Int) {
+    InvalidTLSEndpoint(2),
+    InvalidStream(3),
+    InvalidURL(4),
+    InvalidZone(5),
+    InvalidCombination(6),
+    InvalidTriggerType(7),
+    InvalidTransportStatus(8),
+    InvalidOptions(9),
+    InvalidStreamUsage(10),
+    InvalidTime(11),
+    InvalidPreRollLength(12),
+    DuplicateStreamValues(13),
+  }
+
   enum class PushAVStreamTransportClusterTransportStatus(val value: Int) {
     Active(0),
     Inactive(1),
@@ -1162,6 +1935,7 @@ object Enums {
     UserInitiated(0),
     Automation(1),
     Emergency(2),
+    DoorbellPressed(3),
   }
 
   enum class ResourceMonitoringClusterChangeIndication(val value: Int) {
@@ -1232,6 +2006,7 @@ object Enums {
     EndOfService(6),
     InterconnectSmoke(7),
     InterconnectCO(8),
+    Inoperative(9),
   }
 
   enum class SmokeCOAlarmClusterMuteState(val value: Int) {
@@ -1253,6 +2028,131 @@ object Enums {
     InvalidTime(6),
   }
 
+  enum class TargetNavigatorClusterStatus(val value: Int) {
+    Success(0),
+    TargetNotFound(1),
+    NotAllowed(2),
+  }
+
+  enum class ThermostatClusterACCapacityFormat(val value: Int) {
+    BTUh(0),
+  }
+
+  enum class ThermostatClusterACCompressorType(val value: Int) {
+    Unknown(0),
+    T1(1),
+    T2(2),
+    T3(3),
+  }
+
+  enum class ThermostatClusterACLouverPosition(val value: Int) {
+    Closed(1),
+    Open(2),
+    Quarter(3),
+    Half(4),
+    ThreeQuarters(5),
+  }
+
+  enum class ThermostatClusterACRefrigerantType(val value: Int) {
+    Unknown(0),
+    R22(1),
+    R410a(2),
+    R407c(3),
+  }
+
+  enum class ThermostatClusterACType(val value: Int) {
+    Unknown(0),
+    CoolingFixed(1),
+    HeatPumpFixed(2),
+    CoolingInverter(3),
+    HeatPumpInverter(4),
+  }
+
+  enum class ThermostatClusterControlSequenceOfOperation(val value: Int) {
+    CoolingOnly(0),
+    CoolingWithReheat(1),
+    HeatingOnly(2),
+    HeatingWithReheat(3),
+    CoolingAndHeating(4),
+    CoolingAndHeatingWithReheat(5),
+  }
+
+  enum class ThermostatClusterPresetScenario(val value: Int) {
+    Occupied(1),
+    Unoccupied(2),
+    Sleep(3),
+    Wake(4),
+    Vacation(5),
+    GoingToSleep(6),
+    UserDefined(254),
+  }
+
+  enum class ThermostatClusterSetpointChangeSource(val value: Int) {
+    Manual(0),
+    Schedule(1),
+    External(2),
+  }
+
+  enum class ThermostatClusterSetpointRaiseLowerMode(val value: Int) {
+    Heat(0),
+    Cool(1),
+    Both(2),
+  }
+
+  enum class ThermostatClusterStartOfWeek(val value: Int) {
+    Sunday(0),
+    Monday(1),
+    Tuesday(2),
+    Wednesday(3),
+    Thursday(4),
+    Friday(5),
+    Saturday(6),
+  }
+
+  enum class ThermostatClusterSystemMode(val value: Int) {
+    Off(0),
+    Auto(1),
+    Cool(3),
+    Heat(4),
+    EmergencyHeat(5),
+    Precooling(6),
+    FanOnly(7),
+    Dry(8),
+    Sleep(9),
+  }
+
+  enum class ThermostatClusterTemperatureSetpointHold(val value: Int) {
+    SetpointHoldOff(0),
+    SetpointHoldOn(1),
+  }
+
+  enum class ThermostatClusterThermostatRunningMode(val value: Int) {
+    Off(0),
+    Cool(3),
+    Heat(4),
+  }
+
+  enum class ThermostatUserInterfaceConfigurationClusterKeypadLockout(val value: Int) {
+    NoLockout(0),
+    Lockout1(1),
+    Lockout2(2),
+    Lockout3(3),
+    Lockout4(4),
+    Lockout5(5),
+  }
+
+  enum class ThermostatUserInterfaceConfigurationClusterScheduleProgrammingVisibility(
+      val value: Int
+  ) {
+    ScheduleProgrammingPermitted(0),
+    ScheduleProgrammingDenied(1),
+  }
+
+  enum class ThermostatUserInterfaceConfigurationClusterTemperatureDisplayMode(val value: Int) {
+    Celsius(0),
+    Fahrenheit(1),
+  }
+
   enum class TimeSyncClusterGranularity(val value: Int) {
     NoTimeGranularity(0),
     MinutesGranularity(1),
@@ -1261,24 +2161,38 @@ object Enums {
     MicrosecondsGranularity(4),
   }
 
+  enum class TimeSyncClusterStatusCode(val value: Int) {
+    TimeNotAccepted(2),
+  }
+
   enum class TimeSyncClusterTimeSource(val value: Int) {
     None(0),
     Unknown(1),
     Admin(2),
     NodeTimeCluster(3),
-    NonFabricSntp(4),
-    NonFabricNtp(5),
-    FabricSntp(6),
-    FabricNtp(7),
-    MixedNtp(8),
-    NonFabricSntpNts(9),
-    NonFabricNtpNts(10),
-    FabricSntpNts(11),
-    FabricNtpNts(12),
-    MixedNtpNts(13),
+    NonMatterSNTP(4),
+    NonMatterNTP(5),
+    MatterSNTP(6),
+    MatterNTP(7),
+    MixedNTP(8),
+    NonMatterSNTPNTS(9),
+    NonMatterNTPNTS(10),
+    MatterSNTPNTS(11),
+    MatterNTPNTS(12),
+    MixedNTPNTS(13),
     CloudSource(14),
-    Ptp(15),
-    Gnss(16),
+    PTP(15),
+    GNSS(16),
+  }
+
+  enum class TimeSyncClusterTimeZoneDatabase(val value: Int) {
+    Full(0),
+    Partial(1),
+    None(2),
+  }
+
+  enum class ValveConfigurationControlClusterStatusCode(val value: Int) {
+    FailureDueToFault(2),
   }
 
   enum class ValveConfigurationControlClusterValveState(val value: Int) {
@@ -1290,6 +2204,48 @@ object Enums {
   enum class WaterHeaterManagementClusterBoostState(val value: Int) {
     Inactive(0),
     Active(1),
+  }
+
+  enum class WindowCoveringClusterEndProductType(val value: Int) {
+    RollerShade(0),
+    RomanShade(1),
+    BalloonShade(2),
+    WovenWood(3),
+    PleatedShade(4),
+    CellularShade(5),
+    LayeredShade(6),
+    LayeredShade2D(7),
+    SheerShade(8),
+    TiltOnlyInteriorBlind(9),
+    InteriorBlind(10),
+    VerticalBlindStripCurtain(11),
+    InteriorVenetianBlind(12),
+    ExteriorVenetianBlind(13),
+    LateralLeftCurtain(14),
+    LateralRightCurtain(15),
+    CentralCurtain(16),
+    RollerShutter(17),
+    ExteriorVerticalScreen(18),
+    AwningTerracePatio(19),
+    AwningVerticalScreen(20),
+    TiltOnlyPergola(21),
+    SwingingShutter(22),
+    SlidingShutter(23),
+    Unknown(255),
+  }
+
+  enum class WindowCoveringClusterType(val value: Int) {
+    RollerShade(0),
+    RollerShade2Motor(1),
+    RollerShadeExterior(2),
+    RollerShadeExterior2Motor(3),
+    Drapery(4),
+    Awning(5),
+    Shutter(6),
+    TiltBlindTiltOnly(7),
+    TiltBlindLiftAndTilt(8),
+    ProjectorScreen(9),
+    Unknown(255),
   }
 
   enum class ZoneManagementClusterZoneEventStoppedReason(val value: Int) {

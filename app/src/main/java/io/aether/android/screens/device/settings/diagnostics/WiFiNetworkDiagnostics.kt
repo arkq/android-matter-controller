@@ -86,14 +86,10 @@ fun WiFiNetworkDiagnostics(data: WiFiNetworkDiagnosticsData) {
       DiagnosticsInfoRow(stringResource(R.string.device_diagnostics_label_network_traffic)) {
         networkTrafficUnicast
             .takeIf { it.isNotEmpty() }
-            ?.let {
-              Text(stringResource(R.string.device_diagnostics_network_unicast, it))
-            }
+            ?.let { Text(stringResource(R.string.device_diagnostics_network_unicast, it)) }
         networkTrafficMulticast
             .takeIf { it.isNotEmpty() }
-            ?.let {
-              Text(stringResource(R.string.device_diagnostics_network_multicast, it))
-            }
+            ?.let { Text(stringResource(R.string.device_diagnostics_network_multicast, it)) }
       }
     }
     if (data.rssi != null || linkQuality.isNotEmpty()) {

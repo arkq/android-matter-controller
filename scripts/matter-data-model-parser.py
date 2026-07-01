@@ -302,6 +302,10 @@ class Device:
         return bool(self.diagnostics)
 
 
+def diag_name_changed(spec: str, old: str, new: str):
+    return f"Name change in spec v{spec}: '{old}' -> '{new}'"
+
+
 def collect_clusters(data_model_dir: Path, versions: list[str]):
     """Collect clusters with attributes/commands/events across ALL versions."""
     clusters: dict[int, Cluster] = {}
@@ -309,6 +313,7 @@ def collect_clusters(data_model_dir: Path, versions: list[str]):
         for xml_file in _xml_files_for_version(data_model_dir, ver):
             ns = _xml_file_to_namespace(xml_file)
             tree = ET.parse(xml_file)
+
             # Get all enum types defined in this XML namespace.
             enums: dict[str, Enum] = {}
             for enum_elem in tree.xpath("./dataTypes/enum[@name]"):
@@ -321,7 +326,7 @@ def collect_clusters(data_model_dir: Path, versions: list[str]):
                     entry_new = EnumItem(id=id, name=name)
                     entry = enum.entries.setdefault(id, entry_new)
                     if entry.name != name:
-                        entry.diagnostics.append(f"v{ver}: '{entry.name}' -> '{name}'")
+                        entry.diagnostics.append(diag_name_changed(ver, entry.name, name))
                         # Update to the latest name.
                         entry.name = _to_pascal(name)
 
@@ -351,14 +356,15 @@ def collect_clusters(data_model_dir: Path, versions: list[str]):
                     commands_in={},
                     commands_out={},
                     events={},
-                    enums=enums,
                 )
                 cluster = clusters.setdefault(id, cluster_new)
+                cluster.enums = enums
                 cluster.versions.append(ver)
                 if cluster.name != name:
-                    cluster.diagnostics.append(f"v{ver}: '{cluster.name}' -> '{name}'")
+                    cluster.diagnostics.append(diag_name_changed(ver, cluster.name, name))
                     # Update to the latest name.
                     cluster.name = name
+
                 # Collect cluster's attributes.
                 for attr_elem in cluster_elem.xpath("../../attributes/attribute[@id]"):
                     id = int(attr_elem.get("id"), 0)
@@ -366,13 +372,14 @@ def collect_clusters(data_model_dir: Path, versions: list[str]):
                     attr_new = Attribute(id=id, name=name, type=_get_type(attr_elem))
                     attr = cluster.attributes.setdefault(id, attr_new)
                     if attr.name != name:
-                        attr.diagnostics.append(f"v{ver}: '{attr.name}' -> '{name}'")
+                        attr.diagnostics.append(diag_name_changed(ver, attr.name, name))
                         # Update to the latest name.
                         attr.name = name
                     if priv := attr_elem.xpath("./access/@readPrivilege"):
                         attr.read_privilege = priv[0]
                     if priv := attr_elem.xpath("./access/@writePrivilege"):
                         attr.write_privilege = priv[0]
+
                 # Collect cluster's commands.
                 for cmd_elem in cluster_elem.xpath("../../commands/command[@id]"):
                     id = int(cmd_elem.get("id"), 0)
@@ -383,7 +390,7 @@ def collect_clusters(data_model_dir: Path, versions: list[str]):
                     else:
                         cmd = cluster.commands_out.setdefault(id, cmd_new)
                     if cmd.name != name:
-                        cmd.diagnostics.append(f"v{ver}: '{cmd.name}' -> '{name}'")
+                        cmd.diagnostics.append(diag_name_changed(ver, cmd.name, name))
                         # Update to the latest name.
                         cmd.name = name
                     if priv := cmd_elem.xpath("./access/@invokePrivilege"):
@@ -395,9 +402,10 @@ def collect_clusters(data_model_dir: Path, versions: list[str]):
                         param_new = Field(id=id, name=name, type=_get_type(field))
                         param = cmd.parameters.setdefault(id, param_new)
                         if param.name != name:
-                            param.diagnostics.append(f"v{ver}: '{param.name}' -> '{name}'")
+                            param.diagnostics.append(diag_name_changed(ver, param.name, name))
                             # Update to the latest name.
                             param.name = name
+
                 # Collect cluster's events.
                 for event_elem in cluster_elem.xpath("../../events/event[@id]"):
                     id = int(event_elem.get("id"), 0)
@@ -405,7 +413,7 @@ def collect_clusters(data_model_dir: Path, versions: list[str]):
                     event_new = Event(id=id, name=name, parameters={})
                     event = cluster.events.setdefault(id, event_new)
                     if event.name != name:
-                        event.diagnostics.append(f"v{ver}: '{event.name}' -> '{name}'")
+                        event.diagnostics.append(diag_name_changed(ver, event.name, name))
                         # Update to the latest name.
                         event.name = name
                     # Collect event's parameters.
@@ -415,16 +423,17 @@ def collect_clusters(data_model_dir: Path, versions: list[str]):
                         param_new = Field(id=id, name=name, type=_get_type(field))
                         param = event.parameters.setdefault(id, param_new)
                         if param.name != name:
-                            param.diagnostics.append(f"v{ver}: '{param.name}' -> '{name}'")
+                            param.diagnostics.append(diag_name_changed(ver, param.name, name))
                             # Update to the latest name.
                             param.name = name
+
     # Print diagnostics for any name changes across versions.
     for cluster in sorted(clusters.values(), key=lambda x: x.id):
         if not cluster.has_diagnostics():
             continue
         print(f"Cluster 0x{cluster.id:04X}:")
         for diag in cluster.diagnostics:
-            print(f"  Name changed in spec {diag}")
+            print(f"  {diag}")
         for enum in sorted(cluster.enums.values(), key=lambda x: x.name):
             if not enum.has_diagnostics():
                 continue
@@ -433,49 +442,50 @@ def collect_clusters(data_model_dir: Path, versions: list[str]):
                 if not item.has_diagnostics():
                     continue
                 for diag in item.diagnostics:
-                    print(f"  Name changed in spec {diag}")
+                    print(f"  {diag}")
         for attr in sorted(cluster.attributes.values(), key=lambda x: x.id):
             if not attr.has_diagnostics():
                 continue
             print(f"  Attribute 0x{attr.id:04X}:")
             for diag in attr.diagnostics:
-                print(f"    Name changed in spec {diag}")
+                print(f"    {diag}")
         for cmd in sorted(cluster.commands_in.values(), key=lambda x: x.id):
             if not cmd.has_diagnostics():
                 continue
             print(f"  Command (to server) 0x{cmd.id:04X}:")
             for diag in cmd.diagnostics:
-                print(f"    Name changed in spec {diag}")
+                print(f"    {diag}")
             for param in sorted(cmd.parameters.values(), key=lambda x: x.id):
                 if not param.has_diagnostics():
                     continue
                 print(f"    Parameter 0x{param.id:04X}:")
                 for diag in param.diagnostics:
-                    print(f"      Name changed in spec {diag}")
+                    print(f"      {diag}")
         for cmd in sorted(cluster.commands_out.values(), key=lambda x: x.id):
             if not cmd.has_diagnostics():
                 continue
             print(f"  Command (to client) 0x{cmd.id:04X}:")
             for diag in cmd.diagnostics:
-                print(f"    Name changed in spec {diag}")
+                print(f"    {diag}")
             for param in sorted(cmd.parameters.values(), key=lambda x: x.id):
                 if not param.has_diagnostics():
                     continue
                 print(f"    Parameter 0x{param.id:04X}:")
                 for diag in param.diagnostics:
-                    print(f"      Name changed in spec {diag}")
+                    print(f"      {diag}")
         for event in sorted(cluster.events.values(), key=lambda x: x.id):
             if not event.has_diagnostics():
                 continue
             print(f"  Event 0x{event.id:04X}:")
             for diag in event.diagnostics:
-                print(f"    Name changed in spec {diag}")
+                print(f"    {diag}")
             for param in sorted(event.parameters.values(), key=lambda x: x.id):
                 if not param.has_diagnostics():
                     continue
                 print(f"    Parameter 0x{param.id:04X}:")
                 for diag in param.diagnostics:
-                    print(f"      Name changed in spec {diag}")
+                    print(f"      {diag}")
+
     return clusters
 
 
@@ -491,7 +501,7 @@ def collect_devices(data_model_dir: Path, versions: list[str]):
                 device_new = Device(id=id, name=name, clusters=set())
                 device = devices.setdefault(id, device_new)
                 if device.name != name:
-                    device.diagnostics.append(f"v{ver}: '{device.name}' -> '{name}'")
+                    device.diagnostics.append(diag_name_changed(ver, device.name, name))
                     # Update to the latest name.
                     device.name = name
                 device.clusters.update(int(id, 0) for id in elem.xpath("./clusters/cluster/@id"))
@@ -501,7 +511,7 @@ def collect_devices(data_model_dir: Path, versions: list[str]):
             continue
         print(f"Device 0x{device.id:04X}:")
         for diag in device.diagnostics:
-            print(f"  Name changed in spec {diag}")
+            print(f"  {diag}")
     return devices
 
 
@@ -551,7 +561,8 @@ devices = collect_devices(args.DATA_MODEL_DIR, versions)
 
 enums: dict[str, Enum] = {}
 for cluster in clusters.values():
-    enums.update(cluster.enums)
+    for enum in cluster.enums.values():
+        enums[enum.name] = enum
 
 types: set[str] = set()
 for cluster in clusters.values():

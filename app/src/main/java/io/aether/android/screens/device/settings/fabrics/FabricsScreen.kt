@@ -73,15 +73,19 @@ fun FabricsRoute(
         )
       },
   ) { innerPadding ->
+    val modifierWithInnerPadding = Modifier.fillMaxSize().padding(innerPadding)
     if (uiState.isInitialLoading) {
-      LoadingIndicator(stringResource(R.string.device_fabrics_loading))
+      LoadingIndicator(
+          stringResource(R.string.device_fabrics_loading),
+          modifier = modifierWithInnerPadding,
+      )
       return@Scaffold
     }
     FabricsScreen(
-        modifier = Modifier.padding(innerPadding),
         uiState = uiState,
         onRefresh = { viewModel.loadFabrics(nodeId) },
         onRemoveController = { index -> viewModel.removeFabric(nodeId, index) },
+        modifier = modifierWithInnerPadding,
     )
   }
 }
@@ -97,7 +101,7 @@ private fun FabricsScreen(
   PullToRefreshBox(
       isRefreshing = uiState.isRefreshing,
       onRefresh = onRefresh,
-      modifier = modifier.fillMaxSize(),
+      modifier = modifier,
   ) {
     when {
       uiState.errorRes != null -> {

@@ -28,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.protobuf.Timestamp
 import io.aether.android.Device
 import io.aether.android.R
@@ -75,19 +75,21 @@ fun DeviceSettingsRoute(
 
   val activity = LocalContext.current.getActivity()
 
-  val uiState by viewModel.uiState.collectAsState()
+  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   val device = (uiState as? DeviceSettingsViewModel.UiState.Loaded)?.device
   val basicInformation = (uiState as? DeviceSettingsViewModel.UiState.Loaded)?.basicInformation
   val isOnline = (uiState as? DeviceSettingsViewModel.UiState.Loaded)?.isOnline ?: false
   val dateCommissioned = (uiState as? DeviceSettingsViewModel.UiState.Loaded)?.dateCommissioned
-  val msgDialogInfo by viewModel.msgDialogInfo.collectAsState()
-  val showShareDeviceAlertDialog by viewModel.showShareDeviceAlertDialog.collectAsState()
-  val showRemoveDeviceAlertDialog by viewModel.showRemoveDeviceAlertDialog.collectAsState()
+  val msgDialogInfo by viewModel.msgDialogInfo.collectAsStateWithLifecycle()
+  val showShareDeviceAlertDialog by
+      viewModel.showShareDeviceAlertDialog.collectAsStateWithLifecycle()
+  val showRemoveDeviceAlertDialog by
+      viewModel.showRemoveDeviceAlertDialog.collectAsStateWithLifecycle()
   val showRemoveDeviceConfirmAlertDialog by
-      viewModel.showRemoveDeviceConfirmAlertDialog.collectAsState()
-  val deviceRemovalCompleted by viewModel.deviceRemovalCompleted.collectAsState()
+      viewModel.showRemoveDeviceConfirmAlertDialog.collectAsStateWithLifecycle()
+  val deviceRemovalCompleted by viewModel.deviceRemovalCompleted.collectAsStateWithLifecycle()
   val pairingWindowOpenForDeviceSharing by
-      viewModel.pairingWindowOpenForDeviceSharing.collectAsState()
+      viewModel.pairingWindowOpenForDeviceSharing.collectAsStateWithLifecycle()
 
   // GPS share activity launcher.
   val shareDeviceLauncher =
@@ -112,9 +114,7 @@ fun DeviceSettingsRoute(
               act.applicationContext,
               shareDeviceLauncher,
               deviceName,
-              onShareFailed = { title, error ->
-                viewModel.showMsgDialog(title, error)
-              },
+              onShareFailed = { title, error -> viewModel.showMsgDialog(title, error) },
           )
         }
       }
@@ -147,6 +147,7 @@ fun DeviceSettingsRoute(
         )
       },
   ) { innerPadding ->
+    val modifierWithInnerPadding = Modifier.fillMaxSize().padding(innerPadding)
     DeviceSettingsScreen(
         device = device,
         basicInformation = basicInformation,
@@ -156,7 +157,6 @@ fun DeviceSettingsRoute(
         showShareDeviceAlertDialog = showShareDeviceAlertDialog,
         showRemoveDeviceAlertDialog = showRemoveDeviceAlertDialog,
         showRemoveDeviceConfirmAlertDialog = showRemoveDeviceConfirmAlertDialog,
-        modifier = Modifier.fillMaxSize().padding(innerPadding),
         onDismissMsgDialog = { viewModel.dismissMsgDialog() },
         onDeviceNameChange = { name -> viewModel.renameDevice(nodeId, name) },
         onDeviceTypeChange = { type -> viewModel.changeDeviceType(nodeId, type) },
@@ -177,6 +177,7 @@ fun DeviceSettingsRoute(
           viewModel.dismissRemoveDeviceConfirmAlertDialog()
           if (doIt) viewModel.removeDeviceWithoutUnlink(nodeId)
         },
+        modifier = modifierWithInnerPadding,
     )
   }
 }
@@ -210,7 +211,7 @@ private fun DeviceSettingsScreen(
   }
 
   if (device == null) {
-    LoadingIndicator(stringResource(R.string.loading_device_info))
+    LoadingIndicator(stringResource(R.string.loading_device_info), modifier = modifier)
     return
   }
 

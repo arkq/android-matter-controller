@@ -73,7 +73,13 @@ fun SoftwareDiagnostics(data: SoftwareDiagnosticsData) {
 
 @Composable
 private fun SoftwareDiagnosticsThread(thread: ThreadMetrics, maxStackSizeAcrossThreads: UInt) {
-  DiagnosticsInfoRow("${thread.name ?: "Thread"} (${thread.id})") {
+  DiagnosticsInfoRow(
+      stringResource(
+          R.string.device_diagnostics_thread_label,
+          thread.name ?: stringResource(R.string.device_diagnostics_thread_unnamed),
+          thread.id.toString(),
+      )
+  ) {
     if (thread.stackSize != null && thread.stackFreeCurrent != null) {
       val used = (thread.stackSize - thread.stackFreeCurrent).coerceAtLeast(0u)
       val progress = used.toFloat() / thread.stackSize.toFloat()

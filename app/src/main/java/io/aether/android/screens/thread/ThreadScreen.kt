@@ -16,7 +16,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,7 +46,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -63,6 +61,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.threadnetwork.ThreadNetworkCredentials
 import com.google.common.io.BaseEncoding
 import io.aether.android.R
@@ -145,14 +144,16 @@ internal fun ThreadRoute(
   // to be shown in the UI.
   // ThreadViewModel hoists the ActionDialogInfo StateFlow as the source of truth
   // for the state of the Action Dialog shown in the UI.
-  val currentActionInfo by threadViewModel.currentActionDialogInfoStateFlow.collectAsState()
+  val currentActionInfo by
+      threadViewModel.currentActionDialogInfoStateFlow.collectAsStateWithLifecycle()
 
   // The processing performed in ThreadNetworkUiState/ThreadViewModel impacts the
   // Thread Network Credentials Information to be shown in the UI
   // (Thread Credentials Working Dataset).
   // ThreadViewModel hoists the threadCredentialsInfo StateFlow as the source of truth
   // for the state of the Working Dataset for the Thread Credentials.
-  val threadCredentialsInfo by threadViewModel.threadCredentialsInfoStateFlow.collectAsState()
+  val threadCredentialsInfo by
+      threadViewModel.threadCredentialsInfoStateFlow.collectAsStateWithLifecycle()
 
   // Registers for activity result from Google Play Services.
   // This defines a launcher for the IntentSender of an Activity to
@@ -208,26 +209,28 @@ internal fun ThreadRoute(
         )
       },
   ) { innerPadding ->
-    ThreadScreen(innerPadding, currentActionInfo, threadCredentialsInfo, onThreadNetworkAction)
+    val modifierWithInnerPadding = Modifier.fillMaxSize().padding(innerPadding)
+    ThreadScreen(
+        currentActionInfo,
+        threadCredentialsInfo,
+        onThreadNetworkAction,
+        modifier = modifierWithInnerPadding,
+    )
   }
 }
 
 @Composable
 private fun ThreadScreen(
-    innerPadding: PaddingValues,
     currentActionInfo: ActionDialogInfo,
     threadCredentialsInfo: ThreadCredentialsInfo,
     onThreadNetworkAction: (ActionRequest) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
   // The action dialogs.
   SimpleActionDialog(currentActionInfo, onThreadNetworkAction)
   OtbrActionDialog(currentActionInfo, onThreadNetworkAction)
 
-  Box(
-      modifier = Modifier.fillMaxSize()
-      // Not needed it seems.
-      // .padding(innerPadding)
-  ) {
+  Box(modifier = modifier) {
     Column(
         modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.paddingSurfaceContent)
     ) {

@@ -77,14 +77,10 @@ fun GeneralDiagnostics(data: GeneralDiagnosticsData) {
         Text(stringResource(R.string.device_diagnostics_interface_hw_address, hardwareAddress))
         ipv4Addresses
             .takeIf { it.isNotEmpty() }
-            ?.let {
-              Text(stringResource(R.string.device_diagnostics_interface_ipv4_address, it))
-            }
+            ?.let { Text(stringResource(R.string.device_diagnostics_interface_ipv4_address, it)) }
         ipv6Addresses
             .takeIf { it.isNotEmpty() }
-            ?.let {
-              Text(stringResource(R.string.device_diagnostics_interface_ipv6_address, it))
-            }
+            ?.let { Text(stringResource(R.string.device_diagnostics_interface_ipv6_address, it)) }
       }
     }
   }

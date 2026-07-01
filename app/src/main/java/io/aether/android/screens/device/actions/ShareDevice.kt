@@ -34,15 +34,11 @@ internal fun ShareDeviceConfirmationDialog(
       title = { Text(stringResource(R.string.device_share_dialog_title)) },
       text = { Text(stringResource(R.string.device_share_dialog_body)) },
       confirmButton = {
-        Button(onClick = onConfirm) {
-          Text(stringResource(R.string.device_share_dialog_yes))
-        }
+        Button(onClick = onConfirm) { Text(stringResource(R.string.device_share_dialog_yes)) }
       },
       onDismissRequest = onDismissRequest,
       dismissButton = {
-        TextButton(onClick = onDismissRequest) {
-          Text(stringResource(R.string.cancel))
-        }
+        TextButton(onClick = onDismissRequest) { Text(stringResource(R.string.cancel)) }
       },
   )
 }

@@ -320,9 +320,9 @@ val CLUSTERS_1_6 =
                                 type = DataType.LIST_SEMANTIC_TAG_STRUCT,
                                 readPrivilege = Privilege.VIEW,
                             ),
-                        Clusters.AmbientContextSensing.Attributes.ObjectCountReached.ID to
+                        Clusters.AmbientContextSensing.Attributes.ObjectCountThresholdReached.ID to
                             AttributeInfo(
-                                name = "ObjectCountReached",
+                                name = "ObjectCountThresholdReached",
                                 type = DataType.BOOLEAN,
                                 readPrivilege = Privilege.VIEW,
                             ),

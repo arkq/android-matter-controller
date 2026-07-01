@@ -101,6 +101,10 @@ constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewMode
 
                 val general = generalDef.await()
                 if (general == null) {
+                  softwareDef.cancel()
+                  ethernetDef.cancel()
+                  wifiDef.cancel()
+                  threadDef.cancel()
                   emit(PartialState.Error(R.string.device_diagnostics_load_failed))
                   return@coroutineScope
                 }

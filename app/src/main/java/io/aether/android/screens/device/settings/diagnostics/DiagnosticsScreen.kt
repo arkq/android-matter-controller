@@ -20,12 +20,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.aether.android.R
 import io.aether.android.matter.NodeId
 import io.aether.android.screens.common.LoadingIndicator
@@ -38,7 +38,7 @@ fun DiagnosticsRoute(
     nodeId: NodeId,
     viewModel: DiagnosticsViewModel = hiltViewModel(),
 ) {
-  val uiState by viewModel.uiState.collectAsState()
+  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
   LifecycleResumeEffect(nodeId) {
     viewModel.loadDiagnostics(nodeId)
@@ -59,14 +59,18 @@ fun DiagnosticsRoute(
         }
       },
   ) { innerPadding ->
+    val modifierWithInnerPadding = Modifier.fillMaxSize().padding(innerPadding)
     if (uiState.isInitialLoading) {
-      LoadingIndicator(stringResource(R.string.device_diagnostics_loading))
+      LoadingIndicator(
+          stringResource(R.string.device_diagnostics_loading),
+          modifier = modifierWithInnerPadding,
+      )
       return@Scaffold
     }
     DiagnosticsScreen(
-        modifier = Modifier.fillMaxSize().padding(innerPadding),
         uiState = uiState,
         onRefresh = { viewModel.loadDiagnostics(nodeId, forceRefresh = true) },
+        modifier = modifierWithInnerPadding,
     )
   }
 }
@@ -74,14 +78,14 @@ fun DiagnosticsRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DiagnosticsScreen(
-    modifier: Modifier = Modifier,
     uiState: DiagnosticsUiState,
     onRefresh: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
   PullToRefreshBox(
       isRefreshing = uiState.isRefreshing,
       onRefresh = onRefresh,
-      modifier = modifier.fillMaxSize(),
+      modifier = modifier,
   ) {
     if (uiState.errorRes != null) {
       Text(stringResource(uiState.errorRes), color = MaterialTheme.colorScheme.error)

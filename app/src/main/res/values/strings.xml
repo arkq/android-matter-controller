@@ -194,8 +194,10 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_diagnostics_current_heap_used">%1$s KB used</string>
     <string name="device_diagnostics_current_heap_free">%1$s KB free</string>
     <string name="device_diagnostics_current_heap_high_watermark">%1$s KB</string>
+    <string name="device_diagnostics_thread_label">%1$s (%2$s)</string>
     <string name="device_diagnostics_thread_stack_used">%1$s KB used</string>
     <string name="device_diagnostics_thread_stack_free">%1$s KB free</string>
+    <string name="device_diagnostics_thread_unnamed">Unnamed thread</string>
     <string name="device_diagnostics_interface_hw_address">HW addr: %1$s</string>
     <string name="device_diagnostics_interface_ipv4_address">IPv4: %1$s</string>
     <string name="device_diagnostics_interface_ipv6_address">IPv6: %1$s</string>
