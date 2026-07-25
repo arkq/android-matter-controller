@@ -23,6 +23,42 @@ constructor(
 
   private val retrieveLogsTimeoutDuration = 30.seconds
 
+  // CHIP TLV control byte constants (bits[7:5]=tag type, bits[4:0]=element type)
+  private companion object {
+    const val TLV_ANONYMOUS_STRUCTURE = 0x15 // anonymous tag, structure element
+    const val TLV_END_CONTAINER = 0x18 // end of container
+    const val TLV_CTX_UINT8 = 0x24 // context tag, unsigned int 1 byte
+    const val TLV_INTENT_TAG = 0x00 // RetrieveLogsRequest field 0: Intent
+    const val TLV_PROTOCOL_TAG = 0x01 // RetrieveLogsRequest field 1: RequestedProtocol
+    const val INTENT_END_USER_SUPPORT = 0x00
+    const val PROTOCOL_RESPONSE_PAYLOAD = 0x00
+    const val TAG_ANONYMOUS = -1
+    const val TAG_TYPE_ANONYMOUS = 0
+    const val TAG_TYPE_CONTEXT = 1
+    const val ELEM_SINT8 = 0x00
+    const val ELEM_SINT16 = 0x01
+    const val ELEM_SINT32 = 0x02
+    const val ELEM_SINT64 = 0x03
+    const val ELEM_UINT8 = 0x04
+    const val ELEM_UINT16 = 0x05
+    const val ELEM_UINT32 = 0x06
+    const val ELEM_UINT64 = 0x07
+    const val ELEM_BOOL_FALSE = 0x08
+    const val ELEM_BOOL_TRUE = 0x09
+    const val ELEM_FLOAT = 0x0A
+    const val ELEM_DOUBLE = 0x0B
+    const val ELEM_UTF8_1 = 0x0C // UTF-8 string with 1-byte length prefix
+    const val ELEM_UTF8_2 = 0x0D // UTF-8 string with 2-byte length prefix
+    const val ELEM_BYTES_1 = 0x10 // byte string with 1-byte length prefix
+    const val ELEM_BYTES_2 = 0x11 // byte string with 2-byte length prefix
+    const val ELEM_BYTES_4 = 0x12 // byte string with 4-byte length prefix
+    const val STATUS_TAG = 0 // RetrieveLogsResponse field 0: Status
+    const val LOG_CONTENT_TAG = 1 // RetrieveLogsResponse field 1: LogContent
+    const val STATUS_NO_LOGS = 2
+    const val STATUS_BUSY = 3
+    const val STATUS_DENIED = 4
+  }
+
   suspend fun isDiagnosticLogsClusterSupported(nodeId: NodeId): Boolean =
       runCatching {
             val devicePtr = chipClient.getConnectedDevicePointer(nodeId)
@@ -69,14 +105,14 @@ constructor(
    */
   private fun encodeRetrieveLogsRequest(): ByteArray =
       byteArrayOf(
-          0x15, // Structure start
-          0x24.toByte(),
-          0x00,
-          0x00, // Context tag 0, uint8: Intent=EndUserSupport
-          0x24.toByte(),
-          0x01,
-          0x00, // Context tag 1, uint8: Protocol=ResponsePayload
-          0x18, // End container
+          TLV_ANONYMOUS_STRUCTURE.toByte(),
+          TLV_CTX_UINT8.toByte(),
+          TLV_INTENT_TAG.toByte(),
+          INTENT_END_USER_SUPPORT.toByte(),
+          TLV_CTX_UINT8.toByte(),
+          TLV_PROTOCOL_TAG.toByte(),
+          PROTOCOL_RESPONSE_PAYLOAD.toByte(),
+          TLV_END_CONTAINER.toByte(),
       )
 
   /**
@@ -97,8 +133,12 @@ constructor(
       return tlv[i++].toInt() and 0xFF
     }
 
-    // Skip structure start (0x15)
-    if (end() || readByte() != 0x15) return null
+    fun readInt16() = readByte() or (readByte() shl 8)
+
+    fun readInt32() = readByte() or (readByte() shl 8) or (readByte() shl 16) or (readByte() shl 24)
+
+    // Skip structure start
+    if (end() || readByte() != TLV_ANONYMOUS_STRUCTURE) return null
 
     var status = -1
     var logContent: ByteArray? = null
@@ -108,59 +148,53 @@ constructor(
       val elementType = control and 0x1F
       val tagControl = (control ushr 5) and 0x07
 
-      if (elementType == 0x18) break // end container
+      if (elementType == TLV_END_CONTAINER) break
 
       val tag =
           when (tagControl) {
-            0 -> -1 // anonymous
-            1 -> readByte() // context tag: next byte is tag value
+            TAG_TYPE_ANONYMOUS -> TAG_ANONYMOUS
+            TAG_TYPE_CONTEXT -> readByte() // context tag: next byte is the tag number
             else -> break // unsupported tag type
           }
 
       when (elementType) {
-        0x00 -> { // signed int 1 byte
+        ELEM_SINT8 -> {
           val v = readByte()
-          if (tag == 0) status = v.toByte().toInt()
+          if (tag == STATUS_TAG) status = v.toByte().toInt()
         }
-        0x01 -> i += 2 // signed int 2 bytes, skip
-        0x02 -> i += 4 // signed int 4 bytes, skip
-        0x03 -> i += 8 // signed int 8 bytes, skip
-        0x04 -> { // unsigned int 1 byte
+        ELEM_SINT16 -> i += 2
+        ELEM_SINT32 -> i += 4
+        ELEM_SINT64 -> i += 8
+        ELEM_UINT8 -> {
           val v = readByte()
-          if (tag == 0) status = v
+          if (tag == STATUS_TAG) status = v
         }
-        0x05 -> i += 2 // unsigned int 2 bytes, skip
-        0x06 -> i += 4 // unsigned int 4 bytes, skip
-        0x07 -> i += 8 // unsigned int 8 bytes, skip
-        0x08,
-        0x09 -> {} // bool false/true, no value bytes
-        0x0A -> i += 4 // float, skip
-        0x0B -> i += 8 // double, skip
-        0x0C -> { // UTF-8 string, 1-byte length
+        ELEM_UINT16 -> i += 2
+        ELEM_UINT32 -> i += 4
+        ELEM_UINT64 -> i += 8
+        ELEM_BOOL_FALSE,
+        ELEM_BOOL_TRUE -> {} // no value bytes
+        ELEM_FLOAT -> i += 4
+        ELEM_DOUBLE -> i += 8
+        ELEM_UTF8_1 -> i += readByte()
+        ELEM_UTF8_2 -> i += readInt16()
+        ELEM_BYTES_1 -> {
           val len = readByte()
-          i += len
-        }
-        0x0D -> { // UTF-8 string, 2-byte length
-          val len = readByte() or (readByte() shl 8)
-          i += len
-        }
-        0x10 -> { // byte string, 1-byte length
-          val len = readByte()
-          if (tag == 1 && len > 0 && i + len <= tlv.size) {
+          if (tag == LOG_CONTENT_TAG && len > 0 && i + len <= tlv.size) {
             logContent = tlv.copyOfRange(i, i + len)
           }
           i += len
         }
-        0x11 -> { // byte string, 2-byte length
-          val len = readByte() or (readByte() shl 8)
-          if (tag == 1 && len > 0 && i + len <= tlv.size) {
+        ELEM_BYTES_2 -> {
+          val len = readInt16()
+          if (tag == LOG_CONTENT_TAG && len > 0 && i + len <= tlv.size) {
             logContent = tlv.copyOfRange(i, i + len)
           }
           i += len
         }
-        0x12 -> { // byte string, 4-byte length
-          val len = readByte() or (readByte() shl 8) or (readByte() shl 16) or (readByte() shl 24)
-          if (tag == 1 && len > 0 && i + len <= tlv.size) {
+        ELEM_BYTES_4 -> {
+          val len = readInt32()
+          if (tag == LOG_CONTENT_TAG && len > 0 && i + len <= tlv.size) {
             logContent = tlv.copyOfRange(i, i + len)
           }
           i += len
@@ -169,8 +203,8 @@ constructor(
       }
     }
 
-    // Status 2 = NoLogs, Status 3 = Busy, Status 4 = Denied – no content to show
-    if (status in 2..4) return null
+    // Status NoLogs/Busy/Denied – no content to show
+    if (status in STATUS_NO_LOGS..STATUS_DENIED) return null
 
     val bytes = logContent ?: return null
     return bytes.toString(Charsets.UTF_8)
