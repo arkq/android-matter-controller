@@ -54,9 +54,12 @@ constructor(
     const val ELEM_BYTES_4 = 0x12 // byte string with 4-byte length prefix
     const val STATUS_TAG = 0 // RetrieveLogsResponse field 0: Status
     const val LOG_CONTENT_TAG = 1 // RetrieveLogsResponse field 1: LogContent
-    const val STATUS_NO_LOGS = 2
-    const val STATUS_BUSY = 3
-    const val STATUS_DENIED = 4
+    // Matter DiagnosticLogs cluster RetrieveLogsResponse Status enum values
+    const val STATUS_SUCCESS = 0 // all log content returned
+    const val STATUS_EXHAUSTED = 1 // log content truncated (returned what fit)
+    const val STATUS_NO_LOGS = 2 // no logs of requested type available
+    const val STATUS_BUSY = 3 // another log transfer in progress
+    const val STATUS_DENIED = 4 // requestor not authorized
   }
 
   suspend fun isDiagnosticLogsClusterSupported(nodeId: NodeId): Boolean =
@@ -160,7 +163,7 @@ constructor(
       when (elementType) {
         ELEM_SINT8 -> {
           val v = readByte()
-          if (tag == STATUS_TAG) status = v.toByte().toInt()
+          if (tag == STATUS_TAG) status = v
         }
         ELEM_SINT16 -> i += 2
         ELEM_SINT32 -> i += 4
@@ -180,30 +183,36 @@ constructor(
         ELEM_UTF8_2 -> i += readInt16()
         ELEM_BYTES_1 -> {
           val len = readByte()
-          if (tag == LOG_CONTENT_TAG && len > 0 && i + len <= tlv.size) {
+          if (tag == LOG_CONTENT_TAG && len > 0 && len <= tlv.size - i) {
             logContent = tlv.copyOfRange(i, i + len)
           }
           i += len
         }
         ELEM_BYTES_2 -> {
           val len = readInt16()
-          if (tag == LOG_CONTENT_TAG && len > 0 && i + len <= tlv.size) {
+          if (tag == LOG_CONTENT_TAG && len > 0 && len <= tlv.size - i) {
             logContent = tlv.copyOfRange(i, i + len)
           }
           i += len
         }
         ELEM_BYTES_4 -> {
           val len = readInt32()
-          if (tag == LOG_CONTENT_TAG && len > 0 && i + len <= tlv.size) {
+          if (tag == LOG_CONTENT_TAG && len > 0 && len <= tlv.size - i) {
             logContent = tlv.copyOfRange(i, i + len)
           }
           i += len
         }
-        else -> break // unknown element, bail
+        else -> {
+          Timber.w(
+              "decodeRetrieveLogsResponse: unknown TLV element type 0x%02X, skipping",
+              elementType,
+          )
+          break
+        }
       }
     }
 
-    // Status NoLogs/Busy/Denied – no content to show
+    // NoLogs/Busy/Denied means no content to show; Success and Exhausted both carry log data
     if (status in STATUS_NO_LOGS..STATUS_DENIED) return null
 
     val bytes = logContent ?: return null

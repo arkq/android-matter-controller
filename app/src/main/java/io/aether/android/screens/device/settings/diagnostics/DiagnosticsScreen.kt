@@ -4,7 +4,6 @@
 package io.aether.android.screens.device.settings.diagnostics
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -64,10 +63,11 @@ fun DiagnosticsRoute(
       },
       bottomBar = {
         if (uiState.hasDiagnosticLogs) {
-          Box(modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.paddingNormal)) {
-            Button(onClick = onShowLogs, modifier = Modifier.fillMaxWidth()) {
-              Text(stringResource(R.string.device_diagnostics_show_logs))
-            }
+          Button(
+              onClick = onShowLogs,
+              modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.paddingNormal),
+          ) {
+            Text(stringResource(R.string.device_diagnostics_show_logs))
           }
         }
       },

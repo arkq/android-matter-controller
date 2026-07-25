@@ -132,12 +132,11 @@ fun AppNavigation(
         ROUTE_DEVICE_DIAGNOSTICS,
         arguments = listOf(navArgument(ARG_NODE_ID) { type = NavType.LongType }),
     ) {
+      val nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId()
       DiagnosticsRoute(
           onBackClick = { navController.popBackStack() },
-          onShowLogs = {
-            navigateToDeviceDiagnosticLogs(it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId())
-          },
-          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId(),
+          onShowLogs = { navigateToDeviceDiagnosticLogs(nodeId) },
+          nodeId = nodeId,
       )
     }
     // Diagnostic Logs from Diagnostics
