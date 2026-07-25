@@ -192,16 +192,16 @@ constructor(
         ELEM_FLOAT -> if (!skip(4)) break
         ELEM_DOUBLE -> if (!skip(8)) break
         ELEM_UTF8_1 -> {
-          val len = readByte()
-          if (len < 0 || !skip(len)) break
+          val len = readByte() // readByte() returns 0-255, never negative
+          if (!skip(len)) break
         }
         ELEM_UTF8_2 -> {
           val len = readInt16() ?: break
           if (!skip(len)) break
         }
         ELEM_BYTES_1 -> {
-          val len = readByte()
-          if (len < 0 || len > remaining()) break
+          val len = readByte() // readByte() returns 0-255, never negative
+          if (len > remaining()) break
           if (tag == LOG_CONTENT_TAG && len > 0) {
             logContent = tlv.copyOfRange(i, i + len)
           }
@@ -209,7 +209,7 @@ constructor(
         }
         ELEM_BYTES_2 -> {
           val len = readInt16() ?: break
-          if (len > remaining()) break
+          if (len < 0 || len > remaining()) break
           if (tag == LOG_CONTENT_TAG && len > 0) {
             logContent = tlv.copyOfRange(i, i + len)
           }
@@ -217,6 +217,7 @@ constructor(
         }
         ELEM_BYTES_4 -> {
           val len = readInt32() ?: break
+          // readInt32() may return a negative value for malformed/large lengths
           if (len < 0 || len > remaining()) break
           if (tag == LOG_CONTENT_TAG && len > 0) {
             logContent = tlv.copyOfRange(i, i + len)
@@ -224,8 +225,10 @@ constructor(
           i += len
         }
         else -> {
+          // Unknown element type: cannot determine size to skip safely.
+          // Stop parsing and use whatever was collected so far.
           Timber.w(
-              "decodeRetrieveLogsResponse: unknown TLV element type 0x%02X, skipping",
+              "decodeRetrieveLogsResponse: unknown TLV element type 0x%02X; stopping parse",
               elementType,
           )
           break

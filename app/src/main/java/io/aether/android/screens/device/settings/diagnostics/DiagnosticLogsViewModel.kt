@@ -90,7 +90,13 @@ constructor(private val diagnosticLogsRepository: DiagnosticLogsRepository) : Vi
 
   fun loadLogs(nodeId: NodeId, forceRefresh: Boolean = false) {
     val currentRequest = loadTrigger.replayCache.firstOrNull()
-    if (!forceRefresh && currentRequest?.nodeId == nodeId && uiState.value.logContent != null) {
+    val state = uiState.value
+    if (
+        !forceRefresh &&
+            currentRequest?.nodeId == nodeId &&
+            state.logContent != null &&
+            state.errorRes == null
+    ) {
       return
     }
     viewModelScope.launch { loadTrigger.emit(LoadRequest(nodeId)) }

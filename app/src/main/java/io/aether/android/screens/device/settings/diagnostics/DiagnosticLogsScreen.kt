@@ -89,9 +89,16 @@ private fun DiagnosticLogsScreen(
       Text(stringResource(uiState.errorRes), color = MaterialTheme.colorScheme.error)
       return@PullToRefreshBox
     }
+    if (uiState.logContent == null) {
+      Text(
+          stringResource(R.string.device_diagnostic_logs_empty),
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+      )
+      return@PullToRefreshBox
+    }
     SelectionContainer(modifier = Modifier.fillMaxSize()) {
       Text(
-          text = uiState.logContent.orEmpty(),
+          text = uiState.logContent,
           fontFamily = FontFamily.Monospace,
           style = MaterialTheme.typography.bodySmall,
           modifier =
