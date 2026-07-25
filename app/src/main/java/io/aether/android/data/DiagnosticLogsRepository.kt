@@ -129,24 +129,36 @@ constructor(
   private fun decodeRetrieveLogsResponse(tlv: ByteArray): String? {
     var i = 0
 
-    fun end() = i >= tlv.size
+    fun remaining() = tlv.size - i
 
     fun readByte(): Int {
-      if (end()) return -1
+      if (remaining() < 1) return -1
       return tlv[i++].toInt() and 0xFF
     }
 
-    fun readInt16() = readByte() or (readByte() shl 8)
+    fun readInt16(): Int? {
+      if (remaining() < 2) return null
+      return readByte() or (readByte() shl 8)
+    }
 
-    fun readInt32() = readByte() or (readByte() shl 8) or (readByte() shl 16) or (readByte() shl 24)
+    fun readInt32(): Int? {
+      if (remaining() < 4) return null
+      return readByte() or (readByte() shl 8) or (readByte() shl 16) or (readByte() shl 24)
+    }
+
+    fun skip(n: Int): Boolean {
+      if (n < 0 || remaining() < n) return false
+      i += n
+      return true
+    }
 
     // Skip structure start
-    if (end() || readByte() != TLV_ANONYMOUS_STRUCTURE) return null
+    if (remaining() < 1 || readByte() != TLV_ANONYMOUS_STRUCTURE) return null
 
     var status = -1
     var logContent: ByteArray? = null
 
-    while (!end()) {
+    while (remaining() > 0) {
       val control = readByte()
       val elementType = control and 0x1F
       val tagControl = (control ushr 5) and 0x07
@@ -165,39 +177,48 @@ constructor(
           val v = readByte()
           if (tag == STATUS_TAG) status = v
         }
-        ELEM_SINT16 -> i += 2
-        ELEM_SINT32 -> i += 4
-        ELEM_SINT64 -> i += 8
+        ELEM_SINT16 -> if (!skip(2)) break
+        ELEM_SINT32 -> if (!skip(4)) break
+        ELEM_SINT64 -> if (!skip(8)) break
         ELEM_UINT8 -> {
           val v = readByte()
           if (tag == STATUS_TAG) status = v
         }
-        ELEM_UINT16 -> i += 2
-        ELEM_UINT32 -> i += 4
-        ELEM_UINT64 -> i += 8
+        ELEM_UINT16 -> if (!skip(2)) break
+        ELEM_UINT32 -> if (!skip(4)) break
+        ELEM_UINT64 -> if (!skip(8)) break
         ELEM_BOOL_FALSE,
         ELEM_BOOL_TRUE -> {} // no value bytes
-        ELEM_FLOAT -> i += 4
-        ELEM_DOUBLE -> i += 8
-        ELEM_UTF8_1 -> i += readByte()
-        ELEM_UTF8_2 -> i += readInt16()
+        ELEM_FLOAT -> if (!skip(4)) break
+        ELEM_DOUBLE -> if (!skip(8)) break
+        ELEM_UTF8_1 -> {
+          val len = readByte()
+          if (len < 0 || !skip(len)) break
+        }
+        ELEM_UTF8_2 -> {
+          val len = readInt16() ?: break
+          if (!skip(len)) break
+        }
         ELEM_BYTES_1 -> {
           val len = readByte()
-          if (tag == LOG_CONTENT_TAG && len > 0 && len <= tlv.size - i) {
+          if (len < 0 || len > remaining()) break
+          if (tag == LOG_CONTENT_TAG && len > 0) {
             logContent = tlv.copyOfRange(i, i + len)
           }
           i += len
         }
         ELEM_BYTES_2 -> {
-          val len = readInt16()
-          if (tag == LOG_CONTENT_TAG && len > 0 && len <= tlv.size - i) {
+          val len = readInt16() ?: break
+          if (len > remaining()) break
+          if (tag == LOG_CONTENT_TAG && len > 0) {
             logContent = tlv.copyOfRange(i, i + len)
           }
           i += len
         }
         ELEM_BYTES_4 -> {
-          val len = readInt32()
-          if (tag == LOG_CONTENT_TAG && len > 0 && len <= tlv.size - i) {
+          val len = readInt32() ?: break
+          if (len < 0 || len > remaining()) break
+          if (tag == LOG_CONTENT_TAG && len > 0) {
             logContent = tlv.copyOfRange(i, i + len)
           }
           i += len
