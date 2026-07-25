@@ -3,16 +3,13 @@
 
 package io.aether.android.screens.device.settings.diagnostics
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,54 +33,41 @@ import io.aether.android.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DiagnosticsRoute(
+fun DiagnosticLogsRoute(
     onBackClick: () -> Unit,
-    onShowLogs: () -> Unit,
     nodeId: NodeId,
-    viewModel: DiagnosticsViewModel = hiltViewModel(),
+    viewModel: DiagnosticLogsViewModel = hiltViewModel(),
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
   LifecycleResumeEffect(nodeId) {
-    viewModel.loadDiagnostics(nodeId)
+    viewModel.loadLogs(nodeId)
     onPauseOrDispose {}
   }
 
   Scaffold(
       topBar = {
-        Column {
-          TopAppBar(
-              title = { Text(stringResource(R.string.device_settings_admin_diagnostics)) },
-              navigationIcon = {
-                IconButton(onClick = onBackClick) {
-                  Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
-                }
-              },
-          )
-        }
-      },
-      bottomBar = {
-        if (uiState.hasDiagnosticLogs) {
-          Button(
-              onClick = onShowLogs,
-              modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.paddingNormal),
-          ) {
-            Text(stringResource(R.string.device_diagnostics_show_logs))
-          }
-        }
+        TopAppBar(
+            title = { Text(stringResource(R.string.device_diagnostic_logs_title)) },
+            navigationIcon = {
+              IconButton(onClick = onBackClick) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+              }
+            },
+        )
       },
   ) { innerPadding ->
     val modifierWithInnerPadding = Modifier.fillMaxSize().padding(innerPadding)
     if (uiState.isInitialLoading) {
       LoadingIndicator(
-          stringResource(R.string.device_diagnostics_loading),
+          stringResource(R.string.device_diagnostic_logs_loading),
           modifier = modifierWithInnerPadding,
       )
       return@Scaffold
     }
-    DiagnosticsScreen(
+    DiagnosticLogsScreen(
         uiState = uiState,
-        onRefresh = { viewModel.loadDiagnostics(nodeId, forceRefresh = true) },
+        onRefresh = { viewModel.loadLogs(nodeId, forceRefresh = true) },
         modifier = modifierWithInnerPadding,
     )
   }
@@ -90,8 +75,8 @@ fun DiagnosticsRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DiagnosticsScreen(
-    uiState: DiagnosticsUiState,
+private fun DiagnosticLogsScreen(
+    uiState: DiagnosticLogsUiState,
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -102,19 +87,25 @@ private fun DiagnosticsScreen(
   ) {
     if (uiState.errorRes != null) {
       Text(stringResource(uiState.errorRes), color = MaterialTheme.colorScheme.error)
+      return@PullToRefreshBox
     }
-    Column(
-        modifier =
-            Modifier.fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(MaterialTheme.spacing.paddingNormal),
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.paddingNormal),
-    ) {
-      uiState.generalDiagnostics?.let { GeneralDiagnostics(it) }
-      uiState.ethernetNetworkDiagnostics?.let { EthernetNetworkDiagnostics(it) }
-      uiState.wifiNetworkDiagnostics?.let { WiFiNetworkDiagnostics(it) }
-      uiState.threadNetworkDiagnostics?.let { ThreadNetworkDiagnostics(it) }
-      uiState.softwareDiagnostics?.let { SoftwareDiagnostics(it) }
+    if (uiState.logContent == null) {
+      Text(
+          stringResource(R.string.device_diagnostic_logs_empty),
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+      )
+      return@PullToRefreshBox
+    }
+    SelectionContainer(modifier = Modifier.fillMaxSize()) {
+      Text(
+          text = uiState.logContent,
+          fontFamily = FontFamily.Monospace,
+          style = MaterialTheme.typography.bodySmall,
+          modifier =
+              Modifier.fillMaxSize()
+                  .verticalScroll(rememberScrollState())
+                  .padding(MaterialTheme.spacing.paddingNormal),
+      )
     }
   }
 }

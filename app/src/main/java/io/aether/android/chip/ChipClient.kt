@@ -462,4 +462,30 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
       )
     }
   }
+
+  /** Like [invoke] but returns the response [InvokeElement] with its TLV payload. */
+  suspend fun invokeWithResponse(
+      devicePtr: Long,
+      invokeElement: InvokeElement,
+      timedRequestTimeoutMs: Int = DEFAULT_TIMEOUT,
+      imTimeoutMs: Int = DEFAULT_TIMEOUT,
+  ): InvokeElement? {
+    return suspendCoroutine { continuation ->
+      chipDeviceController.invoke(
+          object : InvokeCallback {
+            override fun onError(e: java.lang.Exception?) {
+              continuation.resumeWithException(IllegalStateException("invoke failed", e))
+            }
+
+            override fun onResponse(invokeElement: InvokeElement?, successCode: Long) {
+              continuation.resume(invokeElement)
+            }
+          },
+          devicePtr,
+          invokeElement,
+          timedRequestTimeoutMs,
+          imTimeoutMs,
+      )
+    }
+  }
 }

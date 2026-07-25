@@ -92,13 +92,12 @@ constructor(
                       .getOrNull()
                 }
                 // Fetch fresh data from storage (fast local read).
-                val device = runCatching {
-                  devicesRepository.getDevice(nodeId)
-                }
-                    .getOrElse {
-                      emit(UiState.Error(R.string.device_settings_load_failed))
-                      return@coroutineScope
-                    }
+                val device =
+                    runCatching { devicesRepository.getDevice(nodeId) }
+                        .getOrElse {
+                          emit(UiState.Error(R.string.device_settings_load_failed))
+                          return@coroutineScope
+                        }
                 // Emit storage-fresh device with cached basicInfo so e.g. a rename is
                 // reflected immediately without waiting for the network round-trip.
                 val cachedBasicInfo =
@@ -135,15 +134,15 @@ constructor(
       basicInfo: BasicInformationAttributes,
   ) {
     runCatching {
-      devicesRepository.updateNodeBasicInfo(
-          nodeId,
-          basicInfo.vendorId,
-          basicInfo.vendorName,
-          basicInfo.productId,
-          basicInfo.productName,
-          basicInfo.nodeLabel,
-      )
-    }
+          devicesRepository.updateNodeBasicInfo(
+              nodeId,
+              basicInfo.vendorId,
+              basicInfo.vendorName,
+              basicInfo.productId,
+              basicInfo.productName,
+              basicInfo.nodeLabel,
+          )
+        }
         .onFailure { Timber.e(it, "syncBasicInfoToStorage failed") }
   }
 

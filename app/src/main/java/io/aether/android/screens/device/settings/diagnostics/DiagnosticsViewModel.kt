@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.aether.android.R
+import io.aether.android.data.DiagnosticLogsRepository
 import io.aether.android.data.DiagnosticsRepository
 import io.aether.android.data.models.EthernetNetworkDiagnosticsData
 import io.aether.android.data.models.GeneralDiagnosticsData
@@ -32,6 +33,7 @@ import kotlinx.coroutines.launch
 data class DiagnosticsUiState(
     val isInitialLoading: Boolean = true,
     val isRefreshing: Boolean = false,
+    val hasDiagnosticLogs: Boolean = false,
     val generalDiagnostics: GeneralDiagnosticsData? = null,
     val softwareDiagnostics: SoftwareDiagnosticsData? = null,
     val ethernetNetworkDiagnostics: EthernetNetworkDiagnosticsData? = null,
@@ -50,6 +52,8 @@ private sealed interface DiagnosticUpdate {
   data class WiFiNetwork(val diag: WiFiNetworkDiagnosticsData) : DiagnosticUpdate
 
   data class ThreadNetwork(val diag: ThreadNetworkDiagnosticsData) : DiagnosticUpdate
+
+  data class DiagnosticLogsSupported(val supported: Boolean) : DiagnosticUpdate
 }
 
 private sealed interface PartialState {
@@ -66,13 +70,18 @@ private sealed interface PartialState {
 
   data class ThreadNetworkDiagnosticsSuccess(val diag: ThreadNetworkDiagnosticsData) : PartialState
 
+  data class DiagnosticLogsClusterSupported(val supported: Boolean) : PartialState
+
   data class Error(@field:StringRes val errorRes: Int) : PartialState
 }
 
 @HiltViewModel
 class DiagnosticsViewModel
 @Inject
-constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewModel() {
+constructor(
+    private val diagnosticsRepository: DiagnosticsRepository,
+    private val diagnosticLogsRepository: DiagnosticLogsRepository,
+) : ViewModel() {
 
   private val refreshTrigger = MutableSharedFlow<RefreshRequest>(replay = 1)
 
@@ -98,6 +107,9 @@ constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewMode
                 val threadDef = async {
                   diagnosticsRepository.readThreadNetworkDiagnostics(request.nodeId)
                 }
+                val diagnosticLogsDef = async {
+                  diagnosticLogsRepository.isDiagnosticLogsClusterSupported(request.nodeId)
+                }
 
                 val general = generalDef.await()
                 if (general == null) {
@@ -105,6 +117,7 @@ constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewMode
                   ethernetDef.cancel()
                   wifiDef.cancel()
                   threadDef.cancel()
+                  diagnosticLogsDef.cancel()
                   emit(PartialState.Error(R.string.device_diagnostics_load_failed))
                   return@coroutineScope
                 }
@@ -112,13 +125,16 @@ constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewMode
                 emit(PartialState.GeneralDiagnosticsSuccess(general))
 
                 channelFlow {
-                  launch { softwareDef.await()?.let { send(DiagnosticUpdate.Software(it)) } }
-                  launch {
-                    ethernetDef.await()?.let { send(DiagnosticUpdate.EthernetNetwork(it)) }
-                  }
-                  launch { wifiDef.await()?.let { send(DiagnosticUpdate.WiFiNetwork(it)) } }
-                  launch { threadDef.await()?.let { send(DiagnosticUpdate.ThreadNetwork(it)) } }
-                }
+                      launch { softwareDef.await()?.let { send(DiagnosticUpdate.Software(it)) } }
+                      launch {
+                        ethernetDef.await()?.let { send(DiagnosticUpdate.EthernetNetwork(it)) }
+                      }
+                      launch { wifiDef.await()?.let { send(DiagnosticUpdate.WiFiNetwork(it)) } }
+                      launch { threadDef.await()?.let { send(DiagnosticUpdate.ThreadNetwork(it)) } }
+                      launch {
+                        send(DiagnosticUpdate.DiagnosticLogsSupported(diagnosticLogsDef.await()))
+                      }
+                    }
                     .collect { update ->
                       when (update) {
                         is DiagnosticUpdate.Software ->
@@ -129,6 +145,8 @@ constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewMode
                             emit(PartialState.WiFiNetworkDiagnosticsSuccess(update.diag))
                         is DiagnosticUpdate.ThreadNetwork ->
                             emit(PartialState.ThreadNetworkDiagnosticsSuccess(update.diag))
+                        is DiagnosticUpdate.DiagnosticLogsSupported ->
+                            emit(PartialState.DiagnosticLogsClusterSupported(update.supported))
                       }
                     }
               }
@@ -157,6 +175,8 @@ constructor(private val diagnosticsRepository: DiagnosticsRepository) : ViewMode
                   previousState.copy(wifiNetworkDiagnostics = partial.diag)
               is PartialState.ThreadNetworkDiagnosticsSuccess ->
                   previousState.copy(threadNetworkDiagnostics = partial.diag)
+              is PartialState.DiagnosticLogsClusterSupported ->
+                  previousState.copy(hasDiagnosticLogs = partial.supported)
               is PartialState.Error ->
                   previousState.copy(
                       isInitialLoading = false,
