@@ -219,6 +219,13 @@ SPDX-License-Identifier: Apache-2.0
     <string name="device_diagnostics_network_rssi">RSSI:</string>
     <string name="device_diagnostics_network_dbm">%1$d dBm</string>
 
+    <string name="device_diagnostics_show_logs">Show Logs</string>
+
+    <!-- Device Diagnostic Logs Screen -->
+    <string name="device_diagnostic_logs_title">Diagnostic Logs</string>
+    <string name="device_diagnostic_logs_loading">Loading logs…</string>
+    <string name="device_diagnostic_logs_load_failed">Failed to retrieve diagnostic logs.</string>
+
     <!-- Device Share Dialog -->
     <string name="device_share_dialog_title">Share this device?</string>
     <string name="device_share_dialog_body">You can share this device with other controllers. It will allow them to manage this device, including fabric management. Do you want to share this device?</string>

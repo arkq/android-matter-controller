@@ -15,6 +15,7 @@ import io.aether.android.matter.NodeId
 import io.aether.android.matter.toNodeId
 import io.aether.android.screens.device.DeviceRoute
 import io.aether.android.screens.device.settings.DeviceSettingsRoute
+import io.aether.android.screens.device.settings.diagnostics.DiagnosticLogsRoute
 import io.aether.android.screens.device.settings.diagnostics.DiagnosticsRoute
 import io.aether.android.screens.device.settings.explorer.ExplorerRoute
 import io.aether.android.screens.device.settings.fabrics.FabricsRoute
@@ -34,6 +35,7 @@ const val ROUTE_DEVICE_SETTINGS = "device/{$ARG_NODE_ID}/settings"
 const val ROUTE_DEVICE_EXPLORER = "device/{$ARG_NODE_ID}/explorer"
 const val ROUTE_DEVICE_FABRICS = "device/{$ARG_NODE_ID}/fabrics"
 const val ROUTE_DEVICE_DIAGNOSTICS = "device/{$ARG_NODE_ID}/diagnostics"
+const val ROUTE_DEVICE_DIAGNOSTIC_LOGS = "device/{$ARG_NODE_ID}/diagnostic-logs"
 
 fun routeToDevice(nodeId: NodeId): String = "device/${nodeId.toLong()}"
 
@@ -44,6 +46,9 @@ fun routeToDeviceExplorer(nodeId: NodeId): String = "device/${nodeId.toLong()}/e
 fun routeToDeviceFabrics(nodeId: NodeId): String = "device/${nodeId.toLong()}/fabrics"
 
 fun routeToDeviceDiagnostics(nodeId: NodeId): String = "device/${nodeId.toLong()}/diagnostics"
+
+fun routeToDeviceDiagnosticLogs(nodeId: NodeId): String =
+    "device/${nodeId.toLong()}/diagnostic-logs"
 
 @Composable
 fun AppNavigation(
@@ -69,6 +74,9 @@ fun AppNavigation(
   }
   val navigateToDeviceDiagnostics: (nodeId: NodeId) -> Unit = remember {
     { nodeId -> navController.navigate(routeToDeviceDiagnostics(nodeId)) }
+  }
+  val navigateToDeviceDiagnosticLogs: (nodeId: NodeId) -> Unit = remember {
+    { nodeId -> navController.navigate(routeToDeviceDiagnosticLogs(nodeId)) }
   }
 
   NavHost(navController = navController, startDestination = DEST_HOME) {
@@ -125,6 +133,19 @@ fun AppNavigation(
         arguments = listOf(navArgument(ARG_NODE_ID) { type = NavType.LongType }),
     ) {
       DiagnosticsRoute(
+          onBackClick = { navController.popBackStack() },
+          onShowLogs = {
+            navigateToDeviceDiagnosticLogs(it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId())
+          },
+          nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId(),
+      )
+    }
+    // Diagnostic Logs from Diagnostics
+    composable(
+        ROUTE_DEVICE_DIAGNOSTIC_LOGS,
+        arguments = listOf(navArgument(ARG_NODE_ID) { type = NavType.LongType }),
+    ) {
+      DiagnosticLogsRoute(
           onBackClick = { navController.popBackStack() },
           nodeId = it.arguments?.getLong(ARG_NODE_ID)!!.toNodeId(),
       )

@@ -46,15 +46,15 @@ constructor(
         )
       }
       runCatching {
-        val fabrics = repository.readManagedFabrics(nodeId)
-        _uiState.update {
-          it.copy(
-              fabrics = fabrics,
-              isInitialLoading = false,
-              isRefreshing = false,
-          )
-        }
-      }
+            val fabrics = repository.readManagedFabrics(nodeId)
+            _uiState.update {
+              it.copy(
+                  fabrics = fabrics,
+                  isInitialLoading = false,
+                  isRefreshing = false,
+              )
+            }
+          }
           .onFailure { e ->
             Timber.e(e, "Error loading fabrics")
             _uiState.update {
@@ -71,11 +71,11 @@ constructor(
   fun removeFabric(nodeId: NodeId, fabricIndex: Int) {
     viewModelScope.launch {
       runCatching {
-        val currentIdx = repository.getCurrentFabricIndex(nodeId)
-        if (fabricIndex == currentIdx) return@launch
-        repository.removeFabric(nodeId, fabricIndex)
-        loadFabrics(nodeId)
-      }
+            val currentIdx = repository.getCurrentFabricIndex(nodeId)
+            if (fabricIndex == currentIdx) return@launch
+            repository.removeFabric(nodeId, fabricIndex)
+            loadFabrics(nodeId)
+          }
           .onFailure { e -> Timber.e(e, "Error removing fabric") }
     }
   }

@@ -15,39 +15,42 @@ private const val SEPARATOR = " • "
 @Composable
 fun EthernetNetworkDiagnostics(data: EthernetNetworkDiagnosticsData) {
 
-  val networkTraffic = buildList {
-    data.packetRxCount?.let {
-      add(stringResource(R.string.device_diagnostics_network_rx, it.toString()))
-    }
-    data.packetTxCount?.let {
-      add(stringResource(R.string.device_diagnostics_network_tx, it.toString()))
-    }
-  }
-      .joinToString(SEPARATOR)
+  val networkTraffic =
+      buildList {
+            data.packetRxCount?.let {
+              add(stringResource(R.string.device_diagnostics_network_rx, it.toString()))
+            }
+            data.packetTxCount?.let {
+              add(stringResource(R.string.device_diagnostics_network_tx, it.toString()))
+            }
+          }
+          .joinToString(SEPARATOR)
 
-  val linkQuality = buildList {
-    data.txErrCount?.let {
-      add(stringResource(R.string.device_diagnostics_network_tx_errors, it.toString()))
-    }
-    data.collisionCount?.let {
-      add(stringResource(R.string.device_diagnostics_network_collisions, it.toString()))
-    }
-    data.overrunCount?.let {
-      add(stringResource(R.string.device_diagnostics_network_drops, it.toString()))
-    }
-  }
-      .joinToString(SEPARATOR)
+  val linkQuality =
+      buildList {
+            data.txErrCount?.let {
+              add(stringResource(R.string.device_diagnostics_network_tx_errors, it.toString()))
+            }
+            data.collisionCount?.let {
+              add(stringResource(R.string.device_diagnostics_network_collisions, it.toString()))
+            }
+            data.overrunCount?.let {
+              add(stringResource(R.string.device_diagnostics_network_drops, it.toString()))
+            }
+          }
+          .joinToString(SEPARATOR)
 
-  val linkProperties = buildList {
-    data.phyRate?.let { add(it.name) }
-    data.fullDuplex
-        ?.takeIf { it }
-        ?.let { add(stringResource(R.string.device_diagnostics_network_full_duplex)) }
-    data.carrierDetect
-        ?.takeIf { !it }
-        ?.let { add(stringResource(R.string.device_diagnostics_network_no_carrier)) }
-  }
-      .joinToString(SEPARATOR)
+  val linkProperties =
+      buildList {
+            data.phyRate?.let { add(it.name) }
+            data.fullDuplex
+                ?.takeIf { it }
+                ?.let { add(stringResource(R.string.device_diagnostics_network_full_duplex)) }
+            data.carrierDetect
+                ?.takeIf { !it }
+                ?.let { add(stringResource(R.string.device_diagnostics_network_no_carrier)) }
+          }
+          .joinToString(SEPARATOR)
 
   DiagnosticsSection(stringResource(R.string.device_diagnostics_section_ethernet_network)) {
     if (networkTraffic.isNotEmpty()) {
