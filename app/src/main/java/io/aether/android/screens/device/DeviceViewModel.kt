@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import chip.devicecontroller.model.NodeState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.aether.android.MatterEndpoint
+import io.aether.android.MatterNode
 import io.aether.android.PERIODIC_READ_INTERVAL_DEVICE_SCREEN_SECONDS
 import io.aether.android.STATE_CHANGES_MONITORING_MODE
 import io.aether.android.StateChangesMonitoringMode
@@ -34,12 +35,14 @@ import io.aether.android.supportsColorTemperature
 import io.aether.android.supportsLevelControl
 import java.time.LocalDateTime
 import javax.inject.Inject
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 
 /** The ViewModel for the Device Screen. */
@@ -82,7 +85,17 @@ constructor(
     } else {
       Timber.d("loadDevice: loading nodeId [${nodeId}]")
       viewModelScope.launch {
-        val state = devicesStateRepository.getAllDevicesState()
+        val stateDeferred = async { devicesStateRepository.getAllDevicesState() }
+        val state =
+            withTimeoutOrNull(DEVICE_LOAD_TIMEOUT_MILLIS) { stateDeferred.await() }
+                ?: run {
+                  val fallbackNode = MatterNode.newBuilder().setNodeId(nodeId.toLong()).build()
+                  val fallbackEndpoint = MatterEndpoint.newBuilder().setEndpointId(1).build()
+                  val fallbackDevice = DeviceUiModel(fallbackNode, fallbackEndpoint, false, false)
+                  _deviceUiModel.value = fallbackDevice
+                  _allEndpointUiModels.value = listOf(fallbackDevice)
+                  stateDeferred.await()
+                }
         val node = state.nodesList.firstOrNull { it.nodeId == nodeId.toLong() }
         if (node == null) {
           _deviceUiModel.value = null
@@ -135,6 +148,10 @@ constructor(
         launch { syncEndpointsFromDevice(nodeId) }
       }
     }
+  }
+
+  private companion object {
+    const val DEVICE_LOAD_TIMEOUT_MILLIS = 500L
   }
 
   // -----------------------------------------------------------------------------------------------

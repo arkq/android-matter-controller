@@ -42,6 +42,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 
 @HiltViewModel
@@ -92,13 +93,11 @@ constructor(
                       .getOrNull()
                 }
                 // Fetch fresh data from storage (fast local read).
-                val device = runCatching {
-                  devicesRepository.getDevice(nodeId)
-                }
-                    .getOrElse {
-                      emit(UiState.Error(R.string.device_settings_load_failed))
-                      return@coroutineScope
-                    }
+                val deviceDeferred = async { runCatching { devicesRepository.getDevice(nodeId) } }
+                val device =
+                    withTimeoutOrNull(DEVICE_LOAD_TIMEOUT_MILLIS) {
+                      deviceDeferred.await().getOrNull()
+                    } ?: Device.newBuilder().setNodeId(nodeId).build()
                 // Emit storage-fresh device with cached basicInfo so e.g. a rename is
                 // reflected immediately without waiting for the network round-trip.
                 val cachedBasicInfo =
@@ -111,6 +110,9 @@ constructor(
                 if (basicInfo != null) {
                   syncBasicInfoToStorage(nodeId, basicInfo)
                   emit(UiState.Loaded(device, basicInfo, false, null))
+                }
+                deviceDeferred.await().getOrNull()?.let { cachedDevice ->
+                  emit(UiState.Loaded(cachedDevice, basicInfo, false, null))
                 }
               }
             }
@@ -135,20 +137,24 @@ constructor(
       basicInfo: BasicInformationAttributes,
   ) {
     runCatching {
-      devicesRepository.updateNodeBasicInfo(
-          nodeId,
-          basicInfo.vendorId,
-          basicInfo.vendorName,
-          basicInfo.productId,
-          basicInfo.productName,
-          basicInfo.nodeLabel,
-      )
-    }
+          devicesRepository.updateNodeBasicInfo(
+              nodeId,
+              basicInfo.vendorId,
+              basicInfo.vendorName,
+              basicInfo.productId,
+              basicInfo.productName,
+              basicInfo.nodeLabel,
+          )
+        }
         .onFailure { Timber.e(it, "syncBasicInfoToStorage failed") }
   }
 
   private fun isDefaultTimestamp(timestamp: Timestamp): Boolean {
     return timestamp.seconds == 0L && timestamp.nanos == 0
+  }
+
+  private companion object {
+    const val DEVICE_LOAD_TIMEOUT_MILLIS = 500L
   }
 
   // Controls whether the "Message" AlertDialog should be shown in the UI.
