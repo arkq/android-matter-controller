@@ -35,14 +35,13 @@ import io.aether.android.supportsColorTemperature
 import io.aether.android.supportsLevelControl
 import java.time.LocalDateTime
 import javax.inject.Inject
-import kotlinx.coroutines.async
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 
 /** The ViewModel for the Device Screen. */
@@ -79,23 +78,17 @@ constructor(
 
   fun loadDevice(nodeId: NodeId) {
     if (nodeId == deviceUiModel.value?.nodeId) {
-      Timber.d("loadDevice: nodeId [${nodeId}] was already loaded, syncing from device")
+      // Already loaded, but we still want to sync from device in case the device state has changed
+      // since last time.
       viewModelScope.launch { syncEndpointsFromDevice(nodeId) }
       return
-    } else {
-      Timber.d("loadDevice: loading nodeId [${nodeId}]")
-      viewModelScope.launch {
-        val stateDeferred = async { devicesStateRepository.getAllDevicesState() }
-        val state =
-            withTimeoutOrNull(DEVICE_LOAD_TIMEOUT_MILLIS) { stateDeferred.await() }
-                ?: run {
-                  val fallbackNode = MatterNode.newBuilder().setNodeId(nodeId.toLong()).build()
-                  val fallbackEndpoint = MatterEndpoint.newBuilder().setEndpointId(1).build()
-                  val fallbackDevice = DeviceUiModel(fallbackNode, fallbackEndpoint, false, false)
-                  _deviceUiModel.value = fallbackDevice
-                  _allEndpointUiModels.value = listOf(fallbackDevice)
-                  stateDeferred.await()
-                }
+    }
+
+    Timber.d("Loading data for nodeId=$nodeId")
+    viewModelScope.launch {
+      // 1. Kick off the actual fetch job in parallel.
+      val fetchJob = launch {
+        val state = devicesStateRepository.getAllDevicesState()
         val node = state.nodesList.firstOrNull { it.nodeId == nodeId.toLong() }
         if (node == null) {
           _deviceUiModel.value = null
@@ -144,21 +137,29 @@ constructor(
           }
         }
         _allEndpointUiModels.value = models
-
-        launch { syncEndpointsFromDevice(nodeId) }
       }
-    }
-  }
 
-  private companion object {
-    const val DEVICE_LOAD_TIMEOUT_MILLIS = 500L
+      // 2. If the fetch isn't done in 500ms, show fallback UI while it keeps loading.
+      delay(500.milliseconds)
+      if (fetchJob.isActive) {
+        Timber.d("Timeout reached before data loaded. Showing fallback UI.")
+        val fallbackNode = MatterNode.newBuilder().setNodeId(nodeId.toLong()).build()
+        val fallbackEndpoint = MatterEndpoint.newBuilder().setEndpointId(1).build()
+        val fallbackDevice = DeviceUiModel(fallbackNode, fallbackEndpoint, false, false)
+        _deviceUiModel.value = fallbackDevice
+        _allEndpointUiModels.value = listOf(fallbackDevice)
+      }
+
+      fetchJob.join()
+      syncEndpointsFromDevice(nodeId)
+    }
   }
 
   // -----------------------------------------------------------------------------------------------
   // Sync endpoints from device
 
   private suspend fun syncEndpointsFromDevice(nodeId: NodeId) {
-    Timber.d("syncEndpointsFromDevice: nodeId [$nodeId]")
+    Timber.d("Sync endpoints from nodeId=$nodeId")
     try {
       val deviceMatterInfoList = clustersHelper.fetchDeviceMatterInfo(nodeId)
 
