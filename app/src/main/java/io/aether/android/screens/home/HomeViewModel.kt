@@ -187,7 +187,7 @@ constructor(
     val sortedNodes = devicesStates.nodesList.sortedBy { it.nodeId }
     sortedNodes.forEach { node ->
       val nId = node.nodeId.toNodeId()
-      Timber.d("processDevices() nodeId: [${nId}]}")
+      Timber.d("Processing device nodeId=$nId")
       val endpointState = node.endpointsList.minByOrNull { it.endpointId }
       if (userPreferences.hideOfflineDevices) {
         if (!node.online) return@forEach
@@ -231,11 +231,11 @@ constructor(
    * through GMSCore? All we're missing is network location.
    */
   fun multiadminCommissioning(intent: Intent, context: Context) {
-    Timber.d("multiadminCommissioning: starting")
+    Timber.d("Starting multi-admin commissioning")
 
     val sharedDeviceData = fromIntent(intent)
-    Timber.d("multiadminCommissioning: sharedDeviceData [${sharedDeviceData}]")
-    Timber.d("multiadminCommissioning: manualPairingCode [${sharedDeviceData.manualPairingCode}]")
+    Timber.d("Starting multi-admin commissioning data=$sharedDeviceData")
+    Timber.d("Multi-admin pairing code=${sharedDeviceData.manualPairingCode}")
 
     val commissionRequestBuilder =
         CommissioningRequest.builder()
@@ -251,8 +251,8 @@ constructor(
     val timeLeftSeconds = (commissioningWindowExpirationMillis - currentUptimeMillis) / 1000
     Timber.d(
         "commissionDevice: TargetCommissioner for MultiAdmin. " +
-            "uptime [${currentUptimeMillis}] " +
-            "commissioningWindowExpiration [${commissioningWindowExpirationMillis}] " +
+            "uptimeMillis=$currentUptimeMillis " +
+            "commissioningWindowExpirationMillis=$commissioningWindowExpirationMillis " +
             "-> expires in $timeLeftSeconds seconds"
     )
 
@@ -288,9 +288,9 @@ constructor(
 
     Timber.d(
         "multiadmin: commissioningRequest " +
-            "onboardingPayload [${commissioningRequest.onboardingPayload}] " +
-            "vendorId [${commissioningRequest.deviceInfo!!.vendorId}] " +
-            "productId [${commissioningRequest.deviceInfo!!.productId}]"
+            "onboardingPayload=${commissioningRequest.onboardingPayload} " +
+            "vendorId=${commissioningRequest.deviceInfo!!.vendorId} " +
+            "productId=${commissioningRequest.deviceInfo!!.productId}"
     )
   }
 
@@ -300,14 +300,12 @@ constructor(
   fun gpsCommissioningDeviceSucceeded(activityResult: ActivityResult) {
     gpsCommissioningResult =
         CommissioningResult.fromIntentSenderResult(activityResult.resultCode, activityResult.data)
-    Timber.i(
-        "Device commissioned successfully! deviceName [${gpsCommissioningResult!!.deviceName}]"
-    )
+    Timber.i("Device commissioned successfully deviceName=${gpsCommissioningResult!!.deviceName}")
     Timber.i(
         "Device commissioned successfully! DeviceDescriptor of device:\n" +
-            "productId [${gpsCommissioningResult!!.commissionedDeviceDescriptor.productId}]\n" +
-            "vendorId [${gpsCommissioningResult!!.commissionedDeviceDescriptor.vendorId}]\n" +
-            "hashCode [${gpsCommissioningResult!!.commissionedDeviceDescriptor.hashCode()}]"
+            "productId=${gpsCommissioningResult!!.commissionedDeviceDescriptor.productId}\n" +
+            "vendorId=${gpsCommissioningResult!!.commissionedDeviceDescriptor.vendorId}\n" +
+            "hashCode=${gpsCommissioningResult!!.commissionedDeviceDescriptor.hashCode()}"
     )
 
     // Now we need to capture the device name.
@@ -457,7 +455,7 @@ constructor(
           }
         }
       } catch (e: Exception) {
-        val msg = "Adding device [${nodeId}] [${deviceName}] to app's repository failed."
+        val msg = "Failed to add device nodeId=$nodeId deviceName=$deviceName"
         Timber.e(e, msg)
         showMsgDialog(R.string.add_device_to_repository_failed, "$msg\n\n${e.message ?: e}")
       }
@@ -485,7 +483,7 @@ constructor(
   }
 
   fun updateDeviceStateOn(nodeId: NodeId, isOn: Boolean) {
-    Timber.d("updateDeviceStateOn: nodeId [${nodeId}]  isOn [${isOn}]")
+    Timber.d("Updating device power nodeId=$nodeId isOn=$isOn")
     viewModelScope.launch {
       try {
         val node =
@@ -494,7 +492,7 @@ constructor(
             } ?: return@launch
         val endpointDevice = node.endpointsList.minByOrNull { it.endpointId } ?: return@launch
         val endpoint = endpointDevice.endpointId
-        Timber.d("Handling real device nodeId [$nodeId] endpoint [$endpoint]")
+        Timber.d("Handling real device nodeId=$nodeId endpointId=$endpoint")
         clustersHelper.setOnOffDeviceStateOnOffCluster(
             nodeId.toLong(),
             isOn,
@@ -527,7 +525,7 @@ constructor(
             colorTemperature,
         )
       } catch (e: Exception) {
-        Timber.e(e, "Failed to update on/off for node [$nodeId]")
+        Timber.e(e, "Failed to update device power nodeId=$nodeId")
         if (e.isCommunicationTimeoutError()) {
           devicesStateRepository.updateNodeOnlineState(nodeId, isOnline = false)
         }
@@ -613,17 +611,17 @@ constructor(
                         Clusters.ColorControl.ID,
                         Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID.toLong(),
                     ) as Int?
-                Timber.d("onOffState [${onOffState}]")
+                Timber.d("Device power state onOffState=$onOffState")
                 if (onOffState == null) {
-                  Timber.e("onReport(): WARNING -> onOffState is NULL. Ignoring.")
+                  Timber.e("Ignoring report with missing onOffState")
                   return
                 }
                 if (supportsLevelControl(endpointDevice) && levelState == null) {
-                  Timber.e("onReport(): WARNING -> levelState is NULL. Ignoring.")
+                  Timber.e("Ignoring report with missing levelState")
                   return
                 }
                 if (supportsColorTemperature(endpointDevice) && colorTemperatureState == null) {
-                  Timber.e("onReport(): WARNING -> colorTemperatureState is NULL. Ignoring.")
+                  Timber.e("Ignoring report with missing colorTemperatureState")
                   return
                 }
                 val level = if (supportsLevelControl(endpointDevice)) levelState!! else 0
@@ -658,7 +656,7 @@ constructor(
               reportCallback,
           )
         } catch (e: IllegalStateException) {
-          Timber.e("Can't get connectedDevicePointer for nodeId=${nId}.")
+          Timber.e("Can't get connected device pointer nodeId=$nId")
           if (e.isCommunicationTimeoutError()) {
             devicesStateRepository.updateNodeOnlineState(nId, isOnline = false)
           }
@@ -679,7 +677,7 @@ constructor(
           val connectedDevicePtr = chipClient.getConnectedDevicePointer(nId)
           subscriptionHelper.awaitUnsubscribeToPeriodicUpdates(connectedDevicePtr)
         } catch (e: IllegalStateException) {
-          Timber.e("Can't get connectedDevicePointer for nodeId=${nId}.")
+          Timber.e("Can't get connected device pointer nodeId=$nId")
           if (e.isCommunicationTimeoutError()) {
             devicesStateRepository.updateNodeOnlineState(nId, isOnline = false)
           }
@@ -710,7 +708,7 @@ constructor(
         val nodes = devicesStateRepository.getAllDevicesState().nodesList
         nodes.forEach { node ->
           val nId = node.nodeId.toNodeId()
-          Timber.d("runDevicesPeriodicPing nodeId [${nId}]")
+          Timber.d("Pinging device nodeId=$nId")
           node.endpointsList
               .sortedBy { it.endpointId }
               .forEach { endpointDevice ->
@@ -745,7 +743,7 @@ constructor(
                         (hasLevelControl && levelRead == null) ||
                         (hasColorTemperature && colorTemperatureRead == null)
                 ) {
-                  Timber.e("runDevicesPeriodicUpdate: cannot get device state -> OFFLINE")
+                  Timber.e("Cannot get device state; marking device offline")
                   isOn = false
                   isOnline = false
                   level = 0
@@ -755,7 +753,7 @@ constructor(
                   colorTemperature = if (hasColorTemperature) colorTemperatureRead!! else 0
                   isOnline = true
                 }
-                Timber.d("runDevicesPeriodicPing nodeId [${nId}] [${isOnline}] [${isOn}]")
+                Timber.d("Device ping nodeId=$nId isOnline=$isOnline isOn=$isOn")
                 // TODO: only need to do it if state has changed
                 devicesStateRepository.upsertEndpointState(
                     nId,
@@ -794,12 +792,12 @@ constructor(
       )
 
       if (errorCode == STATUS_PAIRING_SUCCESS) {
-        Timber.d("DeviceAttestationDelegate: Success on device attestation.")
+        Timber.d("Device attestation succeeded")
         viewModelScope.launch {
           chipClient.chipDeviceController.continueCommissioning(devicePtr, true)
         }
       } else {
-        Timber.d("DeviceAttestationDelegate: Error on device attestation [$errorCode].")
+        Timber.e("Device attestation failed errorCode=$errorCode")
         // Ideally, we'd want to show a Dialog and ask the user whether the attestation
         // failure should be ignored or not.
         // Unfortunately, the GPS commissioning API is in control at this point, and the

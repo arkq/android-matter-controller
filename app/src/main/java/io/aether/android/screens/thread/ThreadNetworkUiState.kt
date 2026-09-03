@@ -42,7 +42,7 @@ class ThreadNetworkUiState(
 
   fun processAction(actionRequest: ActionRequest) {
     Timber.d(
-        "processAction [${actionRequest.type}] [${actionRequest.task}] [${actionRequest.serviceInfo}]"
+        "Processing action type=${actionRequest.type} task=${actionRequest.task} serviceInfo=${actionRequest.serviceInfo}"
     )
 
     // Dispatch processing according to action type.
@@ -137,7 +137,7 @@ class ThreadNetworkUiState(
               )
             } else {
               intentSenderResult.intentSender?.let { intentSender ->
-                Timber.d("threadClient: intent returned result")
+                Timber.d("Thread client returned an intent result")
                 viewModel.setThreadClientIntentSender(intentSender)
               }
             }

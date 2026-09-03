@@ -31,7 +31,7 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
       reportCallback: ReportCallback,
   ) {
     return suspendCoroutine { continuation ->
-      Timber.d("subscribeToPeriodicUpdates()")
+      Timber.d("Subscribing to periodic updates")
       val endpointId = ChipPathId.forWildcard()
       val clusterId = ChipPathId.forWildcard()
       val attributeId = ChipPathId.forWildcard()
@@ -39,7 +39,7 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
       val maxInterval = 10 // seconds
       val attributePath = ChipAttributePath.newInstance(endpointId, clusterId, attributeId)
       val eventPath = ChipEventPath.newInstance(endpointId, clusterId, attributeId)
-      Timber.d("attributePath: [${attributePath}]")
+      Timber.d("Attribute path=$attributePath")
       chipClient.chipDeviceController.subscribeToPath(
           subscriptionEstablishedCallback,
           resubscriptionAttemptCallback,
@@ -66,7 +66,7 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
   }
 
   suspend fun awaitUnsubscribeToPeriodicUpdates(connectedDevicePtr: Long) {
-    Timber.d("awaitUnsubscribeToPeriodicUpdates()")
+    Timber.d("Unsubscribing from periodic updates")
     return suspendCoroutine { continuation ->
       chipClient.chipDeviceController.shutdownSubscriptions()
       continuation.resume(Unit)
@@ -100,10 +100,10 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
         ex: Exception,
     ) {
       if (attributePath != null) {
-        Timber.e(ex, "reportCallback: error on node [${nodeId}] for [${attributePath}]")
+        Timber.e(ex, "Subscription failed nodeId=$nodeId attributePath=$attributePath")
       }
       if (eventPath != null) {
-        Timber.e(ex, "reportCallback: error on node [${nodeId}] for [${eventPath}]")
+        Timber.e(ex, "Subscription failed nodeId=$nodeId eventPath=$eventPath")
       }
     }
 
@@ -123,7 +123,7 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
   open class SubscriptionEstablishedCallbackForDevice(val nodeId: NodeId) :
       SubscriptionEstablishedCallback {
     override fun onSubscriptionEstablished(subscriptionId: Long) {
-      Timber.d("onSubscriptionEstablished(): subscriptionId [${subscriptionId}]")
+      Timber.d("Subscription established subscriptionId=$subscriptionId")
     }
   }
 
@@ -131,7 +131,7 @@ class SubscriptionHelper @Inject constructor(private val chipClient: ChipClient)
       ResubscriptionAttemptCallback {
     override fun onResubscriptionAttempt(terminationCause: Int, nextResubscribeIntervalMsec: Int) {
       Timber.d(
-          "onResubscriptionAttempt(): node [$nodeId] terminationCause [$terminationCause] nextResubscribeIntervalMsec [$nextResubscribeIntervalMsec]"
+          "Resubscription attempt nodeId=$nodeId terminationCause=$terminationCause nextIntervalMsec=$nextResubscribeIntervalMsec"
       )
     }
   }

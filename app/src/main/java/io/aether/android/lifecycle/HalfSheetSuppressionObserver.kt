@@ -38,7 +38,7 @@ internal constructor(
       if (suppressHalfSheetNotification) {
         try {
           Matter.getCommissioningClient(context).suppressHalfSheetNotification().await()
-          Timber.d("suppressHalfSheetNotification: Successful")
+          Timber.d("Half-sheet notification suppressed")
         } catch (e: Exception) {
           Timber.e(e, "Error on suppressHalfSheetNotification")
         }

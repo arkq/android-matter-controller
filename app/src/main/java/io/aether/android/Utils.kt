@@ -76,17 +76,17 @@ fun displayPreferences(context: Context) {
     Timber.d("*** Preference Files ***")
     val list = prefsDir.list().orEmpty()
     for (element in list) {
-      Timber.d("*** [${element}] ***")
+      Timber.d("Preference file=$element")
       val sharedPreferencesFileKey = element.substringBefore(".xml")
-      Timber.d("*** FileKey: [${sharedPreferencesFileKey}] ***")
+      Timber.d("Preference fileKey=$sharedPreferencesFileKey")
       val sharedPreferences =
           context.getSharedPreferences(sharedPreferencesFileKey, Context.MODE_PRIVATE)
       val allPreferences = sharedPreferences.all
-      for ((key, value) in allPreferences.entries) Timber.d("$key [$value]")
+      for ((key, value) in allPreferences.entries) Timber.d("Preference key=$key value=$value")
     }
     return
   } else {
-    Timber.d("prefsDir does not exist: $prefsDir")
+    Timber.d("Preferences directory does not exist path=$prefsDir")
     return
   }
 }

@@ -182,10 +182,7 @@ class DevicesStateRepository @Inject constructor(@ApplicationContext context: Co
     devicesStateDataStore.updateData { state ->
       val nodeIndex = findNodeIndex(state, nodeId)
       if (nodeIndex == -1) {
-        Timber.e(
-            "updateNodeOnlineState: missing node state for nodeId=%s; refusing to create a new node",
-            nodeId,
-        )
+        Timber.e("Missing node state nodeId=$nodeId; refusing to create a new node")
         return@updateData state
       }
       val nodeBuilder = state.getNodes(nodeIndex).toBuilder()

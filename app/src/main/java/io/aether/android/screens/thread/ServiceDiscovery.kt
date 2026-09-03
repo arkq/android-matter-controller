@@ -91,7 +91,7 @@ class DiscoveryListener(
 ) : NsdManager.DiscoveryListener {
   // Called as soon as service discovery begins.
   override fun onDiscoveryStarted(regType: String) {
-    Timber.d("threadClient: Border Router Service discovery started")
+    Timber.d("Border Router service discovery started")
   }
 
   override fun onServiceFound(service: NsdServiceInfo) {
@@ -99,9 +99,9 @@ class DiscoveryListener(
         service.serviceType != serviceType
     ) { // Service type is the string containing the protocol and transport layer for
       // this service.
-      Timber.d("Unknown Service discovered: ${service.serviceType}")
+      Timber.d("Unknown service discovered serviceType=${service.serviceType}")
     } else {
-      Timber.d("Service discovered $service")
+      Timber.d("Service discovered service=$service")
       // Sending this coroutine to the Dispatcher.IO thread, so it doesn't block UI
       coroutineScope.launch(Dispatchers.IO) {
         // NsdManager doesn't like simultaneous resolve calls. Thus using a lock
@@ -119,23 +119,23 @@ class DiscoveryListener(
     if (resolvedServices.contains(service)) {
       resolvedServices.remove(service)
     }
-    Timber.e("Service Lost: $service")
+    Timber.e("Service lost service=$service")
   }
 
   override fun onDiscoveryStopped(serviceType: String) {
     resolvedServices.clear()
-    Timber.i("Discovery stopped: $serviceType")
+    Timber.i("Discovery stopped serviceType=$serviceType")
   }
 
   override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
     resolvedServices.clear()
-    Timber.e("Discovery failed: Error code: $errorCode")
+    Timber.e("Discovery failed errorCode=$errorCode")
     nsdManager.stopServiceDiscovery(this)
   }
 
   override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) {
     resolvedServices.clear()
-    Timber.e("Discovery failed: Error code: $errorCode")
+    Timber.e("Discovery failed errorCode=$errorCode")
     nsdManager.stopServiceDiscovery(this)
   }
 }
@@ -151,7 +151,7 @@ class ResolveListener(
 ) : NsdManager.ResolveListener {
   override fun onResolveFailed(serviceInfo: NsdServiceInfo, errorCode: Int) {
     // Called when the resolve fails. Use the error code to debug.
-    Timber.e("Resolve failed: $errorCode")
+    Timber.e("Service resolution failed errorCode=$errorCode")
   }
 
   override fun onServiceResolved(serviceInfo: NsdServiceInfo) {
@@ -168,7 +168,7 @@ class ResolveListener(
       )
       resolvedDevices.add(serviceInfo)
     } else {
-      Timber.e("Resolve failed")
+      Timber.e("Service resolution failed")
     }
   }
 }

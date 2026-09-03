@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import chip.devicecontroller.model.NodeState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.aether.android.MatterEndpoint
+import io.aether.android.MatterNode
 import io.aether.android.PERIODIC_READ_INTERVAL_DEVICE_SCREEN_SECONDS
 import io.aether.android.STATE_CHANGES_MONITORING_MODE
 import io.aether.android.StateChangesMonitoringMode
@@ -34,6 +35,7 @@ import io.aether.android.supportsColorTemperature
 import io.aether.android.supportsLevelControl
 import java.time.LocalDateTime
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -76,12 +78,16 @@ constructor(
 
   fun loadDevice(nodeId: NodeId) {
     if (nodeId == deviceUiModel.value?.nodeId) {
-      Timber.d("loadDevice: nodeId [${nodeId}] was already loaded, syncing from device")
+      // Already loaded, but we still want to sync from device in case the device state has changed
+      // since last time.
       viewModelScope.launch { syncEndpointsFromDevice(nodeId) }
       return
-    } else {
-      Timber.d("loadDevice: loading nodeId [${nodeId}]")
-      viewModelScope.launch {
+    }
+
+    Timber.d("Loading data for nodeId=$nodeId")
+    viewModelScope.launch {
+      // 1. Kick off the actual fetch job in parallel.
+      val fetchJob = launch {
         val state = devicesStateRepository.getAllDevicesState()
         val node = state.nodesList.firstOrNull { it.nodeId == nodeId.toLong() }
         if (node == null) {
@@ -131,9 +137,21 @@ constructor(
           }
         }
         _allEndpointUiModels.value = models
-
-        launch { syncEndpointsFromDevice(nodeId) }
       }
+
+      // 2. If the fetch isn't done in 500ms, show fallback UI while it keeps loading.
+      delay(500.milliseconds)
+      if (fetchJob.isActive) {
+        Timber.d("Timeout reached before data loaded. Showing fallback UI.")
+        val fallbackNode = MatterNode.newBuilder().setNodeId(nodeId.toLong()).build()
+        val fallbackEndpoint = MatterEndpoint.newBuilder().setEndpointId(1).build()
+        val fallbackDevice = DeviceUiModel(fallbackNode, fallbackEndpoint, false, false)
+        _deviceUiModel.value = fallbackDevice
+        _allEndpointUiModels.value = listOf(fallbackDevice)
+      }
+
+      fetchJob.join()
+      syncEndpointsFromDevice(nodeId)
     }
   }
 
@@ -141,7 +159,7 @@ constructor(
   // Sync endpoints from device
 
   private suspend fun syncEndpointsFromDevice(nodeId: NodeId) {
-    Timber.d("syncEndpointsFromDevice: nodeId [$nodeId]")
+    Timber.d("Sync endpoints from nodeId=$nodeId")
     try {
       val deviceMatterInfoList = clustersHelper.fetchDeviceMatterInfo(nodeId)
 
@@ -251,13 +269,13 @@ constructor(
         }
       }
     } catch (e: Exception) {
-      Timber.w(e, "syncEndpointsFromDevice failed for nodeId [$nodeId]")
+      Timber.w(e, "Failed to sync endpoints nodeId=$nodeId")
     }
   }
 
   // On/Off
   fun updateDeviceStateOn(deviceUiModel: DeviceUiModel, isOn: Boolean) {
-    Timber.d("updateDeviceStateOn: isOn [${isOn}]")
+    Timber.d("Updating device power isOn=$isOn")
     val nodeId = deviceUiModel.nodeId
     viewModelScope.launch {
       Timber.d("Handling real device")
@@ -290,7 +308,7 @@ constructor(
 
   // Level
   fun updateDeviceStateLevel(deviceUiModel: DeviceUiModel, level: Int) {
-    Timber.d("updateDeviceStateLevel: level [${level}]")
+    Timber.d("Updating device level level=$level")
     val nodeId = deviceUiModel.nodeId
     viewModelScope.launch {
       if (!supportsLevelControl(deviceUiModel.endpoint)) {
@@ -326,7 +344,7 @@ constructor(
 
   // Color Temperature
   fun updateDeviceStateColorTemperature(deviceUiModel: DeviceUiModel, colorTemperature: Int) {
-    Timber.d("updateDeviceStateColorTemperature: level [${colorTemperature}]")
+    Timber.d("Updating color temperature colorTemperature=$colorTemperature")
     val nodeId = deviceUiModel.nodeId
     viewModelScope.launch {
       if (!supportsColorTemperature(deviceUiModel.endpoint)) {
@@ -365,55 +383,55 @@ constructor(
     val name = deviceUiModel.name
     val divider = "-".repeat(20)
 
-    Timber.d("\n${divider} Inspect Device [${name}] [${nodeId}] $divider")
+    Timber.d("$divider Inspect device name=$name nodeId=$nodeId $divider")
     viewModelScope.launch {
       val partsListAttribute =
           clustersHelper.readDescriptorClusterPartsListAttribute(
               chipClient.getConnectedDevicePointer(nodeId),
               EndpointId(0u),
           )
-      Timber.d("partsListAttribute [${partsListAttribute}]")
+      Timber.d("Parts list=$partsListAttribute")
 
       partsListAttribute.orEmpty().forEach { part ->
         val endpoint = part
-        Timber.d("Processing part [$part]")
+        Timber.d("Processing part=$part")
 
         val deviceListAttribute =
             clustersHelper.readDescriptorClusterDeviceListAttribute(
                 chipClient.getConnectedDevicePointer(nodeId),
                 endpoint,
             )
-        deviceListAttribute.forEach { Timber.d("device attribute: [${it}]") }
+        deviceListAttribute.forEach { Timber.d("Device attribute=$it") }
 
         val serverListAttribute =
             clustersHelper.readDescriptorClusterServerListAttribute(
                 chipClient.getConnectedDevicePointer(nodeId),
                 endpoint,
             )
-        serverListAttribute.forEach { Timber.d("server attribute: [${it}]") }
+        serverListAttribute.forEach { Timber.d("Server attribute=$it") }
       }
     }
   }
 
   fun inspectApplicationBasicCluster(nodeId: NodeId) {
-    Timber.d("inspectApplicationBasicCluster: nodeId [${nodeId}]")
+    Timber.d("Inspecting application basic cluster nodeId=$nodeId")
     viewModelScope.launch {
       val attributeList =
           clustersHelper.readApplicationBasicClusterAttributeList(nodeId.toLong(), 1.toEndpointId())
-      attributeList.forEach { Timber.d("inspectDevice attribute: [$it]") }
+      attributeList.forEach { Timber.d("Device attribute=$it") }
     }
   }
 
   fun inspectBasicCluster(nodeId: NodeId) {
-    Timber.d("inspectBasicCluster: nodeId [${nodeId}]")
+    Timber.d("Inspecting basic cluster nodeId=$nodeId")
     viewModelScope.launch {
       val vendorId =
           clustersHelper.readBasicClusterVendorIDAttribute(nodeId.toLong(), EndpointId(0u))
-      Timber.d("vendorId [${vendorId}]")
+      Timber.d("Vendor ID=$vendorId")
 
       val attributeList =
           clustersHelper.readBasicClusterAttributeList(nodeId.toLong(), EndpointId(0u))
-      Timber.d("attributeList [${attributeList}]")
+      Timber.d("Attribute list=$attributeList")
     }
   }
 
@@ -424,7 +442,7 @@ constructor(
    * subscriptions. We left its associated code as it could be useful to some developers.
    */
   fun startMonitoringStateChanges() {
-    Timber.d("startMonitoringStateChanges(): mode [$STATE_CHANGES_MONITORING_MODE]")
+    Timber.d("Starting state monitoring mode=$STATE_CHANGES_MONITORING_MODE")
     when (STATE_CHANGES_MONITORING_MODE) {
       StateChangesMonitoringMode.Subscription -> subscribeToPeriodicUpdates()
       StateChangesMonitoringMode.PeriodicRead -> startDevicePeriodicPing()
@@ -434,7 +452,7 @@ constructor(
   fun stopMonitoringStateChanges() {
     val nodeId = deviceUiModel.value?.nodeId
     if (nodeId == null) {
-      Timber.d("stopMonitoringStateChanges(): no loaded device; skipping.")
+      Timber.d("No loaded device; skipping state monitoring stop")
       return
     }
     when (STATE_CHANGES_MONITORING_MODE) {
@@ -474,7 +492,7 @@ constructor(
   ```
   */
   private fun subscribeToPeriodicUpdates() {
-    Timber.d("subscribeToPeriodicUpdates()")
+    Timber.d("Subscribing to periodic updates")
     val primaryDevice =
         deviceUiModel.value
             ?: run {
@@ -529,7 +547,7 @@ constructor(
                         Clusters.ColorControl.ID,
                         Clusters.ColorControl.Attributes.ColorTemperatureMireds.ID.toLong(),
                     ) as Int?
-                Timber.d("onOffState [${onOffState}] for endpoint $endpoint")
+                Timber.d("Device power state onOffState=$onOffState endpointId=$endpoint")
                 if (onOffState == null) {
                   Timber.e(
                       "onReport(): WARNING -> onOffState is NULL for endpoint $endpoint. Ignoring."
@@ -598,7 +616,7 @@ constructor(
   }
 
   private fun unsubscribeToPeriodicUpdates() {
-    Timber.d("unsubscribeToPeriodicUpdates()")
+    Timber.d("Unsubscribing from periodic updates")
     val primaryDevice =
         deviceUiModel.value
             ?: run {
@@ -673,7 +691,7 @@ constructor(
                   (hasLevelControl && levelRead == null) ||
                   (hasColorTemperature && colorTemperatureRead == null)
           ) {
-            Timber.e("[device ping] failed for endpoint $endpointId")
+            Timber.e("Device ping failed endpointId=$endpointId")
             isOn = false
             isOnline = false
             level = 0
@@ -681,7 +699,7 @@ constructor(
           } else {
             level = if (hasLevelControl) levelRead!! else 0
             colorTemperature = if (hasColorTemperature) colorTemperatureRead!! else 0
-            Timber.d("[device ping] success [${isOn}] for endpoint $endpointId")
+            Timber.d("Device ping succeeded isOn=$isOn endpointId=$endpointId")
             isOnline = true
           }
           devicesStateRepository.upsertEndpointState(
@@ -706,13 +724,13 @@ constructor(
   // UI State update
 
   fun showMsgDialog(title: String?, msg: String?, showConfirmButton: Boolean = true) {
-    Timber.d("showMsgDialog [$title]")
+    Timber.d("Showing message dialog title=$title")
     _msgDialogInfo.value =
         DialogInfo(title = title, message = msg, showConfirmButton = showConfirmButton)
   }
 
   fun showMsgDialog(@StringRes titleRes: Int, msg: String?, showConfirmButton: Boolean = true) {
-    Timber.d("showMsgDialog [titleRes=$titleRes]")
+    Timber.d("Showing message dialog titleRes=$titleRes")
     _msgDialogInfo.value =
         DialogInfo(titleRes = titleRes, message = msg, showConfirmButton = showConfirmButton)
   }
@@ -722,7 +740,7 @@ constructor(
       @StringRes msgRes: Int,
       showConfirmButton: Boolean = true,
   ) {
-    Timber.d("showMsgDialog [titleRes=$titleRes msgRes=$msgRes]")
+    Timber.d("Showing message dialog titleRes=$titleRes msgRes=$msgRes")
     _msgDialogInfo.value =
         DialogInfo(titleRes = titleRes, messageRes = msgRes, showConfirmButton = showConfirmButton)
   }

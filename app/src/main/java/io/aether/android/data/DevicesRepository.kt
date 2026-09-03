@@ -59,7 +59,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
           }
 
   suspend fun addDevice(device: Device) {
-    Timber.d("addDevice: device [${device}]")
+    Timber.d("Adding device=$device")
     val normalizedEndpoint = endpointOf(device)
     devicesStateDataStore.updateData { state ->
       val stateBuilder = state.toBuilder()
@@ -162,7 +162,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
   }
 
   suspend fun updateDevice(device: Device) {
-    Timber.d("updateDevice: device [${device}]")
+    Timber.d("Updating device=$device")
     val nodeIndex = findNodeIndex(device.nodeId)
     if (nodeIndex == -1) {
       throw Exception("Device not found: ${device.nodeId}")
@@ -171,7 +171,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
   }
 
   suspend fun updateDeviceType(nodeId: NodeId, deviceTypeId: DeviceTypeId) {
-    Timber.d("updateDeviceType: nodeId [${nodeId}] deviceTypeId [${deviceTypeId}]")
+    Timber.d("Updating device type nodeId=$nodeId deviceTypeId=$deviceTypeId")
     val nodeIndex = findNodeIndex(nodeId)
     if (nodeIndex == -1) {
       Timber.e(
@@ -202,7 +202,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
       productName: String?,
       nodeLabel: String?,
   ) {
-    Timber.d("updateNodeBasicInfo: nodeId [$nodeId]")
+    Timber.d("Updating node info nodeId=$nodeId")
     val nodeIndex = findNodeIndex(nodeId)
     if (nodeIndex == -1) return
     devicesStateDataStore.updateData { state ->
@@ -217,7 +217,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
   }
 
   suspend fun removeEndpointsFromNode(nodeId: NodeId, endpointIds: Set<EndpointId>) {
-    Timber.d("removeEndpointsFromNode: nodeId [$nodeId] endpointIds [$endpointIds]")
+    Timber.d("Removing endpoints nodeId=$nodeId endpointIds=$endpointIds")
     val nodeIndex = findNodeIndex(nodeId)
     if (nodeIndex == -1) return
     devicesStateDataStore.updateData { state ->
@@ -234,7 +234,7 @@ class DevicesRepository @Inject constructor(@ApplicationContext context: Context
   }
 
   suspend fun removeDevice(nodeId: NodeId) {
-    Timber.d("removeDevice: nodeId [${nodeId}]")
+    Timber.d("Removing device nodeId=$nodeId")
     val nodeIndex = findNodeIndex(nodeId)
     if (nodeIndex == -1) {
       throw Exception("Device not found: ${nodeId}")

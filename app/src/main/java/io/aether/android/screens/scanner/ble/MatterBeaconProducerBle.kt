@@ -53,7 +53,7 @@ constructor(
                   currentTime - (beaconEmittedTime[beacon] ?: 0) > BEACON_EMITTING_DEBOUNCE_IN_MS
               if (shouldWeEmitItAgain) {
                 beaconEmittedTime[beacon] = currentTime
-                Timber.d("Emitting BLE beacon [${beacon}]")
+                Timber.d("Emitting BLE beacon=$beacon")
                 trySend(beacon)
               }
             }
@@ -100,14 +100,14 @@ constructor(
     val data = scanRecord?.bytes ?: return null
     // Full record must be at least 14 bytes.
     if (data.size < 14) {
-      Timber.d("Dropping BLE ad with record length %d (expected 14)", data.size)
+      Timber.d("Dropping BLE ad recordLength=${data.size} expectedLength=14")
       return null
     }
 
     // Data payload length is byte 4 and should be exactly 10.
     val dataLength = data[3].toInt()
     if (dataLength < 10) {
-      Timber.w("Dropping BLE ad with data length [${dataLength}] (expected >= 10)")
+      Timber.w("Dropping BLE ad dataLength=$dataLength expectedMinimum=10")
       return null
     }
 

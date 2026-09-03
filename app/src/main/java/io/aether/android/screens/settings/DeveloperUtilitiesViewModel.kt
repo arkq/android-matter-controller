@@ -94,7 +94,7 @@ constructor(
   }
 
   fun getRequiredScanningPermissions(): Array<String> {
-    Timber.d("getRequiredScanningPermissions(): Build.VERSION.SDK_INT is ${Build.VERSION.SDK_INT}")
+    Timber.d("Required scanning permissions sdkInt=${Build.VERSION.SDK_INT}")
     return when {
       Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
           arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.ACCESS_FINE_LOCATION)

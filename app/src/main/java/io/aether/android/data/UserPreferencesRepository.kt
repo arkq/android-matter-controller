@@ -36,7 +36,7 @@ class UserPreferencesRepository @Inject constructor(@ApplicationContext context:
   val userPreferencesLiveData = userPreferencesFlow.asLiveData()
 
   suspend fun updateHideOfflineDevices(hide: Boolean) {
-    Timber.d("updateHideOfflineDevices [$hide]")
+    Timber.d("Updating offline device visibility hide=$hide")
     userPreferencesDataStore.updateData { prefs ->
       prefs.toBuilder().setHideOfflineDevices(hide).build()
     }
@@ -48,7 +48,7 @@ class UserPreferencesRepository @Inject constructor(@ApplicationContext context:
   }
 
   suspend fun updateShowGpsMatterDiscoveryNotification(show: Boolean) {
-    Timber.d("updateShowGpsMatterDiscoveryNotification [$show]")
+    Timber.d("Updating GPS discovery notification show=$show")
     userPreferencesDataStore.updateData { prefs ->
       prefs.toBuilder().setShowHalfsheetNotification(show).build()
     }

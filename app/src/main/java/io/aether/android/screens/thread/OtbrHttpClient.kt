@@ -111,7 +111,7 @@ object OtbrHttpClient {
           urlConnection.inputStream.use {
             content = String(it.readBytes(), StandardCharsets.UTF_8)
             val response = urlConnection.responseCode
-            Timber.d("$verb response: $response")
+            Timber.d("HTTP response verb=$verb response=$response")
           }
         }
       }

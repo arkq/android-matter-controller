@@ -69,7 +69,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
 
             override fun onConnectionFailure(id: Long, error: Exception) {
               val errorMessage = "Unable to get connected device with nodeId ${id.toNodeId()}."
-              Timber.e(errorMessage, error)
+              Timber.e(error, errorMessage)
               continuation.resumeWithException(IllegalStateException(errorMessage))
             }
           },
@@ -91,14 +91,12 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
           object : UnpairDeviceCallback {
             override fun onError(status: Int, id: Long) {
               continuation.resumeWithException(
-                  java.lang.IllegalStateException(
-                      "Failed unpairing device [$id] with status [$status]"
-                  )
+                  java.lang.IllegalStateException("Failed to unpair deviceId=$id status=$status")
               )
             }
 
             override fun onSuccess(id: Long) {
-              Timber.d("awaitUnpairDevice.onSuccess: deviceId [$id]")
+              Timber.d("Device unpaired deviceId=$id")
               continuation.resume(Unit)
             }
           }
@@ -117,7 +115,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
       salt: ByteArray,
   ): PaseVerifierParams {
     Timber.d(
-        "computePaseVerifier: devicePtr [${devicePtr}] pinCode [${pinCode}] iterations [${iterations}] salt [${salt}]"
+        "Computing PASE verifier devicePtr=$devicePtr pinCode=$pinCode iterations=$iterations salt=$salt"
     )
     return chipDeviceController.computePaseVerifier(devicePtr, pinCode, iterations, salt)
   }
@@ -142,7 +140,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
               super.onPairingComplete(code)
               if (code != 0) {
                 continuation.resumeWithException(
-                    IllegalStateException("Pairing failed with error code [${code}]")
+                    IllegalStateException("Pairing failed errorCode=$code")
                 )
               } else {
                 continuation.resume(Unit)
@@ -192,7 +190,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
               super.onCommissioningComplete(id, errorCode)
               if (errorCode != 0) {
                 continuation.resumeWithException(
-                    IllegalStateException("Commissioning failed with error code [${errorCode}]")
+                    IllegalStateException("Commissioning failed errorCode=$errorCode")
                 )
               } else {
                 continuation.resume(Unit)
@@ -221,20 +219,14 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
       val callback: OpenCommissioningCallback =
           object : OpenCommissioningCallback {
             override fun onError(status: Int, deviceId: Long) {
-              Timber.e(
-                  "ShareDevice: awaitOpenPairingWindowWithPIN.onError: status [${status}] device [${deviceId}]"
-              )
+              Timber.e("Failed to open pairing window status=$status deviceId=$deviceId")
               continuation.resumeWithException(
-                  java.lang.IllegalStateException(
-                      "Failed opening the pairing window with status [${status}]"
-                  )
+                  java.lang.IllegalStateException("Failed to open pairing window status=$status")
               )
             }
 
             override fun onSuccess(deviceId: Long, manualPairingCode: String?, qrCode: String?) {
-              Timber.d(
-                  "ShareDevice: awaitOpenPairingWindowWithPIN.onSuccess: deviceId [${deviceId}]"
-              )
+              Timber.d("Pairing window opened deviceId=$deviceId")
               continuation.resume(Unit)
             }
           }
@@ -264,7 +256,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
 
             override fun onConnectionFailure(id: Long, error: Exception) {
               val errorMessage = "Unable to get connected device with nodeId ${id.toNodeId()}"
-              Timber.e(errorMessage, error)
+              Timber.e(error, errorMessage)
               continuation.resumeWithException(IllegalStateException(errorMessage))
             }
           },
@@ -284,7 +276,7 @@ class ChipClient @Inject constructor(@ApplicationContext context: Context) {
   }
 
   fun getDiscoveredDevice(index: Int): DiscoveredDevice? {
-    Timber.d("getDiscoveredDevice(${index})")
+    Timber.d("Getting discovered device index=$index")
     return chipDeviceController.getDiscoveredDevice(index)
   }
 

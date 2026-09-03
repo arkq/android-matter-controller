@@ -74,14 +74,14 @@ constructor(
       name: String,
       onLocalPersisted: suspend () -> Unit = {},
   ): SetDeviceNameResult {
-    Timber.d("SetDeviceNameUseCase: nodeId [$nodeId] nameLength [${name.length}]")
+    Timber.d("Setting device name nodeId=$nodeId nameLength=${name.length}")
     try {
       val device = devicesRepository.getDevice(nodeId)
       devicesRepository.updateDevice(device.toBuilder().setName(name).build())
     } catch (e: CancellationException) {
       throw e
     } catch (e: Exception) {
-      Timber.e(e, "SetDeviceNameUseCase: failed to persist name locally")
+      Timber.e(e, "Failed to persist device name locally")
       return SetDeviceNameResult.LocalError(e)
     }
     onLocalPersisted()
@@ -95,7 +95,7 @@ constructor(
         if (e.isCommunicationTimeoutError()) {
           devicesStateRepository.updateNodeOnlineState(nodeId, isOnline = false)
         }
-        Timber.e(e, "SetDeviceNameUseCase: failed to write NodeLabel")
+        Timber.e(e, "Failed to write node label")
         appErrorNotifier.notify(
             DialogInfo(
                 titleRes = R.string.set_device_name_failed,

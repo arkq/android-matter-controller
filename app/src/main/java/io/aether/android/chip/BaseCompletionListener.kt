@@ -12,41 +12,39 @@ import timber.log.Timber
  */
 abstract class BaseCompletionListener : ChipDeviceController.CompletionListener {
   override fun onConnectDeviceComplete() {
-    Timber.d("BaseCompletionListener onConnectDeviceComplete()")
+    Timber.d("Device connection completed")
   }
 
   override fun onStatusUpdate(status: Int) {
-    Timber.d("BaseCompletionListener onStatusUpdate(): status [${status}]")
+    Timber.d("Connection status=$status")
   }
 
   override fun onPairingComplete(code: Int) {
-    Timber.d("BaseCompletionListener onPairingComplete(): code [${code}]")
+    Timber.d("Pairing completed code=$code")
   }
 
   override fun onPairingDeleted(code: Int) {
-    Timber.d("BaseCompletionListener onPairingDeleted(): code [${code}]")
+    Timber.d("Pairing deleted code=$code")
   }
 
   override fun onCommissioningComplete(id: Long, errorCode: Int) {
-    Timber.d(
-        "BaseCompletionListener onCommissioningComplete(): nodeId [${id}] errorCode [${errorCode}]"
-    )
+    Timber.d("Commissioning completed nodeId=$id errorCode=$errorCode")
   }
 
   override fun onNotifyChipConnectionClosed() {
-    Timber.d("BaseCompletionListener onNotifyChipConnectionClosed()")
+    Timber.d("Chip connection closed")
   }
 
   override fun onCloseBleComplete() {
-    Timber.d("BaseCompletionListener onCloseBleComplete()")
+    Timber.d("BLE close completed")
   }
 
   override fun onError(error: Throwable) {
-    Timber.e(error, "BaseCompletionListener onError()")
+    Timber.e(error, "Chip operation failed")
   }
 
   override fun onOpCSRGenerationComplete(csr: ByteArray) {
-    Timber.d("BaseCompletionListener onOpCSRGenerationComplete() csr [${csr}]")
+    Timber.d("CSR generation completed csr=$csr")
   }
 
   override fun onReadCommissioningInfo(
@@ -56,13 +54,11 @@ abstract class BaseCompletionListener : ChipDeviceController.CompletionListener 
       threadEndpointId: Int,
   ) {
     Timber.d(
-        "onReadCommissioningInfo: vendorId [${vendorId}]  productId [${productId}]  wifiEndpointId [${wifiEndpointId}] threadEndpointId [${threadEndpointId}]"
+        "Commissioning info vendorId=$vendorId productId=$productId wifiEndpointId=$wifiEndpointId threadEndpointId=$threadEndpointId"
     )
   }
 
   override fun onCommissioningStatusUpdate(id: Long, stage: String?, errorCode: Int) {
-    Timber.d(
-        "onCommissioningStatusUpdate nodeId [${id}]  stage [${stage}]  errorCode [${errorCode}]"
-    )
+    Timber.d("Commissioning status nodeId=$id stage=$stage errorCode=$errorCode")
   }
 }
