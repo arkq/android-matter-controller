@@ -181,7 +181,7 @@ internal fun HomeRoute(
         // The Commission Device activity in GPS (step 4) has completed.
         val resultCode = result.resultCode
         if (resultCode == Activity.RESULT_OK) {
-          Timber.d("CommissionDevice: Success")
+          Timber.d("Device commissioning succeeded")
           // We let the ViewModel know that GPS commissioning has completed successfully.
           // The ViewModel knows that we still need to capture the device name and will\
           // update UI state to trigger the NewDeviceAlertDialog.
@@ -200,11 +200,11 @@ internal fun HomeRoute(
   }
 
   LifecycleResumeEffect(Unit) {
-    Timber.d("HomeScreen: LifecycleResumeEffect")
+    Timber.d("Home screen resumed")
     val intent = activity!!.intent
-    Timber.d("intent [${intent}]")
+    Timber.d("Received intent=$intent")
     if (isMultiAdminCommissioning(intent)) {
-      Timber.d("Invocation: MultiAdminCommissioning")
+      Timber.d("Invocation multiAdminCommissioning")
       if (multiadminCommissionDeviceTaskStatus == TaskStatus.NotStarted) {
         Timber.d("TaskStatus.NotStarted so starting multiadmin commissioning")
         homeViewModel.setMultiadminCommissioningTaskStatus(TaskStatus.InProgress)
@@ -215,10 +215,10 @@ internal fun HomeRoute(
             commissionDeviceLauncher,
         )
       } else {
-        Timber.d("TaskStatus is *not* NotStarted: $multiadminCommissionDeviceTaskStatus")
+        Timber.d("Task status=$multiadminCommissionDeviceTaskStatus")
       }
     } else {
-      Timber.d("Invocation: Main")
+      Timber.d("Invocation main")
       homeViewModel.startMonitoringStateChanges()
     }
     // FIXME[TJ]: I had this on fragment's create(). Anything similar to that for composables?
@@ -545,7 +545,7 @@ fun commissionDevice(
     context: Context,
     commissionDeviceLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
 ) {
-  Timber.d("CommissionDevice: starting")
+  Timber.d("Starting device commissioning")
 
   val commissionDeviceRequest =
       CommissioningRequest.builder()
@@ -557,7 +557,7 @@ fun commissionDevice(
   Matter.getCommissioningClient(context)
       .commissionDevice(commissionDeviceRequest)
       .addOnSuccessListener { result ->
-        Timber.d("CommissionDevice: Success getting the IntentSender: result [${result}]")
+        Timber.d("Got commissioning intent sender result=$result")
         commissionDeviceLauncher.launch(IntentSenderRequest.Builder(result).build())
       }
       .addOnFailureListener { error ->
@@ -573,11 +573,11 @@ fun multiAdminCommissionDevice(
     homeViewModel: HomeViewModel,
     commissionDeviceLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
 ) {
-  Timber.d("CommissionDevice: starting")
+  Timber.d("Starting device commissioning")
 
   val sharedDeviceData = SharedDeviceData.fromIntent(intent)
-  Timber.d("multiadminCommissioning: sharedDeviceData [${sharedDeviceData}]")
-  Timber.d("multiadminCommissioning: manualPairingCode [${sharedDeviceData.manualPairingCode}]")
+  Timber.d("Starting multi-admin commissioning data=$sharedDeviceData")
+  Timber.d("Multi-admin pairing code=${sharedDeviceData.manualPairingCode}")
 
   val commissionRequestBuilder =
       CommissioningRequest.builder()
@@ -595,8 +595,8 @@ fun multiAdminCommissionDevice(
   val timeLeftSeconds = (commissioningWindowExpirationMillis - currentUptimeMillis) / 1000
   Timber.d(
       "commissionDevice: TargetCommissioner for MultiAdmin. " +
-          "uptime [${currentUptimeMillis}] " +
-          "commissioningWindowExpiration [${commissioningWindowExpirationMillis}] " +
+          "uptimeMillis=$currentUptimeMillis " +
+          "commissioningWindowExpirationMillis=$commissioningWindowExpirationMillis " +
           "-> expires in $timeLeftSeconds seconds"
   )
 
@@ -631,15 +631,15 @@ fun multiAdminCommissionDevice(
 
   Timber.d(
       "multiadmin: commissioningRequest " +
-          "onboardingPayload [${commissioningRequest.onboardingPayload}] " +
-          "vendorId [${commissioningRequest.deviceInfo!!.vendorId}] " +
-          "productId [${commissioningRequest.deviceInfo!!.productId}]"
+          "onboardingPayload=${commissioningRequest.onboardingPayload} " +
+          "vendorId=${commissioningRequest.deviceInfo!!.vendorId} " +
+          "productId=${commissioningRequest.deviceInfo!!.productId}"
   )
 
   Matter.getCommissioningClient(context)
       .commissionDevice(commissioningRequest)
       .addOnSuccessListener { result ->
-        Timber.d("Success getting the IntentSender: result [${result}]")
+        Timber.d("Got intent sender result=$result")
         commissionDeviceLauncher.launch(IntentSenderRequest.Builder(result).build())
       }
       .addOnFailureListener { error ->

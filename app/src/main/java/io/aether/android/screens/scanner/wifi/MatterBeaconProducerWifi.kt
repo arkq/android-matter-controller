@@ -43,12 +43,12 @@ constructor(
   override fun getBeaconsFlow(): Flow<MatterBeacon> = flow {
     while (coroutineContext.isActive) {
       val scanResults = wifiManager.scanResults
-      Timber.d("${scanResults.size} results from the wifi scan.")
+      Timber.d("WiFi scan results=${scanResults.size}")
       scanResults
           .orEmpty()
           .mapNotNull { scanResult -> scanResult.toMatterBeaconOrNull() }
           .forEach { beacon ->
-            Timber.d("Emitting Matter hotspot beacon: [${beacon}]")
+            Timber.d("Emitting Matter hotspot beacon=$beacon")
             emit(beacon)
           }
 

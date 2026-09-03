@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
 
     // See package "io.aether.android.lifecycle" for all the lifecycle observers
     // defined for the application.
-    Timber.d("lifecycleObservers [$lifecycleObservers]")
+    Timber.d("Lifecycle observers=$lifecycleObservers")
     lifecycleObservers.forEach { lifecycle.addObserver(it) }
 
     // Useful to see which preferences are set under the hood by Matter libraries.

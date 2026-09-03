@@ -49,7 +49,7 @@ internal fun shareDevice(
     deviceName: String,
     onShareFailed: (title: String, error: String) -> Unit,
 ) {
-  Timber.d("ShareDevice: starting")
+  Timber.d("Starting device sharing")
 
   val shareDeviceRequest =
       ShareDeviceRequest.builder()
@@ -64,14 +64,12 @@ internal fun shareDevice(
                   .build()
           )
           .build()
-  Timber.d(
-      "ShareDevice: shareDeviceRequest discriminator [${shareDeviceRequest.commissioningWindow.discriminator}]"
-  )
+  Timber.d("Sharing device discriminator=${shareDeviceRequest.commissioningWindow.discriminator}")
 
   Matter.getCommissioningClient(context)
       .shareDevice(shareDeviceRequest)
       .addOnSuccessListener { result ->
-        Timber.d("ShareDevice: Success getting the IntentSender: result [${result}]")
+        Timber.d("Got sharing intent sender result=$result")
         shareDeviceLauncher.launch(IntentSenderRequest.Builder(result).build())
       }
       .addOnFailureListener { error ->

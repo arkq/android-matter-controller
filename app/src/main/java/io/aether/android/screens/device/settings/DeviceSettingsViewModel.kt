@@ -192,7 +192,7 @@ constructor(
   // Rename device
 
   fun renameDevice(nodeId: NodeId, newName: String) {
-    Timber.d("renameDevice: nodeId [$nodeId] newName [$newName]")
+    Timber.d("Renaming device nodeId=$nodeId newName=$newName")
     viewModelScope.launch {
       val result =
           setDeviceNameUseCase.execute(nodeId, newName) {
@@ -209,7 +209,7 @@ constructor(
   // Change device type
 
   fun changeDeviceType(nodeId: NodeId, deviceTypeId: DeviceTypeId) {
-    Timber.d("changeDeviceType: nodeId [$nodeId] deviceTypeId [$deviceTypeId]")
+    Timber.d("Changing device type nodeId=$nodeId deviceTypeId=$deviceTypeId")
     viewModelScope.launch {
       try {
         devicesRepository.updateDeviceType(nodeId, deviceTypeId)
@@ -256,12 +256,12 @@ constructor(
   }
 
   fun shareDeviceSucceeded() {
-    Timber.d("ShareDevice: shareDeviceSucceeded")
+    Timber.d("Device sharing succeeded")
     _pairingWindowOpenForDeviceSharing.value = false
   }
 
   fun shareDeviceFailed(resultCode: Int) {
-    Timber.d("ShareDevice: shareDeviceFailed resultCode [$resultCode]")
+    Timber.d("Device sharing failed resultCode=$resultCode")
     _pairingWindowOpenForDeviceSharing.value = false
   }
 
@@ -270,7 +270,7 @@ constructor(
 
   // Open commissioning window for device sharing.
   fun openPairingWindow(nodeId: NodeId) {
-    Timber.d("ShareDevice: openPairingWindow")
+    Timber.d("Opening pairing window")
     viewModelScope.launch {
       showMsgDialog(
           R.string.opening_pairing_window_title,
@@ -281,7 +281,7 @@ constructor(
         val devicePtr = chipClient.awaitGetConnectedDevicePointer(nodeId)
         val isCommissioningWindowOpen = clustersHelper.isCommissioningWindowOpen(devicePtr)
         if (isCommissioningWindowOpen) {
-          Timber.d("ShareDevice: commissioning window is already open, closing it")
+          Timber.d("Commissioning window already open, closing it")
           clustersHelper.closeCommissioningWindow(devicePtr)
         }
         when (OPEN_COMMISSIONING_WINDOW_API) {
@@ -293,7 +293,7 @@ constructor(
         dismissMsgDialog()
         _pairingWindowOpenForDeviceSharing.value = true
       } catch (e: Exception) {
-        Timber.e(e, "ShareDevice: openPairingWindow failed")
+        Timber.e(e, "Failed to open pairing window")
         dismissMsgDialog()
         showMsgDialog(R.string.device_share_dialog_failed, e.message)
       }
@@ -302,9 +302,8 @@ constructor(
 
   private suspend fun openCommissioningWindowUsingOpenPairingWindowWithPin(nodeId: NodeId) {
     Timber.d(
-        "ShareDevice: chipClient.awaitOpenPairingWindowWithPIN " +
-            "duration [${OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS}] iteration [${ITERATION}] " +
-            "discriminator [${DISCRIMINATOR}]"
+        "Opening pairing window durationSeconds=$OPEN_COMMISSIONING_WINDOW_DURATION_SECONDS " +
+            "iteration=$ITERATION discriminator=$DISCRIMINATOR"
     )
     val connectedDevicePointer = chipClient.awaitGetConnectedDevicePointer(nodeId)
     chipClient.awaitOpenPairingWindowWithPIN(
@@ -338,7 +337,7 @@ constructor(
   // Remove device
 
   fun removeDevice(nodeId: NodeId) {
-    Timber.d("Removing device for nodeId [$nodeId]")
+    Timber.d("Removing device nodeId=$nodeId")
     showMsgDialog(R.string.unlinking_device_title, R.string.unlinking_device_body, false)
     viewModelScope.launch {
       try {
@@ -349,7 +348,7 @@ constructor(
         showRemoveDeviceConfirmAlertDialog()
         return@launch
       }
-      Timber.d("removeDevice succeeded for nodeId [$nodeId]")
+      Timber.d("Device removal succeeded nodeId=$nodeId")
       dismissMsgDialog()
       removePhysicalDevice(nodeId)
       _deviceRemovalCompleted.value = true
@@ -357,7 +356,7 @@ constructor(
   }
 
   fun removeDeviceWithoutUnlink(nodeId: NodeId) {
-    Timber.d("removeDeviceWithoutUnlink: nodeId [$nodeId]")
+    Timber.d("Removing device without unlink nodeId=$nodeId")
     viewModelScope.launch {
       try {
         removePhysicalDevice(nodeId)
@@ -381,7 +380,7 @@ constructor(
       msg: String?,
       showConfirmButton: Boolean = true,
   ) {
-    Timber.d("showMsgDialog [title=$title]")
+    Timber.d("Showing message dialog title=$title")
     _msgDialogInfo.value =
         DialogInfo(title = title, message = msg, showConfirmButton = showConfirmButton)
   }
@@ -391,7 +390,7 @@ constructor(
       @StringRes msgRes: Int,
       showConfirmButton: Boolean = true,
   ) {
-    Timber.d("showMsgDialog [titleRes=$titleRes]")
+    Timber.d("Showing message dialog titleRes=$titleRes")
     _msgDialogInfo.value =
         DialogInfo(titleRes = titleRes, messageRes = msgRes, showConfirmButton = showConfirmButton)
   }
@@ -401,7 +400,7 @@ constructor(
       msg: String?,
       showConfirmButton: Boolean = true,
   ) {
-    Timber.d("showMsgDialog [titleRes=$titleRes]")
+    Timber.d("Showing message dialog titleRes=$titleRes")
     _msgDialogInfo.value =
         DialogInfo(titleRes = titleRes, message = msg, showConfirmButton = showConfirmButton)
   }

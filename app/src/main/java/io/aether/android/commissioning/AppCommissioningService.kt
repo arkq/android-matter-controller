@@ -48,12 +48,12 @@ class AppCommissioningService : Service(), CommissioningService.Callback {
   }
 
   override fun onBind(intent: Intent): IBinder {
-    Timber.d("onBind(): intent [${intent}]")
+    Timber.d("Binding service intent=$intent")
     return commissioningServiceDelegate.asBinder()
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-    Timber.d("onStartCommand(): intent [${intent}] flags [${flags}] startId [${startId}]")
+    Timber.d("Starting service intent=$intent flags=$flags startId=$startId")
     return super.onStartCommand(intent, flags, startId)
   }
 
@@ -67,22 +67,20 @@ class AppCommissioningService : Service(), CommissioningService.Callback {
     Timber.d(
         "*** onCommissioningRequested ***:\n" +
             "\tdeviceDescriptor: " +
-            "vendorId [${metadata.deviceDescriptor.vendorId}] " +
-            "productId [${metadata.deviceDescriptor.productId}]\n" +
+            "vendorId=${metadata.deviceDescriptor.vendorId} " +
+            "productId=${metadata.deviceDescriptor.productId}\n" +
             "\tnetworkLocation: " +
-            "IP address toString() [${metadata.networkLocation.ipAddress}] " +
-            "IP address hostAddress [${metadata.networkLocation.ipAddress.hostAddress}] " +
-            "port [${metadata.networkLocation.port}]\n" +
-            "\tpassCode [${metadata.passcode}]"
+            "IP address=${metadata.networkLocation.ipAddress} " +
+            "hostAddress=${metadata.networkLocation.ipAddress.hostAddress} " +
+            "port=${metadata.networkLocation.port}\n" +
+            "\tpassCode=${metadata.passcode}"
     )
 
     // Perform commissioning on custom fabric for the sample app.
     serviceScope.launch {
       val deviceId = generateNextDeviceId()
       try {
-        Timber.d(
-            "Commissioning: App fabric -> ChipClient.establishPaseConnection(): deviceId [${deviceId}]"
-        )
+        Timber.d("Establishing PASE connection deviceId=$deviceId")
         chipClient.awaitEstablishPaseConnection(
             deviceId,
             metadata.networkLocation.ipAddress.hostAddress!!,
@@ -90,9 +88,7 @@ class AppCommissioningService : Service(), CommissioningService.Callback {
             metadata.passcode,
         )
 
-        Timber.d(
-            "Commissioning: App fabric -> ChipClient.commissionDevice(): deviceId [${deviceId}]"
-        )
+        Timber.d("Commissioning deviceId=$deviceId")
         chipClient.awaitCommissionDevice(deviceId, null)
       } catch (e: Exception) {
         Timber.e(e, "onCommissioningRequested() failed")
@@ -113,7 +109,7 @@ class AppCommissioningService : Service(), CommissioningService.Callback {
         return@launch
       }
 
-      Timber.d("Commissioning: Calling commissioningServiceDelegate.sendCommissioningComplete()")
+      Timber.d("Sending commissioning complete")
       commissioningServiceDelegate
           .sendCommissioningComplete(
               CommissioningCompleteMetadata.builder().setToken(deviceId.toString()).build()

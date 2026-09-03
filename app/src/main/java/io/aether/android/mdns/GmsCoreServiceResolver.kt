@@ -24,7 +24,7 @@ class GmsCoreServiceResolver @Inject constructor(private val client: DiscoveryCl
         .resolveService(ResolveServiceRequest.create(serviceType, instanceName))
         .addOnSuccessListener { result ->
           val serviceInfo = result.serviceInfo
-          Timber.d("GmsCoreServiceResolver:resolveService:success [${serviceInfo}]")
+          Timber.d("Service resolved serviceInfo=$serviceInfo")
           Timber.d("txtRecords:")
           serviceInfo.txtRecords.forEach { txtRecord -> Timber.d(txtRecord.toString()) }
 
@@ -40,7 +40,7 @@ class GmsCoreServiceResolver @Inject constructor(private val client: DiscoveryCl
           )
         }
         .addOnFailureListener { ex ->
-          Timber.d("GmsCoreServiceResolver:resolveService:failure [${ex}]")
+          Timber.e(ex, "Service resolution failed")
           callback.handleServiceResolve(
               instanceName,
               serviceType,

@@ -54,14 +54,14 @@ constructor(
 
         // Called as soon as service discovery begins.
         override fun onDiscoveryStarted(regType: String) {
-          Timber.d("onDiscoveryStarted: regType [${regType}]")
+          Timber.d("mDNS discovery started regType=$regType")
         }
 
         override fun onServiceFound(service: NsdServiceInfo) {
-          Timber.d("onServiceFound: service [${service}]")
+          Timber.d("mDNS service found service=$service")
           if (service.serviceType != SERVICE_TYPE_ANDROID) {
             Timber.d(
-                "Discarded Service: Type [${service.serviceType}] Name [${service.serviceName}]"
+                "Discarded serviceType=${service.serviceType} serviceName=${service.serviceName}"
             )
           } else {
             // Resolve the service.
@@ -70,32 +70,30 @@ constructor(
             discoveryClient
                 .resolveService(resolveServiceRequest)
                 .addOnSuccessListener { result ->
-                  Timber.d("resolveService success: [${result.serviceInfo}]")
+                  Timber.d("mDNS service resolved serviceInfo=${result.serviceInfo}")
                   resolvedDnsSdServiceInfo(result.serviceInfo)
                 }
-                .addOnFailureListener { error ->
-                  Timber.e(error, "resolveService failure: [${error}]")
-                }
+                .addOnFailureListener { error -> Timber.e(error, "Service resolution failed") }
           }
         }
 
         override fun onServiceLost(service: NsdServiceInfo) {
           // When the network service is no longer available.
-          Timber.d("onServiceLost service [${service}]")
+          Timber.d("mDNS service lost service=$service")
           lostNsdServiceInfo(service)
         }
 
         override fun onDiscoveryStopped(serviceType: String) {
-          Timber.d("onDiscoveryStopped serviceType [${serviceType}]")
+          Timber.d("mDNS discovery stopped serviceType=$serviceType")
         }
 
         override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
-          Timber.d("onStartDiscoveryFailed serviceType [${serviceType}] errorCode [${errorCode}]")
+          Timber.e("mDNS discovery failed serviceType=$serviceType errorCode=$errorCode")
           nsdManager.stopServiceDiscovery(this)
         }
 
         override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) {
-          Timber.d("onStopDiscoveryFailed serviceType [${serviceType}] errorCode [${errorCode}]")
+          Timber.e("mDNS discovery stop failed serviceType=$serviceType errorCode=$errorCode")
           nsdManager.stopServiceDiscovery(this)
         }
       }
@@ -134,13 +132,13 @@ constructor(
             discriminator = discriminator!!,
             transport = Transport.Mdns(address, port, true),
         )
-    Timber.d("resolvedDnsSdServiceInfo: [${beacon}]")
+    Timber.d("Resolved DNS-SD beacon=$beacon")
     producer.trySend(beacon)
   }
 
   /** The mDNS service is no longer advertising. */
   private fun lostNsdServiceInfo(nsdServiceInfo: NsdServiceInfo) {
-    Timber.d("lostNsdServiceInfo: [${nsdServiceInfo.serviceName}]")
+    Timber.d("Lost DNS-SD serviceName=${nsdServiceInfo.serviceName}")
     val beacon =
         MatterBeacon(
             name = nsdServiceInfo.serviceName,
@@ -161,7 +159,7 @@ constructor(
     nsdManager.discoverServices(SERVICE_TYPE_ANDROID, NsdManager.PROTOCOL_DNS_SD, discoveryListener)
 
     awaitClose {
-      Timber.d("awaitClose: Stop discovery.")
+      Timber.d("Stopping mDNS discovery")
       nsdManager.stopServiceDiscovery(discoveryListener)
     }
   }

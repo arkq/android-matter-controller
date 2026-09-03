@@ -176,7 +176,7 @@ internal fun ThreadRoute(
   // The IntentSender used to trigger the ThreadClient GPS activity.
   val threadClientIntentSender by threadViewModel.threadClientIntentSender.observeAsState()
   if (threadClientIntentSender != null) {
-    Timber.d("threadClient: Launch GPS activity to get ThreadClient")
+    Timber.d("Launching GPS activity for Thread client")
     threadClientLauncher.launch(IntentSenderRequest.Builder(threadClientIntentSender!!).build())
     // Reset IntentSender so we don't redo the launch on configuration change where data
     // is reset in the fragment.
@@ -387,7 +387,7 @@ private fun ActionItem(text: String, colors: CardColors, onClick: () -> Unit) {
       modifier = Modifier.padding(4.dp),
       colors = colors,
       onClick = {
-        Timber.d("onClick: $text")
+        Timber.d("Clicked text=$text")
         onClick()
         Timber.d("after calling onClick")
       },
@@ -548,7 +548,7 @@ private fun OtbrActionDialog(
                   modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                   readOnly = true,
                   value = if (otbr == null) "" else otbr!!.serviceName,
-                  onValueChange = { Timber.d("FIXME: value changed") },
+                  onValueChange = { Timber.d("Value changed") },
                   label = { Text("Select OTBR to use") },
                   trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
@@ -557,7 +557,7 @@ private fun OtbrActionDialog(
               )
               ExposedDropdownMenu(expanded = isExpanded, onDismissRequest = { /*TODO*/ }) {
                 currentActionInfo.borderRoutersList.forEach {
-                  Timber.d("OTBR: $it")
+                  Timber.d("OTBR value=$it")
                   DropdownMenuItem(
                       text = { Text(it.serviceName) },
                       onClick = {

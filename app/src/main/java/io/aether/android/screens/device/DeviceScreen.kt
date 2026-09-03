@@ -71,11 +71,11 @@ internal fun DeviceRoute(
     nodeId: NodeId,
     deviceViewModel: DeviceViewModel = hiltViewModel(),
 ) {
-  Timber.d("DeviceRoute nodeId [$nodeId]")
+  Timber.d("Opening device nodeId=$nodeId")
 
   // Observes values needed by the DeviceScreen.
   val deviceUiModel by deviceViewModel.deviceUiModel.collectAsStateWithLifecycle()
-  Timber.d("DeviceRoute deviceUiModel [${deviceUiModel?.nodeId}]")
+  Timber.d("Loaded device nodeId=${deviceUiModel?.nodeId}")
 
   // All endpoint models for the same physical node.
   val allEndpointUiModels by deviceViewModel.allEndpointUiModels.collectAsStateWithLifecycle()
